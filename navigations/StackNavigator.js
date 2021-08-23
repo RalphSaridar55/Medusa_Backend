@@ -5,6 +5,8 @@ import Home from "../screens/Home/home";
 import About from "../screens/About/about";
 import Contact from "../screens/Contact/contact";
 
+
+
 const Stack = createStackNavigator();
 
 const screenOptionStyle = {
@@ -19,11 +21,8 @@ const MainStackNavigator = () => {
     return (
         <Stack.Navigator
             creenOptions={screenOptionStyle}
-            screenOptions={{ headerShown: false }}
-        >
+            screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="About" component={About} />
-            <Stack.Screen name="Contact" component={ContactStackNavigator} />
         </Stack.Navigator>
     );
 }
@@ -35,4 +34,12 @@ const ContactStackNavigator = () => {
     );
 }
 
-export { MainStackNavigator, ContactStackNavigator };
+const AboutStackNavigator = () => {
+    return (
+        <Stack.Navigator creenOptions={screenOptionStyle} screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="About" component={About} />
+        </Stack.Navigator>
+    );
+}
+
+export { MainStackNavigator, ContactStackNavigator, AboutStackNavigator };

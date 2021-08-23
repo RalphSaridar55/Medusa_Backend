@@ -7,6 +7,7 @@ import Cart from "../screens/Checkout/cart";
 import Categories from "../screens/Categories/categories";
 import Account from "../screens/Account/Account";
 
+
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {

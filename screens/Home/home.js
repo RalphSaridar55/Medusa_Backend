@@ -19,37 +19,49 @@ const images = [
 const info = [
     {
         image: "https://sc04.alicdn.com/kf/H8620b8f47fd14c94b8cb5ae677418c2bl.jpg",
-        name: "Tops ",
+        name: "Q12 Smartwatch ",
         status: "$0.66 - $3.46 / Piece",
     },
     {
         image: "https://sc04.alicdn.com/kf/H5a25154aed3a441cb7bbaeefb22689baS.jpg",
-        name: "Printer", status: "$0.76 - $3.46 / Piece",
+        name: "Q13 Smartwatch", status: "$0.76 - $3.46 / Piece",
     },
     {
         image: "https://sc04.alicdn.com/kf/H8620b8f47fd14c94b8cb5ae677418c2bl.jpg",
-        name: "Tops ",
+        name: "116 smart watch",
         status: "$0.66 - $3.46 / Piece",
     },
     {
         image: "https://sc04.alicdn.com/kf/H5a25154aed3a441cb7bbaeefb22689baS.jpg",
-        name: "Printer", status: "$0.76 - $3.46 / Piece",
+        name: "Z15 Smartwatch", status: "$0.76 - $3.46 / Piece",
+    },
+
+    {
+        image: "https://sc04.alicdn.com/kf/Hb1a7df7c8ea041e780440827874d67ddn.jpg",
+        name: "G102 Gaming", status: "$0.76 - $3.46 / Piece",
     },
 ]
-
+const top = [
+    {
+        image: 'https://sc04.alicdn.com/kf/Hf1bd3c0da31145ed835dab667efced6dP.jpg',
+        name: "Tops ",
+        status: "$0.66 - $3.46 / Piece",
+    },
+    {
+        image: 'https://sc04.alicdn.com/kf/HTB14p5ebyDxK1RjSsph762HrpXaT.png',
+        name: "Printer ",
+        status: "$0.66 - $3.46 / Piece",
+    },
+    {
+        image: 'https://sc04.alicdn.com/kf/Hf1bd3c0da31145ed835dab667efced6dP.jpg',
+        name: "Tops ",
+        status: "$0.66 - $3.46 / Piece",
+    }
+]
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
-            data: [
-                { id: 1, name: "116 smart watch ", status: "$0.66 - $3.46 / Piece", moq: "10", av: '100', image: "https://sc04.alicdn.com/kf/H8620b8f47fd14c94b8cb5ae677418c2bl.jpg" },
-                { id: 2, name: "Q12 Smartwatch", status: "$0.76 - $3.46 / Piece", moq: "20", av: '100', image: "https://sc04.alicdn.com/kf/H5a25154aed3a441cb7bbaeefb22689baS.jpg" },
-                { id: 3, name: "Q12 Smartwatch", status: "$0.12 - $7.55 / Piece", moq: "5", av: '200', image: "https://sc04.alicdn.com/kf/Hd03ed87f7279473c89dd2bc3f01d050eI.jpg" },
-                { id: 4, name: "Z15 Smartwatch", status: "$0.13 - $8.55 / Piece", moq: "10", av: '100', image: "https://sc04.alicdn.com/kf/Hbe79d59029f749bdb11318553a997740u.jpg" },
-                { id: 5, name: "Z15 Smartwatch", status: "$0.12 - $7.55 / Piece", moq: "1", av: '300', image: "https://sc04.alicdn.com/kf/Hbefda793d3084ed5819cc908183d6b71a.jpg" },
-
-            ],
         }
     }
 
@@ -59,19 +71,6 @@ class Home extends Component {
                 <Image style={{ width: BannerWidth, height: BannerHeight }} source={{ uri: image }} />
             </View>
         );
-    }
-    renderItems(data, index) {
-        return (
-            <View key={index} style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
-                <View style={{ flex: 1 }}>
-                    <Card>
-                        <Card.Cover source={{ uri: data.image }} style={{ height: 100 }} />
-                        <Card.Title title={item.name} subtitle={item.status}></Card.Title>
-                    </Card>
-                </View>
-            </View>
-        );
-
     }
 
     render() {
@@ -96,15 +95,14 @@ class Home extends Component {
                         Show All
                     </Button>
                 </View>
-                <View >
+                <View style={{ marginLeft: 10, marginRight: 10 }} >
                     <FlatListSlider
                         data={info}
-                        width={200}
+                        width={300}
                         timer={5000}
                         component={<Preview />}
                         onPress={item => alert(JSON.stringify(item))}
-                        indicatorActiveWidth={40}
-
+                        indicatorActiveWidth={10}
                     />
                 </View>
                 <View style={{ marginTop: 10, marginBottom: 10 }}>
@@ -118,6 +116,14 @@ class Home extends Component {
                     </Button>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
+                    <FlatListSlider
+                        data={top}
+                        width={300}
+                        timer={5000}
+                        component={<Preview />}
+                        onPress={item => alert(JSON.stringify(item))}
+                        indicatorActiveWidth={10}
+                    />
                     <View style={{ flex: 1 }}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/Hf1bd3c0da31145ed835dab667efced6dP.jpg' }} style={{ height: 100 }} />

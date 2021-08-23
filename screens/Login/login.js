@@ -1,105 +1,158 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, Headline } from 'react-native';
-import { TextInput, HelperText } from 'react-native-paper';
+import React, { useState, useEffect } from 'react'
+import { TouchableOpacity, StyleSheet, View, ImageBackground } from 'react-native'
+import { Text, Button } from 'react-native-paper'
+import Header from '../../components/Header'
+import TextInput from '../../components/TextInput'
+import { emailValidator } from '../../helpers/emailValidator'
+import { passwordValidator } from '../../helpers/passwordValidator'
+import * as Device from 'expo-device';
+import Spinner from 'react-native-loading-spinner-overlay';
+import APIKit, { setClientToken, isUserLoggedIn } from "../../core/apis/APIKit"
 
-class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            email: "",
-            password: '',
-            emailError: "",
-            passwordError: ""
-        }
+
+
+export default function Login({ navigation }) {
+
+  const [email, setEmail] = useState({ value: '', error: '' })
+  const [password, setPassword] = useState({ value: '', error: '' })
+  const [isAuthorized, setAuthorized] = useState(false)
+  const [isLoading, setLoading] = useState(false)
+  const [data, setData] = useState("")
+
+
+  const onLoginPressed = () => {
+
+    // Validation 
+    const emailError = emailValidator(email.value)
+    const passwordError = passwordValidator(password.value)
+
+    // Set Errors msgs
+    if (emailError || passwordError) {
+      setEmail({ ...email, error: emailError })
+      setPassword({ ...password, error: passwordError })
+      return
     }
 
-    onChange = () => {
 
+    const payload = {
+      owner_email: email.value,
+      password: password.value,
+      device_id: "string",
+      device_name: Device.deviceName,
+      device_version: Device.osVersion,
+      device_token: "string"
     }
 
-    render() {
-        return (<ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
-            style={{
-                flex: 1,
-                justifyContent: "center"
-            }}>
-            <View style={{ flex: 1, padding: 15, justifyContent: 'center' }}>
-                <TextInput
-                    label="Email"
-                    placeholder="email@gmail.com"
-                    mode="outlined"
-                    outlineColor="#C4C4C4"
-                    theme={{ colors: { primary: '#31c2aa' } }}
-                    style={styles.inputView}
-                    value={this.state.email}
-                // onChangeText={onChangeText}
-                />
-                <HelperText type="error" visible={hasErrors()}>
-                    Email address is invalid!
-                </HelperText>
-                <TextInput
-                    mode="outlined"
-                    label="Password"
-                    secureTextEntry
-                    outlineColor="#C4C4C4"
-                    style={styles.inputView}
-                    value={this.state.passwordpassword}
-                    //onChangeText={onChangePassword}
-                    theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                    right={<TextInput.Icon name="eye" />}
-                />
-                <TouchableOpacity>
-                    <Text style={styles.forgot} onPress={() => this.props.navigation.navigate('ForgotPassword')}>Forgot Password?</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.loginBtn}>
-                    <Text style={styles.loginText} onPress={() => this.props.navigation.navigate('Home')}>LOGIN</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.signupText} onPress={() => this.props.navigation.navigate('Registration')}>Become a Partner </Text>
-                </TouchableOpacity>
+    // Show spinner when call is made
+    setLoading(true)
+
+
+    APIKit.post('/user/login', payload)
+      .then((res) => {
+        setClientToken(res.data.data.access_token);
+        console.log(res.data.data)
+        setData(res.data.data)
+        setAuthorized(true);
+        setLoading(false)
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Categories' }],
+        })
+
+      })
+      .catch((error) => {
+        console.error(error.response);
+        setAuthorized(false);
+      })
+
+  }
+
+  return (
+    <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+      style={{
+        flex: 1,
+      }}>
+      <View style={styles.container}>
+        <Spinner visible={isLoading} />
+        {!isAuthorized ?
+          <View>
+            <Header>Welcome back </Header>
+            <TextInput
+              label="Email"
+              returnKeyType="next"
+              value={email.value}
+              onChangeText={(text) => setEmail({ value: text, error: '' })}
+              error={!!email.error}
+              errorText={email.error}
+              autoCapitalize="none"
+              autoCompleteType="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              outlineColor="#C4C4C4"
+              theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
+            />
+            <TextInput
+              label="Password"
+              returnKeyType="done"
+              value={password.value}
+              onChangeText={(text) => setPassword({ value: text, error: '' })}
+              error={!!password.error}
+              errorText={password.error}
+              secureTextEntry
+              outlineColor="#C4C4C4"
+              theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
+              right={<TextInput.Icon name="eye" />}
+            />
+            <View style={styles.forgotPassword}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ResetPasswordScreen')}
+              >
+                <Text style={styles.forgot}>Forgot your password ?</Text>
+              </TouchableOpacity>
             </View>
+            <Button mode="contained" onPress={onLoginPressed} style={styles.loginBtn}>
+              Login
+            </Button>
+            <View >
+              <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
+                <Text style={styles.link}>Become a Partner </Text>
+              </TouchableOpacity>
+            </View>
+          </View> : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Header>Welcome {data.userDetails.company_name}</Header></View>}
+      </View>
 
-        </ImageBackground>);
-    }
+    </ImageBackground>
+  )
 }
 
-export default Login;
-
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 15,
-        justifyContent: "center",
-    },
-    inputView: {
-        backgroundColor: "#fff",
-        marginBottom: 10,
-        borderRadius: 25
-    },
-    inputText: {
-        height: 50,
-        color: "white"
-    },
-    forgot: {
-        color: "#31C2AA",
-        fontSize: 11,
-        textAlign: "right"
-    },
-    loginBtn: {
-        backgroundColor: "#31C2AA",
-        borderRadius: 25,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 20,
-        marginBottom: 10
-    },
-    loginText: {
-        color: "white"
-    },
-    signupText: {
-        color: "#31C2AA",
-        textAlign: "center"
-    }
-});
+  container: {
+    flex: 1,
+    padding: 15,
+    justifyContent: 'center'
+  },
+  forgotPassword: {
+    width: '100%',
+    alignItems: 'flex-end',
+    marginBottom: 10,
+  },
+  forgot: {
+    color: "#31C2AA",
+    fontSize: 12,
+    textAlign: "right"
+  },
+  link: {
+    color: "#31C2AA",
+    textAlign: "center",
+    marginTop: 5
+  },
+  loginBtn: {
+    backgroundColor: "#31C2AA",
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 50
+  }
+})
+
+
