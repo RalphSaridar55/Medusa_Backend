@@ -11,7 +11,7 @@ export default function App() {
 
   useEffect(() => {
    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-    LogBox.ignoreAllLogs()
+  LogBox.ignoreAllLogs()
   }, [])
   return (
     <NavigationContainer>

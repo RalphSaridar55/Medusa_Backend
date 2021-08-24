@@ -54,10 +54,9 @@ export default function Login({ navigation }) {
         setData(res.data.data)
         setAuthorized(true);
         setLoading(false)
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Categories' }],
-        })
+        navigation.navigate(
+         "Home"
+        )
 
       })
       .catch((error) => {

@@ -8,5 +8,4 @@ export const LOGIN = "/login";
 
 export const HOME_CATEGORIES = "home-category";
 export const CATEGORIES = "category";
-
 export const COUNTRIES = "country";

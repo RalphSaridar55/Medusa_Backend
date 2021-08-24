@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { TouchableOpacity, StyleSheet, View, ImageBackground, ScrollView, } from 'react-native'
-import {Text, Button, IconButton } from 'react-native-paper'
+import { Text, Button, IconButton } from 'react-native-paper'
 import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
 import { emailValidator } from '../../helpers/emailValidator'
@@ -20,7 +20,7 @@ export default function Registration({ navigation }) {
 
     const getCategoires = () => {
         APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
-            const result = res.data.data.map(option => ({ id: option.id, item: option.category_name }));
+            const result = res.data.data.map(option => ({ value: option.id, label: option.category_name }));
             setftechedCategories(result)
         });
     };
@@ -33,18 +33,16 @@ export default function Registration({ navigation }) {
     };
 
     const getCategoryDetails = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((res) => {
-            const results = res.data.data
-            setftechedSubCategories(results)
-
-
+        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
+            var result = response.data.data.data[0].subcategory.map(option => ({ value: option.id, label: option.sub_category_name, key: option.id }))
+            setftechedSubCategories(result)
         });
     };
     useEffect(() => {
         getCategoires()
         getCountries()
         getCategoryDetails()
-    });
+    }, []);
 
 
     const typeList = [
@@ -57,14 +55,6 @@ export default function Registration({ navigation }) {
             value: "2",
         },
     ]
-
-    const SubCategoriesList = [
-        {
-            label: "Phone",
-            value: "1",
-        }
-
-    ];
 
     const BrandsList = [
         {
@@ -106,7 +96,7 @@ export default function Registration({ navigation }) {
     const [terms, setTerms] = useState({ value: '', error: '' })
 
 
-    const [categories, setCategories] = useState("1")
+    const [categories, setCategories] = useState("")
     const [subCategories, setSubCategories] = useState("")
     const [brands, setBrands] = useState("")
     const [country, setCountry] = useState("")
@@ -115,10 +105,7 @@ export default function Registration({ navigation }) {
     const [fetchedCountries, setftechedCountries] = useState([])
     const [fetchedSubcategories, setftechedSubCategories] = useState([])
 
-
-    const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
-    const [showDropDown, setShowDropDown] = useState(false);
-    const [accounttype, setType] = useState("")
+    const [accounttype, setType] = useState(1)
 
 
     const [docs, setDocs] = useState("")
@@ -126,22 +113,10 @@ export default function Registration({ navigation }) {
     const [isLoading, setLoading] = useState(false)
 
 
-    const [ConfirmError, setConfirmError] = useState("")
-
-    const [selectedCategories, setSelectedCategories] = useState([])
-
-    function onMultiChange() {
-        return (item) => setSelectedCategories(xorBy(selectedCategories, [item], 'id'))
-    }
-
 
     const onRegister = () => {
-        console.log(fetchedCountries)
 
-        if (password !== confirm_password) {
-            setConfirmError("Passwords doesn't match")
-        }
-        // Validation 
+        //Validation 
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
         const companynameError = nameValidator(company_name.value)
@@ -160,7 +135,7 @@ export default function Registration({ navigation }) {
         // const brandsError = nameValidator(brands.value)
 
 
-        // // Set Errors msgs
+        //  Set Errors msgs
         if (streetError || ConfirmError || emailError || passwordError || companynameError || websiteError || financialNumberError || phoneNumberError || countryCodeError || registeredAddressError || stateError || cityError || postalCodeError || termsError) {
             setEmail({ ...email, error: emailError })
             setPassword({ ...password, error: passwordError })
@@ -175,7 +150,7 @@ export default function Registration({ navigation }) {
             setPostalCode({ ...postalCode, error: postalCodeError })
             setStreet({ ...street, error: streetError })
             setTerms({ ...terms, error: termsError })
-            // setConfirmPassword({ ...confirm_password, error: "Passwords don't match" })
+            setConfirmPassword({ ...confirm_password, error: "Passwords don't match" })
             return
         }
 
@@ -194,18 +169,18 @@ export default function Registration({ navigation }) {
             city: city.value,
             street: street.value,
             postal_code: postalCode.value,
-            user_type: accounttype,
+            user_type: parseInt(accounttype),
             company_reg_doc: docs,
-            trading_license_doc: "string",
+            trading_license_doc: docs,
             categories: [
                 {
-                    category_id: categories,
+                    category_id: parseInt(categories),
                     subCategory: [
                         {
-                            subCategory_id: 1,
+                            subCategory_id: parseInt(subCategories),
                             brands: [
                                 {
-                                    brand_id: 1
+                                    brand_id: parseInt(brands)
                                 }
                             ]
                         }
@@ -216,10 +191,10 @@ export default function Registration({ navigation }) {
 
         // Show spinner when call is made
         setLoading(true)
-
         // api call
         APIKit.post('/user-signup', payload)
             .then((res) => {
+
                 alert(res.data.message)
                 setLoading(false)
             })
@@ -404,59 +379,57 @@ export default function Registration({ navigation }) {
                             outlineColor="#C4C4C4"
                             theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
                         />
-                        <View>
-                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
-                                    <Picker
-                                        selectedValue={categories}
-                                        onValueChange={(itemValue, itemIndex) =>
-                                            setCategories(itemValue)
-                                        }>
-                                        {fetchedcategories.map((option) =>
-                                            <Picker.Item
-                                                key={option.value}
-                                                value={option.value}
-                                                label={option.label}
-                                            />
-                                        )}
-                                    </Picker>
-                                </View> */}
-                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff", marginTop: 10, marginBottom: 10 }}>
-                                    <Picker
-                                        selectedValue={subCategories}
-                                        onValueChange={(itemValue, itemIndex) =>
-                                            setSubCategories(itemValue)
-                                        }>
-                                        {categories === "1" ? SubCategoriesList.map((option) =>
-                                            <Picker.Item
-                                                key={option.value}
-                                                value={option.value}
-                                                label={option.label}
-                                            />
-                                        ) : <Picker.Item
+                        {accounttype === 1 ? <View>
+                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
+                                <Picker
+                                    selectedValue={categories}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        setCategories(itemValue)
+                                    }>
+                                    {fetchedcategories.map((option, index) =>
+                                        <Picker.Item
+                                            key={index}
+                                            value={option.value}
+                                            label={option.label}
+                                        />
+                                    )}
+                                </Picker>
+                            </View>
+                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff", marginTop: 10, marginBottom: 10 }}>
+                                <Picker
+                                    selectedValue={subCategories}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        setSubCategories(itemValue)
+                                    }>
 
-                                            label=""
-                                        />}
-                                    </Picker>
-                                </View> */}
-                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
-                                    <Picker
-                                        selectedValue={brands}
-                                        onValueChange={(itemValue, itemIndex) =>
-                                            setBrands(itemValue)
-                                        }>
-                                        {BrandsList.map((option) =>
-                                            <Picker.Item
-                                                key={option.value}
-                                                value={option.value}
-                                                label={option.label}
-                                            />
-                                        )}
-                                    </Picker>
-                                </View> */}
-                        </View>
+                                    {fetchedSubcategories.map((option) =>
+                                        <Picker.Item
+                                            key={option.value}
+                                            value={option.value}
+                                            label={option.label}
+                                        />
+                                    )}
+
+                                </Picker>
+                            </View>
+                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
+                                <Picker
+                                    selectedValue={brands}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        setBrands(itemValue)
+                                    }>
+                                    {BrandsList.map((option) =>
+                                        <Picker.Item
+                                            key={option.value}
+                                            value={option.value}
+                                            label={option.label}
+                                        />
+                                    )}
+                                </Picker>
+                            </View>
+                        </View> : <View></View>}
 
                         <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: 5, marginTop: 10 }}>
-                            {/* <Avatar.Icon onPress={pickDocument} size={40} icon="plus" style={{ backgroundColor: '#698EB7' }} color="#fff" /> */}
                             <IconButton
                                 icon="plus"
                                 size={20}
