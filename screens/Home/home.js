@@ -90,8 +90,9 @@ class Home extends Component {
                 </View>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
                     <Headline>Top Products</Headline>
+                    {/* //    onPress={() => this.props.navigation.navigate('Categories')}  */}
                     <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
-                        onPress={() => this.props.navigation.navigate('Checkout')}>
+                    >
                         Show All
                     </Button>
                 </View>
@@ -111,7 +112,9 @@ class Home extends Component {
                 </View>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
                     <Headline>Top Selling</Headline>
-                    <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }} onPress={() => this.props.navigation.navigate('List')}>
+                    {/* // onPress={() => this.props.navigation.navigate('Users')} */}
+                    <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
+                    >
                         Show All
                     </Button>
                 </View>

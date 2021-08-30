@@ -25,29 +25,19 @@ export default class Categories extends Component {
 
     componentDidMount() {
         this.getCategoires()
-        this.getCategoryDetails()
+
     }
 
     getCategoires = () => {
         APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
             const result = res.data.data
+            console.log(result)
             this.setState({ categories: result })
         });
     };
 
-    getCategoryDetails = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
-            for (let i = 0; i < 1; i++) {
-                var result = response.data.data.data[i].subcategory.map(option => ({ value: option.id, label: option.sub_category_name, key: option.id }))
-                console.log(result)
-            }
-            this.setState({ SubCategories: result })
-        });
-    };
 
-    clickEventListener(item) {
 
-    }
     render() {
         return (
 
@@ -62,7 +52,7 @@ export default class Categories extends Component {
                     }}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity style={styles.card} onPress={() => { this.clickEventListener(item) }}>
+                            <TouchableOpacity style={styles.card} onPress={() => { this.props.navigation.navigate('CategoiresList', { id: item.category_name }); }}>
                                 <View style={styles.cardHeader}>
 
                                 </View>

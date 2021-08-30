@@ -72,6 +72,7 @@
              onPress={pickDocument}
            />
          </TouchableOpacity>
+         
        </View>
      </View>
    );

@@ -6,6 +6,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Cart from "../screens/Checkout/cart";
 import Categories from "../screens/Categories/categories";
 import Account from "../screens/Account/Account";
+import { isUserLoggedIn } from "../core/apis/APIKit";
+import Home from "../screens/Home/home";
 
 
 const Tab = createBottomTabNavigator();
@@ -13,7 +15,7 @@ const Tab = createBottomTabNavigator();
 const BottomTabNavigator = () => {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false, tabBarActiveTintColor: '#31C2AA', tabBarInactiveTintColor: "#698EB7" }}  >
-            <Tab.Screen name="Home" component={MainStackNavigator} options={{
+            <Tab.Screen name="Home" component={Home} options={{
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="home" color={color} size={size} />
@@ -33,6 +35,7 @@ const BottomTabNavigator = () => {
                     <MaterialCommunityIcons name="truck-fast-outline" color={color} size={size} />
                 ),
             }} />
+
             <Tab.Screen name="Account" component={Account} options={{
                 tabBarLabel: 'Account',
                 tabBarIcon: ({ color, size }) => (

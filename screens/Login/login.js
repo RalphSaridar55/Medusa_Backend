@@ -7,9 +7,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import * as Device from 'expo-device';
 import Spinner from 'react-native-loading-spinner-overlay';
-import APIKit, { setClientToken, isUserLoggedIn } from "../../core/apis/APIKit"
-
-
+import APIKit, { setToken } from "../../core/apis/APIKit"
 
 export default function Login({ navigation }) {
 
@@ -49,19 +47,19 @@ export default function Login({ navigation }) {
 
     APIKit.post('/user/login', payload)
       .then((res) => {
-        setClientToken(res.data.data.access_token);
-        console.log(res.data.data)
+        setToken(res.data.data.access_token);
         setData(res.data.data)
         setAuthorized(true);
         setLoading(false)
         navigation.navigate(
-         "Home"
+          "Home"
         )
 
       })
       .catch((error) => {
         console.error(error.response);
         setAuthorized(false);
+        setLoading(false)
       })
 
   }
@@ -100,7 +98,7 @@ export default function Login({ navigation }) {
               secureTextEntry
               outlineColor="#C4C4C4"
               theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-              right={<TextInput.Icon name="eye" />}
+            // right={<TextInput.Icon name="eye" />}
             />
             <View style={styles.forgotPassword}>
               <TouchableOpacity
@@ -113,7 +111,7 @@ export default function Login({ navigation }) {
               Login
             </Button>
             <View >
-              <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
+              <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
                 <Text style={styles.link}>Become a Partner </Text>
               </TouchableOpacity>
             </View>

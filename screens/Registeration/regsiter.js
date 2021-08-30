@@ -14,16 +14,12 @@ import _ from 'lodash';
 import * as ROUTE_LIST from "../../core/apis/apis-list"
 import * as DocumentPicker from "expo-document-picker";
 import { Picker } from '@react-native-picker/picker';
-
+// import MultiSelect library
+import MultiSelect from 'react-native-multiple-select';
 
 export default function Registration({ navigation }) {
 
-    const getCategoires = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
-            const result = res.data.data.map(option => ({ value: option.id, label: option.category_name }));
-            setftechedCategories(result)
-        });
-    };
+
     const getCountries = () => {
         APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
             const COUNTRIES = res.data.data;
@@ -32,9 +28,17 @@ export default function Registration({ navigation }) {
         });
     };
 
+
+    const getCategoires = () => {
+        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
+            const result = res.data.data.map(option => ({ id: option.id, name: option.category_name }));
+            setftechedCategories(result)
+        });
+    };
+
     const getCategoryDetails = () => {
         APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
-            var result = response.data.data.data[0].subcategory.map(option => ({ value: option.id, label: option.sub_category_name, key: option.id }))
+            var result = response.data.data.data[0].subcategory.map(option => ({ id: option.id, name: option.sub_category_name, key: option.id }))
             setftechedSubCategories(result)
         });
     };
@@ -96,9 +100,9 @@ export default function Registration({ navigation }) {
     const [terms, setTerms] = useState({ value: '', error: '' })
 
 
-    const [categories, setCategories] = useState("")
-    const [subCategories, setSubCategories] = useState("")
-    const [brands, setBrands] = useState("")
+    const [categories, setCategories] = useState([])
+    const [subCategories, setSubCategories] = useState([])
+    const [brands, setBrands] = useState([])
     const [country, setCountry] = useState("")
 
     const [fetchedcategories, setftechedCategories] = useState([])
@@ -107,7 +111,6 @@ export default function Registration({ navigation }) {
 
     const [accounttype, setType] = useState(1)
 
-
     const [docs, setDocs] = useState("")
 
     const [isLoading, setLoading] = useState(false)
@@ -115,6 +118,7 @@ export default function Registration({ navigation }) {
 
 
     const onRegister = () => {
+        console.log(categories)
 
         //Validation 
         const emailError = emailValidator(email.value)
@@ -194,16 +198,23 @@ export default function Registration({ navigation }) {
         // api call
         APIKit.post('/user-signup', payload)
             .then((res) => {
-
                 alert(res.data.message)
                 setLoading(false)
+                navigation.navigate(
+                    "Home"
+                )
             })
             .catch((error) => {
                 alert(error.response.data.message)
                 setLoading(false)
             })
     }
+    const [selectedItems, setSelectedItems] = useState([]);
 
+    const onSelectedItemsChange = (selectedItems) => {
+        // Set Selected Items
+        setSelectedItems(selectedItems);
+    };
     return (
 
         <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
@@ -380,7 +391,7 @@ export default function Registration({ navigation }) {
                             theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
                         />
                         {accounttype === 1 ? <View>
-                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
+                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
                                 <Picker
                                     selectedValue={categories}
                                     onValueChange={(itemValue, itemIndex) =>
@@ -394,8 +405,30 @@ export default function Registration({ navigation }) {
                                         />
                                     )}
                                 </Picker>
-                            </View>
-                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff", marginTop: 10, marginBottom: 10 }}>
+                            </View> */}
+
+                            <MultiSelect
+                                hideTags
+                                items={fetchedcategories}
+                                uniqueKey="id"
+                                onSelectedItemsChange={setCategories}
+                                selectedItems={categories}
+                                selectText="  Select Categories"
+                                searchInputPlaceholderText="  Search ..."
+                                tagRemoveIconColor="#CCC"
+                                tagBorderColor="#CCC"
+                                tagTextColor="#CCC"
+                                selectedItemTextColor="#CCC"
+                                selectedItemIconColor="#CCC"
+                                itemTextColor="#000"
+                                displayKey="name"
+                                searchInputStyle={{ color: '#CCC' }}
+                                styleRowList={{ padding: 5 }}
+                                styleSelectorContainer={{ padding: 5 }}
+
+                            />
+
+                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff", marginTop: 10, marginBottom: 10 }}>
                                 <Picker
                                     selectedValue={subCategories}
                                     onValueChange={(itemValue, itemIndex) =>
@@ -411,7 +444,62 @@ export default function Registration({ navigation }) {
                                     )}
 
                                 </Picker>
+                            </View> */}
+                            <View style={{ marginTop: 10, marginBottom: 10 }}>
+                                <MultiSelect
+                                    hideTags
+                                    items={fetchedSubcategories}
+                                    uniqueKey="id"
+                                    onSelectedItemsChange={setSubCategories}
+                                    selectedItems={subCategories}
+                                    selectText="  Select SubCategories"
+                                    searchInputPlaceholderText="  Search ..."
+                                    tagRemoveIconColor="#CCC"
+                                    tagBorderColor="#CCC"
+                                    tagTextColor="#CCC"
+                                    selectedItemTextColor="#CCC"
+                                    selectedItemIconColor="#CCC"
+                                    itemTextColor="#000"
+                                    displayKey="name"
+                                    searchInputStyle={{ color: '#CCC' }}
+                                    //submitButtonColor="#48d22b"
+                                    // submitButtonText="Submit"
+                                    // styleItemsContainer={{ padding: 2 }}
+                                    searchInputStyle={{ padding: 5 }}
+                                    // styleInputGroup={{ padding: 5 }}
+                                    styleRowList={{ padding: 5 }}
+                                    styleSelectorContainer={{ padding: 5, backgroundColor: "#fff" }} />
                             </View>
+
+
+                            <View style={{ marginTop: 10, marginBottom: 10 }}>
+                                <MultiSelect
+                                    hideTags
+                                    items={BrandsList}
+                                    uniqueKey="id"
+                                    onSelectedItemsChange={setBrands}
+                                    selectedItems={brands}
+                                    selectText="  Select Brands"
+                                    searchInputPlaceholderText="  Search ..."
+                                    tagRemoveIconColor="#CCC"
+                                    tagBorderColor="#CCC"
+                                    tagTextColor="#CCC"
+                                    selectedItemTextColor="#CCC"
+                                    selectedItemIconColor="#CCC"
+                                    itemTextColor="#000"
+                                    displayKey="name"
+                                    searchInputStyle={{ color: '#CCC' }}
+                                    //submitButtonColor="#48d22b"
+                                    // submitButtonText="Submit"
+                                    // styleItemsContainer={{ padding: 2 }}
+                                    searchInputStyle={{ padding: 5 }}
+                                    // styleInputGroup={{ padding: 5 }}
+                                    styleRowList={{ padding: 5 }}
+                                    styleSelectorContainer={{ padding: 5, backgroundColor: "#fff" }} />
+                            </View>
+
+
+                            {/* 
                             <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
                                 <Picker
                                     selectedValue={brands}
@@ -426,7 +514,7 @@ export default function Registration({ navigation }) {
                                         />
                                     )}
                                 </Picker>
-                            </View>
+                            </View> */}
                         </View> : <View></View>}
 
                         <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: 5, marginTop: 10 }}>

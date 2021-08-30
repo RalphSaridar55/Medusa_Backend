@@ -1,6 +1,6 @@
 import axios from 'axios';
 import base64 from 'react-native-base64'
-
+import * as SecureStore from 'expo-secure-store';
 // Create axios client, pre-configured with baseURL
 const username = "cashmystock"
 const password = "cashmystock@123"
@@ -25,5 +25,30 @@ export const setClientToken = token => {
   });
 };
 
+
+export const setToken = (token) => {
+  return SecureStore.setItemAsync('secure_token', token);
+};
+
+const getToken = () => {
+  return SecureStore.getItemAsync('secure_token');
+};
+
+
+export const isUserLoggedIn = () => {
+  let user = getToken()
+  if (user === null) return false
+  else {
+    return true;
+  }
+}
+
+export const logout = () => {
+  SecureStore.deleteItemAsync('secure_token')
+  alert("logout")
+}
+
+//logout()
+//getToken().then(token => console.log(token)); // output '#your_secret_token'
 
 export default APIKit;
