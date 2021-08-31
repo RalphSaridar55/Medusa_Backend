@@ -6,6 +6,7 @@ import Carousel from 'react-native-banner-carousel';
 import styles from "./style";
 import { FlatListSlider } from 'react-native-flatlist-slider';
 import Preview from './preview';
+import Footer from '../../components/footer/footer';
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 200;
@@ -231,6 +232,7 @@ class Home extends Component {
                     </View>
                 </View>
             </ScrollView>
+            <Footer/>
         </View >
         );
     }
