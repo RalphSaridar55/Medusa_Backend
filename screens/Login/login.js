@@ -102,7 +102,7 @@ export default function Login({ navigation }) {
             />
             <View style={styles.forgotPassword}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ResetPasswordScreen')}
+                onPress={() => navigation.navigate('ForgotPassword')}
               >
                 <Text style={styles.forgot}>Forgot your password ?</Text>
               </TouchableOpacity>
@@ -117,7 +117,6 @@ export default function Login({ navigation }) {
             </View>
           </View> : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Header>Welcome {data.userDetails.company_name}</Header></View>}
       </View>
-
     </ImageBackground>
   )
 }

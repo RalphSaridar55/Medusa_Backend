@@ -6,7 +6,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Cart from "../screens/Checkout/cart";
 import Categories from "../screens/Categories/categories";
 import Account from "../screens/Account/Account";
-import { isUserLoggedIn } from "../core/apis/APIKit";
 import Home from "../screens/Home/home";
 
 
