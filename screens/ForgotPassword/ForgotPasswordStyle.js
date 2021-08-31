@@ -45,7 +45,7 @@ export default StyleSheet.create({
     loginText: {
         color: "white"
     },
-    mainontent: {
+    mainContent: {
         flex: 1,
         padding: 15,
         justifyContent: 'center'
