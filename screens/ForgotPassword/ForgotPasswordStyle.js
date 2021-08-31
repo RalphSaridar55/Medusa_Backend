@@ -1,9 +1,23 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+    cardEmailSent: {
+        backgroundColor: "#fff",
+        padding: 30
+    },
+    cardPickerStyle: {
+        backgroundColor: "#fff",
+        paddingTop: 15,
+        paddingBottom: 15
+    },
     container: {
         flex: 1,
         justifyContent: "center"
+    },
+    headlineStyle: {
+        marginBottom: 10,
+        color: "#698EB7",
+        fontWeight: "bold"
     },
     inputView: {
         backgroundColor: "#fff",
@@ -30,6 +44,11 @@ export default StyleSheet.create({
     },
     loginText: {
         color: "white"
+    },
+    mainontent: {
+        flex: 1,
+        padding: 15,
+        justifyContent: 'center'
     },
     signupText: {
         color: "#31C2AA",

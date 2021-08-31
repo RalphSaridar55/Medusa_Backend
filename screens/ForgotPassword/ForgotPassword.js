@@ -31,8 +31,8 @@ export default class ForgotPassword extends Component {
         return (
             <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={forgotPasswordStyle.container}>
-                <View style={{ flex: 1, padding: 15, justifyContent: 'center'}}>
-                    <Headline style={{ marginBottom: 10, color: "#698EB7", fontStyle: "bold" }}>{this.state.verified ? "Reset Password" : "Verify Your Email "}</Headline>
+                <View style={forgotPasswordStyle.mainontent}>
+                    <Headline style={forgotPasswordStyle.headlineStyle}>{this.state.verified ? "Reset Password" : "Verify Your Email "}</Headline>
                     <View style={{ display: this.state.verified ? 'none' : 'flex' }}>
                         <TextInput
                             label="Email"
@@ -47,7 +47,7 @@ export default class ForgotPassword extends Component {
                         </TouchableOpacity>
                     </View>
                     <View style={{ display: this.state.verified && !this.state.byemail && !this.state.byotp ? 'flex' : 'none' }}>
-                        <Card style={{ backgroundColor: "#fff", paddingTop: 15, paddingBottom: 15 }}>
+                        <Card style={forgotPasswordStyle.cardPickerStyle}>
                             <RadioButton.Group onValueChange={this.onValueChange} value={this.state.value}>
                                 <RadioButton.Item label="Send Reset to e*****@m***.com" value="email" id="email" />
                                 <RadioButton.Item label="Send Reset to +961 7******4" value="otp" id="otp" />
@@ -55,7 +55,7 @@ export default class ForgotPassword extends Component {
                         </Card>
                     </View>
                     <View style={{ display: this.state.byemail ? 'flex' : 'none' }}>
-                        <Card style={{ backgroundColor: "#fff", padding: 30 }}>
+                        <Card style={forgotPasswordStyle.cardEmailSent}>
                             <Text>An Email has been sent to reset your password</Text>
                         </Card>
                         <TouchableOpacity style={forgotPasswordStyle.loginBtn} >
