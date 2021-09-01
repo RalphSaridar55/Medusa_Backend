@@ -1,24 +1,44 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { Headline, TextInput, RadioButton, Card, Button } from 'react-native-paper';
-import forgotPasswordStyle from './ForgotPasswordStyle'
+import forgotPasswordStyle from './ForgotPasswordStyle';
+import Spinner from 'react-native-loading-spinner-overlay';
+import * as apiUserServices from '../../core/apis/apiUserServices'
 
 export default class ForgotPassword extends Component {
     state = {
-        screenState: "verify"
+        otp: '',
+        userEmailInput: '',
+        screenState: "verify",
+        userInfoFromApi: {},
+        isLoading:false,
     }
-    _onPressButton = () => {
-        this.setState({
-            screenState: 'picker'
+
+    _verifyEmail = () => {
+        this.setState({isLoading:true})
+        apiUserServices.verifyEmail('sellers@yopmail.com').then((res) => {
+            if (res.owner_email == this.state.userEmailInput.toLowerCase()) {
+                this.setState({ userInfoFromApi: res, screenState: 'picker', isLoading:false })
+            } else {
+                this.setState({isLoading:false})
+                alert('Invalid e-mail address');
+            }
         })
     }
 
     _onPressReset = () => {
-
+       // apiUserServices.verifyOtp()
     }
 
     onValueChange = (radioBtnValue) => {
-        this.setState({ screenState: radioBtnValue })
+        if (radioBtnValue === 'otp') {
+            apiUserServices.sendOtp(this.state.userInfoFromApi).then((otpRes) => {
+               
+                this.setState({ screenState: radioBtnValue, otp: '' })
+            })
+        } if (radioBtnValue === 'email') {
+            this.setState({ screenState: radioBtnValue })
+        }
     }
 
     displayBody = () => {
@@ -30,10 +50,11 @@ export default class ForgotPassword extends Component {
                     placeholder="email@gmail.com"
                     mode="outlined"
                     outlineColor="#C4C4C4"
+                    onChangeText={(text) => { this.setState({ userEmailInput: text }) }}
                     theme={{ colors: { primary: '#31c2aa' } }}
                     style={forgotPasswordStyle.inputView}
                 />
-                <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={this._onPressButton}>
+                <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={this._verifyEmail}>
                     <Text style={forgotPasswordStyle.loginText}>Submit</Text>
                 </TouchableOpacity>
             </>
@@ -83,6 +104,7 @@ export default class ForgotPassword extends Component {
         return (
             <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={forgotPasswordStyle.container}>
+                    <Spinner visible={this.state.isLoading} />
                 <View style={forgotPasswordStyle.mainContent}>
                     {this.displayBody()}
                 </View>

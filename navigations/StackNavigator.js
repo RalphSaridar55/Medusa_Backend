@@ -11,6 +11,7 @@ import Registration from "../screens/Registeration/regsiter";
 import { NavigationContainer } from "@react-navigation/native";
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as apiServices from "../core/apis/apiUserServices"
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -19,7 +20,7 @@ const Tab = createBottomTabNavigator();
 class Nav extends Component {
     authStack = () => (
         <Stack.Navigator >
-            {!isUserLoggedIn ? (
+            {!apiServices.isUserLoggedIn? (
                 <>
                     <Stack.Screen
                         name="drawerTab"

@@ -7,7 +7,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import * as Device from 'expo-device';
 import Spinner from 'react-native-loading-spinner-overlay';
-import APIKit, { setToken } from "../../core/apis/APIKit"
+import * as apiServices from "../../core/apis/apiUserServices"
 
 export default function Login({ navigation }) {
 
@@ -31,7 +31,6 @@ export default function Login({ navigation }) {
       return
     }
 
-
     const payload = {
       owner_email: email.value,
       password: password.value,
@@ -43,25 +42,15 @@ export default function Login({ navigation }) {
 
     // Show spinner when call is made
     setLoading(true)
-
-
-    APIKit.post('/user/login', payload)
-      .then((res) => {
-        setToken(res.data.data.access_token);
+    apiServices.userLogin(payload).then((res)=>{
+      apiServices.setToken(res.data.data.access_token);
         setData(res.data.data)
         setAuthorized(true);
         setLoading(false)
         navigation.navigate(
           "Home"
         )
-
-      })
-      .catch((error) => {
-        console.error(error.response);
-        setAuthorized(false);
-        setLoading(false)
-      })
-
+    })
   }
 
   return (
