@@ -48,8 +48,12 @@ export const logout = () => {
   alert("logout")
 }
 
-export const userLogin = async (payload) => {
-  return await APIKit.post('/user/login', payload)
+export const userLogin = (payload) => {
+  console.log('---> payload: ', payload)
+  APIKit.post('/user/login', payload).then((res)=>{
+    console,log('---->', res)
+    return res.data.data
+  })
 }
 
 export const verifyEmail = async (owner_email) => {
@@ -62,7 +66,7 @@ export const sendOtp = async (usernfo) => {
   return await APIKit.post('/user/forgot-password', usernfo).then((res) => {
     return res.data.data;
   }).catch((error) => {
-    console.error('===>',error.response);
+    console.error(error.response);
     setAuthorized(false);
     setLoading(false)
   });
@@ -72,6 +76,12 @@ export const verifyOtp = async (userOtp, userMobile) => {
   return await APIKit.post('/user/forgot-password' + '/' + userOtp + '/' + userMobile).then((res) => {
     return res.data.data;
   });
+}
+
+export const sendEmailLink = async () =>{
+  return await APIKit.get('/user/deepLink').then((res)=>{
+    return res.data.data;
+  })
 }
 
 export default APIKit;

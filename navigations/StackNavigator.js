@@ -44,6 +44,10 @@ class Nav extends Component {
                         component={ForgotPassword}
                         options={{ headerShown: false }}
                     />
+                    <Stack.Screen
+                        name="initialHome"
+                        component={this.createDrawer}
+                        options={{ headerShown: false }} />
                 </>
             )}
         </Stack.Navigator>

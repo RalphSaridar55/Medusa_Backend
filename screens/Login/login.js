@@ -7,7 +7,8 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import * as Device from 'expo-device';
 import Spinner from 'react-native-loading-spinner-overlay';
-import * as apiServices from "../../core/apis/apiUserServices"
+import * as apiServices from "../../core/apis/apiUserServices";
+import APIKit, { setToken } from "../../core/apis/APIKit"
 
 export default function Login({ navigation }) {
 
@@ -19,7 +20,6 @@ export default function Login({ navigation }) {
 
 
   const onLoginPressed = () => {
-
     // Validation 
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
@@ -39,18 +39,32 @@ export default function Login({ navigation }) {
       device_version: Device.osVersion,
       device_token: "string"
     }
-
     // Show spinner when call is made
     setLoading(true)
-    apiServices.userLogin(payload).then((res)=>{
-      apiServices.setToken(res.data.data.access_token);
+    APIKit.post('/user/login', payload).then((res) => {
+        apiServices.setToken(res.data.data.access_token);
         setData(res.data.data)
         setAuthorized(true);
         setLoading(false)
         navigation.navigate(
-          "Home"
+          "initialHome"
         )
-    })
+
+      })
+      .catch((error) => {
+        console.error(error.response);
+        setAuthorized(false);
+        setLoading(false)
+      })
+    // apiServices.userLogin(payload).then((res)=>{
+    //   apiServices.setToken(res.data.data.access_token);
+    //     setData(res.data.data)
+    //     setAuthorized(true);
+    //     setLoading(false)
+    //     navigation.navigate(
+    //       "initialHome"
+    //     )
+    // })
   }
 
   return (
