@@ -11,30 +11,46 @@ export default class ForgotPassword extends Component {
         userEmailInput: '',
         screenState: "verify",
         userInfoFromApi: {},
-        isLoading:false,
+        isLoading: false,
     }
 
     _verifyEmail = () => {
-        this.setState({isLoading:true})
+        this.setState({ isLoading: true })
         apiUserServices.verifyEmail('sellers@yopmail.com').then((res) => {
             if (res.owner_email == this.state.userEmailInput.toLowerCase()) {
-                this.setState({ userInfoFromApi: res, screenState: 'picker', isLoading:false })
+                this.setState({ userInfoFromApi: res, screenState: 'picker', isLoading: false })
             } else {
-                this.setState({isLoading:false})
+                this.setState({ isLoading: false })
                 alert('Invalid e-mail address');
             }
         })
     }
 
     _onPressReset = () => {
-       // apiUserServices.verifyOtp()
+        apiUserServices.verifyOtp({
+            otp:this.state.otp,
+            owner_mobile_number: '71188394'
+        }).then((res)=>{
+            if (res===200){
+                
+            }else{
+                alert('Invalid OTP')
+            }
+        })
     }
 
     onValueChange = (radioBtnValue) => {
         if (radioBtnValue === 'otp') {
-            apiUserServices.sendOtp(this.state.userInfoFromApi).then((otpRes) => {
-               
-                this.setState({ screenState: radioBtnValue, otp: '' })
+            apiUserServices.sendOtp(/*this.state.userInfoFromApi*/  {
+                owner_email: this.state.userEmailInput,
+                owner_country_code: '961',
+                owner_mobile_number: '71188394'
+            }).then((otpRes) => {
+                if (otpRes.statusCode === 200){
+                    this.setState({ screenState: radioBtnValue})
+                }else{
+                    alert('failed Sending OTP')
+                }
             })
         } if (radioBtnValue === 'email') {
             this.setState({ screenState: radioBtnValue })
@@ -86,10 +102,11 @@ export default class ForgotPassword extends Component {
                     placeholder="#44445"
                     mode="outlined"
                     outlineColor="#C4C4C4"
+                    onChangeText={(text) => { this.setState({ otp: text }) }}
                     theme={{ colors: { primary: '#31c2aa' } }}
                     style={forgotPasswordStyle.inputView}
                 />
-                <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={() => { this._onPressReset }} >
+                <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={() => { this._onPressReset()}} >
                     <Text style={forgotPasswordStyle.loginText}>Reset</Text>
                 </TouchableOpacity>
             </>);
@@ -104,7 +121,7 @@ export default class ForgotPassword extends Component {
         return (
             <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={forgotPasswordStyle.container}>
-                    <Spinner visible={this.state.isLoading} />
+                <Spinner visible={this.state.isLoading} />
                 <View style={forgotPasswordStyle.mainContent}>
                     {this.displayBody()}
                 </View>

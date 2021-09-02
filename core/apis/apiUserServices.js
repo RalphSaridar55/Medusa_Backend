@@ -31,7 +31,7 @@ export const setToken = (token) => {
   return SecureStore.setItemAsync('secure_token', token);
 };
 
-const getToken = () => {
+export const getToken = () => {
   return SecureStore.getItemAsync('secure_token');
 };
 
@@ -48,12 +48,10 @@ export const logout = () => {
   alert("logout")
 }
 
-export const userLogin = (payload) => {
-  console.log('---> payload: ', payload)
-  APIKit.post('/user/login', payload).then((res)=>{
-    console,log('---->', res)
-    return res.data.data
-  })
+export const login = async (userInfo) => {
+  return await APIKit.post('/user/forgot-password-details', '/user/login', userInfo).then((res) => {
+    return res.data.data;
+  });
 }
 
 export const verifyEmail = async (owner_email) => {
@@ -64,7 +62,7 @@ export const verifyEmail = async (owner_email) => {
 
 export const sendOtp = async (usernfo) => {
   return await APIKit.post('/user/forgot-password', usernfo).then((res) => {
-    return res.data.data;
+    return res.data;
   }).catch((error) => {
     console.error(error.response);
     setAuthorized(false);
@@ -72,16 +70,22 @@ export const sendOtp = async (usernfo) => {
   });
 }
 
-export const verifyOtp = async (userOtp, userMobile) => {
-  return await APIKit.post('/user/forgot-password' + '/' + userOtp + '/' + userMobile).then((res) => {
-    return res.data.data;
-  });
-}
-
-export const sendEmailLink = async () =>{
-  return await APIKit.get('/user/deepLink').then((res)=>{
+export const sendEmailLink = async () => {
+  return await APIKit.get('/user/deepLink').then((res) => {
     return res.data.data;
   })
+}
+
+export const verifyOtp = async (userOtpAndMobile) => {
+  return await APIKit.get(
+    '/user/verify-forgot-otp?' + 'otp=' + userOtpAndMobile.otp + '&' + 'owner_mobile_number=' + userOtpAndMobile.owner_mobile_number
+  )
+    .then((res) => {
+      return res.data.statusCode;
+    })
+    .catch((error) => {
+      return error.response;
+    })
 }
 
 export default APIKit;
