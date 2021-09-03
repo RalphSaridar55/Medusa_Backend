@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@digieggs/rn-country-code-picker": "^1.2.0",
     "@expo/vector-icons": "^12.0.5",
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/masked-view": "0.1.10",
@@ -27,7 +28,9 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-banner-carousel": "^1.0.3",
     "react-native-base64": "^0.2.1",
+    "react-native-country-codes-picker": "^1.2.3",
     "react-native-device-info": "^8.3.0",
+    "react-native-dropdown-picker": "^5.1.23",
     "react-native-flatlist-slider": "^1.0.5",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-loading-spinner-overlay": "^2.0.0",

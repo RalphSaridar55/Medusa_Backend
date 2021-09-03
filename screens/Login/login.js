@@ -9,6 +9,8 @@ import * as Device from 'expo-device';
 import Spinner from 'react-native-loading-spinner-overlay';
 import APIKit, { setToken } from "../../core/apis/APIKit"
 
+import { platform } from 'react-native';
+
 export default function Login({ navigation }) {
 
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -19,7 +21,7 @@ export default function Login({ navigation }) {
 
 
   const onLoginPressed = () => {
-
+    console.log(platform.osVersion)
     // Validation 
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
@@ -63,6 +65,8 @@ export default function Login({ navigation }) {
       })
 
   }
+
+
 
   return (
     <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
@@ -111,7 +115,7 @@ export default function Login({ navigation }) {
               Login
             </Button>
             <View >
-              <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
                 <Text style={styles.link}>Become a Partner </Text>
               </TouchableOpacity>
             </View>
@@ -122,34 +126,6 @@ export default function Login({ navigation }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 15,
-    justifyContent: 'center'
-  },
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 10,
-  },
-  forgot: {
-    color: "#31C2AA",
-    fontSize: 12,
-    textAlign: "right"
-  },
-  link: {
-    color: "#31C2AA",
-    textAlign: "center",
-    marginTop: 5
-  },
-  loginBtn: {
-    backgroundColor: "#31C2AA",
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 50
-  }
-})
+
 
 

@@ -28,7 +28,6 @@ export default function Registration({ navigation }) {
         });
     };
 
-
     const getCategoires = () => {
         APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
             const result = res.data.data.map(option => ({ id: option.id, name: option.category_name }));
@@ -62,17 +61,17 @@ export default function Registration({ navigation }) {
 
     const BrandsList = [
         {
-            label: "Samsung",
-            value: "1",
+            name: "Samsung",
+            id: "1",
         },
 
         {
-            label: "Apple",
-            value: "2",
+            name: "Apple",
+            id: "2",
         },
         {
-            label: "Nokia",
-            value: "3",
+            name: "Nokia",
+            id: "3",
         }
 
     ];
@@ -98,27 +97,22 @@ export default function Registration({ navigation }) {
     const [street, setStreet] = useState({ value: '', error: '' })
     const [postalCode, setPostalCode] = useState({ value: '', error: '' })
     const [terms, setTerms] = useState({ value: '', error: '' })
-
-
     const [categories, setCategories] = useState([])
     const [subCategories, setSubCategories] = useState([])
     const [brands, setBrands] = useState([])
     const [country, setCountry] = useState("")
-
     const [fetchedcategories, setftechedCategories] = useState([])
     const [fetchedCountries, setftechedCountries] = useState([])
     const [fetchedSubcategories, setftechedSubCategories] = useState([])
-
-    const [accounttype, setType] = useState(1)
-
+    const [accounttype, setType] = useState()
     const [docs, setDocs] = useState("")
-
     const [isLoading, setLoading] = useState(false)
+    const [display, setDisplay] = useState(false)
+    const [catFilter, setcatFilter] = useState("")
 
 
 
     const onRegister = () => {
-        console.log(categories)
 
         //Validation 
         const emailError = emailValidator(email.value)
@@ -139,26 +133,27 @@ export default function Registration({ navigation }) {
         // const brandsError = nameValidator(brands.value)
 
 
-        //  Set Errors msgs
-        if (streetError || ConfirmError || emailError || passwordError || companynameError || websiteError || financialNumberError || phoneNumberError || countryCodeError || registeredAddressError || stateError || cityError || postalCodeError || termsError) {
-            setEmail({ ...email, error: emailError })
-            setPassword({ ...password, error: passwordError })
-            setCompanyName({ ...company_name, error: companynameError })
-            setWebsite({ ...website, error: websiteError })
-            setfinancialNumber({ ...financialNumber, error: financialNumberError })
-            setPhoneNumber({ ...phoneNumber, error: phoneNumberError })
-            setCountryCode({ ...countryCode, error: countryCodeError })
-            setRegisteredAddress({ ...registeredAddress, error: registeredAddressError })
-            setState({ ...state, error: stateError })
-            setCity({ ...city, error: cityError })
-            setPostalCode({ ...postalCode, error: postalCodeError })
-            setStreet({ ...street, error: streetError })
-            setTerms({ ...terms, error: termsError })
-            setConfirmPassword({ ...confirm_password, error: "Passwords don't match" })
-            return
-        }
+        // //Set Errors msgs
+        // if (streetError || emailError || passwordError || companynameError || websiteError || financialNumberError || phoneNumberError || countryCodeError || registeredAddressError || stateError || cityError || postalCodeError || termsError) {
+        //     setEmail({ ...email, error: emailError })
+        //     setPassword({ ...password, error: passwordError })
+        //     setCompanyName({ ...company_name, error: companynameError })
+        //     setWebsite({ ...website, error: websiteError })
+        //     setfinancialNumber({ ...financialNumber, error: financialNumberError })
+        //     setPhoneNumber({ ...phoneNumber, error: phoneNumberError })
+        //     setCountryCode({ ...countryCode, error: countryCodeError })
+        //     setRegisteredAddress({ ...registeredAddress, error: registeredAddressError })
+        //     setState({ ...state, error: stateError })
+        //     setCity({ ...city, error: cityError })
+        //     setPostalCode({ ...postalCode, error: postalCodeError })
+        //     setStreet({ ...street, error: streetError })
+        //     setTerms({ ...terms, error: termsError })
+        //     // setConfirmPassword({ ...confirm_password, error: "Passwords don't match" })
+        //     return
+        // }
 
         // Payload Data 
+
         const payload = {
             owner_email: email.value,
             owner_country_code: countryCode.value,
@@ -178,13 +173,13 @@ export default function Registration({ navigation }) {
             trading_license_doc: docs,
             categories: [
                 {
-                    category_id: parseInt(categories),
+                    category_id: 0,
                     subCategory: [
                         {
-                            subCategory_id: parseInt(subCategories),
+                            subCategory_id: 0,
                             brands: [
                                 {
-                                    brand_id: parseInt(brands)
+                                    brand_id: 0
                                 }
                             ]
                         }
@@ -192,6 +187,7 @@ export default function Registration({ navigation }) {
                 }
             ]
         }
+        console.log(payload)
 
         // Show spinner when call is made
         setLoading(true)
@@ -209,12 +205,16 @@ export default function Registration({ navigation }) {
                 setLoading(false)
             })
     }
-    const [selectedItems, setSelectedItems] = useState([]);
 
-    const onSelectedItemsChange = (selectedItems) => {
-        // Set Selected Items
-        setSelectedItems(selectedItems);
-    };
+    const onchange = (itemValue) => {
+        setType(itemValue)
+        setDisplay(!display)
+    }
+    const oncategoryChange = (itemValue) => {
+        setcatFilter(itemValue)
+        this.getCategoryDetails()
+        setCategories(itemValue)
+    }
     return (
 
         <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
@@ -229,8 +229,9 @@ export default function Registration({ navigation }) {
                         <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
                             <Picker
                                 selectedValue={accounttype}
-                                onValueChange={(itemValue, itemIndex) =>
-                                    setType(itemValue)
+                                onValueChange={
+                                    (itemValue) =>
+                                        onchange(itemValue)
                                 }>
                                 {typeList.map((option) =>
                                     <Picker.Item
@@ -390,22 +391,7 @@ export default function Registration({ navigation }) {
                             outlineColor="#C4C4C4"
                             theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
                         />
-                        {accounttype === 1 ? <View>
-                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
-                                <Picker
-                                    selectedValue={categories}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        setCategories(itemValue)
-                                    }>
-                                    {fetchedcategories.map((option, index) =>
-                                        <Picker.Item
-                                            key={index}
-                                            value={option.value}
-                                            label={option.label}
-                                        />
-                                    )}
-                                </Picker>
-                            </View> */}
+                        {!display ? <View>
 
                             <MultiSelect
                                 hideTags
@@ -427,24 +413,6 @@ export default function Registration({ navigation }) {
                                 styleSelectorContainer={{ padding: 5 }}
 
                             />
-
-                            {/* <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff", marginTop: 10, marginBottom: 10 }}>
-                                <Picker
-                                    selectedValue={subCategories}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        setSubCategories(itemValue)
-                                    }>
-
-                                    {fetchedSubcategories.map((option) =>
-                                        <Picker.Item
-                                            key={option.value}
-                                            value={option.value}
-                                            label={option.label}
-                                        />
-                                    )}
-
-                                </Picker>
-                            </View> */}
                             <View style={{ marginTop: 10, marginBottom: 10 }}>
                                 <MultiSelect
                                     hideTags
@@ -462,11 +430,7 @@ export default function Registration({ navigation }) {
                                     itemTextColor="#000"
                                     displayKey="name"
                                     searchInputStyle={{ color: '#CCC' }}
-                                    //submitButtonColor="#48d22b"
-                                    // submitButtonText="Submit"
-                                    // styleItemsContainer={{ padding: 2 }}
                                     searchInputStyle={{ padding: 5 }}
-                                    // styleInputGroup={{ padding: 5 }}
                                     styleRowList={{ padding: 5 }}
                                     styleSelectorContainer={{ padding: 5, backgroundColor: "#fff" }} />
                             </View>
@@ -489,32 +453,11 @@ export default function Registration({ navigation }) {
                                     itemTextColor="#000"
                                     displayKey="name"
                                     searchInputStyle={{ color: '#CCC' }}
-                                    //submitButtonColor="#48d22b"
-                                    // submitButtonText="Submit"
-                                    // styleItemsContainer={{ padding: 2 }}
                                     searchInputStyle={{ padding: 5 }}
-                                    // styleInputGroup={{ padding: 5 }}
                                     styleRowList={{ padding: 5 }}
                                     styleSelectorContainer={{ padding: 5, backgroundColor: "#fff" }} />
                             </View>
 
-
-                            {/* 
-                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
-                                <Picker
-                                    selectedValue={brands}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        setBrands(itemValue)
-                                    }>
-                                    {BrandsList.map((option) =>
-                                        <Picker.Item
-                                            key={option.value}
-                                            value={option.value}
-                                            label={option.label}
-                                        />
-                                    )}
-                                </Picker>
-                            </View> */}
                         </View> : <View></View>}
 
                         <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: 5, marginTop: 10 }}>
@@ -529,8 +472,6 @@ export default function Registration({ navigation }) {
                         </View>
 
                     </View>
-
-
                     <View>
                         <TextInput
                             label="Password *"
@@ -571,6 +512,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15,
+        marginTop: 15,
         justifyContent: 'center'
     },
     forgotPassword: {

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 
-export default class CurrentOrders extends Component {
+export default class Orders extends Component {
 
     constructor(props) {
         super(props);
@@ -35,43 +35,43 @@ export default class CurrentOrders extends Component {
 
     render() {
         return (
-           <View style={{flex:1}}>
+            <View style={{ flex: 1 }}>
                 <FlatList
-                style={styles.root}
-                data={this.state.data}
-                extraData={this.state}
-                keyExtractor={(item) => {
-                    return item.id;
-                }}
-                renderItem={(item) => {
-                    const Notification = item.item;
-                    return (
-                       <ScrollView>
-                            <View style={styles.container}>
-                            <TouchableOpacity onPress={() => { }}>
-                                <Image style={styles.image} source={require('../../assets/images/logo.png')} />
-                            </TouchableOpacity>
-                            <View style={styles.content}>
-                                <View style={styles.contentHeader}>
-                                    <View style={{ flexDirection: 'row', justifyContent: "space-between"  , alignItems:'center'}}>
-                                        <Text style={styles.name}>{Notification.name}</Text>
-                                        <Text style={styles.status}>{Notification.status}</Text>
+                    style={styles.root}
+                    data={this.state.data}
+                    extraData={this.state}
+                    keyExtractor={(item) => {
+                        return item.id;
+                    }}
+                    renderItem={(item) => {
+                        const Notification = item.item;
+                        return (
+                            <ScrollView>
+                                <View style={styles.container}>
+                                    <TouchableOpacity onPress={() => { }}>
+                                        <Image style={styles.image} source={require('../../assets/images/logo.png')} />
+                                    </TouchableOpacity>
+                                    <View style={styles.content}>
+                                        <View style={styles.contentHeader}>
+                                            <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
+                                                <Text style={styles.name}>{Notification.name}</Text>
+                                                <Text style={styles.status}>{Notification.status}</Text>
+                                            </View>
+                                            <Text style={styles.time}>WED, AUG 4, 08:51 AM</Text>
+                                        </View>
                                     </View>
-                                    <Text style={styles.time}>WED, AUG 4, 08:51 AM</Text>
                                 </View>
-                            </View>
-                        </View>
-                       </ScrollView>
-                    );
-                }} />
-           </View>
+                            </ScrollView>
+                        );
+                    }} />
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     root: {
-       // backgroundColor: "#ffffff",
+        // backgroundColor: "#ffffff",
 
     },
     container: {
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         backgroundColor: "#ffffff",
-        margin:5, 
-        borderRadius:10
+        margin: 5,
+        borderRadius: 10
     },
     content: {
         marginLeft: 16,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         height: 50,
         marginLeft: 10,
         resizeMode: 'contain',
- 
+
     },
     time: {
         fontSize: 11,

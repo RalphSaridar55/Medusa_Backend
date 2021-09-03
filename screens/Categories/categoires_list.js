@@ -30,23 +30,16 @@ class CategoiresList extends Component {
         this.getCategoryDetails()
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.id === this.props.route.params.id ) {
-            console.log("Helo")
-            
-        }
-        else if (prevState.id !== this.props.route.params.id) {
+    componentDidUpdate(prevState) {
+        if (prevState.id !== this.props.route.params.id) {
             this.getCategoryDetails()
             prevState.id = this.props.route.params.id
-            console.log(prevState.id)
-            console.log(this.props.route.params.id)
-        //    if(prevProps.SubCategories.length !== this.state.SubCategories.length)
         }
     }
 
 
     getCategoryDetails = () => {
-        this.setState({ SubCategories: [] })       
+        this.setState({ SubCategories: [] })
         APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
             const name = this.props.route.params.id
             var Res = response.data.data.data.filter(option => option.category_name === name)
@@ -82,30 +75,13 @@ class CategoiresList extends Component {
                 </List.AccordionGroup>
             </View>;
         } else {
-            return <View style={{ justifyContent: 'center', flex: 1, fontSize: 18, alignItems: 'center', padding: 20 , margin:20 }} ><Text>No Data </Text></View>;
+            return <View style={{ justifyContent: 'center', flex: 1, fontSize: 18, alignItems: 'center', padding: 20, margin: 20 }} ><Text>No Data </Text></View>;
         }
     }
     render() {
 
         return (
             <View>
-                {/* {
-                    this.state.SubCategories.length > 0 ?
-                        <View>
-                            <List.AccordionGroup>
-                                {this.state.SubCategories.map((sub) => (
-                                    <List.Accordion title={sub.label} id={sub.key} key={sub.key}>
-                                        {this.state.Brands.map((brand) => {
-                                            return (
-                                                <List.Item title={brand.value} id={brand.key} key={brand.key} />
-                                            );
-                                        })}
-                                    </List.Accordion>))}
-                            </List.AccordionGroup>
-                        </View> :
-
-                        <View style={{ justifyContent: 'center', flex: 1, fontSize: 18, alignItems: 'center', padding: 20 }}><Text>No Data </Text></View>
-                } */}
                 {this.updateView()}
             </View>
         )
