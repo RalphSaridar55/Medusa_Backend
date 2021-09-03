@@ -6,12 +6,10 @@ import {
     View,
     TouchableOpacity,
     Image,
-    Alert,
-    ScrollView,
     FlatList,
 } from 'react-native';
-import * as ROUTE_LIST from "../../core/apis/apis-list"
-import APIKit from "../../core/apis/APIKit"
+import * as ROUTE_LIST from "../../core/apis/apis-list";
+import * as apiUserServices from "../../core/apis/apiUserServices";
 
 export default class Categories extends Component {
 
@@ -29,7 +27,7 @@ export default class Categories extends Component {
     }
 
     getCategoires = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
+        apiUserServices.APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
             const result = res.data.data
             console.log(result)
             this.setState({ categories: result })

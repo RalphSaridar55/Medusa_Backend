@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 const username = "cashmystock"
 const password = "cashmystock@123"
 
-let APIKit = axios.create({
+export let APIKit = axios.create({
   baseURL: 'https://ecomstgapi.appskeeper.in/cashmystock/api/v1/',
   timeout: 10000,
   headers: {

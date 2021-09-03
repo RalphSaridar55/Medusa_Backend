@@ -1,15 +1,15 @@
 
 
-import React, { useState, useEffect } from 'react'
-import { TouchableOpacity, StyleSheet, View, ImageBackground, ScrollView, } from 'react-native'
-import { Text, Button, IconButton } from 'react-native-paper'
-import Header from '../../components/Header'
-import TextInput from '../../components/TextInput'
-import { emailValidator } from '../../helpers/emailValidator'
-import { passwordValidator } from '../../helpers/passwordValidator'
-import { nameValidator } from "../../helpers/nameValidator"
+import React, { useState, useEffect } from 'react';
+import { TouchableOpacity, StyleSheet, View, ImageBackground, ScrollView, } from 'react-native';
+import { Text, Button, IconButton } from 'react-native-paper';
+import Header from '../../components/Header';
+import TextInput from '../../components/TextInput';
+import { emailValidator } from '../../helpers/emailValidator';
+import { passwordValidator } from '../../helpers/passwordValidator';
+import { nameValidator } from "../../helpers/nameValidator";
 import Spinner from 'react-native-loading-spinner-overlay';
-import APIKit from "../../core/apis/APIKit"
+import * as apiServices from "../../core/apis/apiUserServices"
 import _ from 'lodash';
 import * as ROUTE_LIST from "../../core/apis/apis-list"
 import * as DocumentPicker from "expo-document-picker";
@@ -18,25 +18,22 @@ import { Picker } from '@react-native-picker/picker';
 import MultiSelect from 'react-native-multiple-select';
 
 export default function Registration({ navigation }) {
-
-
     const getCountries = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
+        apiServices.APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
             const COUNTRIES = res.data.data;
             var result = COUNTRIES.map(option => ({ value: option.id, label: option.name }));
             setftechedCountries(result)
         });
     };
-
     const getCategoires = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
+        apiServices.APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
             const result = res.data.data.map(option => ({ id: option.id, name: option.category_name }));
             setftechedCategories(result)
         });
     };
 
     const getCategoryDetails = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
+        apiServices.APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
             var result = response.data.data.data[0].subcategory.map(option => ({ id: option.id, name: option.sub_category_name, key: option.id }))
             setftechedSubCategories(result)
         });
@@ -192,7 +189,7 @@ export default function Registration({ navigation }) {
         // Show spinner when call is made
         setLoading(true)
         // api call
-        APIKit.post('/user-signup', payload)
+        apiServices.APIKit.post('/user-signup', payload)
             .then((res) => {
                 alert(res.data.message)
                 setLoading(false)

@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet,
     Text,
     View,
-    TouchableOpacity,
-    Image,
-    Alert,
-    ScrollView,
-    FlatList,
 } from 'react-native';
 import * as ROUTE_LIST from "../../core/apis/apis-list"
-import APIKit from "../../core/apis/APIKit"
+import * as apiUserServices from "../../core/apis/apiUserServices"
 import { List } from 'react-native-paper';
 
 
@@ -40,7 +34,7 @@ class CategoiresList extends Component {
 
     getCategoryDetails = () => {
         this.setState({ SubCategories: [] })
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
+        apiUserServices.APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
             const name = this.props.route.params.id
             var Res = response.data.data.data.filter(option => option.category_name === name)
             if (Res.length > 0) {
