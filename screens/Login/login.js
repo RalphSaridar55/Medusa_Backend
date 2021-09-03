@@ -8,7 +8,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import * as Device from 'expo-device';
 import Spinner from 'react-native-loading-spinner-overlay';
- import * as apiServices from "../../core/apis/apiUserServices";
+import * as apiServices from "../../core/apis/apiUserServices";
 
 export default function Login({ navigation }) {
 
@@ -45,14 +45,14 @@ export default function Login({ navigation }) {
     // Show spinner when call is made
     setLoading(true)
 
-    apiServices.userLogin(payload).then((res)=>{
+    apiServices.userLogin(payload).then((res) => {
       apiServices.setToken(res.access_token);
-        setData(res)
-        setAuthorized(true);
-        setLoading(false)
-        navigation.navigate(
-          "initialHome"
-        )
+      setData(res)
+      setAuthorized(true);
+      setLoading(false)
+      navigation.navigate(
+        "initialHome"
+      )
     })
   }
 
@@ -99,10 +99,10 @@ export default function Login({ navigation }) {
                 <Text style={loginStyle.forgot}>Forgot your password ?</Text>
               </TouchableOpacity>
             </View>
-            <Button mode="contained" 
-             onPress={() => onLoginPressed()}
-             style={loginStyle.loginBtn}>
-              Login
+            <Button mode="contained"
+              onPress={() => onLoginPressed()}
+              style={loginStyle.loginBtn}
+            >Login
             </Button>
             <View >
               <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
@@ -114,7 +114,4 @@ export default function Login({ navigation }) {
     </ImageBackground>
   )
 }
-
-
-
 
