@@ -31,8 +31,10 @@ export const setToken = (token) => {
   return SecureStore.setItemAsync('secure_token', token);
 };
 
-export const getToken = () => {
-  return SecureStore.getItemAsync('secure_token');
+export const getToken = async () => {
+  return await SecureStore.getItemAsync('secure_token').then((tokenData)=>{
+   return tokenData;
+  });
 };
 
 export const isUserLoggedIn = () => {
@@ -70,9 +72,10 @@ export const sendOtp = async (usernfo) => {
   });
 }
 
-export const sendEmailLink = async () => {
-  return await APIKit.get('/user/deepLink').then((res) => {
-    return res.data.data;
+export const sendEmailLink = async (owner_email) => {
+  return await APIKit.post('/user/forgot-password',{owner_email}).then((res) => {
+    console.log('inside send email, ', res.data.message)
+    return res.data.message;
   })
 }
 
@@ -86,6 +89,19 @@ export const verifyOtp = async (userOtpAndMobile) => {
     .catch((error) => {
       return error.response;
     })
+}
+
+export const resetPass = async (mobile, newPass) => {
+  await getToken().then((x)=>{
+    var payload = {
+    token: x,
+    owner_mobile_number:mobile,
+    password:newPass
+  }
+  returnAPIKit.post('/user/reset-password',payload).then((res) => {
+    return res.data.data;
+  })
+  })
 }
 
 export default APIKit;

@@ -1,6 +1,17 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+    btnLoginScreen: {
+        marginTop: '5%',
+        width: '50%',
+        borderRadius: 25,
+        alignSelf: 'flex-end'
+    },
+    btnReset: {
+        width: '50%',
+        borderRadius: 25,
+        alignSelf: 'flex-end'
+    },
     cardEmailSent: {
         backgroundColor: "#fff",
         padding: 30
@@ -24,14 +35,19 @@ export default StyleSheet.create({
         marginBottom: 10,
         borderRadius: 25
     },
-    inputText: {
-        height: 50,
-        color: "white"
+    emailLinkMsg: {
+        textAlign: "center",
+        width: "95%",
+        alignSelf: "center"
     },
     forgot: {
         color: "#31C2AA",
         fontSize: 11,
         textAlign: "right"
+    },
+    inputText: {
+        height: 50,
+        color: "white"
     },
     loginBtn: {
         backgroundColor: "#31C2AA",
@@ -48,10 +64,14 @@ export default StyleSheet.create({
     mainContent: {
         flex: 1,
         padding: 15,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     signupText: {
         color: "#31C2AA",
         textAlign: "center"
+    },
+    textBtn: {
+        color: 'white'
     }
+
 });
