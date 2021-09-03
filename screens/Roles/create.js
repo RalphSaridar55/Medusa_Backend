@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, Image } from 'react-native';
 import { Headline, Paragraph, TextInput, List, Avatar, Card } from 'react-native-paper';
 import MultiSelect from 'react-native-multiple-select';
+import styles from "./style"
 
 export default class AddRole extends Component {
     state = {
@@ -20,7 +21,7 @@ export default class AddRole extends Component {
             }
         ]
     }
-    
+
     setRoles = (e) => {
         this.setState({ roles: e.target.value }
         )
@@ -76,40 +77,3 @@ export default class AddRole extends Component {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 15,
-        justifyContent: "center",
-    },
-    inputView: {
-        backgroundColor: "#fff",
-        marginBottom: 10,
-        borderRadius: 25
-    },
-    inputText: {
-        height: 50,
-        color: "white"
-    },
-    forgot: {
-        color: "#31C2AA",
-        fontSize: 11,
-        textAlign: "right"
-    },
-    loginBtn: {
-        backgroundColor: "#31C2AA",
-        borderRadius: 25,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 20,
-        marginBottom: 10
-    },
-    loginText: {
-        color: "white"
-    },
-    signupText: {
-        color: "#31C2AA",
-        textAlign: "center"
-    }
-});

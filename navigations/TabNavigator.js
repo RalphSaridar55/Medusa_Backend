@@ -1,7 +1,5 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-import { MainStackNavigator, ContactStackNavigator } from "./StackNavigator"
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Cart from "../screens/Checkout/cart";
 import Categories from "../screens/Categories/categories";

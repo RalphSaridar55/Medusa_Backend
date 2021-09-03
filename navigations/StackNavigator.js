@@ -4,18 +4,14 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Home from "../screens/Home/home";
 import Contact from "../screens/Contact/contact";
 import Login from "../screens/Login/login";
-import { isUserLoggedIn } from "../core/apis/APIKit";
 import Categories from "../screens/Categories/categories";
 import CategoiresList from "../screens/Categories/categoires_list";
-import Registration from "../screens/Registeration/regsiter";
 import { NavigationContainer } from "@react-navigation/native";
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as apiServices from "../core/apis/apiUserServices"
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
 
 class Nav extends Component {
     authStack = () => (
@@ -36,7 +32,7 @@ class Nav extends Component {
                     />
                     <Stack.Screen
                         name="Registration"
-                        component={Registration}
+                        component={Signup}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

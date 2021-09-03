@@ -1,7 +1,9 @@
 import axios from 'axios';
 import base64 from 'react-native-base64'
 import * as SecureStore from 'expo-secure-store';
-// Create axios client, pre-configured with baseURL
+import { platform } from 'react-native';
+import * as Localization from 'expo-localization';
+
 const username = "cashmystock"
 const password = "cashmystock@123"
 
@@ -11,8 +13,8 @@ let APIKit = axios.create({
   headers: {
     'Content-Type': 'application/json',
     language: 'en',
-    platform: '3',
-    timezone: '+3',
+    platform: platform.os,
+    timezone: Localization.timezone,
     Authorization: 'Basic ' + base64.encode(username + ":" + password)
   }
 });
@@ -47,8 +49,5 @@ export const logout = () => {
   SecureStore.deleteItemAsync('secure_token')
   alert("logout")
 }
-
-//logout()
-//getToken().then(token => console.log(token)); // output '#your_secret_token'
 
 export default APIKit;
