@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { TouchableOpacity, StyleSheet, View, ImageBackground } from 'react-native'
+import React, { useState } from 'react'
+import { TouchableOpacity, View, ImageBackground } from 'react-native'
 import { Text, Button } from 'react-native-paper'
 import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
+import loginStyle from './loginStyle'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import * as Device from 'expo-device';
 import Spinner from 'react-native-loading-spinner-overlay';
-import * as apiServices from "../../core/apis/apiUserServices";
-import APIKit, { setToken } from "../../core/apis/APIKit"
-
-import { platform } from 'react-native';
+ import * as apiServices from "../../core/apis/apiUserServices";
 
 export default function Login({ navigation }) {
 
@@ -20,12 +18,11 @@ export default function Login({ navigation }) {
   const [isLoading, setLoading] = useState(false)
   const [data, setData] = useState("")
 
-
+  /**
+   * 
+   * @returns to login page when user credentials are validated
+   */
   const onLoginPressed = () => {
-<<<<<<< HEAD
-=======
-    console.log(platform.osVersion)
->>>>>>> Login
     // Validation 
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
@@ -47,40 +44,24 @@ export default function Login({ navigation }) {
     }
     // Show spinner when call is made
     setLoading(true)
-    APIKit.post('/user/login', payload).then((res) => {
-        apiServices.setToken(res.data.data.access_token);
-        setData(res.data.data)
+
+    apiServices.userLogin(payload).then((res)=>{
+      apiServices.setToken(res.access_token);
+        setData(res)
         setAuthorized(true);
         setLoading(false)
         navigation.navigate(
           "initialHome"
         )
-
-      })
-      .catch((error) => {
-        console.error(error.response);
-        setAuthorized(false);
-        setLoading(false)
-      })
-    // apiServices.userLogin(payload).then((res)=>{
-    //   apiServices.setToken(res.data.data.access_token);
-    //     setData(res.data.data)
-    //     setAuthorized(true);
-    //     setLoading(false)
-    //     navigation.navigate(
-    //       "initialHome"
-    //     )
-    // })
+    })
   }
-
-
 
   return (
     <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
       style={{
         flex: 1,
       }}>
-      <View style={styles.container}>
+      <View style={loginStyle.container}>
         <Spinner visible={isLoading} />
         {!isAuthorized ?
           <View>
@@ -111,22 +92,24 @@ export default function Login({ navigation }) {
               theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
             // right={<TextInput.Icon name="eye" />}
             />
-            <View style={styles.forgotPassword}>
+            <View style={loginStyle.forgotPassword}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgotPassword')}
               >
-                <Text style={styles.forgot}>Forgot your password ?</Text>
+                <Text style={loginStyle.forgot}>Forgot your password ?</Text>
               </TouchableOpacity>
             </View>
-            <Button mode="contained" onPress={onLoginPressed} style={styles.loginBtn}>
+            <Button mode="contained" 
+             onPress={() => onLoginPressed()}
+             style={loginStyle.loginBtn}>
               Login
             </Button>
             <View >
               <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
-                <Text style={styles.link}>Become a Partner </Text>
+                <Text style={loginStyle.link}>Become a Partner </Text>
               </TouchableOpacity>
             </View>
-          </View> : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Header>Welcome {data.userDetails.company_name}</Header></View>}
+          </View> : <View style={loginStyle.alignWelcome}><Header>Welcome {data.userDetails.company_name}</Header></View>}
       </View>
     </ImageBackground>
   )

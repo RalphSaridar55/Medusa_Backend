@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Image, StyleSheet } from 'react-native';
-import { Avatar, Button, Card, Title, Divider, IconButton } from 'react-native-paper';
+import { View, ScrollView } from 'react-native';
+import { Avatar, Button, Card, Divider, IconButton } from 'react-native-paper';
 import styles from "./style"
 export default class Account extends Component {
     render() {

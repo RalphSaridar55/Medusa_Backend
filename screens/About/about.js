@@ -1,10 +1,9 @@
 import React, { Component } from "react"
-import { Appbar, Divider, Headline, Searchbar } from "react-native-paper"
-import { Text, View, ScrollView } from 'react-native';
-import styles from "./style";
-import Carousel from 'react-native-banner-carousel';
-import { StyleSheet, Image, Dimensions } from 'react-native';
-import { Card, Title, Paragraph, Button, Avatar, Banner, List, Surface } from 'react-native-paper';
+import { Divider, Headline } from "react-native-paper"
+import { View, ScrollView } from 'react-native';
+import aboutStyle from "./aboutStyle";
+import {  Image, Dimensions } from 'react-native';
+import { Paragraph, List} from 'react-native-paper';
 
 
 const BannerWidth = Dimensions.get('window').width;
@@ -28,11 +27,11 @@ export default class About extends Component {
   render() {
 
     return (
-      <View style={styles.container}>
+      <View style={aboutStyle.container}>
         <ScrollView>
-          <Headline style={{ marginBottom: 10, color: "#698EB7", fontStyle: "bold" }}>About us </Headline>
+          <Headline style={aboutStyle.headLine}>About us </Headline>
           <View>
-            <Image style={{ width: 400, height: 200 }} source={{ uri: 'https://cdn.corporatefinanceinstitute.com/assets/team-cohesion.jpeg' }}></Image>
+            <Image style={aboutStyle.img} source={{ uri: 'https://cdn.corporatefinanceinstitute.com/assets/team-cohesion.jpeg' }}></Image>
           </View>
           <View>
             <List.Section>

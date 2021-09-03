@@ -4,6 +4,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Home from "../screens/Home/home";
 import Contact from "../screens/Contact/contact";
 import Login from "../screens/Login/login";
+import Registration from "../screens/Registeration/regsiter";
 import Categories from "../screens/Categories/categories";
 import CategoiresList from "../screens/Categories/categoires_list";
 import { NavigationContainer } from "@react-navigation/native";
@@ -32,7 +33,7 @@ class Nav extends Component {
                     />
                     <Stack.Screen
                         name="Registration"
-                        component={Signup}
+                        component={Registration}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

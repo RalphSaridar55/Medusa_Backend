@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 
-const styles = StyleSheet.create({
+export default StyleSheet.create({
     Bcontainer: {
         flex: 1,
         backgroundColor: '#fff',
@@ -9,14 +9,26 @@ const styles = StyleSheet.create({
     B_container: {
         flex: 1,
         backgroundColor: '#fff',
-        margin:10
+        margin: 10
     },
     container: {
         backgroundColor: "#e9f3ff",
         flex: 1,
-        padding:10
+        padding: 10
     },
-    header: { height: 50, backgroundColor: "#698eb7" },
+    header: {
+        height: 50,
+        backgroundColor: "#698eb7"
+    },
+    headLine: {
+        marginBottom: 10,
+        color: "#698EB7",
+        fontWeight: "bold"
+    },
+    img: {
+        width: 400,
+        height: 200
+    },
     Title: {
         fontSize: 18,
     },
@@ -29,8 +41,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 4,
-      },
+    },
 
 });
-
-export default styles;

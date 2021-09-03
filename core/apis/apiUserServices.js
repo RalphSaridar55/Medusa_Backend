@@ -5,8 +5,6 @@ import * as SecureStore from 'expo-secure-store';
 const username = "cashmystock"
 const password = "cashmystock@123"
 
-
-
 let APIKit = axios.create({
   baseURL: 'https://ecomstgapi.appskeeper.in/cashmystock/api/v1/',
   timeout: 10000,
@@ -50,8 +48,8 @@ export const logout = () => {
   alert("logout")
 }
 
-export const login = async (userInfo) => {
-  return await APIKit.post('/user/forgot-password-details', '/user/login', userInfo).then((res) => {
+export const userLogin = async (userInfo) => {
+  return await APIKit.post('/user/login', userInfo).then((res) => {
     return res.data.data;
   });
 }
