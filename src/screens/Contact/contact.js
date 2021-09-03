@@ -12,7 +12,7 @@ export default class Contact extends Component {
     }
     render() {
         return (
-            <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+            <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={contactStyle.imageBkg}>
                 <View style={contactStyle.container}>
                     <Headline style={contactStyle.headLine}>Get In Touch </Headline>

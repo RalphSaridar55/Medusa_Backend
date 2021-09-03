@@ -57,7 +57,7 @@ export default function Login({ navigation }) {
   }
 
   return (
-    <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+    <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
       style={{
         flex: 1,
       }}>

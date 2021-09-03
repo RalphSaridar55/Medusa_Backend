@@ -194,7 +194,7 @@ export default class ForgotPassword extends Component {
 
     render() {
         return (
-            <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+            <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={forgotPasswordStyle.container}>
                 <Spinner visible={this.state.isLoading} />
                 <View style={forgotPasswordStyle.mainContent}>
