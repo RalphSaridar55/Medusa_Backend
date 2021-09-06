@@ -71,7 +71,7 @@ export default function Login({ navigation }) {
               returnKeyType="next"
               value={email.value}
               onChangeText={(text) => setEmail({ value: text, error: '' })}
-              error={!!email.error}
+              error={email.error}
               errorText={email.error}
               autoCapitalize="none"
               autoCompleteType="email"
@@ -85,7 +85,7 @@ export default function Login({ navigation }) {
               returnKeyType="done"
               value={password.value}
               onChangeText={(text) => setPassword({ value: text, error: '' })}
-              error={!!password.error}
+              error={password.error}
               errorText={password.error}
               secureTextEntry
               outlineColor="#C4C4C4"

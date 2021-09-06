@@ -10,6 +10,7 @@ import CategoiresList from "../screens/Categories/categoires_list";
 import { NavigationContainer } from "@react-navigation/native";
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword'
 import * as apiServices from "../core/apis/apiUserServices"
+import Signup from '../screens/Registeration/signup';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -33,7 +34,7 @@ class Nav extends Component {
                     />
                     <Stack.Screen
                         name="Registration"
-                        component={Registration}
+                        component={Signup}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

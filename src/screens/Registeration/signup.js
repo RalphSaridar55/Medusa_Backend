@@ -1,30 +1,32 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet, View, ImageBackground, ScrollView, } from 'react-native'
-import { Text, Button, IconButton } from 'react-native-paper'
+import { SafeAreaView, View, ImageBackground, ScrollView, } from 'react-native'
+import { Text, Button, IconButton, Card,RadioButton } from 'react-native-paper'
 import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
-import { nameValidator } from "../../helpers/nameValidator"
+import { nameValidator } from '../../helpers/nameValidator'
 import Spinner from 'react-native-loading-spinner-overlay';
-import APIKit from "../../core/apis/APIKit"
+import apiUserServices from '../../core/apis/apiUserServices'
 import _ from 'lodash';
-import * as ROUTE_LIST from "../../core/apis/apis-list"
-import * as DocumentPicker from "expo-document-picker";
+import * as ROUTE_LIST from '../../core/apis/apis-list'
+import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
-import styles from "./style"
+import signupStyle from './signupStyle'
 import DropDownPicker from 'react-native-dropdown-picker';
+import * as Animatable from 'react-native-animatable';
+import {registrationElements } from './registrationElements'
 
 
 
 const typeList = [
     {
-        label: "Seller & Buyer",
-        value: "1",
+        label: 'Seller & Buyer',
+        value: '1',
     },
     {
-        label: "Buyer",
-        value: "2",
+        label: 'Buyer',
+        value: '2',
     },
 ]
 
@@ -32,41 +34,42 @@ class Signup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accounttype: 1,
-            email: "",
-            emailError: "",
-            password: "",
-            passwordError: "",
-            company_name: "",
+            userRole:'buyer',
+            accountType: 1,
+            email: '',
+            emailError: '',
+            password: '',
+            passwordError: '',
+            company_name: '',
             companynameError: '',
-            website: "",
-            websiteError: "",
-            financialNumber: "",
-            financialNumberError: "",
-            countryCode: "961",
-            countryCodeError: "",
-            phoneNumber: "",
-            phoneNumberError: "",
-            registeredAddress: "",
-            registeredAddressError: "",
-            state: "",
-            stateError: "",
+            website: '',
+            websiteError: '',
+            financialNumber: '',
+            financialNumberError: '',
+            countryCode: '961',
+            countryCodeError: '',
+            phoneNumber: '',
+            phoneNumberError: '',
+            registeredAddress: '',
+            registeredAddressError: '',
+            state: '',
+            stateError: '',
             city: '',
-            cityError: "",
-            street: "",
-            streetError: "",
-            postalCode: "",
-            postalCodeError: "",
-            terms: "",
-            categories: "",
-            categoriesError: "",
+            cityError: '',
+            street: '',
+            streetError: '',
+            postalCode: '',
+            postalCodeError: '',
+            terms: '',
+            categories: '',
+            categoriesError: '',
 
-            subcategoriesError: "",
+            subcategoriesError: '',
 
-            brandsError: "",
-            country: "",
-            countryError: "",
-            docs: "",
+            brandsError: '',
+            country: '',
+            countryError: '',
+            docs: '',
             data: '',
 
             fetchedCountries: [],
@@ -82,12 +85,16 @@ class Signup extends Component {
             value: null,
             subcategories: null,
             brands: null,
-            show: ""
+            show: ''
         };
     }
 
+    onValueChange = (radioBtnValue) => {
+        this.setState({userRole:radioBtnValue})
+    }
+
     getCountries = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
+        apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
             var result = res.data.data.map(option => ({ value: option.id, label: option.name }));
             this.setState({ fetchedCountries: result })
 
@@ -95,7 +102,7 @@ class Signup extends Component {
     };
 
     getCategoryDetails = () => {
-        APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
+        apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
             this.setState({ data: response.data.data.data })
             const Categoryarry = []
             for (let i = 0; i < response.data.data.data.length; i++) {
@@ -109,6 +116,7 @@ class Signup extends Component {
     };
 
     getsub = () => {
+        console.log('--> inside get Sub')
         const id = this.state.value
         const filter = this.state.data.filter(option => option.id === id);
         for (let i = 0; i < filter.length; i++) {
@@ -181,7 +189,7 @@ class Signup extends Component {
             city: this.state.city,
             street: this.state.street,
             postal_code: this.state.postalCode,
-            user_type: parseInt(this.state.accounttype),
+            user_type: parseInt(this.state.accountType),
             company_reg_doc: this.state.docs,
             trading_license_doc: this.state.docs,
             categories: [
@@ -206,12 +214,12 @@ class Signup extends Component {
         this.setState({ loading: true })
 
         // api call
-        APIKit.post(`/${ROUTE_LIST.REGISTER}`, payload)
+        apiUserServices.post(`/${ROUTE_LIST.REGISTER}`, payload)
             .then((res) => {
                 alert(res.data.message)
                 this.setState({ loading: false })
                 navigation.navigate(
-                    "Home"
+                    'Home'
                 )
             })
             .catch((error) => {
@@ -250,7 +258,7 @@ class Signup extends Component {
         await this.setState(state => ({
             subcategories: callback(state.subcategories)
         }));
-        alert("sub")
+        alert('sub')
     }
 
     setSubCategories = (callback) => {
@@ -280,7 +288,7 @@ class Signup extends Component {
     }
 
     onchange = async (itemValue) => {
-        await this.setState({ accounttype: itemValue })
+        await this.setState({ accountType: itemValue })
         this.setState({ display: !display })
     }
 
@@ -289,273 +297,87 @@ class Signup extends Component {
         this.getCountries();
     }
 
+    DropDownPickerForSeller = ()=>{
+        return(
+            <><DropDownPicker
+                placeholder='Select Category'
+                searchable={true}
+                categorySelectable={true}
+                open={this.state.open}
+                value={this.state.value}
+                items={this.state.fetchedcategories}
+                setOpen={this.setOpen}
+                setValue={this.setCategoryValue}
+                setItems={this.setCategories}
+                zIndex={3}
+                bottomOffset={100}
+                dropDownDirection='AUTO' /><DropDownPicker
+                    placeholder='Select Sub Categories'
+                    searchable={true}
+                    categorySelectable={true}
+                    open={this.state.opensub}
+                    value={this.state.subcategories}
+                    items={this.state.fetchedSubcategories}
+                    setOpen={this.setOpenSub}
+                    setValue={this.setSubCategory}
+                    setItems={this.setSubCategories}
+                    multiple={true}
+                    zIndex={2}
+                    dropDownDirection='AUTO' /><DropDownPicker
+                    placeholder='Select Brands'
+                    searchable={true}
+                    categorySelectable={true}
+                    open={this.state.openBrand}
+                    value={this.state.brands}
+                    items={this.state.fetchedBrands}
+                    setOpen={this.setOpenBrands}
+                    setValue={this.setBrand}
+                    setItems={this.setBrands}
+                    zIndex={1}
+                    multiple={true}
+                    dropDownDirection='AUTO' /></>
+        )
+    }
+
+    drawTextInputFields = () => {
+        return (registrationElements.map((element, index) => {
+            if( element.type === 'textInput'){
+                return  <TextInput key={index}
+                label={element.label}
+                returnKeyType={element.returnKeyType}
+                value={this.state[element.stateValue]}
+                onChangeText={(text) => this.setState({[element.stateValue]: text, emailError: '' })}
+                error={this.state[element.stateError]}
+                errorText={this.state[element.stateError]}
+                autoCapitalize='none'
+                keyboardType={this.state[element.keyBoardType]}
+                outlineColor='#C4C4C4'
+                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
+            />
+            }if(element.type ==='dropDownPicker'){
+                return this.DropDownPickerForSeller();
+            }
+
+        }) )
+    }
+
     render() {
         return (
-
-            <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
-                style={{
-                    flex: 1,
-                }}>
-                <ScrollView>
-                    <View style={styles.container}>
-                        <Spinner visible={this.state.loading} />
-                        <Header>Create Account</Header>
-                        <View>
-                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
-                                <Picker
-                                    selectedValue={this.state.accounttype}
-                                    onValueChange={
-                                        (itemValue) =>
-                                            this.onchange(itemValue)
-                                    }>
-                                    {typeList.map((option) =>
-                                        <Picker.Item
-                                            key={option.value}
-                                            value={option.value}
-                                            label={option.label}
-                                        />
-                                    )}
-                                </Picker>
-                            </View>
-                            <TextInput
-                                label="Owner Email *"
-                                returnKeyType="next"
-                                value={this.state.email}
-                                onChangeText={(text) => this.setState({ email: text, emailError: "" })}
-                                error={!!this.state.emailError}
-                                errorText={this.state.emailError}
-                                autoCapitalize="none"
-                                autoCompleteType="email"
-                                textContentType="emailAddress"
-                                keyboardType="email-address"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <TextInput
-                                label="Company Name *"
-                                returnKeyType="next"
-                                value={this.state.company_name}
-                                onChangeText={(text) => this.setState({ company_name: text, companynameError: "" })}
-                                error={!!this.state.companynameError}
-                                errorText={this.state.companynameError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <TextInput
-                                label="Website *"
-                                returnKeyType="next"
-                                value={this.state.website}
-                                onChangeText={(text) => this.setState({ website: text, websiteError: "" })}
-                                error={!!this.state.websiteError}
-                                errorText={this.state.websiteError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <CallingCodePicker
-                                    selectedValue={this.state.countryCode}
-                                    onValueChange={value => this.setState({ countryCode: value })}
-                                />
-
-                                <View style={{ flex: 2 }}>
-                                    <TextInput
-                                        label="phoneNumber *"
-                                        returnKeyType="next"
-                                        value={this.state.phoneNumber}
-                                        onChangeText={(text) => this.setState({ phoneNumber: text, phoneNumberError: "" })}
-                                        error={!!this.state.phoneNumberError}
-                                        errorText={this.state.phoneNumberError}
-                                        autoCapitalize="none"
-                                        outlineColor="#C4C4C4"
-                                        theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                                    />
-                                </View>
-                            </View>
-                            <TextInput
-                                label="Financial Number *"
-                                returnKeyType="next"
-                                value={this.state.financialNumber}
-                                onChangeText={(text) => this.setState({ financialNumber: text, financialNumberError: '' })}
-                                error={!!this.state.financialNumberError}
-                                errorText={this.state.financialNumberError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
-                                <Picker
-                                    selectedValue={this.state.country}
-                                    onValueChange={(itemValue) =>
-                                        this.setState({ country: itemValue })
-                                    }>
-                                    {this.state.fetchedCountries.map((option) =>
-                                        <Picker.Item
-                                            key={option.value}
-                                            value={option.value}
-                                            label={option.label}
-                                        />
-                                    )}
-                                </Picker>
-                            </View>
-                            <TextInput
-                                label="Registered Address *"
-                                returnKeyType="next"
-                                value={this.state.registeredAddress}
-                                onChangeText={(text) => this.setState({ registeredAddress: text, registeredAddressError: '' })}
-                                error={!!this.state.registeredAddressError}
-                                errorText={this.state.registeredAddressError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <TextInput
-                                label="City *"
-                                returnKeyType="next"
-                                value={this.state.city}
-                                onChangeText={(text) => this.setState({ city: text, cityError: '' })}
-                                error={!!this.state.cityError}
-                                errorText={this.state.cityError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <TextInput
-                                label="State *"
-                                returnKeyType="next"
-                                value={this.state.state}
-                                onChangeText={(text) => this.setState({ state: text, stateError: '' })}
-                                error={!!this.state.stateError}
-                                errorText={this.state.stateError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <TextInput
-                                label="Street *"
-                                returnKeyType="next"
-                                value={this.state.street}
-                                onChangeText={(text) => this.setState({ street: text, streetError: '' })}
-                                error={!!this.state.streetError}
-                                errorText={this.state.streetError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            <TextInput
-                                label="Postal Code *"
-                                returnKeyType="next"
-                                value={this.state.postalCode}
-                                onChangeText={(text) => this.setState({ postalCode: text, postalCodeError: '' })}
-                                error={!!this.state.postalCodeError}
-                                errorText={this.state.postalCodeError}
-                                autoCapitalize="none"
-                                outlineColor="#C4C4C4"
-                                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-                            />
-                            {this.state.display ?
-                                <View>
-                                    <View style={{ marginTop: 15, marginBottom: 15 }}>
-                                        <DropDownPicker
-                                            placeholder="Select Category"
-                                            searchable={true}
-                                            categorySelectable={true}
-                                            open={this.state.open}
-                                            value={this.state.value}
-                                            items={this.state.fetchedcategories}
-                                            setOpen={this.setOpen}
-                                            setValue={this.setCategoryValue}
-                                            setItems={this.setCategories}
-                                            // multiple={true}
-                                            bottomOffset={100}
-                                            dropDownDirection='AUTO'
-
-                                        />
-                                    </View>
-                                    <View style={{ marginTop: 15, marginBottom: 15 }}>
-                                        <DropDownPicker
-                                            placeholder="Select Sub Categories"
-                                            searchable={true}
-                                            categorySelectable={true}
-                                            open={this.state.opensub}
-                                            value={this.state.subcategories}
-                                            items={this.state.fetchedSubcategories}
-                                            setOpen={this.setOpenSub}
-                                            setValue={this.setSubCategory}
-                                            setItems={this.setSubCategories}
-                                            multiple={true}
-                                            dropDownDirection='AUTO'
-
-                                        />
-                                    </View>
-                                    <View style={{ marginTop: 15, marginBottom: 15 }}>
-                                        <DropDownPicker
-                                            placeholder="Select Brands"
-                                            searchable={true}
-                                            categorySelectable={true}
-                                            open={this.state.openBrand}
-                                            value={this.state.brands}
-                                            items={this.state.fetchedBrands}
-                                            setOpen={this.setOpenBrands}
-                                            setValue={this.setBrand}
-                                            setItems={this.setBrands}
-                                            zIndex={2000}
-                                            multiple={true}
-                                            zIndexInverse={2000}
-                                            dropDownDirection='AUTO'
-                                        />
-                                    </View>
-                                </View> : <View></View>}
-
-                            <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: 5, marginTop: 10 }}>
-                                <IconButton
-                                    icon="plus"
-                                    size={20}
-                                    onPress={this.pickDocument}
-                                    style={{ backgroundColor: '#698EB7' }} color="#fff"
-                                />
-                                <Text style={{ marginLeft: 10, color: "#698EB7", fontWeight: 'bold' }}>Company Registration Details .docx .pdf</Text>
-
-                            </View>
-                            <View>
-                                <TextInput
-                                    label="Password *"
-                                    returnKeyType="done"
-                                    value={this.state.password}
-                                    onChangeText={(text) => this.setState({ password: text, passwordError: "" })}
-                                    error={!!this.state.passwordError}
-                                    errorText={this.state.passwordError}
-                                    outlineColor="#C4C4C4"
-                                    theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-
-                                />
-                                <TextInput
-                                    label="Confirm Password *"
-                                    returnKeyType="done"
-                                    value={this.state.password}
-                                    onChangeText={(text) => this.setState({ password: text, passwordError: "" })}
-                                    // error={!!this.state.passwordError}
-                                    // errorText={this.state.passwordError}
-                                    outlineColor="#C4C4C4"
-                                    theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-
-                                />
-                                {/* 
-                        <Checkbox.Item label="I agree to the Terms & Conditions" status="checked" position="leading" /> */}
-                            </View>
-                            < Button mode="contained" onPress={this.onRegister} style={styles.loginBtn}>Register</Button>
-                        </View>
-                    </View>
-                </ScrollView>
+            <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode='cover'
+                style={signupStyle.imgContainer}>
+                <SafeAreaView style={signupStyle.container}>
+                    <Spinner visible={this.state.loading} />
+                    <Header>Create Account</Header>
+                    <ScrollView style={{backgroundColor:'transparent'}}>
+                                            
+                    {this.drawTextInputFields()}
+                      {/* < Button mode='contained' onPress={this.onRegister} style={[signupStyle.loginBtn,]}>Register</Button> */}
+                   
+                    </ScrollView>
+                </SafeAreaView>
             </ImageBackground>
         )
     }
 }
 
 export default Signup;
-
-
-
-
-

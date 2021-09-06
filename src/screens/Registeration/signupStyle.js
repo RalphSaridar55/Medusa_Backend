@@ -1,11 +1,14 @@
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar  } from 'react-native';
 const styles = StyleSheet.create({
+    cardContainer:{
+
+    },
     container: {
         flex: 1,
-        padding: 15,
-        marginTop: 15,
-        justifyContent: 'center'
+         padding: 20,
+         marginTop: StatusBar.currentHeight,
+         justifyContent: 'center'
     },
     forgotPassword: {
         width: '100%',
@@ -16,6 +19,9 @@ const styles = StyleSheet.create({
         color: "#31C2AA",
         fontSize: 12,
         textAlign: "right"
+    },
+    imgContainer:{
+        flex:1
     },
     link: {
         color: "#31C2AA",
