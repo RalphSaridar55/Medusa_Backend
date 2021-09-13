@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { SafeAreaView, View, ImageBackground, ScrollView, } from 'react-native'
-import { Text, Button, IconButton, Card,RadioButton } from 'react-native-paper'
+import { Text, Button, IconButton, Card, RadioButton } from 'react-native-paper'
 import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
 import { emailValidator } from '../../helpers/emailValidator'
@@ -12,12 +12,12 @@ import _ from 'lodash';
 import * as ROUTE_LIST from '../../core/apis/apis-list'
 import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
-import signupStyle from './signupStyle'
+import signupStyle from './registrationStyle'
 import DropDownPicker from 'react-native-dropdown-picker';
-import * as Animatable from 'react-native-animatable';
-import {registrationElements } from './registrationElements'
-
-
+import { registrationElements } from './registrationElements';
+import registrationStyle from './registrationStyle';
+import * as apiPortFolioServices from '../../core/apis/apiPortfolioServices';
+import * as registrationServices from './registrationServices';
 
 const typeList = [
     {
@@ -30,11 +30,11 @@ const typeList = [
     },
 ]
 
-class Signup extends Component {
+export default class Registartion extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userRole:'buyer',
+            userRole: 'buyer',
             accountType: 1,
             email: '',
             emailError: '',
@@ -70,7 +70,7 @@ class Signup extends Component {
             country: '',
             countryError: '',
             docs: '',
-            data: '',
+            categoryData: {},
 
             fetchedCountries: [],
             fetchedcategories: [],
@@ -90,51 +90,47 @@ class Signup extends Component {
     }
 
     onValueChange = (radioBtnValue) => {
-        this.setState({userRole:radioBtnValue})
+        this.setState({ userRole: radioBtnValue })
     }
 
-    getCountries = () => {
-        apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
-            var result = res.data.data.map(option => ({ value: option.id, label: option.name }));
-            this.setState({ fetchedCountries: result })
-
-        });
-    };
-
     getCategoryDetails = () => {
-        apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((response) => {
-            this.setState({ data: response.data.data.data })
+            apiPortFolioServices.getCategoryDetails().then((response) => {
+            this.setState({ categoryData: response })
             const Categoryarry = []
-            for (let i = 0; i < response.data.data.data.length; i++) {
-                var category = response.data.data.data[i].category_name
-                var id = response.data.data.data[i].id
+            for (let i = 0; i < response.length; i++) {
+                var category = response[i].category_name
+                var id = response[i].id
                 Categoryarry.push({ label: category, value: id })
                 this.setState({ fetchedcategories: Categoryarry })
             }
-
         });
     };
 
     getsub = () => {
-        console.log('--> inside get Sub')
-        const id = this.state.value
-        const filter = this.state.data.filter(option => option.id === id);
+        this.setState({subcategories : []});
+        const filter = this.state.categoryData.filter(option =>
+            option.id === this.state.value
+        );
         for (let i = 0; i < filter.length; i++) {
             const subDetails = filter[i].subcategory.map(option => ({ value: option.id, label: option.sub_category_name, key: option.id, Brands: option.brands }))
             this.setState({ fetchedSubcategories: subDetails })
         }
-        this.getBrands()
+        this.getBrands();
     }
 
+    //working here
     getBrands = () => {
-        const label = this.state.brands
-        const filter = this.state.fetchedSubcategories.filter(option => option.value === 1);
-        for (let i = 0; i < filter.length; i++) {
-            const brands = filter[i].Brands.map(option => ({ value: option.id, label: option.brand_name }))
-            this.setState({ fetchedBrands: brands })
-            console.log(brands)
-        }
-
+        this.setState({fetchedBrands : []});
+        console.log('the sub categoriesss, ', this.state.fetchedSubcategories)
+        this.state.subcategories.map((id)=>{
+            console.log('id: ', id)
+            let brands = [];
+            const filter = this.state.fetchedSubcategories.filter(option => option.value === 1);
+            for (let i = 0; i < filter.length; i++) {
+                 brands = filter[i].Brands.map(option => ({ value: option.id, label: option.brand_name }))
+            }
+            this.setState({ fetchedBrands:{ ...brands} })
+        })
     }
 
     pickDocument = async () => {
@@ -208,7 +204,6 @@ class Signup extends Component {
                 }
             ]
         }
-        console.log(payload)
 
         // Show spinner when call is made
         this.setState({ loading: true })
@@ -236,11 +231,15 @@ class Signup extends Component {
     }
     //1
     setCategoryValue = async (callback) => {
-        await this.setState(state => ({
-            value: callback(state.value),
-        }));
-        this.getsub()
+         await this.setState(state => (
+            //console.log('state : ', state),
+            {
+            value: callback(state.value)
+          }));
+          console.log('--->',this.state.value)
+         this.getsub()
     }
+
     //2
     setCategories = (callback) => {
         this.setState(state => ({
@@ -258,7 +257,8 @@ class Signup extends Component {
         await this.setState(state => ({
             subcategories: callback(state.subcategories)
         }));
-        alert('sub')
+        console.log('sub--->', this.state.subcategories)
+
     }
 
     setSubCategories = (callback) => {
@@ -275,6 +275,7 @@ class Signup extends Component {
     }
 
     setBrand = async (callback) => {
+        alert('bnjr')
         await this.setState(state => ({
             brands: callback(state.brands)
         }));
@@ -293,72 +294,67 @@ class Signup extends Component {
     }
 
     componentDidMount() {
-        this.getCategoryDetails();
-        this.getCountries();
-    }
-
-    DropDownPickerForSeller = ()=>{
-        return(
-            <><DropDownPicker
-                placeholder='Select Category'
-                searchable={true}
-                categorySelectable={true}
-                open={this.state.open}
-                value={this.state.value}
-                items={this.state.fetchedcategories}
-                setOpen={this.setOpen}
-                setValue={this.setCategoryValue}
-                setItems={this.setCategories}
-                zIndex={3}
-                bottomOffset={100}
-                dropDownDirection='AUTO' /><DropDownPicker
-                    placeholder='Select Sub Categories'
-                    searchable={true}
-                    categorySelectable={true}
-                    open={this.state.opensub}
-                    value={this.state.subcategories}
-                    items={this.state.fetchedSubcategories}
-                    setOpen={this.setOpenSub}
-                    setValue={this.setSubCategory}
-                    setItems={this.setSubCategories}
-                    multiple={true}
-                    zIndex={2}
-                    dropDownDirection='AUTO' /><DropDownPicker
-                    placeholder='Select Brands'
-                    searchable={true}
-                    categorySelectable={true}
-                    open={this.state.openBrand}
-                    value={this.state.brands}
-                    items={this.state.fetchedBrands}
-                    setOpen={this.setOpenBrands}
-                    setValue={this.setBrand}
-                    setItems={this.setBrands}
-                    zIndex={1}
-                    multiple={true}
-                    dropDownDirection='AUTO' /></>
+       this.getCategoryDetails();
+        // apiPortFolioServices.getCategoryDetails().then((response) => {
+        //     return (
+        //         this.setState({ ...this.state,...{categoryData: response}}),
+        //         this.setState({ ...this.state,...{fetchedcategories: registrationServices.filterCategory(response)}})
+        //     )
+        // })
+        apiPortFolioServices.getCountries().then((result)=>{
+           return this.setState({ ...this.state,...{fetchedCountries: result}})
+    })}
+    
+    /**
+     * 
+     * @param {*} dropDownElement 
+     * @returns drop down data for registration element file to display them
+     */
+    DropDownPickerForSeller = (dropDownElement,index) => {
+        return (((dropDownElement?.userRole === 'sellerBuyer' && this.state.userRole === 'sellerBuyer') || !dropDownElement?.userRole) ? 
+        <View key={index}>
+            <DropDownPicker
+            style={registrationStyle.dropDownPickerSellers}
+            listMode="MODAL"
+            multiple={dropDownElement.multiple}
+            placeholder={dropDownElement.placeholder}
+            searchable={true}
+            categorySelectable={true}
+            open={this.state[dropDownElement.open]}
+            value={this.state[dropDownElement.value]}
+            items={this.state[dropDownElement.items]}
+            setOpen={this[dropDownElement.setOpen]}
+            setValue={this[dropDownElement.setValue]}
+            setItems={this[dropDownElement.setItems]} />
+        </View>
+         : null
         )
     }
 
+    /**
+     * 
+     * @returns loop over inout text dields
+     */
     drawTextInputFields = () => {
         return (registrationElements.map((element, index) => {
-            if( element.type === 'textInput'){
-                return  <TextInput key={index}
-                label={element.label}
-                returnKeyType={element.returnKeyType}
-                value={this.state[element.stateValue]}
-                onChangeText={(text) => this.setState({[element.stateValue]: text, emailError: '' })}
-                error={this.state[element.stateError]}
-                errorText={this.state[element.stateError]}
-                autoCapitalize='none'
-                keyboardType={this.state[element.keyBoardType]}
-                outlineColor='#C4C4C4'
-                theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-            />
-            }if(element.type ==='dropDownPicker'){
-                return this.DropDownPickerForSeller();
+            if (element.type === 'textInput') {
+                return <TextInput key={index}
+                    label={element.label}
+                    returnKeyType={element.returnKeyType}
+                    value={this.state[element.stateValue]}
+                    onChangeText={(text) => this.setState({ [element.stateValue]: text, emailError: '' })}
+                    error={this.state[element.stateError]}
+                    errorText={this.state[element.stateError]}
+                    autoCapitalize='none'
+                    // keyboardType={element.keyBoardType}
+                    outlineColor='#C4C4C4'
+                    theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
+                />
+            } if (element.type === 'dropDownPicker') {
+                return this.DropDownPickerForSeller(element,index);
             }
 
-        }) )
+        }))
     }
 
     render() {
@@ -368,16 +364,19 @@ class Signup extends Component {
                 <SafeAreaView style={signupStyle.container}>
                     <Spinner visible={this.state.loading} />
                     <Header>Create Account</Header>
-                    <ScrollView style={{backgroundColor:'transparent'}}>
-                                            
-                    {this.drawTextInputFields()}
-                      {/* < Button mode='contained' onPress={this.onRegister} style={[signupStyle.loginBtn,]}>Register</Button> */}
-                   
+                    <ScrollView >
+                        <Card style={registrationStyle.cardContainer}>
+                            <RadioButton.Group onValueChange={this.onValueChange} value={this.state.userRole}>
+                                <View style={registrationStyle.radioBtn}>
+                                    <RadioButton.Item label={'Just a buyer '} value='buyer' id='buyer' />
+                                    <RadioButton.Item label={'Seller & Buyer'} value='sellerBuyer' id='sellerBuyer' />
+                                </View>
+                            </RadioButton.Group>
+                            {this.drawTextInputFields()}
+                            {/* < Button mode='contained' onPress={this.onRegister} style={[signupStyle.loginBtn,]}>Register</Button> */}
+                        </Card>
                     </ScrollView>
                 </SafeAreaView>
             </ImageBackground>
         )
-    }
-}
-
-export default Signup;
+    }}
