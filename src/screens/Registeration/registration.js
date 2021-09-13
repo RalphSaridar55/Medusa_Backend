@@ -121,16 +121,23 @@ export default class Registartion extends Component {
     //working here
     getBrands = () => {
         this.setState({fetchedBrands : []});
-        console.log('the sub categoriesss, ', this.state.fetchedSubcategories)
-        this.state.subcategories.map((id)=>{
-            console.log('id: ', id)
-            let brands = [];
-            const filter = this.state.fetchedSubcategories.filter(option => option.value === 1);
-            for (let i = 0; i < filter.length; i++) {
-                 brands = filter[i].Brands.map(option => ({ value: option.id, label: option.brand_name }))
-            }
-            this.setState({ fetchedBrands:{ ...brands} })
-        })
+        let brands = [];
+        let brandResult = [];
+        for (let index = 0; index < this.state.subcategories.length; index++) {
+          const id = this.state.subcategories[index];
+          const filter = this.state.fetchedSubcategories.filter(option => option.value === id);
+          brands.push({...filter});
+}
+
+  for (let i = 0; i < brands.length; i++) {
+    console.log(brands[i][0].Brands[0].brand_name);
+  }
+//   brands[i].Brands.map(option => {
+//     console.log('res: ',option )
+//     ({ value: option.id, label: option.brand_name })
+//  })
+//console.log('--->-----> ', brandResult);
+//this.setState({ fetchedBrands:{ ...brands} })
     }
 
     pickDocument = async () => {
@@ -257,7 +264,9 @@ export default class Registartion extends Component {
         await this.setState(state => ({
             subcategories: callback(state.subcategories)
         }));
-        console.log('sub--->', this.state.subcategories)
+        if (this.state.subcategories.length > 0) {
+            this.getBrands()
+        }
 
     }
 
