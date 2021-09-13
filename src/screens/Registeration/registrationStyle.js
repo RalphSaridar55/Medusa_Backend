@@ -1,14 +1,21 @@
 
-import { StyleSheet, StatusBar  } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 const styles = StyleSheet.create({
-    cardContainer:{
-
+    cardContainer: {
+        padding: 20,
+        borderRadius: 20
+    },
+    containerStyle: {
+        flex: 1,
     },
     container: {
         flex: 1,
-         padding: 20,
-         marginTop: StatusBar.currentHeight,
-         justifyContent: 'center'
+        padding: 20,
+        marginTop: StatusBar.currentHeight,
+        justifyContent: 'center'
+    },
+    dropDownPickerSellers: {
+        marginTop: 20
     },
     forgotPassword: {
         width: '100%',
@@ -20,8 +27,8 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: "right"
     },
-    imgContainer:{
-        flex:1
+    imgContainer: {
+        flex: 1
     },
     link: {
         color: "#31C2AA",
@@ -35,8 +42,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         height: 50
     },
-    containerStyle: {
-        flex: 1,
+    radioBtn: {
+        flexDirection: 'row', justifyContent: 'center'
     },
     spacerStyle: {
         marginBottom: 15,
