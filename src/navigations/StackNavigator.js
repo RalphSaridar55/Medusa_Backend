@@ -12,6 +12,9 @@ import ForgotPassword from '../screens/ForgotPassword/ForgotPassword'
 import * as apiServices from "../core/apis/apiUserServices"
 import Signup from '../screens/Registeration/signup';
 
+//
+import Products from '../screens/Products/product_list.js';
+
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
@@ -29,7 +32,7 @@ class Nav extends Component {
                 <>
                     <Stack.Screen
                         name="Login"
-                        component={Login}
+                        component={Products}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen
