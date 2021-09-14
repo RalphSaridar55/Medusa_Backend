@@ -5,7 +5,7 @@ import accountStyle from "./accountStyle"
 export default class Account extends Component {
     render() {
         return (
-            <View style={}>
+            <View>
                 <ScrollView style={accountStyle.scrollView}>
                     <Card style={accountStyle.cardPadding}>
                         <Button icon="login" contentStyle={{ flexDirection: 'row-reverse', }} mode="contained" style={{ backgroundColor: "#698EB7", padding: 5 }} onPress={() => this.props.navigation.navigate('Login')}>Login or Register </Button>

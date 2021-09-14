@@ -156,6 +156,7 @@ export default class ForgotPassword extends Component {
                     <Text style={forgotPasswordStyle.loginText}>Next</Text>
                 </TouchableOpacity>
             </>);
+            
                 break;
             case 'reset': return (<>
                 <Headline style={forgotPasswordStyle.headlineStyle}>{"Reset Password"}</Headline>
@@ -176,7 +177,7 @@ export default class ForgotPassword extends Component {
                     mode="outlined"
                     outlineColor={this._checkIfPasswordsMatch()}
                     onChangeText={(text) => { this.setState({ confirmPass: text }) }}
-                    theme={{ colors: { primary: this._checkIfPasswordsMatch() } }}
+                    theme={{ colors: { primary: this._a() } }}
                     style={forgotPasswordStyle.inputView}
                 />
                 <Button style={forgotPasswordStyle.btnReset} mode="contained"

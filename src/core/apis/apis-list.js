@@ -10,3 +10,4 @@ export const HOME_CATEGORIES = "home-category";
 
 export const CATEGORIES = "category";
 export const COUNTRIES = "country";
+export const productDetails = "user/product_details";

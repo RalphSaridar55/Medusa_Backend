@@ -7,6 +7,7 @@ import styles from "./style";
 import { FlatListSlider } from 'react-native-flatlist-slider';
 import Preview from './preview';
 import Footer from '../../components/footer/footer';
+import * as apiPortFolioService from'../../core/apis/apiPortfolioServices';
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 200;
@@ -64,7 +65,8 @@ class Home extends Component {
         super(props);
         this.state = {
         }
-    }
+        //apiPortFolioService.getProductDetails(0)
+        }
 
     renderSlider(image, index) {
         return (
@@ -75,8 +77,8 @@ class Home extends Component {
     }
 
     render() {
-
-        return (<View style={styles.container}>
+        
+        return(<View style={styles.container}>
             <ScrollView>
                 <View style={styles.Bcontainer}>
                     <Carousel
@@ -89,7 +91,7 @@ class Home extends Component {
                         {images.map((image, index) => this.renderSlider(image, index))}
                     </Carousel>
                 </View>
-                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
+                <View style={styles.topProductContainer}>
                     <Headline>Top Products</Headline>
                     {/* //    onPress={() => this.props.navigation.navigate('Categories')}  */}
                     <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
@@ -97,7 +99,7 @@ class Home extends Component {
                         Show All
                     </Button>
                 </View>
-                <View style={{ marginLeft: 10, marginRight: 10 }} >
+                <View style={styles.flatListSliderContainer} >
                     <FlatListSlider
                         data={info}
                         width={300}
@@ -107,11 +109,11 @@ class Home extends Component {
                         indicatorActiveWidth={10}
                     />
                 </View>
-                <View style={{ marginTop: 10, marginBottom: 10 }}>
+                <View style={styles.imageContainer}>
                     <Image source={{ uri: 'https://ossgw.alicdn.com/creatives-assets/image/3h7n3/2021/05/26/f78a5880-be6b-4537-99ff-133e118d113a.jpg' }}
-                        style={{ width: 400, height: 100 }} />
+                        style={styles.image} />
                 </View>
-                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
+                <View style={styles.topSellingContainer}>
                     <Headline>Top Selling</Headline>
                     {/* // onPress={() => this.props.navigation.navigate('Users')} */}
                     <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
@@ -119,7 +121,7 @@ class Home extends Component {
                         Show All
                     </Button>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
+                <View style={styles.flatListSliderContainer2 }>
                     <FlatListSlider
                         data={top}
                         width={300}
@@ -128,19 +130,19 @@ class Home extends Component {
                         onPress={item => alert(JSON.stringify(item))}
                         indicatorActiveWidth={10}
                     />
-                    <View style={{ flex: 1 }}>
+                    <View style={styles.card}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/Hf1bd3c0da31145ed835dab667efced6dP.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Tops" subtitle="10 ~ 50 USD"></Card.Title>
                         </Card>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5, marginRight: 5 }}>
+                    <View style={styles.card2}>
                         <Card >
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/HTB14p5ebyDxK1RjSsph762HrpXaT.png' }} style={{ height: 100 }} />
                             <Card.Title title="Printer" subtitle="100 ~ 500 USD" ></Card.Title>
                         </Card>
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={styles.card}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/Hcaeb65c4343249649d5a8bb45af9408cI.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Glasses" subtitle="1 ~ 5 USD"></Card.Title>
@@ -148,17 +150,17 @@ class Home extends Component {
                     </View>
                 </View>
 
-                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
+                <View style={styles.headlineTitle}>
                     <Headline>Summer Fashion</Headline>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
+                <View style={styles.headlineContainer}>
                     <View style={{ flex: 1 }}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/Hb505616b56654fe4b0c505b7b891b6a9s.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Tops & Tees" ></Card.Title>
                         </Card>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5, marginRight: 5 }}>
+                    <View style={styles.insideHeadline}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://images.zoodmall.com/app/homePageLayout/1626674906688.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Accessories"></Card.Title>
@@ -167,22 +169,22 @@ class Home extends Component {
                 </View>
 
 
-                <View style={{ marginTop: 10, marginBottom: 10 }}>
+                <View style={styles.imageAdContainer}>
                     <Image source={{ uri: 'https://img.alicdn.com/imgextra/i2/O1CN01XZACYu1XzkuPt6xSN_!!6000000002995-0-tps-990-400.jpg' }}
                         style={{ width: 400, height: 100 }} />
                 </View>
 
-                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
+                <View style={styles.topBrandTitle}>
                     <Headline>Top Brands</Headline>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
+                <View style={styles.topBrandContainer}>
                     <View style={{ flex: 1 }}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/Hb505616b56654fe4b0c505b7b891b6a9s.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Tops & Tees" ></Card.Title>
                         </Card>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5, marginRight: 5 }}>
+                    <View style={styles.insideTopBrand}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://images.zoodmall.com/app/homePageLayout/1626674906688.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Accessories"></Card.Title>
@@ -202,17 +204,17 @@ class Home extends Component {
                     </Carousel>
                 </View>
 
-                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", margin: 10, marginBottom: 5 }}>
+                <View style={styles.topTitle}>
                     <Headline>Top</Headline>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
+                <View style={styles.topContainer}>
                     <View style={{ flex: 1 }}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://sc04.alicdn.com/kf/Hb505616b56654fe4b0c505b7b891b6a9s.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Tops & Tees" ></Card.Title>
                         </Card>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5, marginRight: 5 }}>
+                    <View style={styles.insideTopContainer}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://images.zoodmall.com/app/homePageLayout/1626674906688.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Accessories"></Card.Title>
@@ -224,7 +226,7 @@ class Home extends Component {
                             <Card.Title title="Tops & Tees" ></Card.Title>
                         </Card>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5, marginRight: 5 }}>
+                    <View style={styles.insideTopContainer}>
                         <Card>
                             <Card.Cover source={{ uri: 'https://images.zoodmall.com/app/homePageLayout/1626674906688.jpg' }} style={{ height: 100 }} />
                             <Card.Title title="Accessories"></Card.Title>
