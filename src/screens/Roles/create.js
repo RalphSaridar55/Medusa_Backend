@@ -28,7 +28,7 @@ export default class AddRole extends Component {
     }
     render() {
         return (
-            <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+            <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={{
                     flex: 1,
                     justifyContent: "center"

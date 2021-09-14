@@ -75,19 +75,19 @@ class ProductDetails extends Component {
                             <View style={{ flex: 1, flexDirection: 'row' }}>
 
                                 <Image source={{ uri: "https://sc04.alicdn.com/kf/U0d1e94debab043c2b1578221e21cfb14W.jpg" }}
-                                    style={{ width: 50, height: 50, borderColor: "#C4C4C4", borderWidth: 1, borderRadius: 10, margin: 5 }} ></Image>
+                                    style={styles.cardImage} ></Image>
                                 <Image source={{ uri: "https://sc04.alicdn.com/kf/U60b3294b8bca43b4be7ace957e90226ee.jpg" }}
-                                    style={{ width: 50, height: 50, borderColor: "#C4C4C4", borderWidth: 1, borderRadius: 10, margin: 5 }} ></Image>
+                                    style={styles.cardImage} ></Image>
                                 <Image source={{ uri: "https://sc04.alicdn.com/kf/Hf6c4d5d39fc64fac945778df0d59851ba.jpg" }}
-                                    style={{ width: 50, height: 50, borderColor: "#C4C4C4", borderWidth: 1, borderRadius: 10, margin: 5 }} ></Image>
+                                    style={styles.cardImage} ></Image>
                                 <Image source={{ uri: "https://sc04.alicdn.com/kf/U60b3294b8bca43b4be7ace957e90226ee.jpg" }}
-                                    style={{ width: 50, height: 50, borderColor: "#C4C4C4", borderWidth: 1, borderRadius: 10, margin: 5 }} ></Image>
+                                    style={styles.cardImage} ></Image>
                             </View>
 
                             <View >
                                 <Title style={{ fontSize: 14 }}>Functionality:</Title>
                                 <View>
-                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={styles.functionalityContainer}>
                                         <Chip style={{ backgroundColor: '#fff', flex: 1, borderColor: '#5EB8C5', margin: 5 }} mode="flat" >Cable</Chip>
                                         <Chip style={{ backgroundColor: '#fff', flex: 1, borderColor: '#C4C4C4', margin: 5 }}>Wireless</Chip>
                                         <Chip style={{ backgroundColor: '#fff', flex: 1, borderColor: '#5EB8C5', margin: 5 }}>Cable</Chip>

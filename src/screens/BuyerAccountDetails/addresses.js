@@ -16,7 +16,7 @@ class Addresses extends Component {
     }
 
     render() {
-        return (<ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+        return (<ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
             style={{
                 flex: 1,
                 justifyContent: "center"

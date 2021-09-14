@@ -46,6 +46,7 @@ export default function Login({ navigation }) {
     setLoading(true)
 
     apiServices.userLogin(payload).then((res) => {
+      console.log("---->", res.access_token)
       apiServices.setToken(res.access_token);
       setData(res)
       setAuthorized(true);

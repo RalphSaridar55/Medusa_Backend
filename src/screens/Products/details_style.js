@@ -6,6 +6,25 @@ const styles = StyleSheet.create({
         flex: 1,
         //backgroundColor: '#fff',
     },
+    cardImage:{
+        width: 50,
+        height: 50,
+        borderColor: "#C4C4C4",
+        borderWidth: 1,
+        borderRadius: 10,
+        margin: 5 
+    },
+    functionalityContainer:{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    functionalityChip:{
+        backgroundColor: '#fff',
+        flex: 1,
+        borderColor: '#5EB8C5',
+        margin: 5 
+    },
     B_container: {
         flex: 1,
         backgroundColor: '#fff',

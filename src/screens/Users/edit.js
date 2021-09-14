@@ -5,6 +5,7 @@ import MultiSelect from 'react-native-multiple-select';
 import { ScrollView } from "react-native-gesture-handler";
 import { Picker } from '@react-native-picker/picker';
 import * as DocumentPicker from "expo-document-picker";
+import styles from './edit_style'
 
 const items = [
     {
@@ -46,7 +47,7 @@ export default class EditUsers extends Component {
         const { selectedItems } = this.state;
 
         return (
-            <ImageBackground source={require('../../assets/images/Login-bg.png')} resizeMode="cover"
+            <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
                 style={{
                     flex: 1,
                     justifyContent: "center"
@@ -71,7 +72,7 @@ export default class EditUsers extends Component {
                         value="Mark"
                     />
                     {/* Drop down  */}
-                    <View style={{ borderWidth: 1, borderColor: '#C4C4C4', borderRadius: 4, paddingVertical: 15, backgroundColor: "#fff" }}>
+                    <View style={styles.dropdown}>
                         <Picker
                             selectedValue={this.state.role}
                             onValueChange={(itemValue, itemIndex) =>
@@ -99,7 +100,7 @@ export default class EditUsers extends Component {
                             <IconButton
                                 icon="plus"
                                 size={20}
-                                onPress={pickDocument}
+                                onPress={this.pickDocument}
                                 style={{ backgroundColor: '#698EB7' }} color="#fff"
                             />
                             <Text style={{ marginLeft: 10, color: "#698EB7", fontWeight: 'bold' }}>Proof of identification .pdf .png</Text>
@@ -116,40 +117,3 @@ export default class EditUsers extends Component {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 15,
-        justifyContent: "center",
-    },
-    inputView: {
-        backgroundColor: "#fff",
-        marginBottom: 10,
-        borderRadius: 25
-    },
-    inputText: {
-        height: 50,
-        color: "white"
-    },
-    forgot: {
-        color: "#31C2AA",
-        fontSize: 11,
-        textAlign: "right"
-    },
-    loginBtn: {
-        backgroundColor: "#31C2AA",
-        borderRadius: 25,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 20,
-        marginBottom: 10
-    },
-    loginText: {
-        color: "white"
-    },
-    signupText: {
-        color: "#31C2AA",
-        textAlign: "center"
-    }
-});

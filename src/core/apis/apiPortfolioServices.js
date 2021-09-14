@@ -104,3 +104,12 @@ export async function getCategoryDetails () {
       ]
     });
 }
+
+export async function getProductDetails (id) {
+  console.log('inside get prod details')
+  return await apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product_details?product_id=10').then((res) => {
+
+    console.log('resp --> : ',res)
+        return null;
+    });
+};
