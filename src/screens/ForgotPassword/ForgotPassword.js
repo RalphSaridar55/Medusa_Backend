@@ -156,6 +156,7 @@ export default class ForgotPassword extends Component {
                     <Text style={forgotPasswordStyle.loginText}>Next</Text>
                 </TouchableOpacity>
             </>);
+            
                 break;
             case 'reset': return (<>
                 <Headline style={forgotPasswordStyle.headlineStyle}>{"Reset Password"}</Headline>
