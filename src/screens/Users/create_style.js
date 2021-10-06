@@ -30,11 +30,23 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     loginText: {
-        color: "white"
+        color: "white",
+        fontSize:18,
     },
     signupText: {
         color: "#31C2AA",
         textAlign: "center"
+    },
+    dropDownPickerCountry: {
+        marginVertical: 10,
+        borderRadius:5,
+        borderColor:'lightgray',
+        backgroundColor:'#f6f6f6',
+        height:60
+    },
+    MultiSelectContainer:{
+        marginVertical:20,
+        height:110
     }
 });
 

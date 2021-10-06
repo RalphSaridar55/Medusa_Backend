@@ -15,7 +15,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     dropDownPickerSellers: {
-        marginTop: 20
+        marginVertical: 10,
+        borderRadius:5,
+        borderColor:'lightgray',
+        backgroundColor:'#f6f6f6',
+    },
+    dropDownPickerCountry: {
+        marginVertical: 10,
+        borderRadius:5,
+        borderColor:'lightgray',
+        backgroundColor:'#f6f6f6',
+        height:60
+    },
+    autocomplete:{
+        backgroundColor:'#f6f6f6',
+        height:50,
+        borderRadius:10,
+        paddingLeft:10,
     },
     forgotPassword: {
         width: '100%',
@@ -36,11 +52,17 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     loginBtn: {
+        marginTop:40,
         backgroundColor: "#31C2AA",
         borderRadius: 25,
         alignItems: "center",
         justifyContent: "center",
         height: 50
+    },
+    loginBtnText:{
+        color:'white',
+        fontSize:16,
+        fontWeight:'bold'
     },
     radioBtn: {
         flexDirection: 'row', justifyContent: 'center'
@@ -53,6 +75,26 @@ const styles = StyleSheet.create({
         margin: 20,
         justifyContent: "center",
     },
+    docPicker:{
+        borderWidth:1,
+        borderRadius:5,
+        borderColor:'gray',
+        marginVertical:10,
+        height:55,
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:10,
+        alignItems:'center'
+    },
+    MultiSelectContainer:{
+        marginVertical:20,
+        height:130
+    },
+    countryPicker:{
+        borderRadius:1,
+        marginVertical:10
+    }
 })
 
 

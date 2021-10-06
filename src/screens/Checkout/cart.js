@@ -27,7 +27,7 @@ const Cart = () => {
   const [active, setActive] = useState(0);
 
   return (
-    <View>
+    <View style={{marginTop:60,marginHorizontal:20}}>
       <Stepper
         active={active}
         content={content}

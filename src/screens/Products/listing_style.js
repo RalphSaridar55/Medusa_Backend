@@ -1,10 +1,24 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
+const screenwidth = Dimensions.get('screen').width;
+const screenheight = Dimensions.get('screen').height;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        //marginTop: 20,
+    },
+    Btn: {
+        backgroundColor: "#31C2AA",
+        borderRadius: 25,
+        width:50,
+        position:'absolute',
+        zIndex:99,
+        bottom:10,
+        left:screenwidth*0.44,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 20,
     },
     list: {
         paddingHorizontal: 5,
@@ -32,6 +46,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    priceTextContainer:{
+        marginVertical:10,
+        marginLeft:10,
+    },
+    priceText:{
+        fontSize:16,
+        color:'#6E91EC'
+    },
+    resetButton:{
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        borderWidth:1,
+        height:40,
+        marginHorizontal:screenwidth*0.25,
+        borderRadius:5,
+        borderColor:'#6E91EC',
+    },
+    resetText:{
+        color:'#6E91EC'
+    },
+
     /******** card **************/
     card: {
         shadowColor: '#00000021',

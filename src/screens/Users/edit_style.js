@@ -29,8 +29,18 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10
     },
+    deleteBtn: {
+        backgroundColor: "red",
+        opacity:1,
+        borderRadius: 25,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 10
+    },
     loginText: {
-        color: "white"
+        color: "white",
+        fontSize:18
     },
     signupText: {
         color: "#31C2AA",
@@ -41,8 +51,20 @@ const styles = StyleSheet.create({
         borderColor: '#C4C4C4',
         borderRadius: 4,
         paddingVertical: 15,
-        backgroundColor: "#fff"
-    }
+        backgroundColor: "#fff",
+        marginBottom:10,
+    },
+    permissionContainer:{
+        marginTop:10,
+        borderRadius:5,
+    },
+    dropDownPickerSellers: {
+        marginVertical: 10,
+        borderRadius:5,
+        borderColor:'lightgray',
+        backgroundColor:'#f6f6f6',
+        height:60,
+    },
 });
 
 export default styles;

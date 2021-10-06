@@ -18,12 +18,32 @@ export let registrationElements = [
         keyBoardType: ''
     },
     {
+        type: 'countryPicker',
+        placeholder: 'Country',
+        multiple: false,
+        open: 'open',
+        value: 'country',
+        items: 'fetchedCountries',
+        setOpen: 'setOpen',
+        setValue: 'setCountryValue',
+        setItems: 'setCountries',
+    },
+    {
         type: 'textInput',
         label: 'Website *',
         stateValue: 'website',
         returnKeyType: 'next',
         stateError: 'websiteError',
         stateErrorText: 'websiteError',
+        keyBoardType: ''
+    },
+    {
+        type: 'textInput',
+        label: 'Country Code *',
+        stateValue: 'countryCode',
+        returnKeyType: 'next',
+        stateError: 'countryCodeError',
+        stateErrorText: 'countryCodeError',
         keyBoardType: ''
     },
     {
@@ -43,9 +63,6 @@ export let registrationElements = [
         stateError: 'financialNumberError',
         stateErrorText: 'financialNumberError',
         keyBoardType: ''
-    },
-    {
-        type: 'picker'
     },
     {
         type: 'textInput',
@@ -85,7 +102,7 @@ export let registrationElements = [
     },
     {
         type: 'textInput',
-        label: 'Postal Code *',
+        label: 'Postal Code',
         stateValue: 'postalCode',
         returnKeyType: 'next',
         stateError: 'postalCodeError',
@@ -93,41 +110,63 @@ export let registrationElements = [
         keyBoardType: ''
     },
     {
-        type: 'dropDownPicker',
+        type: 'multiSelect',
         userRole : 'sellerBuyer',
-        placeholder: 'Select Category',
+        placeholder: 'Category *',
         multiple: false,
+        query:'query',
         open: 'open',
-        value: 'value',
+        value: 'category',
         items: 'fetchedcategories',
         setOpen: 'setOpen',
         setValue: 'setCategoryValue',
         setItems: 'setCategories',
+        text:'Loading Categories'
     },
     {
-        type: 'dropDownPicker',
+        type: 'multiSelect',
         userRole : 'sellerBuyer',
-        placeholder: 'Select Sub Categories',
+        placeholder: 'Sub Categories *',
         multiple: true,
+        query:'query2',
         open: 'opensub',
         value: 'subcategories',
         items: 'fetchedSubcategories',
         setOpen: 'setOpenSub',
         setValue: 'setSubCategory',
         setItems: 'setSubCategories',
+        text:'Please select a category first'
     },
     {
-        type: 'dropDownPicker',
+        type: 'multiSelect',
         userRole : 'sellerBuyer',
-        placeholder: 'Select Brands',
+        placeholder: 'Brands *',
         multiple: true,
         open: 'openBrand',
+        query:'query3',
         value: 'brands',
         items: 'fetchedBrands',
         setOpen: 'setOpenBrands',
         setValue: 'setBrand',
         setItems: 'setBrands',
+        text:'Please select a sub-category first'
     },
+    //added the following trade and passport here
+    {
+        type: 'touchableOpacity',
+        returnKeyType: 'next',
+        typeDoc:'Company Registration',
+        stateError: 'passportError',
+        stateErrorText: 'passportError',
+    },
+    {
+        type: 'touchableOpacity',
+        returnKeyType: 'next',
+        typeDoc:'Trading License',
+        stateError: 'tradeError',
+        stateErrorText: 'tradeError',
+    },
+    //
     {
         type: 'textInput',
         label: 'Password *',
@@ -140,10 +179,10 @@ export let registrationElements = [
     {
         type: 'textInput',
         label: 'Confirm Password *',
-        stateValue: 'Confirm Password',
+        stateValue: 'confirmPassword',
         returnKeyType: 'next',
-        stateError: 'passwordError',
-        stateErrorText: 'passwordError',
+        stateError: 'confirmPasswordError',
+        stateErrorText: 'confirmPasswordError',
         keyBoardType: ''
     },
 ]

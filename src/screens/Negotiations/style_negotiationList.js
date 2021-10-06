@@ -1,0 +1,55 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+    chatsContainer:{
+    },
+    containerChat:{
+        marginVertical:10,
+        paddingHorizontal:20,
+        borderBottomColor:'lightgray',
+        paddingBottom:20,
+        borderBottomWidth:1
+    },
+    pictureAndUsernameContainer:{
+        display:'flex',
+        flexDirection:'row',
+        marginBottom:10
+    },
+    name:{
+        position:'absolute',
+        left:15,
+        top:10,
+        zIndex:99,
+        color:'#fff',
+    },
+    dateContainer:{
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'flex-end',
+        flex:1
+    },
+    date:{
+        color:'gray',
+        textAlignVertical:'center'
+    },
+    pictureContainer:{
+        borderRadius:25,
+        width:50,
+        height:50,
+        color:'#fff',
+        marginRight:20
+
+    },
+    username:{
+        fontSize:20,
+        textAlignVertical:'center'
+    },
+    chatSubject:{
+        fontSize:16,
+        marginTop:5,
+    },
+    chatText:{
+        color:'gray',
+        marginTop:5,
+    }
+})

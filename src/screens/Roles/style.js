@@ -5,6 +5,17 @@ const styles = StyleSheet.create({
         padding: 15,
         justifyContent: "center",
     },
+    docPicker:{
+        borderWidth:1,
+        borderRadius:5,
+        borderColor:'gray',
+        marginVertical:10,
+        height:55,
+        display:'flex',
+        flexDirection:'row',
+        paddingHorizontal:10,
+        alignItems:'center'
+    },
     inputView: {
         backgroundColor: "#fff",
         marginBottom: 10,
@@ -13,6 +24,14 @@ const styles = StyleSheet.create({
     inputText: {
         height: 50,
         color: "white"
+    },
+    dropdown:{ 
+        borderWidth: 1,
+        borderColor: '#C4C4C4',
+        borderRadius: 4,
+        paddingVertical: 15,
+        backgroundColor: "#fff",
+        marginBottom:10,
     },
     forgot: {
         color: "#31C2AA",
@@ -26,10 +45,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
-        marginBottom: 10
+        marginHorizontal:15,
+        marginBottom: 20
     },
     loginText: {
-        color: "white"
+        color: "white",
+        fontSize:16
     },
     signupText: {
         color: "#31C2AA",

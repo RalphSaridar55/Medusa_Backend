@@ -16,7 +16,7 @@ export default class Contact extends Component {
                 style={contactStyle.imageBkg}>
                 <View style={contactStyle.container}>
                     <Headline style={contactStyle.headLine}>Get In Touch </Headline>
-                    <Paragraph style={contactStyle.paragraph}>Give us a call ror drop by anytime, we endeavour to answer all enquiries within 24 hours on business days. We will be happy to answer your questions.</Paragraph>
+                    <Paragraph style={contactStyle.paragraph}>Give us a call or drop by anytime, we endeavour to answer all enquiries within 24 hours on business days. We will be happy to answer your questions.</Paragraph>
                     <TextInput
                         label="Email"
                         placeholder="email@gmail.com"
@@ -39,12 +39,15 @@ export default class Contact extends Component {
                         theme={{ colors: { primary: '#31c2aa' } }}
                         style={contactStyle.inputView}
                     />
-                    <TouchableOpacity style={contactStyle.loginBtn}>
+                    <TouchableOpacity style={contactStyle.loginBtn}
+                        /* onPress={()=>{
+                            
+                        }} */>
                         <Text style={contactStyle.loginText}>Submit</Text>
                     </TouchableOpacity>
 
                 </View>
-                <Footer/>
+                {/* <Footer/> */}
             </ImageBackground>
         );
     }

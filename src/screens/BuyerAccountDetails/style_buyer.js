@@ -8,12 +8,25 @@ const styles = StyleSheet.create({
     },
     inputView: {
         backgroundColor: "#fff",
-        marginBottom: 10,
+        marginBottom: 0,
         borderRadius: 25
     },
     inputText: {
         height: 50,
         color: "white"
+    },
+    docPicker:{
+        borderWidth:1,
+        borderRadius:5,
+        borderColor:'gray',
+        marginVertical:10,
+        height:55,
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:10,
+        alignItems:'center',
+        backgroundColor:'#fff'
     },
     forgot: {
         color: "#31C2AA",
@@ -21,12 +34,13 @@ const styles = StyleSheet.create({
         textAlign: "right"
     },
     Btn: {
-        backgroundColor: "#31C2AA",
+        backgroundColor: "#E3242B",
         borderRadius: 25,
         height: 50,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
+        marginRight:30,
         marginBottom: 10,
         flex: 1
     },
@@ -37,6 +51,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
+        marginLeft:30,
         marginBottom: 10,
         marginLeft: 5,
         flex: 1
@@ -61,6 +76,18 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         flex: 2
     },
+    header:{
+        fontSize:24,
+        marginBottom:20,
+        color:'#6E91EC',
+        marginLeft:1
+    },
+    buttonsContainer:{ 
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems:'flex-end',
+        marginHorizontal:20
+    }
 });
 
 export default styles

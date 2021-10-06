@@ -12,7 +12,8 @@ export default StyleSheet.create({
         marginBottom: 10
     },
     scrollView: {
-        padding: 10
+        padding: 10,
+        marginTop:60,
     },
     Title: {
         fontSize: 18,

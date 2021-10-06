@@ -234,7 +234,7 @@ class Home extends Component {
                     </View>
                 </View>
             </ScrollView>
-            <Footer/>
+            {/* <Footer/> */}
         </View >
         );
     }

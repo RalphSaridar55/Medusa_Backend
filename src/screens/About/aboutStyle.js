@@ -14,7 +14,8 @@ export default StyleSheet.create({
     container: {
         backgroundColor: "#e9f3ff",
         flex: 1,
-        padding: 10
+        padding: 10,
+        paddingTop:60,
     },
     header: {
         height: 50,

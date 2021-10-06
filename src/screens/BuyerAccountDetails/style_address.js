@@ -31,6 +31,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flex: 1
     },
+    textButton:{
+        fontSize:18,
+        color:'white',
+    },
     Dis_Btn: {
         backgroundColor: "#31C2AA",
         borderRadius: 25,
@@ -62,6 +66,20 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         flex: 2
     },
+    dropDownPickerSellers: {
+        marginVertical: 10,
+        borderRadius:5,
+        borderColor:'#bbbbbb',
+        backgroundColor:'#fff',
+        color:'#bbbbbb',
+        height:60,
+    },
+    header:{
+        fontSize:24,
+        marginBottom:20,
+        color:'#6E91EC',
+        marginLeft:1
+    }
 });
 
 export default styles

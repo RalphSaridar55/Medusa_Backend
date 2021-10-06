@@ -1,37 +1,50 @@
-import React, { useState } from 'react'
-import { TouchableOpacity, View, ImageBackground } from 'react-native'
-import { Text, Button } from 'react-native-paper'
-import Header from '../../components/Header'
-import TextInput from '../../components/TextInput'
-import loginStyle from './loginStyle'
-import { emailValidator } from '../../helpers/emailValidator'
-import { passwordValidator } from '../../helpers/passwordValidator'
-import * as Device from 'expo-device';
-import Spinner from 'react-native-loading-spinner-overlay';
+import React, { useState } from "react";
+import { TouchableOpacity, View, ImageBackground } from "react-native";
+import { Text, Button } from "react-native-paper";
+import Header from "../../components/Header";
+import TextInput from "../../components/TextInput";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import loginStyle from "./loginStyle";
+import { emailValidator } from "../../helpers/emailValidator";
+import { passwordValidator } from "../../helpers/passwordValidator";
+import * as Device from "expo-device";
+import Spinner from "react-native-loading-spinner-overlay";
 import * as apiServices from "../../core/apis/apiUserServices";
 
 export default function Login({ navigation }) {
-
-  const [email, setEmail] = useState({ value: '', error: '' })
-  const [password, setPassword] = useState({ value: '', error: '' })
-  const [isAuthorized, setAuthorized] = useState(false)
-  const [isLoading, setLoading] = useState(false)
-  const [data, setData] = useState("")
+  const [email, setEmail] = useState({ value: "", error: "" });
+  const [password, setPassword] = useState({ value: "", error: "" });
+  const [isAuthorized, setAuthorized] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [data, setData] = useState("");
 
   /**
-   * 
+   *
    * @returns to login page when user credentials are validated
    */
+
+  
+
+  const storeData =async(key,value)=>{
+    try {
+      await AsyncStorage.setItem(
+        key,
+        value
+      );
+    } catch (error) {
+      // Error saving data
+    }
+  }
   const onLoginPressed = () => {
-    // Validation 
-    const emailError = emailValidator(email.value)
-    const passwordError = passwordValidator(password.value)
+    // Validation
+    const emailError = emailValidator(email.value);
+    const passwordError = passwordValidator(password.value);
 
     // Set Errors msgs
     if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError })
-      setPassword({ ...password, error: passwordError })
-      return
+      setEmail({ ...email, error: emailError });
+      setPassword({ ...password, error: passwordError });
+      return;
     }
 
     const payload = {
@@ -40,38 +53,43 @@ export default function Login({ navigation }) {
       device_id: "string",
       device_name: Device.deviceName,
       device_version: Device.osVersion,
-      device_token: "string"
-    }
+      device_token: "string",
+    };
     // Show spinner when call is made
-    setLoading(true)
+    setLoading(true);
 
     apiServices.userLogin(payload).then((res) => {
-      console.log("---->", res.access_token)
+      console.log("---->", res.access_token);
+      console.log("USER DETAILS: " , res.userDetails);
       apiServices.setToken(res.access_token);
-      setData(res)
+      setData(res);
       setAuthorized(true);
-      setLoading(false)
-      navigation.navigate(
-        "initialHome"
-      )
-    })
-  }
+      setLoading(false);``
+      storeData("company_name",res.userDetails.company_name)
+      storeData("user_id",res.userDetails.id+"")
+      storeData("user_details",JSON.stringify(res.userDetails));
+      if(res.userDetails.user_type===1 || res.userDetails.user_type===4)
+        navigation.navigate("Home");
+    });
+  };
 
   return (
-    <ImageBackground source={require('../../../assets/images/Login-bg.png')} resizeMode="cover"
+    <ImageBackground
+      source={require("../../../assets/images/Login-bg.png")}
+      resizeMode="cover"
       style={{
         flex: 1,
-      }}>
+      }}
+    >
       <View style={loginStyle.container}>
         <Spinner visible={isLoading} />
-        {!isAuthorized ?
           <View>
             <Header>Welcome back </Header>
             <TextInput
               label="Email"
               returnKeyType="next"
               value={email.value}
-              onChangeText={(text) => setEmail({ value: text, error: '' })}
+              onChangeText={(text) => setEmail({ value: text, error: "" })}
               error={email.error}
               errorText={email.error}
               autoCapitalize="none"
@@ -79,40 +97,47 @@ export default function Login({ navigation }) {
               textContentType="emailAddress"
               keyboardType="email-address"
               outlineColor="#C4C4C4"
-              theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
+              theme={{
+                colors: { primary: "#31c2aa", underlineColor: "transparent" },
+              }}
             />
             <TextInput
               label="Password"
               returnKeyType="done"
               value={password.value}
-              onChangeText={(text) => setPassword({ value: text, error: '' })}
+              onChangeText={(text) => setPassword({ value: text, error: "" })}
               error={password.error}
               errorText={password.error}
               secureTextEntry
               outlineColor="#C4C4C4"
-              theme={{ colors: { primary: '#31c2aa', underlineColor: 'transparent' } }}
-            // right={<TextInput.Icon name="eye" />}
+              theme={{
+                colors: { primary: "#31c2aa", underlineColor: "transparent" },
+              }}
+              // right={<TextInput.Icon name="eye" />}
             />
             <View style={loginStyle.forgotPassword}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ForgotPassword')}
+                onPress={() => navigation.navigate("ForgotPassword")}
               >
                 <Text style={loginStyle.forgot}>Forgot your password ?</Text>
               </TouchableOpacity>
             </View>
-            <Button mode="contained"
+            <Button
+              mode="contained"
               onPress={() => onLoginPressed()}
               style={loginStyle.loginBtn}
-            >Login
+            >
+              Login
             </Button>
-            <View >
-              <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
+            <View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Registration")}
+              >
                 <Text style={loginStyle.link}>Become a Partner </Text>
               </TouchableOpacity>
             </View>
-          </View> : <View style={loginStyle.alignWelcome}><Header>Welcome {data.userDetails.company_name}</Header></View>}
+          </View>
       </View>
     </ImageBackground>
-  )
+  );
 }
-

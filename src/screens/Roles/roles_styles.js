@@ -10,6 +10,15 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         padding: 10,
     },
+    touchable:{
+        display: "flex",
+        borderWidth: 1,
+        borderColor: "#D3D3D3",
+        marginBottom: 10,
+        backgroundColor: "#fff",
+        padding: 20,
+        borderRadius: 20,
+    },
     pic: {
         borderRadius: 30,
         width: 40,
@@ -49,10 +58,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
+        marginHorizontal:20,
         marginBottom: 10
     },
     loginText: {
-        color: "white"
+        color: "white",
+        fontSize:16
     },
 });
 

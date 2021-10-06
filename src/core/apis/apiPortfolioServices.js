@@ -1,5 +1,6 @@
 import * as ROUTE_LIST from './apis-list';
 import apiUserServices from './apiUserServices';
+import { getToken } from "./apiUserServices";
 
 export async function getCountries () {
   return await apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
@@ -7,10 +8,34 @@ export async function getCountries () {
     });
 };
 
+export async function getCategories (){
+  return await apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/category').then((res)=>{
+    console.log("FROM THE API FUNCTION: ",res.data.data.data)
+    return res.data.data.data
+  })
+}
+
+//Get seller's own categories
+export const getSellerCategories= async() =>{
+  return await getToken().then((x)=>{
+      return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller-category-filter',{
+          headers:{
+              Authorization: x
+          }
+      }).then((res)=>{
+          console.log("RES FROM THE API:",res.data.data)
+          return res.data.data
+      })
+  })
+}
+
+
 export async function getCategoryDetails () {
     //return await apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((res) => {
-       //return res.data.data.data
-       return [
+       //console.log(res.data.data.data);
+       //return res.data.data.data;
+    //})
+        return [
         {
           category_name: "Electronics",
           id: 101,
@@ -58,7 +83,35 @@ export async function getCategoryDetails () {
               sub_category_name: "Laptops",
               status: 2,
               created_at: "2021-05-18T12:58:16.536Z",
-              brands: []
+              brands: [
+                {
+                  id: 25,
+                  sub_category_id: 1,
+                  brand_name: "Samsung Laptop",
+                  status: 2,
+                  created_at: "2021-05-18T12:58:16.536Z"
+                },
+                {
+                  id: 26,
+                  sub_category_id: 1,
+                  brand_name: "Apple Laptop",
+                  status: 2,
+                  created_at: "2021-05-18T12:58:16.536Z"
+                },
+                {
+                  id: 27,
+                  sub_category_id: 1,
+                  brand_name: "Nokia Laptop",
+                  status: 2,
+                  created_at: "2021-05-18T12:58:16.536Z"
+                },
+                {
+                  id: 28,
+                  sub_category_id: 1,
+                  brand_name: "LG Laptop",
+                  status: 2,
+                  created_at: "2021-05-18T12:58:16.536Z"
+                }]
             },
             {
               id: 103,
@@ -66,7 +119,13 @@ export async function getCategoryDetails () {
               sub_category_name: "Chargers",
               status: 2,
               created_at: "2021-05-18T12:58:16.536Z",
-              brands: []
+              brands: [{
+                id: 29,
+                sub_category_id: 1,
+                brand_name: "Wireless Charger",
+                status: 2,
+                created_at: "2021-05-18T12:58:16.536Z"
+              }]
             },
             {
               id: 104,
@@ -126,7 +185,7 @@ export async function getCategoryDetails () {
               },
             ]
           },
-      ]
+      ] 
     }
 
 export async function getProductDetails (id) {
@@ -137,3 +196,16 @@ export async function getProductDetails (id) {
         return null;
     });
 };
+
+export async function updateUserProfile(data){
+  return await getToken().then((x)=>{
+    return apiUserServices.put('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/update-profile',data,{
+      headers:{
+        Authorization:x
+      }
+    }).then((res)=>{
+      console.log("RES FROM THE API:",res.data)
+      return res.data.message
+    })
+  })
+}
