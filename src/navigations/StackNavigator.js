@@ -32,11 +32,13 @@ import AdressStack from "./AdressStack";
 import OrderStack from "./OrderStack";
 import CheckoutStack from "./CheckoutStack";
 import RoleStack from "./RoleStack";
-import NotificationStack from "./NotificationStack";
+import NotificationStack from "./NotificationsStack";
+import NegotiationStack from "./NegotiationStack";
 import DashboardStack from "../screens/Dashboard/Dashboard";
+import AboutStack from "./AboutStack";
 //
 
-import Negotiations from "../screens/Negotiations/Negotiations";
+import Negotiations from "../screens/Notifications/Notification";
 import Products from "../screens/Products/product_list";
 import Orders from "../screens/OrderBook/Reserved_Orders";
 import Users from "../screens/Users/list";
@@ -90,7 +92,7 @@ function CustomDrawer(props) {
               props.changeScreen("Dashboard")
               props.navigation.navigate("Dashboard");
             }}
-            icon={() => <MaterialCommunityIcons name="view-dashboard" size={24} color={props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
+            icon={() => <MaterialCommunityIcons name="view-dashboard-outline" size={24} color={props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
           />
         </View>
           <View>
@@ -113,10 +115,27 @@ function CustomDrawer(props) {
                 props.navigation.navigate("Notifications"),{screen:'NegotiationList'}}
               }
               icon={() => (
-                <MaterialCommunityIcons
-                  name="message-text"
+                <Ionicons
+                  name="md-notifications-outline"
                   size={24}
                   color={props.screenC=="Notifications" ? "#6E91EC" : "black"}
+                />
+              )}
+            />
+          </View>
+          <View>
+            <DrawerItem
+              label="Negotiations"
+              labelStyle={props.screenC=="Negotiations" ? { color: "#6E91EC" } : { color: "black" }}
+              onPress={() =>{
+                props.changeScreen("Negotiations")
+                props.navigation.navigate("Negotiations"),{screen:'NegotiationList'}}
+              }
+              icon={() => (
+                <FontAwesome5
+                  name="handshake"
+                  size={24}
+                  color={props.screenC=="Negotiations" ? "#6E91EC" : "black"}
                 />
               )}
             />
@@ -129,26 +148,54 @@ function CustomDrawer(props) {
                 props.changeScreen("Orders")
                 props.navigation.navigate("Orders")}
               }
-              icon={() => <Ionicons name="receipt" size={24} 
+              icon={() => <Ionicons name="receipt-outline" size={24} 
               color={props.screenC=="Orders" ? "#6E91EC" : "black"} />}
             />
           </View>
-          <View>
-            <DrawerItem
-              label="Contact"
-              labelStyle={props.screenC=="Contact" ? { color: "#6E91EC" } : { color: "black" }}
-              onPress={() =>{
-                props.changeScreen("Contact")
-                props.navigation.navigate("Contact")
-              }}
-              icon={() => (
-                <MaterialCommunityIcons
-                  name="cellphone"
-                  size={24}
-                  color={props.screenC=="Contact" ? "#6E91EC" : "black"}
-                />
-              )}
-            />
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              marginLeft: 20,
+            }}
+          >
+            <CollapsibleList
+              numberOfVisibleItems={0}
+              buttonPosition="top"
+              buttonContent={
+                <View style={{ flexDirection: "row", marginVertical: 15 }}>
+                  <MaterialCommunityIcons name="information-outline" size={24} color="black" />
+                  <Text style={{ color: "black", marginLeft: 30 }}>
+                    About
+                  </Text>
+                </View>
+              }
+            >
+            <View style={{ marginLeft: 10 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate("About");
+                    props.changeScreen("About")
+                  }}
+                  style={{ flexDirection: "row", marginVertical: 10 }}>
+                  <Feather name="globe" size={24} color={props.screenC =="About"?"#6E91EC":"black"} />
+                  <Text style={props.screenC =="About"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    About us
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate("Contact");
+                    props.changeScreen("Contact")
+                  }}
+                  style={{ flexDirection: "row", marginVertical: 10 }}>
+                  <MaterialCommunityIcons name="cellphone" size={24} color={props.screenC =="Contact"?"#6E91EC":"black"} />
+                  <Text style={props.screenC =="Contact"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    Contact us
+                  </Text>
+                </TouchableOpacity>
+          </View>
+          </CollapsibleList>
           </View>
           <View
             style={{
@@ -393,8 +440,8 @@ class Nav extends Component {
         options={{ title: "" }}
       />
       <Drawer.Screen
-        name="Contact"
-        component={Contact}
+        name="About"
+        component={AboutStack}
         navigation={navigation}
         options={{ title: "" }}
       />
@@ -413,6 +460,12 @@ class Nav extends Component {
       <Drawer.Screen
         name="Notifications"
         component={NotificationStack}
+        navigation={navigation}
+        options={{ headerShown: true, title: "" }}
+      />
+      <Drawer.Screen
+        name="Negotiations"
+        component={NegotiationStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />

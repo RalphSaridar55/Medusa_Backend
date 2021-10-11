@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import Negotiations from "../screens/Negotiations/Negotiations";
+import Negotiations from "../screens/Negotiations/Negotiation";
 import NegotiationList from "../screens/Negotiations/NegotiationList";
 
 const NSTack = createStackNavigator();

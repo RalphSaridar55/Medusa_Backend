@@ -5,6 +5,20 @@ const styles = StyleSheet.create({
         // backgroundColor: "#ffffff",
 
     },
+    mainInfo:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        flex:1
+    },
+    contentContainer:{
+        flexDirection:'row'
+    },
+    imageContainer: {
+        display:'flex',
+        alignItems:'flex-start',
+        height:'100%',
+        marginRight:20
+    },  
     container: {
         paddingRight: 16,
         paddingVertical: 10,
@@ -13,6 +27,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         margin: 5,
         borderRadius: 10
+    },
+    iconContainer:{
+        backgroundColor:'lightgray',
+        borderRadius:20,
+        height:20,
+        width:20,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    iconTextContainer:{
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center'
     },
     content: {
         marginLeft: 16,
@@ -39,7 +66,7 @@ const styles = StyleSheet.create({
         color: "#808080",
     },
     name: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: "bold",
     },
     time: {
