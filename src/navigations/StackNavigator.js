@@ -35,9 +35,9 @@ import RoleStack from "./RoleStack";
 import NotificationStack from "./NotificationsStack";
 import NegotiationStack from "./NegotiationStack";
 import DashboardStack from "../screens/Dashboard/Dashboard";
+//import SellingDetail from "../screens/BuyerAccountDetails/sellingDetails";
 import AboutStack from "./AboutStack";
 //
-
 import Negotiations from "../screens/Notifications/Notification";
 import Products from "../screens/Products/product_list";
 import Orders from "../screens/OrderBook/Reserved_Orders";
@@ -53,6 +53,9 @@ const TStack = createStackNavigator();
     return()
 } */
 function CustomDrawer(props) {
+  /* const {index, routes} = props.navigation.dangerouslyGetState();
+  const currentRoute = routes[index].name; */
+  console.log('current screen', props.route);
   return (
     <DrawerContentScrollView {...props}>
       {/* <DrawerItemList {...props} /> */}
@@ -84,7 +87,7 @@ function CustomDrawer(props) {
       </View>
       {props.loggedIn ? (
         <>
-        <View>
+        {props.userType==4?<View>
           <DrawerItem
             label="Dashboard"
             labelStyle={props.screenC=="Dashboard" ? { color: "#6E91EC" } : { color: "black" }}
@@ -94,7 +97,7 @@ function CustomDrawer(props) {
             }}
             icon={() => <MaterialCommunityIcons name="view-dashboard-outline" size={24} color={props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
           />
-        </View>
+        </View>:null}
           <View>
             <DrawerItem
               label="Product"
@@ -152,51 +155,7 @@ function CustomDrawer(props) {
               color={props.screenC=="Orders" ? "#6E91EC" : "black"} />}
             />
           </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginLeft: 20,
-            }}
-          >
-            <CollapsibleList
-              numberOfVisibleItems={0}
-              buttonPosition="top"
-              buttonContent={
-                <View style={{ flexDirection: "row", marginVertical: 15 }}>
-                  <MaterialCommunityIcons name="information-outline" size={24} color="black" />
-                  <Text style={{ color: "black", marginLeft: 30 }}>
-                    About
-                  </Text>
-                </View>
-              }
-            >
-            <View style={{ marginLeft: 10 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    props.navigation.navigate("About");
-                    props.changeScreen("About")
-                  }}
-                  style={{ flexDirection: "row", marginVertical: 10 }}>
-                  <Feather name="globe" size={24} color={props.screenC =="About"?"#6E91EC":"black"} />
-                  <Text style={props.screenC =="About"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
-                    About us
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    props.navigation.navigate("Contact");
-                    props.changeScreen("Contact")
-                  }}
-                  style={{ flexDirection: "row", marginVertical: 10 }}>
-                  <MaterialCommunityIcons name="cellphone" size={24} color={props.screenC =="Contact"?"#6E91EC":"black"} />
-                  <Text style={props.screenC =="Contact"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
-                    Contact us
-                  </Text>
-                </TouchableOpacity>
-          </View>
-          </CollapsibleList>
-          </View>
+          
           <View
             style={{
               display: "flex",
@@ -260,15 +219,70 @@ function CustomDrawer(props) {
                       User Address
                     </Text>
                   </TouchableOpacity>
+                  {props.userType==4?<TouchableOpacity
+                    onPress={() => {
+                      props.navigation.navigate("Adress",{screen:"Selling"});
+                      props.changeScreen("Selling")
+                    }}
+                    style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Feather name="book" size={24} color={props.screenC =="Selling"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="Selling"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                      Selling Details
+                    </Text>
+                  </TouchableOpacity>:null}
               </View>
             </CollapsibleList>
             {/* <DrawerItem label="Settings" onPress={() => alert('Link to help')}
             icon={()=>  <Ionicons name="settings-outline" size={24} color="black" />}/> */}
           </View>
         </>
-      ) : null}
+      ) : null}<View
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        marginLeft: 20,
+      }}
+    >
+      <CollapsibleList
+        numberOfVisibleItems={0}
+        buttonPosition="top"
+        buttonContent={
+          <View style={{ flexDirection: "row", marginVertical: 15 }}>
+            <MaterialCommunityIcons name="information-outline" size={24} color="black" />
+            <Text style={{ color: "black", marginLeft: 30 }}>
+              About
+            </Text>
+          </View>
+        }
+      >
+      <View style={{ marginLeft: 10 }}>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("AboutUs");
+              props.changeScreen("About")
+            }}
+            style={{ flexDirection: "row", marginVertical: 10 }}>
+            <Feather name="globe" size={24} color={props.screenC =="About"?"#6E91EC":"black"} />
+            <Text style={props.screenC =="About"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+              About us
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("Contact");
+              props.changeScreen("Contact")
+            }}
+            style={{ flexDirection: "row", marginVertical: 10 }}>
+            <MaterialCommunityIcons name="cellphone" size={24} color={props.screenC =="Contact"?"#6E91EC":"black"} />
+            <Text style={props.screenC =="Contact"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+              Contact us
+            </Text>
+          </TouchableOpacity>
+    </View>
+    </CollapsibleList>
+    </View>
       {/* this will crash the app */}
-      {/* {props.userType==4 &&
+      {props.userType==4 &&props.isUserLoggedIn?
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -278,7 +292,7 @@ function CustomDrawer(props) {
           ><Fontisto name="arrow-swap" size={24} color="black" />
             <Text style={{ color: "black", marginLeft: 30 }}>Switch To {props.userType==4?"Buyer":"Seller"}</Text>
           </TouchableOpacity>
-        </View> } */}
+        </View>:null }
       {props.loggedIn ? (
         <View>
           <TouchableOpacity
@@ -417,19 +431,20 @@ class Nav extends Component {
     navigation.closeDrawer()
   }
 
-  createDrawer = ({ navigation }) => (
+  createDrawer = ({ navigation, route}) => (
     <Drawer.Navigator
       drawerContent={(props) => (
         <CustomDrawer
           loggedIn={this.state.isUserLoggedIn}
           {...props}
+          route={route}
           navigation={navigation}
           screenC={this.state.chosenScreen}
           changeScreen={this.changeScreen}
           closeDrawer={({navigation})=>{
             this.closeDrawer({navigation})
           }}
-          //userType={this.state.userData?.user_type}
+          userType={this.state.userData?.user_type}
         />
       )}
     >

@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
     },
     chatContainer:{
-        height:height * 0.5,
         zIndex:20,
         backgroundColor:'#fff',
         marginTop:20,

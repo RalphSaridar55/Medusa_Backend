@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         backgroundColor: "#ffffff",
-        margin: 5,
+        marginVertical:5,
+        flex:1,
         borderRadius: 10
     },
     iconContainer:{
@@ -76,7 +77,36 @@ const styles = StyleSheet.create({
     status: {
         fontSize: 12,
         color: "#698EB7"
-    }
+    },
+    totalContainer:{
+        borderRadius: 10,
+        marginVertical:20,
+        marginHorizontal:10,
+        paddingHorizontal:10,
+        paddingVertical:10,
+        flexDirection:'row',
+        display:'flex',
+        justifyContent:'space-between',
+        backgroundColor:'#fff'
+    },
+    total:{
+        fontSize:16,
+        fontWeight:'bold',
+        color:'#6E91EC',
+        textAlignVertical:'center'
+        },
+    placeOrderButton: {
+        backgroundColor: "#31C2AA",
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        padding:10
+    },
+    loginBtnText:{
+        color:'white',
+        fontSize:16,
+        fontWeight:'bold'
+    },
 });
 
 export default styles;

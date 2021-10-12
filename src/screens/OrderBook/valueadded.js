@@ -95,7 +95,7 @@ const ValueAdded = ({ navigation }) => {
         </View>
         <View style={styles.priceContainer}>
           <Text style={{ fontWeight: "bold" }}>Cost:</Text>
-          <Text>USD {total}</Text>
+          <Text style={{color:'#6E91EC'}}>USD {total}</Text>
         </View>
         <View style={{ marginVertical: 20, flex: 1 }}>
           <CollapsibleList

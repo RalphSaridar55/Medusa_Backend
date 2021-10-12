@@ -166,7 +166,9 @@ export default class EditUsers extends Component {
       console.log("PAYLOAD ",payload)
       apiServices.updateSubUser(payload).then((res) => {
         this.setState({isLoading:false});
-        Alert.alert("User Modification","User Was Modified");
+        Alert.alert("User Modification","User Was Modified",[
+          {text:"OK",onPress:()=>this.props.navigation.goBack()}
+        ]);
       });
     }
   };

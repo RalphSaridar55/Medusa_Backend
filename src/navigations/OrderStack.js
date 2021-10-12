@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Orders from '../screens/OrderBook/orders';
 import ReservedOrders from '../screens/OrderBook/Reserved_Orders';
 import Value from '../screens/OrderBook/valueadded';
+import detailedOrder from "../screens/OrderBook/order_detailed";
 
 const OStack = createStackNavigator();
 
@@ -19,6 +20,12 @@ const ProductStack = ({ navigation, route }) => {
       <OStack.Screen
         name="ReservedOrders"
         component={ReservedOrders}
+        options={{ headerShown: false }}
+        navigation={navigation}
+      />
+      <OStack.Screen
+        name="DetailedOrder"
+        component={detailedOrder}
         options={{ headerShown: false }}
         navigation={navigation}
       />

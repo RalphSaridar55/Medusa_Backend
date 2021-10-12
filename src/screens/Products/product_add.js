@@ -35,6 +35,7 @@ import TagInput from "react-native-tags-input";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -136,6 +137,7 @@ export default class AddProduct extends Component {
       variant_minqty:0,
       variant_minqty_error:0,
 
+      filter_variant_list:[],
       variant_type_list:[],
       variant_type:{},
       variant_value_list:[],
@@ -156,6 +158,14 @@ export default class AddProduct extends Component {
   }
 
   submit=()=>{
+    if(this.state.product_min_qty>this.state.product_max_qty){
+      Alert.alert("Error","Product minimum quantity is greater than maximum");
+      return;
+    }
+    if(this.state.product_downpayment>100 ||this.state.product_downpayment<0){
+      Alert.alert("Error","Product down payment can't be greater than 100 or lower than 0");
+      return;
+    }
     let filteredTags=[];
     this.state.tags.tagsArray.map((item,index)=>{
       filteredTags.push({is_existing:true,tag_id:index+1,tag_name:item})
@@ -220,11 +230,11 @@ export default class AddProduct extends Component {
           discount_end_date: 0,
           variant_by_package: this.state.variant_package_qty,
           variant_min_qty: this.state.variant_minqty,
-          variant_stock: variant_stock_qty,
+          variant_stock: this.state.variant_stock_qty,
           variant_types: [
             {
-              variant_type_id: 0,
-              variant_value_id: 0
+              variant_type_id: this.state.variant_type,
+              variant_value_id: this.state.variant_value,
             }
           ]
         },
@@ -236,8 +246,6 @@ export default class AddProduct extends Component {
         cargo_document: this.state.cargo_document.uri
     }
     SubmitData(payload);
-    if(this.state.oneIsEmpty)
-      Alert.alert("Error","Please fill all the fields");
     /* APIProduct.sellerPostProduct(payload).then((res)=>{
       Alert.alert("Product Creation",res)
     }); */
@@ -272,7 +280,7 @@ export default class AddProduct extends Component {
     APIPortfolio.getSellerCategories().then((res)=>{
       console.log("RES FROM THE FUNCTION: " ,res);
        let arr = [];
-       //console.log("CATEGORYLIST: ",res.categoryList)
+       console.log("CATEGORYLIST: ",res.categoryList)
       res.categoryList.map((item)=>{
         arr.push({value:item.category_id, label:item.category.category_name})
       })
@@ -462,6 +470,9 @@ export default class AddProduct extends Component {
           if (item.type === "picker") {
             return this.renderPicker(item, index);
           }
+          if(item.type === "date"){
+            return this.renderDate(item,index)
+          }
           if(item.type === "button"){
             return <TouchableOpacity
             onPress={()=>this.submit()}
@@ -479,7 +490,7 @@ export default class AddProduct extends Component {
     );
   };
 
-  handleCategories(type,value){
+  async handleCategories(type,value){
     switch(type){
       case 'category':
         let array = [];
@@ -500,7 +511,8 @@ export default class AddProduct extends Component {
           res.map((item)=>{
             result.push({label:item.varient_type,value:item.id})
           })
-          this.setState({variant_type_list:res})
+          console.log("RESULT BECOMES: ",result)
+          this.setState({variant_type_list:result,filter_variant_list:res})
         })
       case 'subCategory':
           let array2 = [];
@@ -515,8 +527,22 @@ export default class AddProduct extends Component {
             array2.push({label:item.brand.brand_name,value:item.brand_id})
           })
           this.setState({fetchedBrands:array2})
+      case 'variant_type':
+          //this.setState({loading:true})
+          console.log("VALUE IS: ",value,"\nLIST CONSISTS OF: ",this.state.variant_type_list)
+          this.setState({variant_type:value});
+          let ar=[];
+          let values = this.state.filter_variant_list.filter((i)=> i.id === value);
+          console.log("VARIANTS VALUE BECOMES: ",values[0])
+          values[0].varientvalue.map((item)=>{
+            ar.push({label:item.varient_value,value:item.id})
+          })
+          this.setState({variant_value_list:ar,loading:false})
+      case 'variant_value':
+          this.setState({variant_value:value})
     }
   }
+  
 
   renderDocument(item,index){
     return(
@@ -569,6 +595,12 @@ export default class AddProduct extends Component {
         </Picker>
       </View>
       )
+  }
+
+  renderDate(item,index){
+    return (
+      <RNDateTimePicker display="spinner" />
+    )
   }
 
   renderTextInput(item, index) {
@@ -638,7 +670,7 @@ export default class AddProduct extends Component {
           value={this.state[item.valueValue]}
           keyboardType={item.keyBoardType}
           multiline={item.multiline == "false" ? false : true}
-          onChangeText={(text) => this.setState({ [item.stateValue]: text })}
+          onChangeText={(text) => this.setState({ [item.valueValue]: text })}
           error={this.state[item.stateError]}
           autoCapitalize="none"
           // keyboardType={element.keyBoardType}

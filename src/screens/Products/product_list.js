@@ -245,7 +245,7 @@ export default class ProductList extends Component {
                     <ScrollView >
                         <View style={{ flexDirection: 'column', padding: 10 }} >
                             <View style={styles.contentSize}>
-                                <View style={{ flexDirection: "column", alignItems: 'center' }}>
+                                <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize}>
                                         <IconButton
                                             icon="clock"

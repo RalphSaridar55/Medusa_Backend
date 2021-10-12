@@ -23,7 +23,7 @@ export const getSellerCategories= async() =>{
               Authorization: x
           }
       }).then((res)=>{
-          console.log("RES FROM THE API:",res.data.data)
+          console.log("RES FROM THE API SELLER CATEGORY:",res)
           return res.data.data
       })
   })

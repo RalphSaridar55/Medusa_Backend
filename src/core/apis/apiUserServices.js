@@ -145,7 +145,7 @@ export const addSubUser = async (data) => {
       },
     }).then((res) => {
       console.log(res.data.data);
-      return res.data.data.message;
+      return res.data.message;
     });
   });
 };
@@ -180,7 +180,7 @@ export const deleteSubUsers = async (id) => {
 //Get Role list
 export const getRoleList = async () => {
  return await getToken().then((x) => {
-    return APIKit.get("/user/role?pageNo=1&limit=20", {
+    return APIKit.get("/user/role?pageNo=1&limit=1000&isOwnRole=true", {
       headers: {
         Authorization: x,
       }}).then((res) => {
@@ -302,5 +302,21 @@ export const userAdress = async () =>{
 
   })
 } */
+
+
+//Get seller's products
+
+export const getSellersOwnProducts = async () => {
+  return await getToken().then((x)=>{
+      return APIKit.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product_list?limit=10000&page=1',{
+          headers:{
+              Authorization: x
+          }
+      }).then((res)=>{
+          return res.data.data.data
+      });
+  });
+};
+
 
 export default APIKit;

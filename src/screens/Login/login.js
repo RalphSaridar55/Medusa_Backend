@@ -68,8 +68,10 @@ export default function Login({ navigation }) {
       storeData("company_name",res.userDetails.company_name)
       storeData("user_id",res.userDetails.id+"")
       storeData("user_details",JSON.stringify(res.userDetails));
-      if(res.userDetails.user_type===1 || res.userDetails.user_type===4)
-        navigation.navigate("Home");
+      if(res.userDetails.user_type===4 && res.userDetails.default_landing_page=="DASHBOARD")
+        navigation.navigate("Dashboard");
+      else
+        navigation.navigate("Home")
     });
   };
 

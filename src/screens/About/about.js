@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Divider, Headline } from "react-native-paper";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import aboutStyle from "./aboutStyle";
 import { Image, Dimensions } from "react-native";
 import { Paragraph, List } from "react-native-paper";
@@ -8,6 +8,14 @@ import { Paragraph, List } from "react-native-paper";
 const BannerWidth = Dimensions.get("window").width;
 const BannerHeight = 200;
 const countries = ['Lebanon','India','Bahrain','Dubai','USA','UK'];
+const faq = [
+  {question:"Qestion 1",answer:"Answer Answer Answer Answer Answer Answer Answer "},
+  {question:"Qestion 2",answer:"Answer Answer Answer Answer Answer Answer Answer "},
+  {question:"Qestion 3",answer:"Answer Answer Answer Answer Answer Answer Answer "},
+  {question:"Qestion 4",answer:"Answer Answer Answer Answer Answer Answer Answer "},
+  {question:"Qestion 5",answer:"Answer Answer Answer Answer Answer Answer Answer "},
+  {question:"Qestion 6",answer:"Answer Answer Answer Answer Answer Answer Answer "},
+]
 const images = [
   "https://images.zoodmall.com/app/banner/main_banner_60ebe5af36df7.jpg",
   "https://images.zoodmall.com/app/banner/main_banner_60dc615c5fceb.jpg",
@@ -93,16 +101,25 @@ export default class About extends Component {
                   })}
                 </View>
               </List.Accordion>
-              {/* <Divider></Divider>
               <List.Accordion
+                theme={{
+                  colors: { primary: "#6E91EC", underlineColor: "transparent" },
+                }}
                 style={{ backgroundColor: "#fff" }}
-                title="Countries We Serve"
-                left={(props) => <List.Icon {...props} icon="blur" />}
+                title="FAQ"
+                left={(props) => <List.Icon {...props} icon="comment-question-outline" />}
               >
-                <List.Item title="First item" />
-                <List.Item title="Second item" />
+                <View style={{paddingVertical:10}}>
+                {faq.map((item,index)=>{
+                  return(
+                    <View key={index}>
+                      <Text style={{fontWeight:'bold',marginBottom:10}}>{item.question}</Text>
+                      <Text style={{marginBottom:20}}>{item.answer}</Text>
+                    </View>
+                  )
+                })}
+                </View>
               </List.Accordion>
-              <Divider></Divider> */}
             </List.Section>
           </View>
         </ScrollView>

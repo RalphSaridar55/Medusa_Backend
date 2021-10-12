@@ -31,26 +31,27 @@ const AdressList = (props) => {
       current: false,
     },
   ];
-  const [deleted,setDeleted] = useState(false);
+  const [deleted, setDeleted] = useState(false);
   const [adressList, setAdressList] = useState();
   const [countries, setCountries] = useState([]);
   const [current, SetCurrent] = useState([]);
   const [userId, setUserId] = useState("");
-  const [isVisible,setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
 
   const handleAddresses = useCallback(() => {
     console.log("RUNNING USEEFFECT");
-    setIsVisible(true)
+    setIsVisible(true);
     apiServices.getCountries().then((res) => {
+      console.log("COUNTRIES DATA: ", res);
       setCountries(res);
     });
     apiServices.getAddresses().then((res) => {
       console.log("API DATA", res.data);
       //getUserId(res
       console.log("RESULT: ", res.data);
-      setAdressList(res.data)
-      setIsVisible(false)
-     /*  
+      setAdressList(res.data);
+      setIsVisible(false);
+      /*  
       let arr=[]
       let arr2=[]
       res.data.map((i)=>{
@@ -69,12 +70,12 @@ const AdressList = (props) => {
     });
   }, []);
 
-       useEffect(()=>{
-        handleAddresses();
-    },[])
+  useEffect(() => {
+    handleAddresses();
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = props.navigation.addListener('focus', () => {
+    const unsubscribe = props.navigation.addListener("focus", () => {
       handleAddresses();
       //Put your Data loading function here instead of my loadData()
     });
@@ -88,18 +89,18 @@ const AdressList = (props) => {
 
   const deleteAdress = (id) => {
     //api function
-    console.log("DATATYPE:",typeof(id))
-    setIsVisible(true)
-    let payload={
-      address_id:id
-    }
-    apiServices.deleteAddresses(payload).then((res)=>{
+    console.log("DATATYPE:", typeof id);
+    setIsVisible(true);
+    let payload = {
+      address_id: id,
+    };
+    apiServices.deleteAddresses(payload).then((res) => {
       console.log(res);
-      setIsVisible(false)
+      setIsVisible(false);
       setDeleted(!deleted);
-    })
+    });
 
-    setAdressList(adressList.filter(i=>i.id!=id))
+    setAdressList(adressList.filter((i) => i.id != id));
   };
 
   const fetchData = () => {};
@@ -132,7 +133,7 @@ const AdressList = (props) => {
         justifyContent: "center",
       }}
     >
-      <Spinner visible={isVisible}/>
+      <Spinner visible={isVisible} />
       <Headline style={{ margin: 15, marginTop: 20, color: "#698EB7" }}>
         Addresses
       </Headline>
@@ -153,7 +154,8 @@ const AdressList = (props) => {
             </View>
             <View>
               <Text style={styles.listCountry}>
-                {countries.filter((s)=>s.value ===i.country_id)[0].label}
+                {
+                  countries?.filter((s) => s.value === i.country_id)[0]?.label}
               </Text>
               <Text style={styles.listCity}>{i.city}</Text>
               <Text style={styles.listStreet}>{i.street.substr(0, 100)}</Text>

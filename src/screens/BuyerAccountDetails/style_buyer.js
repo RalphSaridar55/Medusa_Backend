@@ -44,6 +44,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flex: 1
     },
+    sellingButton:{
+        backgroundColor:'#B8B8B8',
+        marginRight:0,
+        display:'flex',
+        justifyContent:'space-between',
+        flexDirection:'row',
+        paddingHorizontal:20
+    },
     Dis_Btn: {
         backgroundColor: "#31C2AA",
         borderRadius: 25,

@@ -4,32 +4,60 @@ import { createStackNavigator } from "@react-navigation/stack";
 import AdressList from "../screens/BuyerAccountDetails/addresses_list";
 import BuyerAccountDetails from "../screens/BuyerAccountDetails/buyer_account_details";
 import Addresses from "../screens/BuyerAccountDetails/addresses";
+import SellingDetail from "../screens/BuyerAccountDetails/sellingDetails";
+import DetailedProduct from "../screens/BuyerAccountDetails/detailedProduct";
 
+const AStack = createStackNavigator();
 const PStack = createStackNavigator();
 
-const ProductStack = ({ navigation, route }) => {
-  return (
-    <PStack.Navigator>
+const ProductStack = ({navigation}) => {
+  return(
+  <PStack.Navigator>
       <PStack.Screen
+        name="SellingDetails"
+        component={SellingDetail}
+        options={{ headerShown: false }}
+        navigation={navigation}
+        />
+      <PStack.Screen
+        name="DetailedProduct"
+        component={DetailedProduct}
+        options={{ headerShown: false }}
+        navigation={navigation}
+        />
+  </PStack.Navigator>
+  )
+}
+
+const AdressStack = ({ navigation, route }) => {
+  return (
+    <AStack.Navigator>
+      <AStack.Screen
         name="List"
         component={AdressList}
         options={{ headerShown: false }}
         navigation={navigation}
       />
-      <PStack.Screen
+      <AStack.Screen
         name="Addresses"
         component={Addresses}
         options={{ headerShown: false }}
         navigation={navigation}
       />
-      <PStack.Screen
+      <AStack.Screen
         name="Details"
         component={BuyerAccountDetails}
         options={{ headerShown: false }}
         navigation={navigation}
       />
-    </PStack.Navigator>
+      <AStack.Screen
+        name="Selling"
+        component={ProductStack}
+        options={{ headerShown: false }}
+        navigation={navigation}
+      />
+    </AStack.Navigator>
   );
 };
 
-export default ProductStack;
+export default AdressStack;

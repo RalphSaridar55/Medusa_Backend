@@ -60,7 +60,27 @@ export let addElements3 = [
         returnKeyType: 'next',
         stateError: 'variant_discount_error',
         keyBoardType:"numeric",
+    }, 
+    {
+        type: 'Date',
+        label: 'Start Date',
+        stateValue: 'startdate',
     },
+    {
+        type: 'Date',
+        label: 'End Date',
+        stateValue: 'enddate',
+    },
+    /* {
+        type: 'switchInput',
+        label: 'Variant Discount',
+        placeholder:'Quantity',
+        stateValue: 'variant_discount_switch',
+        valueValue:'variant_discount',
+        returnKeyType: 'next',
+        stateError: 'variant_discount_error',
+        keyBoardType:"numeric",
+    }, */
     {
         type:'button'
     }

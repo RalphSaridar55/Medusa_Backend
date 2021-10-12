@@ -236,6 +236,7 @@ class Addresses extends Component {
             onValueChange={(itemValue, itemIndex) =>
               this.setState({country:itemValue})
             }>
+              <Picker.Item key={0} label="Country" value={0} />
             {this.state.fetchedCountries.length>0?
             this.state.fetchedCountries.map((item,index)=>(
               <Picker.Item key={index} label={item.label} value={item.value}/>

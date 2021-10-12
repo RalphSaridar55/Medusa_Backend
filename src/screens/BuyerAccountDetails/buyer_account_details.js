@@ -219,8 +219,6 @@ class BuyreAccount extends Component {
       this.state.passwordError ||
       this.state.confirmPasswordError ||
       this.state.oldPassword.length<1||
-      this.state.password.length<1||
-      this.state.confirmPassword.length<1||
       this.state.websiteError ||
       this.state.codeError ||
       this.state.phoneError ||
@@ -243,7 +241,7 @@ class BuyreAccount extends Component {
             owner_country_code:this.state.code,
             owner_mobile_number:this.state.phone,
             old_password:this.state.oldPassword,
-            password:this.state.password,
+            password:this.state.password.length<1?this.state.oldPassword:this.state.password,
             website:this.state.website,
             registered_address:this.state.address,
             country_id:this.state.country,

@@ -204,7 +204,6 @@ const Negotiations = () => {
               </View>
             ))}
           </ScrollView>
-        </View>
         <View style={styles.inputContainer}>
           <TextInput
             label="Price"
@@ -221,37 +220,6 @@ const Negotiations = () => {
               colors: { primary: "#31c2aa", underlineColor: "transparent" },
             }}
           />
-          {/* <CollapsibleList
-            style={{ marginVertical: 10 }}
-            wrapperStyle={{
-              borderWidth: 0,
-              borderColor: "#A6A6A6",
-              borderRadius: 5,
-            }}
-            buttonPosition="top"
-            numberOfVisibleItems={0}
-            buttonContent={
-              <View
-                style={[
-                  styles.docPicker,
-                  {
-                    borderColor: "#A6A6A6",
-                    backgroundColor: "#fff",
-                    marginVertical: 0,
-                  },
-                ]}
-              >
-                <Text>{reply}</Text>
-              </View>
-            }
-          >
-            {replies?.map((item) => (
-              <View>
-                <Text>{item.negotiate_reply}</Text>
-              </View>
-            ))}
-          </CollapsibleList> */}
-          
       <View
         style={{
           borderWidth: 1,
@@ -281,6 +249,7 @@ const Negotiations = () => {
                 <Text style={styles.loginBtnText}>Send</Text>
               </TouchableOpacity>
       </View>
+        </View>
       </View>
     </ImageBackground>
   );

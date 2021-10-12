@@ -49,7 +49,7 @@ const List =({navigation}) =>{
     return <ScrollView style={styles.chatsContainer}>{data.map((item,key)=>{
       return(
         <TouchableOpacity key={key} style={styles.containerChat}
-        onPress={()=>navigation.navigate("Notifications",{screen:"Negotiation"})}>
+        onPress={()=>navigation.navigate("Negotiation")}>
         <View style={styles.pictureAndUsernameContainer}>
           <View
             style={[

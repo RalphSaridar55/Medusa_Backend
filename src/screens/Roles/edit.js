@@ -99,6 +99,7 @@ export default class AddRole extends Component {
     deleteRole = (id) =>{
         apiServices.deleteRole(id).then((res)=>{
             console.log("From the component function:" ,res);
+            this.props.navigation.goBack();
         })
     }
 
@@ -108,8 +109,10 @@ export default class AddRole extends Component {
         else{
             let formed_permissions = []
             this.state.permission.map((item)=>{
-                formed_permissions.push(item.value)
+                if(item.value)
+                    formed_permissions.push(item.value)
             })
+
             let payload = {
                 role_name:this.state.role,
                 permission_id:formed_permissions,
@@ -120,7 +123,7 @@ export default class AddRole extends Component {
             apiServices.editRole(payload).then((res)=>{
                 this.setState({isLoading:false});
                 console.log("RESULT FROM API: ",res)
-                Alert.alert("Role",res)
+                Alert.alert("Role",res,[{text:"OK",onPress:()=>this.props.navigation.goBack()}])
             })
             // .catch(e=>{
             //     Alert.alert("Role Error",e);
