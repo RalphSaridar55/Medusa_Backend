@@ -41,121 +41,99 @@ const screenheight = Dimensions.get("screen").height;
 
 export default class AddProduct extends Component {
   constructor(props) {
+
     super(props);
     this.state = {
-      oneIsEmpty: false,
-      product_name: "",
-      product_name_error: false,
-      product_sku: "",
-      product_sku_error: false,
-      product_weight: 0,
-      product_weight_error: false,
-      product_price: 0,
-      product_name_error: false,
-      product_offer_price: 0,
-      product_offer_price_error: false,
-      product_width: 0,
-      product_width_error: false,
-      product_height: 0,
-      product_height_error: false,
-      product_depth: 0,
-      product_depth_error: false,
-      product_description: "",
-      product_description_error: false,
-      product_negotiable: false,
-      product_shipping: false,
-      product_visible: false,
-      product_discount: false,
-      product_warranty: "",
-      product_warranty_error: false,
-      tags: {
-        tag: "",
-        tagsArray: [],
-      },
+      product_min_qty: 0,
+      product_min_qty_error: false,
+      product_max_qty: 0,
+      product_max_qty_error: false,
+      product_reserve_qty: 0,
+      product_reserve_qty_error: false,
+      product_downpayment: 0,
+      product_downpayment_error: false,
+      product_return_switch: false,
+      product_return: 0,
+      product_return_error: false,
+      product_cancel_switch: false,
+      product_cancel: 0,
+      product_cancel_error: false,
+      product_conditions_list: [
+        { label: "New", value: 1 },
+        { label: "Dusty", value: 2 },
+        { label: "Packaging Damaged", value: 3 },
+      ],
+      product_condition: 1,
 
-      product_services_fetched_api: [],
-      product_services_fetched: [],
-      product_services: [],
+      product_packages: 0,
+      product_packages_error: false,
 
-      forFilteringCategories: {},
-      fetchedCategories: [],
-      category: null,
-      fetchedSubCategories: [],
-      subCategory: null,
-      fetchedBrands: [],
-      brand: null,
+      cargo_type_list: [],
+      cargo_type: {},
+
+      product_stacking: 0,
+      product_stacking_error: false,
+      product_package_type: "",
+      product_package_type_error: false,
+
+      company_document: "",
+      company_document_Error: true,
+      cargo_document: "",
+      cargo_document_Error: true,
+
       loading: true,
-      images: [],
+      dataSentFromScreen: {},
     };
   }
 
   submit = () => {
-    this.setState({ loading: true });
-    let arrayOfImages = [];
-    let arrayOfTags = [];
-    let arrayOfServices = [];
-
-    //changing data form for the api post call
+    this.setState({loading:true})
     if (
-      this.state.images.length < 1 ||
-      this.state.tags.tagsArray.length < 1 ||
-      this.state.product_services.length < 1
+      parseInt(this.state.product_min_qty) >
+      parseInt(this.state.product_max_qty)
     ) {
-      Alert.alert("Error", `Images, Tags and Services must not be empty`);
-      this.setState({ loading: false });
+      Alert.alert(
+        "Error",
+        "Please make sure the maximum quantity is greater than the minimum"
+      );
+      return;
+    } else if (this.state.product_downpayment > 100) {
+      Alert.alert(
+        "Error",
+        "Please make sure the down payment rate is lower than 100"
+      );
+      return;
+    } else if (
+      (this.state.product_cancel_switch && this.state.product_cancel < 1) ||
+      (this.state.product_return_switch && this.state.product_return < 1)
+    ) {
+      Alert.alert(
+        "Error",
+        "Please make sure return and cancel day have positive values if switched on"
+      );
       return;
     } else {
-      this.state.product_services.map((item, index) => {
-        let result = this.state.product_services_fetched_api.find(
-          (element) => element.id === item.value
-        );
-        arrayOfServices.push({
-          service_id: result.id,
-          service_name: result.service_name,
-          service_cost: result.service_cost,
-          requested_document: result.requested_document,
-        });
-      });
-
-      this.state.images.map((item, index) => {
-        arrayOfImages.push({
-          is_existing: true,
-          media: item,
-        });
-      });
-
-      this.state.tags.tagsArray.map((item, index) => {
-        arrayOfTags.push({
-          is_existing: true,
-          tag_id: index + 1,
-          tag_name: item,
-        });
-      });
-
       let payload = {
-        product_name: this.state.product_name,
-        product_sku: this.state.product_sku,
-        weight: parseInt(this.state.product_weight),
-        price: parseInt(this.state.product_price),
-        offered_price: parseInt(this.state.product_offer_price),
-        category_id: parseInt(this.state.category),
-        sub_category_id: parseInt(this.state.subCategory),
-        brand_id: parseInt(this.state.brand),
-        width: parseInt(this.state.product_width),
-        height: parseInt(this.state.product_height),
-        depth: parseInt(this.state.product_depth),
-        description: this.state.product_description,
-        warranty_details: this.state.product_warranty,
-        is_negotiable: this.state.product_negotiable,
-        shipping_included: this.state.product_shipping,
-        is_visible: this.state.product_visible,
-        is_discount: this.state.product_discount,
-        services:arrayOfServices,
-        images: arrayOfImages,
-        tags: arrayOfTags,
+        min_purchase_qty: parseInt(this.state.product_min_qty),
+        max_purchase_qty: parseInt(this.state.product_max_qty),
+        max_reserve_qty: parseInt(this.state.product_reserve_qty),
+        down_payment: parseInt(this.state.product_downpayment),
+        return_allowed: this.state.product_return_switch,
+        cancel_allowed: this.state.product_cancel_switch,
+        return_day: parseInt(this.state.product_return),
+        cancel_day: parseInt(this.state.product_cancel),
+        document: this.state.company_document,
+        product_condition: this.state.product_condition,
+        no_of_package: parseInt(this.state.product_packages),
+        package_type: this.state.product_package_type,
+        cargo_type_id: this.state.cargo_type,
+        cargo_type_name: this.state.cargo_type_list.filter(
+          (item) => item.value === this.state.cargo_type
+        )[0].label,
+        stacking: parseInt(this.state.product_stacking),
+        cargo_document: this.state.cargo_document,
       };
 
-      console.log("PAYLOAD IS : ", payload);
       for (var key of Object.keys(payload)) {
         console.log(key + " --> " + payload[key]);
         console.log("typeof" + typeof payload[key]);
@@ -170,7 +148,11 @@ export default class AddProduct extends Component {
               return;
             }
           case "number":
-            if (payload[key] < 1) {
+            if (
+              payload[key] < 1 &&
+              key != "return_day" &&
+              key != "cancel_day"
+            ) {
               Alert.alert(
                 "Error",
                 `${key.replace(/_/g, " ")}'s input must be a positive number`
@@ -178,83 +160,52 @@ export default class AddProduct extends Component {
               this.setState({ loading: false });
               return;
             }
+          case "boolean":
+            if (key == "return_allowed" || key == "cancel_allowed") {
+              if (
+                payload["return_allowed"] == true &&
+                payload["return_day"] < 1
+              ) {
+                Alert.alert(
+                  "Error",
+                  `return days' input must be a positive number`
+                );
+              } else if (
+                payload["cancel_allowed"] == true &&
+                payload["cancel_day"] < 1
+              ) {
+                Alert.alert(
+                  "Error",
+                  `cancel days' input must be a positive number`
+                );
+              } else break;
+            }
           case "object":
             break;
         }
       }
-
+      let data = {...this.props.route.params,...payload}
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-      this.props.navigation.navigate("Add2", payload);
+      this.props.navigation.navigate("Add3",data)
     }
   };
 
   async componentDidMount() {
+    console.log("ROUTE PARAMS: ", this.props.route.params);
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
-    APIProduct.getServices().then((res) => {
-      console.log("SERVICES FROM API: ", res);
+    APIProduct.getCargoTypeList().then((res) => {
+      console.log("CARGO DATA: ", res);
       let array = [];
       res.map((item) => {
-        array.push({
-          value: item.id,
-          label: item.service_name,
-          service_cost: item.service_cost,
-          requested_doc: item.requested_doc,
-        });
+        array.push({ value: item.id, label: item.cargo_type_options });
       });
-      console.log("RES==>", res);
       this.setState({
-        product_services_fetched: array,
-        product_services_fetched_api: res,
-      });
-    });
-    APIPortfolio.getSellerCategories().then((res) => {
-      console.log("RES FROM THE FUNCTION: ", res);
-      let arr = [];
-      console.log("CATEGORYLIST: ", res.categoryList);
-      res.categoryList.map((item) => {
-        arr.push({
-          value: item.category_id,
-          label: item.category.category_name,
-        });
-      });
-      console.log("ARRAY BECOMES: ", arr);
-      console.log("RAN");
-      this.setState({
-        fetchedCategories: arr,
-        forFilteringCategories: res,
+        cargo_type_list: array,
         loading: false,
+        dataSentFromScreen: this.props.route.params,
       });
     });
-  }
-
-  chooseImages = async (type) => {
-    let permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("Permission to access camera roll is required!");
-      return;
-    }
-
-    let pickerResult = await ImagePicker.launchImageLibraryAsync();
-    if (pickerResult.cancelled === true) {
-      return;
-    }
-    if (type == "product") {
-      let ar = this.state.images;
-      ar.push(pickerResult.uri);
-      this.setState({ images: ar });
-    } else if (type == "variant") {
-      this.setState({ variantImage: pickerResult.uri });
-    }
-  };
-
-  removePic(id) {
-    let res = this.state.images.filter((item) => {
-      return item != id;
-    });
-    this.setState({ images: res });
   }
 
   pickDocument = async (e, i) => {
@@ -267,13 +218,16 @@ export default class AddProduct extends Component {
       );
       this.setState({ [e]: true });
     } else {
-      //console.log(result);
+      console.log("DOC: ", result);
       try {
-        this.setState({ [i]: result, [e]: false });
+        this.setState({ [i]: result.uri, [e]: false });
       } catch (error) {
         console.log(error);
       }
     }
+    /* e.typeDoc==="Trade"?console.log("test"):console.log(123);
+        this.setState({ docs: result.uri })
+        alert(result.uri); */
   };
 
   drawImages = () => {
@@ -367,26 +321,25 @@ export default class AddProduct extends Component {
     );
   };
 
-  drawScreenOne = () => {
+  drawScreenTwo = () => {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
-          {this.drawImages()}
-          {addElements.map((item, index) => {
+          {addElements2.map((item, index) => {
             if (item.type == "textInput") {
               return this.renderTextInput(item, index);
             }
             if (item.type === "picker") {
               return this.renderPicker(item, index);
             }
-            if (item.type === "switch") {
-              return this.renderSwitch(item, index);
+            if (item.type === "switchInput") {
+              return this.renderSwitchInput(item, index);
             }
             if (item.type === "checkbox") {
               return this.renderCheckBox(item, index);
             }
-            if (item.type == "tags") {
-              return this.renderTag(item, index);
+            if (item.type == "document") {
+              return this.renderDocument(item, index);
             }
             if (item.type === "button") {
               return (
@@ -404,49 +357,29 @@ export default class AddProduct extends Component {
     );
   };
 
-  async handleCategories(type, value) {
-    switch (type) {
-      case "category":
-        let array = [];
-        console.log("VALUE: ", value);
-        let res = this.state.forFilteringCategories.subCategoryList.filter(
-          (item) => {
-            if (item.subCategory.category_id == value)
-              return {
-                label: item.subCategory.sub_category_name,
-                value: item.subCategory.id,
-              };
-          }
-        );
-        console.log("RESULT ARRAY IS: ", res);
-        res.map((item) => {
-          array.push({
-            label: item.subCategory.sub_category_name,
-            value: item.sub_category_id,
-          });
-        });
-        this.setState({ fetchedSubCategories: array });
-      case "subCategory":
-        let array2 = [];
-        console.log("VALUE: ", value);
-        let res2 = this.state.forFilteringCategories.brandList.filter(
-          (item) => {
-            if (item.brand_id == value)
-              return { label: item.brand.brand_name, value: item.brand_id };
-          }
-        );
-        console.log("RESULT ARRAY IS: ", res2);
-        res2.map((item) => {
-          array2.push({ label: item.brand.brand_name, value: item.brand_id });
-        });
-        this.setState({ fetchedBrands: array2 });
-      case "brand":
-        this.setState({ brand: item });
-    }
+  renderDocument(item, index) {
+    return (
+      <View key={index}>
+        <TouchableOpacity
+          color="#6E91EC"
+          icon="file"
+          mode="outlined"
+          onPress={() => this.pickDocument(item.stateError, item.stateValue)}
+          style={styles.document}
+        >
+          <AntDesign name="file1" size={24} color="#6E91EC" />
+          <Text style={{ color: "gray" }}>{item.typeDoc}</Text>
+          {this.state[item.stateError] ? (
+            <AntDesign name="closecircle" size={24} color="red" />
+          ) : (
+            <AntDesign name="checkcircle" size={24} color="green" />
+          )}
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   renderPicker(item, index) {
-    /* if(this.state[item.items].length>0) */
     return (
       <View
         key={index}
@@ -467,13 +400,18 @@ export default class AddProduct extends Component {
           prompt={item.label}
           onValueChange={(itemValue, itemIndex) => {
             this.setState({ [item.stateValue]: itemValue });
-            this.handleCategories(item.stateValue, itemValue);
+            if (item.stateValue == "product_condition") {
+              console.log(
+                "ITEM VALUE:",
+                itemValue,
+                "\nITEM INDEX:" , itemIndex
+              );
+            }
           }}
         >
-          {this.state[item.items].length > 0 &&
-            this.state[item.items].map((it, index2) => (
-              <Picker.Item label={it.label} value={it.value} key={index2} />
-            ))}
+          {this.state[item.items].map((it, index2) => (
+            <Picker.Item label={it.label} value={it.value} key={index2} />
+          ))}
         </Picker>
       </View>
     );
@@ -495,6 +433,7 @@ export default class AddProduct extends Component {
         onChangeText={(text) => this.setState({ [item.stateValue]: text })}
         error={this.state[item.stateError]}
         autoCapitalize="none"
+        // keyboardType={element.keyBoardType}
         outlineColor="#C4C4C4"
         onBlur={() => {
           if (
@@ -518,49 +457,49 @@ export default class AddProduct extends Component {
     );
   }
 
-  renderSwitch(item, index) {
+  renderSwitchInput(item, index) {
     return (
       <View style={styles.switchContainer} key={index}>
-        <Text style={styles.switchText}>{item.label}</Text>
+        <TextInput
+          style={{
+            backgroundColor: "#fff",
+            marginVertical: 10,
+            flex: 1,
+          }}
+          label={item.label}
+          placeholder={item.placeholder}
+          disabled={!this.state[item.stateValue]}
+          value={this.state[item.valueValue]}
+          keyboardType={item.keyBoardType}
+          multiline={item.multiline == "false" ? false : true}
+          onChangeText={(text) => this.setState({ [item.valueValue]: text })}
+          error={this.state[item.stateError]}
+          autoCapitalize="none"
+          // keyboardType={element.keyBoardType}
+          outlineColor="#C4C4C4"
+          onBlur={() => {
+            if (
+              this.state[item.stateValue] &&
+              this.state[item.valueValue].length < 0
+            )
+              this.setState({
+                [item.stateError]: true,
+              });
+            else
+              this.setState({
+                [item.stateError]: false,
+              });
+          }}
+          theme={{
+            colors: { primary: "#31c2aa", underlineColor: "transparent" },
+          }}
+        />
         <Switch
           value={this.state[item.stateValue]}
           onValueChange={(i) => {
             //console.log("CHOSEN: ",i);
             this.setState({ [item.stateValue]: i });
           }}
-        />
-      </View>
-    );
-  }
-
-  renderTag(item, index) {
-    return (
-      <View style={{ marginVertical: 10 }} key={index}>
-        <TagInput
-          style={[
-            styles.docPicker,
-            {
-              borderColor: "#A6A6A6",
-              backgroundColor: "#fff",
-              marginVertical: 0,
-              marginHorizontal: 10,
-              flex: 1,
-            },
-          ]}
-          placeholder="Tags *"
-          onBlur={() => {
-            if (this.state[item.stateValue].length < 1)
-              this.setState({ [item.stateError]: true, oneIsEmpty: true });
-            else this.setState({ [item.stateError]: true, oneIsEmpty: false });
-          }}
-          deleteElement={
-            <Ionicons name="md-close-sharp" size={24} color="white" />
-          }
-          tagsViewStyle={{ marginHorizontal: 10 }}
-          tagStyle={{ backgroundColor: "#698EB7", paddingVertical: 10 }}
-          tagTextStyle={{ color: "white" }}
-          updateState={(state) => this.setState({ [item.stateValue]: state })}
-          tags={this.state[item.items]}
         />
       </View>
     );
@@ -620,16 +559,16 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>Product Info</Text>
+          <Text style={styles.headerText}>Shipping Info</Text>
           <Progress.Bar
-            progress={0}
+            progress={0.33}
             color="#6E91EC"
             width={
               screenwidth * 0.45
             } /* indeterminateAnimationDuration={1000} indeterminate={true} */
           />
         </View>
-        {this.drawScreenOne()}
+        {this.drawScreenTwo()}
       </SafeAreaView>
     );
   }

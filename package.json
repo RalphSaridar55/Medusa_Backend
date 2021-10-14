@@ -54,6 +54,7 @@
     "react-native-multiple-select": "^0.5.7",
     "react-native-pager-view": "^5.4.6",
     "react-native-paper": "^4.9.2",
+    "react-native-progress": "^5.0.0",
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
@@ -68,7 +69,8 @@
     "react-native-vector-icons": "^8.1.0",
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.4",
-    "react-navigation-stack": "^2.10.4"
+    "react-navigation-stack": "^2.10.4",
+    "rn-select-date-range": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

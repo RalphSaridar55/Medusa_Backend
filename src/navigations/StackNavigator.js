@@ -55,7 +55,7 @@ const TStack = createStackNavigator();
 function CustomDrawer(props) {
   /* const {index, routes} = props.navigation.dangerouslyGetState();
   const currentRoute = routes[index].name; */
-  console.log('current screen', props.route);
+  //console.log('current screen', props.route);
   return (
     <DrawerContentScrollView {...props}>
       {/* <DrawerItemList {...props} /> */}

@@ -165,6 +165,17 @@ class BuyreAccount extends Component {
 
   _discardAction = () => {
     console.log("running");
+    for(var key of Object.keys(this.state)){
+      if(typeof(this.state[key]) ==="boolean"){
+        this.setState({...this.state,[key]:false})
+      }
+      else if(typeof(this.state[key]) ==="string"){
+        this.setState({...this.state,[key]:""})
+      }
+      else if(typeof(this.state[key]) ==="number"){
+        this.setState({...this.state,[key]:0})
+      }
+    }
     this.setState({
       email: "",
       emailError: false,
@@ -215,10 +226,8 @@ class BuyreAccount extends Component {
   _ApplyChanges = () => {
     if (
       this.state.emailError ||
-      this.state.oldPasswordError ||
       this.state.passwordError ||
       this.state.confirmPasswordError ||
-      this.state.oldPassword.length<1||
       this.state.websiteError ||
       this.state.codeError ||
       this.state.phoneError ||
@@ -230,6 +239,8 @@ class BuyreAccount extends Component {
       this.state.addressError
     )
       Alert.alert("Edit Error", "Please fill the inputs correctly");
+    else if(this.state.oldPassword.length<1 || this.state.oldPasswordError )
+      Alert.alert("Edit Error","Please enter your password")
     else if(this.state.companyError ||
     this.state.tradingError ){
         Alert.alert("Edit Error", "Please attach the required files");
@@ -262,28 +273,7 @@ class BuyreAccount extends Component {
             this.setState({spinnerVisible:false})
         })
     }
-    /*  for (const [key, value] of Object.entries(this.state)) {
-                if(i%2==0){
-                    i++;
-                    console.log(`${key}: ${value}`); */
-    /* if(value.length<1){
-                        Alert.alert("Input Error","Please fill all inputs");
-                        return
-                    }
-                    else if(this.state.password !== this.state.confirmPassword){
-                        Alert.alert("Passwords Error","Both passwords don't match");
-                        return
-                    } */
-    /*                 if(this.state.key.length<1)
-                    Alert.alert("Input Error","Please fill all inputs"); */
-
-    /*             if((this.state.password === this.state.confirmPassword)){
-                this.props.navigation.navigate('Home');
-            }
-            else{
-                this.setState({password:'',confirmPassword:''});
-                Alert.alert("Passwords Error","Both passwords don't match");
-            } */
+    
   };
 
   render() {
@@ -413,7 +403,7 @@ class BuyreAccount extends Component {
             <TextInput
               error={this.state.oldPasswordError}
               mode="outlined"
-              label="Old Password*"
+              label="Password*"
               secureTextEntry={this.state.hideOldPassword}
               outlineColor="#C4C4C4"
               onChangeText={(e) => this.setState({ oldPassword: e })}

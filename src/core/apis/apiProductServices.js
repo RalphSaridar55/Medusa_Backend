@@ -56,3 +56,16 @@ export const getVarientTypes= async(id) =>{
         })
     })
 }
+
+//Post a new product
+export const createProduct = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.post(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            console.log("RES FROM THE API:",res.data.message)
+        })
+    })
+}

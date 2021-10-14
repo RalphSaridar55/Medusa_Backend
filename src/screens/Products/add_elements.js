@@ -144,4 +144,8 @@ export let addElements = [
         stateValue: 'product_services',
         items:'product_services_fetched',
     },
+    {
+        type:'button',
+        label:'Next'
+    }
 ]

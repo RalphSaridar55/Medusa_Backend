@@ -108,4 +108,8 @@ export let addElements2 = [
         stateError: 'cargo_document_Error',
         stateErrorText: 'cargo_document_Error',
     },
+    {
+        type:'button',
+        label:'Next'
+    }
 ]

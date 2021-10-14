@@ -1,6 +1,35 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet , Dimensions} from "react-native";
+
 
 const styles = StyleSheet.create({
+    progressBarContainer:{
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        paddingHorizontal:20,
+        paddingVertical:20
+    },
+    container: {
+      margin: 50,
+    },
+    selectedDateContainerStyle: {
+      height: 35,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#6E91EC",
+    },
+    selectedDateStyle: {
+      fontWeight: "bold",
+      color: "white",
+    },
+    headerText:{
+        fontSize: 21,
+        color: "#6E91EC",
+        fontWeight: 'bold',
+        marginBottom: 5
+    },
     imgContainer: {
         flex: 1,
         backgroundColor:'#E9F3FF'
@@ -9,6 +38,15 @@ const styles = StyleSheet.create({
         width:100,
         height:100,
         marginHorizontal:10
+    },
+    Btn: {
+        backgroundColor: "#31C2AA",
+        borderRadius: 25,
+        width:50,
+        zIndex:99,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
     },
     document:{
         marginHorizontal:20,

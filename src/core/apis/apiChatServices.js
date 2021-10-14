@@ -11,7 +11,11 @@ export const getChatReplies = async () => {
                 Authorization: x
             }
         }).then((res)=>{
-            return res.data.data
+            let arra = [];
+            res.data.data.map((item)=>{
+                arra.push({label:item.negotiate_reply,value:item.id})
+            })
+            return arra
         });
     });
   };

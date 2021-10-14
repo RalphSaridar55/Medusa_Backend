@@ -66,11 +66,6 @@ export let addElements3 = [
         label: 'Start Date',
         stateValue: 'startdate',
     },
-    {
-        type: 'Date',
-        label: 'End Date',
-        stateValue: 'enddate',
-    },
     /* {
         type: 'switchInput',
         label: 'Variant Discount',

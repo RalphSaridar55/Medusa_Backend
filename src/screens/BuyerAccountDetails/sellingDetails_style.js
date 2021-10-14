@@ -9,6 +9,18 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     flex: 1,
   },
+  docPicker:{
+      borderWidth:1,
+      borderRadius:5,
+      borderColor:'gray',
+      marginVertical:10,
+      height:55,
+      display:'flex',
+      flexDirection:'row',
+      justifyContent:'space-between',
+      paddingHorizontal:10,
+      alignItems:'center'
+  },
   contentContainer: {
     flexDirection: "row",
   },
