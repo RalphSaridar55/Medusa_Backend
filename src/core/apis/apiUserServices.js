@@ -318,5 +318,20 @@ export const getSellersOwnProducts = async () => {
   });
 };
 
+//Update seller's chosen categories
+
+export const updateSellersChosenCategories = async (payload) => {
+  return await getToken().then((x)=>{
+      return APIKit.put('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/user-category-list',payload,{
+          headers:{
+              Authorization: x
+          }
+      }).then((res)=>{
+          //console.log(`RESULT AFTER UPDATING THE CATEGORIES:` , res)
+          return res.data.message
+      });
+  });
+};
+
 
 export default APIKit;

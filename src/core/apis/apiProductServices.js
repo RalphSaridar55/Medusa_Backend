@@ -65,7 +65,36 @@ export const createProduct = async(payload)=>{
                 Authorization: x
             }
         }).then((res)=>{
+            console.log("RES FROM THE API:",res.data.message);
+        })
+    })
+}
+
+//Add a variant for product
+export const addVariant = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.post(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product-variant`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            console.log("RES FROM THE API:",res.data.message);
+        })
+    })
+}
+
+//Upload Bulk 
+export const uploadBulk = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.post(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/import-product`,payload,{
+            headers:{
+                'Content-Type': 'multipart/form-data',
+                Authorization: x
+            }
+        }).then((res)=>{
             console.log("RES FROM THE API:",res.data.message)
+        }).catch(err=>{
+            return err;
         })
     })
 }

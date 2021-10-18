@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 import SelectMultiple from "react-native-select-multiple";
 import * as apiPortFolioServices from "../../core/apis/apiPortfolioServices";
 
+import Overlay from 'react-native-modal-overlay';
 import {
     StyleSheet,
     Text,
@@ -63,7 +64,8 @@ export default class ProductList extends Component {
             sortByData:'',
 
             fetchedCategories:[],
-            multiplier:10
+            multiplier:10,
+            modalVisible:false,
         };
     }
 
@@ -195,6 +197,37 @@ export default class ProductList extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <Overlay visible={this.state.modalVisible} onClose={()=>this.setState({modalVisible:false})} closeOnTouchOutside>
+                    <Text style={{
+                        fontSize: 21,
+                        color: "#6E91EC",
+                        fontWeight: 'bold',
+                        marginBottom: 5}}>Product</Text>
+                    <View style={{flexDirection:'row',}}>
+                        <View style={{width:150,paddingHorizontal:10}}>
+                            <TouchableOpacity
+                                onPress={()=>{
+                                    this.setState({modalVisible:false});
+                                    this.props.navigation.navigate("Add")}
+                                }
+                                style={[styles.loginBtn]}
+                            >
+                                <Text style={styles.loginBtnText}>Add Product</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{width:150,paddingHorizontal:10}}>
+                            <TouchableOpacity
+                                onPress={()=>{
+                                    this.setState({modalVisible:false});
+                                    this.props.navigation.navigate("Bulk")}
+                                }
+                                style={[styles.loginBtn]}
+                            >
+                                <Text style={styles.loginBtnText}>Bulk Upload</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Overlay>
                 <View>
                     <Appbar style={{backgroundColor:"#E9F3FF" , color:"#fff"}}>
                         <Appbar.Content title={this.state.data.filter
@@ -356,7 +389,7 @@ export default class ProductList extends Component {
                 </ActionSheet>
                 <TouchableOpacity
                     style={styles.Btn}
-                    onPress={() => this.props.navigation.navigate("Add")}
+                    onPress={() => this.setState({modalVisible:true})/* this.props.navigation.navigate("Add") */}
                 >
                     <Icon name="plus-thick" size={30} color="white" />
                 </TouchableOpacity>

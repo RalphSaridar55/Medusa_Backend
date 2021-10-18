@@ -9,6 +9,15 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     flex: 1,
   },
+  loginBtn: {
+      marginVertical:20,
+      marginHorizontal:20,
+      backgroundColor: "#31C2AA",
+      borderRadius: 25,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 50
+  },
   docPicker:{
       borderWidth:1,
       borderRadius:5,

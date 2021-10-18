@@ -9,6 +9,24 @@ export const styles = StyleSheet.create({
         height: screenheight*0.3,
         resizeMode:'stretch'
     },
+    BtnContainer:{
+        display:'flex',
+        justifyContent:'center',
+        flex:1,
+        alignItems:'center',
+        marginTop:5
+    },
+    Btn: {
+        backgroundColor: "#31C2AA",
+        borderRadius: 25,
+        width:50,
+        zIndex:99,
+        bottom:10,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 20,
+    },
     twoInfoBox:{
         display:'flex',
         flexDirection:'row',

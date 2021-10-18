@@ -23,7 +23,6 @@ export const getSellerCategories= async() =>{
               Authorization: x
           }
       }).then((res)=>{
-          console.log("RES FROM THE API SELLER CATEGORY:",res)
           return res.data.data
       })
   })
@@ -190,11 +189,17 @@ export async function getCategoryDetails () {
 
 export async function getProductDetails (id) {
   console.log('inside get prod details')
-  return await apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product_details?product_id=10').then((res) => {
+  return await getToken().then((x)=>{
+    return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product_details?product_id=${id}`,{
+      headers:{
+        Authorization:x
+      }
+    }).then((res) => {
 
-    console.log('resp --> : ',res)
-        return null;
-    });
+      console.log('resp --> : ',res.data.data)
+      return res.data.data
+      });
+  })
 };
 
 export async function updateUserProfile(data){

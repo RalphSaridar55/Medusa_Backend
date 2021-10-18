@@ -33,16 +33,16 @@ export default class AddProduct extends Component {
       dataFromRoute:{},
       variants: [],
       variant_stock_qty_switch: false,
-      variant_stock_qty: 0,
+      variant_stock_qty: 12,
       variant_stock_qty_error: 0,
       variant_piece_qty_switch: false,
-      variant_piece_qty: 0,
+      variant_piece_qty: 12,
       variant_piece_qty_error: 0,
       variant_package_qty_switch: false,
-      variant_package_qty: 0,
+      variant_package_qty: 12,
       variant_package_qty_error: 0,
       variant_discount_switch: false,
-      variant_discount: 0,
+      variant_discount: 12,
       variant_discount_error: 0,
       variant_start: 0,
       variant_end: 0,
@@ -71,6 +71,31 @@ export default class AddProduct extends Component {
     });
   };
 
+  addVariant=()=>{
+      /* {
+            "product_id": 0,
+            "variant_image": "string",
+            "is_variant_by_piece": true,
+            "is_variant_by_package": true,
+            "is_variant_min_qty": true,
+            "is_variant_stock": true,
+            "is_discount": true,
+            "variant_by_piece": 0,
+            "discount": 0,
+            "discount_start_date": 0,
+            "discount_end_date": 0,
+            "variant_by_package": 0,
+            "variant_min_qty": 0,
+            "variant_stock": 0,
+            "variant_types": [
+                {
+                "variant_type_id": 0,
+                "variant_value_id": 0
+                }
+            ]
+        } */
+  }
+
   submit = () => {
     this.setState({loading:true})
     let start = 0;
@@ -82,8 +107,8 @@ export default class AddProduct extends Component {
     }
     if(this.state.range!==null){
       //console.log("DATE BECOMES: ",this.state.range.firstDate,typeof(this.state.range.firstDate),"\n",this.state.range.secondDate,typeof(this.state.range.secondDate))
-      start = (new Date(this.state.range.firstDate).getTime());
-      end = (new Date(this.state.range.secondDate).getTime());
+      start = (new Date(this.state.range.firstDate).getTime())
+      end = (new Date(this.state.range.secondDate).getTime())
     }
     if (this.state.variantImage < 1) {
       Alert.alert("Error", "Please insert an image for the variant");
@@ -91,6 +116,7 @@ export default class AddProduct extends Component {
       return;
     } else {
       let payload = {
+        product_id: this.props.route.params,
         variant_image: this.state.variantImage,
         is_variant_by_piece: this.state.variant_piece_qty_switch,
         is_variant_by_package: this.state.variant_package_qty_switch,
@@ -146,92 +172,14 @@ export default class AddProduct extends Component {
         return;
       }
       console.log("HERE YOU SOHOULD BE RUNNING THE SUCCESS:");
-      let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
-      /* let sendingData ={brand_id: 4,
-      cancel_allowed: false,
-      cancel_day: 0,
-      cargo_document: "lorem-ipsum.pdf",
-      cargo_type_id: 1,
-      cargo_type_name: "General",
-      category_id: 4,
-      depth: 20,
-      description: "desc",
-      document: "lorem-ipsum.pdf",
-      down_payment: 60,
-      height: 20,
-      images:  [
-         {
-          is_existing: true,
-          media: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540nourhan1992%252Fcmsmobileapp/ImagePicker/46b9c8bf-eeac-4a5b-b0cc-721d2efd155d.jpg",
-        },
-      ],
-      is_discount: false,
-      is_visible: false,
-      max_purchase_qty: 40,
-      max_reserve_qty: 60,
-      min_purchase_qty: 30,
-      no_of_package: 30,
-      offered_price: 20,
-      package_type: "type",
-      price: 30,
-      product_condition:  {},
-      product_name: "boot",
-      product_negotiable: false,
-      product_sku: "sku",
-      product_warranty: "details",
-      return_allowed: false,
-      return_day: 0,
-      shipping_included: false,
-      stacking: 45,
-      sub_category_id: 4,
-      tags:  [
-         {
-          is_existing: true,
-          tag_id: 1,
-          tag_name: "Tags",
-        },
-         {
-          is_existing: true,
-          tag_id: 2,
-          tag_name: "Boots",
-        },
-      ],
-      variant:  {
-        discount: 10,
-        discount_end_date: undefined,
-        discount_start_date: undefined,
-        is_discount: true,
-        is_variant_by_package: true,
-        is_variant_by_piece: true,
-        is_variant_min_qty: true,
-        is_variant_stock: true,
-        variant_by_package: 10,
-        variant_by_piece: 10,
-        variant_image: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540nourhan1992%252Fcmsmobileapp/ImagePicker/dbae486b-625b-491a-969b-482bf571b81f.jpg",
-        variant_min_qty: 10,
-        variant_stock: 101,
-        variant_types:  [
-           {
-            variant_type_id: 3,
-            variant_value_id: 49,
-          },
-        ],
-      },
-      weight: 1,
-      width: 20,
-      } */
+      //let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
 
-      console.log("DATA TO SEND: ",sendingData);
-      APIProduct.createProduct(sendingData).then((res)=>{
+      console.log("DATA TO SEND: ",payload);
+      //this.setState({loading:false})
+      APIProduct.addVariant(payload).then((res)=>{
         console.log("RES: ",res);
         this.setState({loading:false})
-        Alert.alert("Success","Product has been created successfully",
-        [
-          {
-            text: "Ok",
-            onPress: () => this.props.navigation.navigate("Add1"),
-          },
-        ]);
+        Alert.alert("Success","Variant has been created successfully");
       })
     }
   };
@@ -255,6 +203,34 @@ export default class AddProduct extends Component {
         filter_variant_list: res,
       });
     });
+
+    if(this.props.route.params.type == "edit"){
+        console.log("SHOULD BE RUNNING")
+        let route = this.props.route.params;
+        let routeVar = this.props.route.params.productvariantopt;
+        console.log("VARIANT: ",route.variant_by_piece)
+        this.setState({
+            variant_stock_qty_switch: route.is_variant_stock,
+            variant_stock_qty: route.variant_stock,
+            variant_stock_qty_error: 0,
+            variant_piece_qty_switch: route.is_variant_by_piece,
+            variant_piece_qty: route.variant_by_piece,
+            variant_piece_qty_error: 0,
+            variant_package_qty_switch: route.is_variant_by_package,
+            variant_package_qty: route.variant_by_package,
+            variant_package_qty_error: 0,
+            variant_discount_switch: route.is_discount,
+            variant_discount: route.discount,
+            variant_discount_error: 0,
+            variant_start: route.discount_start_date,
+            variant_end: route.discount_end_date,
+            variant_minqty_switch: route.is_variant_min_qty,
+            variant_minqty: route.variant_min_qty,
+            variant_minqty_error: 0,
+            variant_type: {label:routeVar[0].varientType.varient_type, value:routeVar[0].varientType.id},
+            variant_value: {label:routeVar[0].varientValue.varient_value,value:routeVar[0].varientValue.id},
+            variantImage: "",})
+    }
   }
 
   chooseImages = async (type) => {
@@ -485,12 +461,7 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>Variants Info</Text>
-          <Progress.Bar
-            progress={0.66}
-            color="#6E91EC"
-            width={screenwidth * 0.45}
-          />
+          <Text style={styles.headerText}>Add Variant</Text>
         </View>
         {this.drawScreenThird()}
       </SafeAreaView>

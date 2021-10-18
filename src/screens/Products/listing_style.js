@@ -7,6 +7,31 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    docPicker:{
+        borderWidth:1,
+        borderRadius:5,
+        borderColor:'gray',
+        marginVertical:10,
+        height:55,
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:10,
+        alignItems:'center'
+    },
+    loginBtn: {
+        marginTop:40,
+        backgroundColor: "#31C2AA",
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 50
+    },
+    loginBtnText:{
+        color:'white',
+        fontSize:16,
+        fontWeight:'bold'
+    },
     Btn: {
         backgroundColor: "#31C2AA",
         borderRadius: 25,

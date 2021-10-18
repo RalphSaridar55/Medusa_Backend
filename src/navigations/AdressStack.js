@@ -6,6 +6,7 @@ import BuyerAccountDetails from "../screens/BuyerAccountDetails/buyer_account_de
 import Addresses from "../screens/BuyerAccountDetails/addresses";
 import SellingDetail from "../screens/BuyerAccountDetails/sellingDetails";
 import DetailedProduct from "../screens/BuyerAccountDetails/detailedProduct";
+import AddVariant from "../screens/BuyerAccountDetails/addVariant";
 
 const AStack = createStackNavigator();
 const PStack = createStackNavigator();
@@ -22,6 +23,12 @@ const ProductStack = ({navigation}) => {
       <PStack.Screen
         name="DetailedProduct"
         component={DetailedProduct}
+        options={{ headerShown: false }}
+        navigation={navigation}
+        />
+      <PStack.Screen
+        name="AddVariant"
+        component={AddVariant}
         options={{ headerShown: false }}
         navigation={navigation}
         />

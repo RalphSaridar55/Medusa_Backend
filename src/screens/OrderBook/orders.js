@@ -189,12 +189,14 @@ export default class Orders extends Component {
   };
 
   _changeFilter = (val) =>{
+    console.log("VALUE IS:",val)
     if(val == 5)
       this.setState({filterData:data1})
-    else{}
+    else{
       var data = data1
       var a = data.filter((i)=>i.status_id === val);
       this.setState({filterData:a})
+    }
   }
 
   componentDidMount() {

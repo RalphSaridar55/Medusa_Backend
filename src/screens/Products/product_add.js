@@ -409,36 +409,32 @@ export default class AddProduct extends Component {
       case "category":
         let array = [];
         console.log("VALUE: ", value);
-        let res = this.state.forFilteringCategories.subCategoryList.filter(
-          (item) => {
+        this.state.forFilteringCategories.subCategoryList.map((item) => {
             if (item.subCategory.category_id == value)
-              return {
+              array.push({
                 label: item.subCategory.sub_category_name,
                 value: item.subCategory.id,
-              };
+              });
           }
         );
+        console.log(`array will consist of ${array}`);/* 
         console.log("RESULT ARRAY IS: ", res);
         res.map((item) => {
           array.push({
             label: item.subCategory.sub_category_name,
             value: item.sub_category_id,
           });
-        });
+        }); */
         this.setState({ fetchedSubCategories: array });
       case "subCategory":
         let array2 = [];
         console.log("VALUE: ", value);
-        let res2 = this.state.forFilteringCategories.brandList.filter(
-          (item) => {
-            if (item.brand_id == value)
-              return { label: item.brand.brand_name, value: item.brand_id };
+        this.state.forFilteringCategories.brandList.map((item) => {
+          console.log(`ITEM IS `,item)
+            if (item.brand.sub_category_id == value)
+              array2.push({ label: item.brand.brand_name, value: item.brand_id });
           }
         );
-        console.log("RESULT ARRAY IS: ", res2);
-        res2.map((item) => {
-          array2.push({ label: item.brand.brand_name, value: item.brand_id });
-        });
         this.setState({ fetchedBrands: array2 });
       case "brand":
         this.setState({ brand: item });

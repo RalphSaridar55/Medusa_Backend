@@ -6,6 +6,7 @@ import ProductDetails from "../screens/Products/product_details";
 import AddProduct1 from "../screens/Products/product_add";
 import AddProduct2 from "../screens/Products/product_add2";
 import AddProduct3 from "../screens/Products/product_add3";
+import BulkProduct from "../screens/Products/Bulk";
 
 const PStack = createStackNavigator();
 const AddStack = createStackNavigator();
@@ -56,6 +57,12 @@ const ProductStack = ({ navigation, route }) => {
       <PStack.Screen
         name="Add"
         component={AddingProduct}
+        options={{ headerShown: false }}
+        navigation={navigation}
+      />
+      <PStack.Screen
+        name="Bulk"
+        component={BulkProduct}
         options={{ headerShown: false }}
         navigation={navigation}
       />

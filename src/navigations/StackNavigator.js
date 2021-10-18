@@ -219,7 +219,7 @@ function CustomDrawer(props) {
                       User Address
                     </Text>
                   </TouchableOpacity>
-                  {props.userType==4?<TouchableOpacity
+                  {props.userType==4?(<TouchableOpacity
                     onPress={() => {
                       props.navigation.navigate("Adress",{screen:"Selling"});
                       props.changeScreen("Selling")
@@ -229,7 +229,7 @@ function CustomDrawer(props) {
                     <Text style={props.screenC =="Selling"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       Selling Details
                     </Text>
-                  </TouchableOpacity>:null}
+                  </TouchableOpacity>):null}
               </View>
             </CollapsibleList>
             {/* <DrawerItem label="Settings" onPress={() => alert('Link to help')}
@@ -258,7 +258,7 @@ function CustomDrawer(props) {
       <View style={{ marginLeft: 10 }}>
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate("AboutUs");
+              props.navigation.navigate("About",{screen:"AboutUs"});
               props.changeScreen("About")
             }}
             style={{ flexDirection: "row", marginVertical: 10 }}>
@@ -269,7 +269,7 @@ function CustomDrawer(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate("Contact");
+              props.navigation.navigate("About",{screen:"Contact"});
               props.changeScreen("Contact")
             }}
             style={{ flexDirection: "row", marginVertical: 10 }}>

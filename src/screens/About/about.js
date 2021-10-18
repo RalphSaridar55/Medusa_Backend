@@ -109,7 +109,7 @@ export default class About extends Component {
                 title="FAQ"
                 left={(props) => <List.Icon {...props} icon="comment-question-outline" />}
               >
-                <View style={{paddingVertical:10}}>
+                <View style={{paddingVertical:10, backgroundColor:'#fff'}}>
                 {faq.map((item,index)=>{
                   return(
                     <View key={index}>
