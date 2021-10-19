@@ -83,6 +83,19 @@ export const addVariant = async(payload)=>{
     })
 }
 
+//Edit a variant for product
+export const editVariant = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.put(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product-variant`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            console.log("RES FROM THE API:",res.data.message);
+        })
+    })
+}
+
 //Upload Bulk 
 export const uploadBulk = async(payload)=>{
     return await getToken().then((x)=>{
@@ -93,8 +106,6 @@ export const uploadBulk = async(payload)=>{
             }
         }).then((res)=>{
             console.log("RES FROM THE API:",res.data.message)
-        }).catch(err=>{
-            return err;
         })
     })
 }

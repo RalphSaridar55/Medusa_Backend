@@ -33,16 +33,16 @@ export default class AddProduct extends Component {
       dataFromRoute:{},
       variants: [],
       variant_stock_qty_switch: false,
-      variant_stock_qty: 12,
+      variant_stock_qty: 0,
       variant_stock_qty_error: 0,
       variant_piece_qty_switch: false,
-      variant_piece_qty: 12,
+      variant_piece_qty: 0,
       variant_piece_qty_error: 0,
       variant_package_qty_switch: false,
-      variant_package_qty: 12,
+      variant_package_qty: 0,
       variant_package_qty_error: 0,
       variant_discount_switch: false,
-      variant_discount: 12,
+      variant_discount: 0,
       variant_discount_error: 0,
       variant_start: 0,
       variant_end: 0,
@@ -71,31 +71,6 @@ export default class AddProduct extends Component {
     });
   };
 
-  addVariant=()=>{
-      /* {
-            "product_id": 0,
-            "variant_image": "string",
-            "is_variant_by_piece": true,
-            "is_variant_by_package": true,
-            "is_variant_min_qty": true,
-            "is_variant_stock": true,
-            "is_discount": true,
-            "variant_by_piece": 0,
-            "discount": 0,
-            "discount_start_date": 0,
-            "discount_end_date": 0,
-            "variant_by_package": 0,
-            "variant_min_qty": 0,
-            "variant_stock": 0,
-            "variant_types": [
-                {
-                "variant_type_id": 0,
-                "variant_value_id": 0
-                }
-            ]
-        } */
-  }
-
   submit = () => {
     this.setState({loading:true})
     let start = 0;
@@ -110,13 +85,17 @@ export default class AddProduct extends Component {
       start = (new Date(this.state.range.firstDate).getTime())
       end = (new Date(this.state.range.secondDate).getTime())
     }
+    if((end<1 || start<1) && this.state.variant_discount_switch){
+        Alert.alert("Error", "Variant date is missing");
+        this.setState({ loading: false });
+        return;
+    }
     if (this.state.variantImage < 1) {
       Alert.alert("Error", "Please insert an image for the variant");
       this.setState({ loading: false });
       return;
     } else {
       let payload = {
-        product_id: this.props.route.params,
         variant_image: this.state.variantImage,
         is_variant_by_piece: this.state.variant_piece_qty_switch,
         is_variant_by_package: this.state.variant_package_qty_switch,
@@ -174,13 +153,27 @@ export default class AddProduct extends Component {
       console.log("HERE YOU SOHOULD BE RUNNING THE SUCCESS:");
       //let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
 
-      console.log("DATA TO SEND: ",payload);
       //this.setState({loading:false})
-      APIProduct.addVariant(payload).then((res)=>{
-        console.log("RES: ",res);
-        this.setState({loading:false})
-        Alert.alert("Success","Variant has been created successfully");
-      })
+      if(this.props.route.params.type=="edit"){
+        payload={...payload,variant_id:this.props.route.params.id}
+        console.log("DATA TO SEND: ",payload);
+        APIProduct.editVariant(payload).then((res)=>{
+          console.log("RES: ",res);
+          this.setState({loading:false})
+          Alert.alert("Success","Variant has been edited successfully",[
+              {text:"Ok",onPress:()=>this.props.navigation.goBack()}
+          ]);
+        })
+
+      }else{
+        payload={...payload,product_id: this.props.route.params,}
+        console.log("DATA TO SEND: ",payload);
+        APIProduct.addVariant(payload).then((res)=>{
+          console.log("RES: ",res);
+          this.setState({loading:false})
+          Alert.alert("Success","Variant has been created successfully");
+        })
+      }
     }
   };
   async componentDidMount() {
@@ -209,27 +202,29 @@ export default class AddProduct extends Component {
         let route = this.props.route.params;
         let routeVar = this.props.route.params.productvariantopt;
         console.log("VARIANT: ",route.variant_by_piece)
+        console.log("VARIANT TYPE: ",{label:routeVar[0].varientType.varient_type, value:routeVar[0].varientType.id})
+        console.log("VARIANT VALUE: ",{label:routeVar[0].varientValue.varient_value,value:routeVar[0].varientValue.id})
         this.setState({
             variant_stock_qty_switch: route.is_variant_stock,
-            variant_stock_qty: route.variant_stock,
+            variant_stock_qty: route.variant_stock+"",
             variant_stock_qty_error: 0,
             variant_piece_qty_switch: route.is_variant_by_piece,
-            variant_piece_qty: route.variant_by_piece,
+            variant_piece_qty: route.variant_by_piece+"",
             variant_piece_qty_error: 0,
             variant_package_qty_switch: route.is_variant_by_package,
-            variant_package_qty: route.variant_by_package,
+            variant_package_qty: route.variant_by_package+"",
             variant_package_qty_error: 0,
             variant_discount_switch: route.is_discount,
-            variant_discount: route.discount,
+            variant_discount: route.discount+"",
             variant_discount_error: 0,
             variant_start: route.discount_start_date,
             variant_end: route.discount_end_date,
             variant_minqty_switch: route.is_variant_min_qty,
-            variant_minqty: route.variant_min_qty,
+            variant_minqty: route.variant_min_qty+"",
             variant_minqty_error: 0,
             variant_type: {label:routeVar[0].varientType.varient_type, value:routeVar[0].varientType.id},
             variant_value: {label:routeVar[0].varientValue.varient_value,value:routeVar[0].varientValue.id},
-            variantImage: "",})
+            variantImage: route.variant_image,})
     }
   }
 
@@ -283,6 +278,7 @@ export default class AddProduct extends Component {
           )}
           <Image
             source={
+              this.props.route.params.type=="edit"?{uri:this.props.route.params.variant_image}:
               this.state.variantImage.length < 1
                 ? require("../../../assets/images/default-image.png")
                 : { uri: this.state.variantImage }
@@ -445,7 +441,10 @@ export default class AddProduct extends Component {
           value={this.state[item.stateValue]}
           onValueChange={(i) => {
             //console.log("CHOSEN: ",i);
-            this.setState({ [item.stateValue]: i });
+            this.setState({ [item.stateValue]: i,});
+            if(i==false){
+                typeof(this.state[item.valueValue]=="number")?this.setState({[item.valueValue]:0}):this.setState({[item.valueValue]:''})
+            }
           }}
         />
       </View>
@@ -461,7 +460,7 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>Add Variant</Text>
+          <Text style={styles.headerText}>{this.props.route.params.type=="edit"?"Edit Variant":"Add Variant"}</Text>
         </View>
         {this.drawScreenThird()}
       </SafeAreaView>

@@ -44,6 +44,24 @@ const detailedOrder = ({ navigation, route }) => {
     })
   }, []);
 
+  useEffect(()=>{
+    apiPortFolioServices.getProductDetails(route.params.id).then((res)=>{
+        console.log("PRODUCT DETAILS: ",res)
+        setDataRoute(res);
+        setIsVisible(false);
+    })
+    const willFocusSubscription = navigation.addListener('focus', () => {
+      
+    apiPortFolioServices.getProductDetails(route.params.id).then((res)=>{
+        console.log("PRODUCT DETAILS: ",res)
+        setDataRoute(res);
+        setIsVisible(false);
+    })
+  });
+
+  return willFocusSubscription;
+  },[])
+
   return (
     <ScrollView style={{ flex: 1 }}>
       <Spinner visible={isVisible} />
@@ -55,19 +73,27 @@ const detailedOrder = ({ navigation, route }) => {
         />
       </View>
       <View style={[styles.mainContainer, {}]}>
-        <View style={{ paddingBottom: 20 }}>
-          <Text
-            style={[
-              styles.name,
-              {
-                marginVertical: 20,
-                borderBottomWidth: 1.5,
-                borderBottomColor: "lightgray",
-              },
-            ]}
-          >
-            {dataRoute?.product_name}
-          </Text>
+        <View style={{ paddingBottom: 20, }}>
+          <View style={{
+                        marginVertical: 20,
+                        borderBottomWidth: 1.5,
+                        borderBottomColor: "lightgray",}}>
+              <View style={{display:'flex',justifyContent:'space-between',flexDirection:'row'}}>
+                  <Text
+                    style={[
+                      styles.name,
+                    ]}
+                  >
+                    {dataRoute?.product_name}
+                  </Text>
+                <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+                    <TouchableOpacity style={{borderRadius:40,backgroundColor:'gray',padding:5}}
+                    onPress={()=>navigation.navigate("Product",{screen:"Add",params:{screen:"Add1",params:{...dataRoute,type:'edit'}}})}>
+                        <Icon name="pencil" size={24} color="white" style={{}}/>
+                    </TouchableOpacity>
+                </View>
+              </View>
+          </View>
           <Text style={{ fontSize: 18 }}>{dataRoute?.description}</Text>
         </View>
         <Text
@@ -178,12 +204,12 @@ const detailedOrder = ({ navigation, route }) => {
             <View style={{borderBottomColor:'lightgray',borderBottomWidth:1,paddingBottom:10}}>
             <View style={styles.twoInfoBox} key={index}>
               <View>
-                <Text>
-                  Type: {item.productvariantopt[0].varientType.varient_type}
+                {item.productvariantopt.length>0 &&<><Text>
+                  Type: {item.productvariantopt[0].varientType?.varient_type}
                 </Text>
                 <Text>
-                  Value: {item.productvariantopt[0].varientValue.varient_value}
-                </Text>
+                  Value: {item.productvariantopt[0].varientValue?.varient_value}
+                </Text></>}
                 <Text>By Piece: {item.is_variant_by_piece ? "Yes" : "No"}</Text>
                 {item.is_variant_by_piece && <Text>Variant Piece: {item.variant_by_piece}</Text>}
                 <Text>By Stock: {item.is_variant_stock ? "Yes" : "No"}</Text>

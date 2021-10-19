@@ -12,6 +12,7 @@ import {
   ImageBackground,
   Dimensions,
   Alert,
+  BackHandler
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
@@ -35,10 +36,13 @@ import Spinner from "react-native-loading-spinner-overlay";
 const SellingDetail = ({navigation}) =>{
 
     const [data,setData] = useState([]);
+    const [chosen,setChosen] = useState({categories:[],subcategories:[],brands:[]})
     const [filterData,setFilterData] = useState({filter:[],search:'',showFilter:false,isVisible:true,showCategory:false,subcategories:[],brands:[]});
     const [apiData,setApiData] = useState({categories:[], subcategories:[], brands:[]});
     const [allData,setAllData] = useState({categories:[], subcategories:[], brands:[]})
     const [usersAllData,setUsersAllData] = useState({categories:[], subcategories:[], brands:[]})
+
+    
 
     useEffect(()=>{
         API.getSellersOwnProducts().then((res)=>{
@@ -51,7 +55,7 @@ const SellingDetail = ({navigation}) =>{
           let subcat = [];
           let brands = [];
           console.log("USER ALL DATA: ",usersAllData)
-          console.log("RESULT CATEGORIES :" ,result);
+          //console.log("RESULT CATEGORIES :" ,result);
           result.map((item1)=>{
             cat.push({label:item1.category_name,value:item1.id})
             // All categories
@@ -62,12 +66,16 @@ const SellingDetail = ({navigation}) =>{
               })
             })
           })
-          console.log("SUBCATS BECOMES: ",subcat)
+          console.log("BRANDS BECOMES: ",brands)
+          //setUsersAllData({categories:cat,subcategories:subcat,brands:brands})
           setAllData({categories:cat,subcategories:subcat,brands:brands})
           setFilterData({...filterData,isVisible:false,subcategories:subcat,brands:brands})
-          setApiData({categories:cat,subcategories:subcat,brands:brands})
+          setApiData({categories:cat})
         });
     },[])
+
+
+
 
     const handleCategories = (value) =>{
       let array = [];
@@ -83,7 +91,9 @@ const SellingDetail = ({navigation}) =>{
           array.push({...map,category_id:map.category_id})
         })
       })
-      setUsersAllData({...usersAllData,categories:value})
+      console.log("SUBCATEGORIES BECOMES: ",array)
+      setChosen({...chosen,categories:value})
+      //setUsersAllData({...usersAllData,categories:value})
       setApiData({...apiData,subcategories:array});
     }
 
@@ -94,7 +104,7 @@ const SellingDetail = ({navigation}) =>{
       console.log(value)
       console.log("INSIDE HANDLE SUBCATEGORIES: ",filterData.subcategories)
       value.map((v)=>{
-        let result = allData.brands.filter((i)=>{
+        let result = filterData.brands.filter((i)=>{
          return i.sub_category_id === v.value
         })
         result.map((map)=>{
@@ -106,8 +116,8 @@ const SellingDetail = ({navigation}) =>{
         console.log("VAL: ",val)
         values.push(val);        
       })
-
-      setUsersAllData({...usersAllData,subcategories:values})
+      setChosen({...chosen,subcategories:values})
+      //setUsersAllData({...usersAllData,subcategories:values})
       setApiData({...apiData,brands:array});
     }
 
@@ -115,63 +125,61 @@ const SellingDetail = ({navigation}) =>{
       console.log("Brands");
       console.log(value)
       let values = [];
-      /* 
       value.map((v)=>{
-        let result = allData.brands.filter((i)=>{
-         return i.sub_category_id === v.value
-        })
-      }) */
-      value.map((v)=>{
-        let val = apiData.brands.find((ite)=>ite.value === v.value)
-        let {label,sub_category_id,value,category} = val
-        values.push({label:label,sub_category_id:sub_category_id,value:value});        
+        let val = filterData.brands.find((ite)=>ite.value === v.value)
+        console.log("BRAND VALUE: ",val)
+        let {label,value,category} = val
+        values.push({label:label,sub_category_id:val.sub_category_id,value:value});        
       })
-      setUsersAllData({...usersAllData,brands:values})
+      setChosen({...chosen,brands:values})
+      //setUsersAllData({...usersAllData,brands:values})
     }
 
-    const applyChanges=()=>{
-      console.log("Categories For Payload: ",usersAllData)
-      let error = false;
-      setFilterData({...filterData,isVisible:true})
-      usersAllData.categories.map((i1)=>{
-        let subFilter = usersAllData.subcategories.filter((i2)=>{
-          i2.category_id === i1.value
-        })
-        if(subFilter.length<1){
-          Alert.alert("Error",`Please choose a subcategory for the category: ${i1.label}`);  
-          setFilterData({...filterData,isVisible:false})
-          error=true;
-        }
-        subFilter.map((i3)=>{
-          let brands = usersAllData.brands.filter((i4)=>{
-            i4.sub_category_id === i3.value
-          })
-          if(brands.length<1){
-            Alert.alert("Error",`Please choose a brand for the subcategory: ${i3.label}`);      
-            setFilterData({...filterData,isVisible:false})
-            error=true;
-          }
-        })
-      })
-      if(error)
-        return
-      let data =[];
-      usersAllData.subcategories.map((i1)=>{
-        let res =usersAllData.brands.filter((i2)=>i2.sub_category_id === i1.value);
-        res.map((i3)=>{
-          data.push({category_id:i1.category_id, subCategory_id:i3.sub_category_id, brand_id:i3.value})
-        })
-      })
 
-      let payload={
-          categories:data
+
+
+
+    const applyChanges=()=>{
+      setFilterData({...filterData,isVisible:true})
+      if(chosen.categories.length<1){
+        Alert.alert("Error",`Please choose atleast one category`);
+        return;
       }
-      console.log("UPDATE DATA SHOULD BE: ",payload)
+      console.log("Categories For Payload: ",chosen)
+      let categories = [];
+      chosen.categories.map((item1)=>{
+        let category_id = item1.value;
+        let subCategory_id;
+        let brand_id;
+        let subcategories = chosen.subcategories.filter((f1)=>f1.category_id === item1.value)
+        if(subcategories.length<1){
+          Alert.alert("Error",`Please choose a subcategory for category: ${item1.label}`);
+          return;
+        }
+        subcategories.map((item2)=>{
+          subCategory_id = item2.value;
+          let brands = chosen.brands.filter((f2)=>f2.sub_category_id === item2.value)
+          if(brands.length<1){
+            Alert.alert("Error",`Please choose a brand for subcategory: ${item2.label}`);
+            return;
+          }
+          brands.map((item3)=>{
+            brand_id = item3.value;
+            categories.push({category_id:category_id, subCategory_id:subCategory_id, brand_id:brand_id})
+          })
+        })
+      })
+      console.log("RESULT IS : ",categories)
+      let payload = {categories:categories}
+
       API.updateSellersChosenCategories(payload).then((res)=>{
+        setFilterData({...filterData,isVisible:false})
         Alert.alert("Success",res,[
-          {text:"Ok",
-        onPress:()=>setFilterData({...filterData,showCategory:false,isVisible:false})}
+          {text:"Ok",onPress:()=>changeScreen()}
         ])
+      }).catch(err=>{
+        setFilterData({...filterData,isVisible:false})
+        Alert.alert("Error","Something went wrong, please make sure you selected atleast one brand-subcategory-category.")
       })
     }
 
@@ -181,56 +189,43 @@ const SellingDetail = ({navigation}) =>{
           //All chosen categories
           let selectedBrands = [];
           let selectedSubcategories = [];
-          let SubCats ;
+          let SubCats;
+          let Brands;
           let selectedCategories = [];
+          console.log("FILTER DATA: ",filterData)
           console.log("ALL CATEGORIES: ",apiData)
           console.log("SELLER'S CATEGORY: ",res)
           res.categoryList.map((item)=>{
             selectedCategories.push({label:item.category.category_name, value:item.category_id})
-            res.subCategoryList.map((item2)=>{
-              let found = apiData.subcategories.find((i)=>item.category.id == i.category_id)
-                console.log("FOUND: ",found) 
-               selectedSubcategories.push({label:item2.subCategory.sub_category_name, value:item2.sub_category_id,})
+            SubCats = res.subCategoryList?.filter((filter)=>{
+              return filter.subCategory.category_id === item.category_id
             })
-          })
-
-          //setting the data for all subcats and brands
-          /* res.categoryList.map((item1)=>{
-            let filtered = apiData.subcategories.filter((item2)=>{
-              item2.category_id === item1.category_id
+            console.log("NON SELECTED SUBCATEGORIES: ",SubCats)
+            /* res.subCategoryList */SubCats.map((item2)=>{
+              /* let found = apiData.subcategories.find((i)=>item.category.id == i.category_id)
+                console.log("FOUND: ",found)  */
+               selectedSubcategories.push({label:item2.subCategory.sub_category_name +` ( ${item.category.category_name} )`, value:item2.subCategory.id,})
+               //console.log("SUBCATEGORY ID: ",item2.sub_category_id)
+               Brands = res.brandList.filter((filter2)=>{
+                return filter2.brand.sub_category_id === item2.subCategory.id
+              })
+              console.log("NON SELECTED BRANDS: ",Brands)
+              /* res.brandList */Brands.map((item3)=>{
+                selectedBrands.push({label:item3.brand.brand_name+` ( ${item2.subCategory.sub_category_name} )`, value:item3.brand.id /* sub_category_id:item.brand.sub_category_id */})
+                
+              })
             })
-            
-            console.log("FILTERED: ",filtered)
-
-            if(filtered.length>0)
-            filtered.map((toPush)=>{
-              SubCats.push({label:toPush.label, value:toPush.value, category_id:toPush.category_id})
-            })
-
-          }) */
-          console.log("SELECTED BRANDS: ",selectedBrands)
-          /* apiData.subcategories.map((item)=>{ 
-            
-          }) */
-          /* res.subCategoryList.map((item)=>{
-            let found = apiData.categories.find((i)=>i.value == item.subCategory.category_id)
-            console.log("FOUND: ",found)
-            selectedSubcategories.push({label:item.subCategory.sub_category_name, value:item.sub_category_id,})
-          }) */
-
-          res.brandList.map((item)=>{
-            selectedBrands.push({label:item.brand.brand_name, value:item.brand_id, /* sub_category_id:item.brand.sub_category_id */})
           })
           setUsersAllData({categories:selectedCategories, subcategories:selectedSubcategories, brands:selectedBrands})
           /*setApiData({...apiData,subcategories:selectedSubcategories}) */
-          setApiData({...apiData,subcategories:SubCats});
+          setApiData({...apiData,/* subcategories:SubCats,brands:Brands */});
           setFilterData({...filterData, showCategory:!filterData.showCategory,isVisible:false})
         })
 
     }
 
     const renderCategories = () =>{
-     return  (<ScrollView>{categories_data.map((item,index)=>{
+     return  (<>{categories_data.map((item,index)=>{
 
         return(
           <View style={{ marginVertical: 20, marginHorizontal:20 }} key={index}>
@@ -257,10 +252,10 @@ const SellingDetail = ({navigation}) =>{
                   <Text style={{color:'gray'}}>{item.label}</Text>
                 </View>
               }
-            >
+            >{apiData[item.items]?.length>0?
               <SelectMultiple
-                items={apiData[item.items]}
-                selectedItems={usersAllData[item.value]}
+                items={apiData[item.items]?.length>0 &&apiData[item.items]}
+                selectedItems={chosen[item.value]}
                 labelStyle={{color:'black'}}
                 selectedLabelStyle	={{color:'#698EB7'}}
                 onSelectionsChange={(it) =>{
@@ -275,10 +270,10 @@ const SellingDetail = ({navigation}) =>{
                 /* renderLabel={(label)=>{
                   [element.value]=="category"?tlabel:<Text>Label</Text>
                 }} */	
-              />
+              />:<Text style={{padding:10,color:'red'}}>Please Select a {item.value=="subcategories"?"Category":"Subcategory"} first</Text>}
             </CollapsibleList>
           </View>
-      )})}</ScrollView>)
+      )})}</>)
     }
     
 return (
@@ -338,13 +333,61 @@ return (
                    </View>
                </TouchableOpacity>
            )
-       }} />:<>{renderCategories()}
+       }} />:<ScrollView>
+       <View style={{ marginVertical: 20, marginHorizontal:20 }}>
+            <CollapsibleList
+              style={{ marginVertical: 10 }}
+              wrapperStyle={{
+                borderWidth: 0.2,
+                borderColor: "gray",
+                borderRadius: 5,
+              }}
+              buttonPosition="top"
+              numberOfVisibleItems={0}
+              buttonContent={
+                <View
+                  style={[
+                    styles.docPicker,
+                    {
+                      borderColor: "#A6A6A6",
+                      backgroundColor:'#fff',
+                      marginVertical: 0,
+                    },
+                  ]}
+                >
+                  <Text style={{color:'black'}}>Selected</Text>
+                </View>
+              }
+            >
+              <View style={{padding:20, backgroundColor:'#fff'}}>
+                <View style={{paddingBottom:20}}>
+                  <Text style={{fontWeight:'bold'}}>Selected Categories:</Text>
+                  {usersAllData?.categories.map((item)=>{
+                    return <Text>{item.label}</Text>
+                  })}
+                </View>
+                <Text style={{fontWeight:'bold'}}>Selected Subcategories:</Text>
+                <View style={{paddingBottom:20}}>
+                  {usersAllData?.subcategories.map((item)=>{
+                    return <Text>{item.label}</Text>
+                  })}
+                </View>
+                <View style={{paddingBottom:20}}>
+                  <Text style={{fontWeight:'bold'}}>Selected Brands:</Text>
+                  {usersAllData?.brands.map((item)=>{
+                    return <Text>{item.label}</Text>
+                  })}
+                </View>
+              </View>
+            </CollapsibleList>
+          </View>
+       {renderCategories()}
        <TouchableOpacity
          onPress={()=>applyChanges()}
          style={styles.loginBtn}
        >
          <Text style={styles.loginBtnText}>Apply Changes</Text>
-       </TouchableOpacity></>}
+       </TouchableOpacity></ScrollView>}
     </>
  );
 }

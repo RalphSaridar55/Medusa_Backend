@@ -134,9 +134,10 @@ const screenheight = Dimensions.get("screen").height;
 
 const Negotiations = () => {
   const [replies, setReplies] = useState();
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState('');
   const [reply, setReply] = useState(0);
   const [isVisible,setIsVisible] = useState(true)
+
   const sendAction = () =>{
       console.log("Should send a text")
   }
@@ -233,6 +234,7 @@ const Negotiations = () => {
                 prompt="Replies"
                 
                 onValueChange={(itemValue,itemIndex)=>{
+                  console.log("Item Value: ",itemValue)
                   setReply(itemValue)
                 }}>
                   {replies?.length<1

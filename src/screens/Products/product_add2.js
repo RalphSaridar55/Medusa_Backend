@@ -192,7 +192,28 @@ export default class AddProduct extends Component {
   };
 
   async componentDidMount() {
-    console.log("ROUTE PARAMS: ", this.props.route.params);
+    console.log("ROUTE PARAMS: ", this.props.route.params.editdata);
+    if(this.props.route.params.type=="edit"){
+      let route = this.props.route.params.editdata
+      this.setState({
+        product_min_qty:route.min_purchase_qty+"",
+        product_max_qty:route.max_purchase_qty+"",
+        product_reserve_qty:route.max_reserve_qty+"",
+        product_downpayment:route.down_payment+"",
+        product_return_switch:route.return_allowed,
+        product_return:route.return_day+"",
+        product_cancel_switch:route.cancel_allowed,
+        product_cancel:route.return_cancel+"",
+        product_condition:route.product_condition,
+        product_packages:route.no_of_package,
+        product_package_type:route.package_type,
+        cargo_type:{
+          value:route.cargo_type_id,
+          label:route.cargo_type_name
+        }
+
+      })
+    }
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     APIProduct.getCargoTypeList().then((res) => {
       console.log("CARGO DATA: ", res);
@@ -559,12 +580,12 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>Shipping Info</Text>
+          <Text style={styles.headerText}>{this.props.route.params.type=="edit" && "Edit " }Shipping Info</Text>
           <Progress.Bar
             progress={0.33}
             color="#6E91EC"
             width={
-              screenwidth * 0.45
+              screenwidth * 0.4
             } /* indeterminateAnimationDuration={1000} indeterminate={true} */
           />
         </View>

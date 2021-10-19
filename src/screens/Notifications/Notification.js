@@ -38,21 +38,18 @@ const data = {
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
 
-const Negotiations = () => {
+const Notification = () => {
   const [replies, setReplies] = useState();
   const [price, setPrice] = useState({ value: "", error: false });
   const [reply, setReply] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+
   const sendAction = () => {
     console.log("Should send a text");
   };
 
   useEffect(() => {
-    apiService.getChatReplies().then((res) => {
-      console.log("CHAT REPLIES: ", res);
-      setReplies(res);
       setIsVisible(false);
-    });
   }, []);
 
   return (
@@ -70,4 +67,4 @@ const Negotiations = () => {
   );
 };
 
-export default Negotiations;
+export default Notification;

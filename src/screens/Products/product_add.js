@@ -185,11 +185,56 @@ export default class AddProduct extends Component {
 
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
+      if(this.props.route.params.type){
+        this.props.navigation.navigate("Add2", {...payload,editdata:this.props.route.params,type:"edit"});
+      }
+      else
       this.props.navigation.navigate("Add2", payload);
     }
   };
 
   async componentDidMount() {
+    console.log("ROUTE PARAMS: ",this.props.route.params)
+    if(this.props.route.params){
+      let route = this.props.route.params;
+      let images=[];
+      let services=[];
+      let tags=[]
+      route.images.map((item)=>{
+        images.push(item.media)
+      })
+      route.services.map((item)=>{
+        services.push({label:item.service_name,value:item.service_id})
+      })
+      route.tags.map((item)=>{
+        tags.push(item.tag_name)
+      })
+      this.setState({
+        product_name:route.product_name,
+        product_sku:route.product_sku,
+        product_weight:route.weight+"",
+        product_price:route.price+"",
+        product_offer_price:route.offered_price+"",
+        product_width:route.width+"",
+        product_height:route.height+"",
+        product_depth:route.depth+"",
+        product_description:route.description,
+        brand:{label:route.brand.brand_name,value:route.brand.id},
+        subCategory:{label:route.subCategory.sub_category_name,value:route.subCategory.id},
+        category:{label:route.category.category_name,value:route.category.id},
+        product_negotiable:route.is_negotiable,
+        product_shipping:route.shipping_included,
+        product_visible:route.is_visible,
+        product_discount:route.is_discount,
+        product_warranty:route.warranty_details,
+        tags:{
+          tag:"",tagsArray:tags
+        },
+        images:images,
+        product_services:services,
+
+      })
+    }
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     APIProduct.getServices().then((res) => {
       console.log("SERVICES FROM API: ", res);
@@ -225,7 +270,12 @@ export default class AddProduct extends Component {
         forFilteringCategories: res,
         loading: false,
       });
-    });
+    })
+    if(this.props.route.params){
+      /* this.setState({
+
+      }) */
+    };
   }
 
   chooseImages = async (type) => {
@@ -555,7 +605,10 @@ export default class AddProduct extends Component {
           tagsViewStyle={{ marginHorizontal: 10 }}
           tagStyle={{ backgroundColor: "#698EB7", paddingVertical: 10 }}
           tagTextStyle={{ color: "white" }}
-          updateState={(state) => this.setState({ [item.stateValue]: state })}
+          updateState={(state) =>{ 
+            console.log("TAG: ",state)
+            this.setState({ [item.stateValue]: state })
+          }}
           tags={this.state[item.items]}
         />
       </View>
@@ -616,12 +669,12 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>Product Info</Text>
+          <Text style={styles.headerText}>{this.props.route.params.type=="edit" && "Edit "}Product Info</Text>
           <Progress.Bar
             progress={0}
             color="#6E91EC"
             width={
-              screenwidth * 0.45
+              screenwidth * 0.4
             } /* indeterminateAnimationDuration={1000} indeterminate={true} */
           />
         </View>

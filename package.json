@@ -26,6 +26,7 @@
     "expo-image-picker": "~10.2.2",
     "expo-image-picker-multiple": "^1.4.1",
     "expo-images-picker": "^2.0.1",
+    "expo-intent-launcher": "~9.1.0",
     "expo-localization": "^10.2.0",
     "expo-secure-store": "^10.2.0",
     "expo-status-bar": "~1.0.4",
@@ -45,6 +46,7 @@
     "react-native-dialog": "^9.1.0",
     "react-native-document-picker": "^6.0.4",
     "react-native-dropdown-picker": "^5.1.23",
+    "react-native-file-viewer": "^2.1.4",
     "react-native-flatlist-slider": "^1.0.5",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-grid-component": "^2.0.1",
@@ -71,7 +73,8 @@
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
-    "rn-select-date-range": "^3.0.1"
+    "rn-select-date-range": "^3.0.1",
+    "expo-asset": "~8.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

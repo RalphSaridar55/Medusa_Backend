@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, ImageBackground } from "react-native";
+import { TouchableOpacity, View, ImageBackground, Alert } from "react-native";
 import { Text, Button } from "react-native-paper";
 import Header from "../../components/Header";
 import TextInput from "../../components/TextInput";
@@ -64,7 +64,7 @@ export default function Login({ navigation }) {
       apiServices.setToken(res.access_token);
       setData(res);
       setAuthorized(true);
-      setLoading(false);``
+      setLoading(false);
       storeData("company_name",res.userDetails.company_name)
       storeData("user_id",res.userDetails.id+"")
       storeData("user_details",JSON.stringify(res.userDetails));
@@ -72,6 +72,12 @@ export default function Login({ navigation }) {
         navigation.navigate("Dashboard");
       else
         navigation.navigate("Home")
+      
+      /* const [value, setValue] = useState(0); // integer state
+      return () => setValue(value => value + 1); */
+    }).catch(err=>{
+      Alert.alert("Wrong Credentials","Wrong Email or Password");
+      setLoading(false);
     });
   };
 

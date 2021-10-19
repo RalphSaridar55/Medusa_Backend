@@ -208,7 +208,7 @@ export default class ProductList extends Component {
                             <TouchableOpacity
                                 onPress={()=>{
                                     this.setState({modalVisible:false});
-                                    this.props.navigation.navigate("Add")}
+                                    this.props.navigation.navigate("Add",{screen:"Add1"})}
                                 }
                                 style={[styles.loginBtn]}
                             >

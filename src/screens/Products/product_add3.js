@@ -470,6 +470,9 @@ export default class AddProduct extends Component {
           onValueChange={(i) => {
             //console.log("CHOSEN: ",i);
             this.setState({ [item.stateValue]: i });
+            if(i==false){
+                typeof(this.state[item.valueValue]=="number")?this.setState({[item.valueValue]:0}):this.setState({[item.valueValue]:''})
+            }
           }}
         />
       </View>
