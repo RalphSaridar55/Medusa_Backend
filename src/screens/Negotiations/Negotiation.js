@@ -1,5 +1,5 @@
 import { Picker } from "@react-native-picker/picker";
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,7 @@ import {
   TextInput,
   Alert
 } from "react-native";
-import CollapsibleList from "react-native-collapsible-list";
 import Spinner from "react-native-loading-spinner-overlay";
-import { useState } from "react/cjs/react.development";
 import * as apiService from "../../core/apis/apiChatServices";
 import styles from "./style_negotiation";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
