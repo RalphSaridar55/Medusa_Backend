@@ -26,7 +26,7 @@ const ProductStack = ({ navigation, route }) => {
     />
       <NSTack.Screen
         name="Negotiation"
-        component={Negotiations}
+        component={Test}
         options={{ headerShown: false }}
         navigation={navigation}
       />

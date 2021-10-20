@@ -1,5 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import {View,Text} from 'react-native';
 
 import ProductList from "../screens/Products/product_list";
 import ProductDetails from "../screens/Products/product_details";
@@ -11,6 +12,13 @@ import BulkProduct from "../screens/Products/Bulk";
 const PStack = createStackNavigator();
 const AddStack = createStackNavigator();
 
+const test = () =>{
+  return(
+    <View>
+      <Text>Testt</Text>
+    </View>
+  )
+}
 const AddingProduct = ({ navigation, route }) => {
   return (
     <AddStack.Navigator>

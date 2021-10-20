@@ -23,7 +23,7 @@ const List =({navigation}) =>{
     <><ScrollView style={styles.chatsContainer}>{dummyData.sort((i)=>i.status==="NotRead"?-1:1).map((item,key)=>{
       return (
         <TouchableOpacity key={key} style={styles.containerChat}
-        onPress={ ()=>navigation.navigate("NotificationChat")}>
+        onPress={ ()=>navigation.navigate("Notifications",{screen:"NotificationChat"})}>
         <View style={styles.pictureAndUsernameContainer}>
           <Image style={styles.adminImage} source={require('../../../assets/images/logo.png')} resizeMode="contain"/>
           <View style={styles.dateContainer}>

@@ -77,7 +77,9 @@ export default class AddRole extends Component {
             console.log("PAYLOAD SHOULD BE: ",payload)
             apiServices.addRole(payload).then((res)=>{
                 Alert.alert("Role",res)
-            });
+            }).catch(err=>{
+                console.log("Error:\n",err)
+                Alert.alert("Error","Something went wrong, please your inputs and try again");});
         }
     }
 

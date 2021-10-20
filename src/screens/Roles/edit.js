@@ -124,11 +124,11 @@ export default class AddRole extends Component {
                 this.setState({isLoading:false});
                 console.log("RESULT FROM API: ",res)
                 Alert.alert("Role",res,[{text:"OK",onPress:()=>this.props.navigation.goBack()}])
+            }).catch(err=>{
+                console.log("Error:\n",err)
+                this.setState({isLoading:false});
+                Alert.alert("Error","Something went wrong, please your inputs and try again");
             })
-            // .catch(e=>{
-            //     Alert.alert("Role Error",e);
-            //     this.setState({isLoading:false});
-            // });
         }
     }
 

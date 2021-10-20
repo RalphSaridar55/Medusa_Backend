@@ -161,7 +161,10 @@ class Addresses extends Component {
       this.setState({visible:false})
       Alert.alert("Address", "Address Added Successfully");
       //console.log('compo func',result);
-    });
+    }).catch(err=>{
+      console.log("Error:\n",err)
+      this.setState({visible:false});
+      Alert.alert("Error","Something went wrong, please your inputs and try again");});
   };
 
   editAddress = (data) => {
@@ -174,7 +177,10 @@ class Addresses extends Component {
         { text: "OK", onPress: () =>this.props.navigation.goBack() }
       ]);
       //console.log('compo func',result);
-    });
+    }).catch(err=>{
+      console.log("Error:\n",err)
+      this.setState({visible:false});
+      Alert.alert("Error","Something went wrong, please your inputs and try again");});
   };
 
   render() {

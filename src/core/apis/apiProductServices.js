@@ -70,6 +70,19 @@ export const createProduct = async(payload)=>{
     })
 }
 
+//Edit a product
+export const editProduct = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.put(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            console.log("RES FROM THE API:",res.data.message);
+        })
+    })
+}
+
 //Add a variant for product
 export const addVariant = async(payload)=>{
     return await getToken().then((x)=>{

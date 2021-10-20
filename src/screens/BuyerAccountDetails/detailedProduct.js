@@ -88,7 +88,7 @@ const detailedOrder = ({ navigation, route }) => {
                   </Text>
                 <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
                     <TouchableOpacity style={{borderRadius:40,backgroundColor:'gray',padding:5}}
-                    onPress={()=>navigation.navigate("Product",{screen:"Add",params:{screen:"Add1",params:{...dataRoute,type:'edit'}}})}>
+                    onPress={()=>navigation.navigate("Edit",{screen:"edit1",params:{...dataRoute,product_id:dataRoute?.productvariant[0].product_id}})}>
                         <Icon name="pencil" size={24} color="white" style={{}}/>
                     </TouchableOpacity>
                 </View>

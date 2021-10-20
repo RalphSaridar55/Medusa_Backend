@@ -271,7 +271,10 @@ class BuyreAccount extends Component {
             console.log("FROM THE COMPONENT: ",res)
             Alert.alert("Edit", res);
             this.setState({spinnerVisible:false})
-        })
+        }).catch(err=>{
+          console.log("Error:\n",err)
+          this.setState({spinnerVisible:false});
+          Alert.alert("Error","Something went wrong, please your inputs and try again");})
     }
     
   };

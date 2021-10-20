@@ -38,36 +38,6 @@ import * as DocumentPicker from "expo-document-picker";
 import styles from "./edit_style";
 import { Ionicons } from "@expo/vector-icons";
 
-const items = [
-  {
-    value: "1",
-    label: "Role 1",
-  },
-  {
-    value: "2",
-    label: "Role 2",
-  },
-  {
-    value: "3",
-    label: "Role 3",
-  },
-];
-
-const permissions = [
-  {
-    value: "1",
-    label: "Permission 1",
-  },
-  {
-    value: "2",
-    label: "Permission 2",
-  },
-  {
-    value: "3",
-    label: "Permission 3",
-  },
-];
-
 export default class EditUsers extends Component {
   state = {
     id:0,
@@ -169,6 +139,10 @@ export default class EditUsers extends Component {
         Alert.alert("User Modification","User Was Modified",[
           {text:"OK",onPress:()=>this.props.navigation.goBack()}
         ]);
+      }).catch(err=>{
+        console.log("Error:\n",err)
+        this.setState({isLoading:false});
+        Alert.alert("Error","Something went wrong, please your inputs and try again");
       });
     }
   };

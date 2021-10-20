@@ -3,7 +3,7 @@ import { StyleSheet,Dimensions } from "react-native";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     container:{
         paddingHorizontal:20,
         paddingVertical:40,
@@ -101,5 +101,3 @@ const styles = StyleSheet.create({
         marginHorizontal:20
     }
 })
-
-export default styles;

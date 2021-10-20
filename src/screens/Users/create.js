@@ -20,21 +20,6 @@ import { docValidator } from "../../helpers/docValidator";
 import * as apiServices from "../../core/apis/apiUserServices";
 import { AntDesign } from "@expo/vector-icons";
 
-const items = [
-  {
-    value: "1",
-    label: "Role 1",
-  },
-  {
-    value: "2",
-    label: "Role 2",
-  },
-  {
-    value: "3",
-    label: "Role 3",
-  },
-];
-
 export default class AddUsers extends Component {
   state = {
     email: "",
@@ -115,7 +100,11 @@ export default class AddUsers extends Component {
         console.log("RES:\n",res)
         this.setState({isLoading:false});
         Alert.alert("User Creation",res);
-      });
+      }).catch(err =>{
+        console.log("Error:\n",err)
+        this.setState({isLoading:false});
+        Alert.alert("Error","Something went wrong, please your inputs and try again");
+      } );
     }
   };
 

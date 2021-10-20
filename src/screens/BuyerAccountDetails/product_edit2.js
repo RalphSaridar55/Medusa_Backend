@@ -1,16 +1,10 @@
 import React, { Component } from "react";
 import * as Progress from "react-native-progress";
-import { SubmitData } from "./submit";
 import * as APIProduct from "../../core/apis/apiProductServices";
-import * as APIPortfolio from "../../core/apis/apiPortfolioServices";
-import { addElements } from "./add_elements";
 import { addElements2 } from "./add_elements_2";
-import { addElements3 } from "./add_elements_3";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
 import { Picker } from "@react-native-picker/picker";
-import * as ImagePicker from "expo-image-picker";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -30,11 +24,9 @@ import {
 } from "react-native";
 import { TextInput, Switch } from "react-native-paper";
 import styles from "./add_style";
-import TagInput from "react-native-tags-input";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -69,7 +61,8 @@ export default class AddProduct extends Component {
       product_packages_error: false,
 
       cargo_type_list: [],
-      cargo_type: {},
+      cargo_type_id: 0,
+      cargo_type_name:"",
 
       product_stacking: 0,
       product_stacking_error: false,
@@ -113,6 +106,9 @@ export default class AddProduct extends Component {
       );
       return;
     } else {
+      let cargo_type_name = this.state.cargo_type_list.filter((item)=>{
+        return item.value == this.state.cargo_type_id 
+      })[0].label
       let payload = {
         min_purchase_qty: parseInt(this.state.product_min_qty),
         max_purchase_qty: parseInt(this.state.product_max_qty),
@@ -126,10 +122,8 @@ export default class AddProduct extends Component {
         product_condition: this.state.product_condition,
         no_of_package: parseInt(this.state.product_packages),
         package_type: this.state.product_package_type,
-        cargo_type_id: this.state.cargo_type,
-        cargo_type_name: this.state.cargo_type_list.filter(
-          (item) => item.value === this.state.cargo_type
-        )[0].label,
+        cargo_type_id: this.state.cargo_type_id,
+        cargo_type_name: cargo_type_name,
         stacking: parseInt(this.state.product_stacking),
         cargo_document: this.state.cargo_document,
       };
@@ -184,32 +178,29 @@ export default class AddProduct extends Component {
             break;
         }
       }
-      let data = {...this.props.route.params,...payload}
+      let data = {...this.props.route.params.editdata,...payload}
+      let send_to_api = {...payload,...this.props.route.params.screen/* ,product_id:this.props.route.params.screen.product_id */}
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-      if(this.props.route.params.type=="edit"){
-        /* this.props.navigation.navigate("Add3",{...data,editdata:this.props.route.params,type:"edit"}) */
-        APIProduct.editProduct(data).then((res)=>{  
+      console.log("DATA THAT SHOULD BE SENT 2 API: ", send_to_api);
+        APIProduct.editProduct(send_to_api).then((res)=>{  
           this.setState({ loading: false });
-          Alert.alert("Successful",res,[
-            {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
+          Alert.alert("Successful","Product was edited successfully",[
+            {text:"Ok",onPress:()=>this.props.navigation.navigate("SellingDetails")}
           ])
         }).catch(err=>{
+          console.warn(err)
           this.setState({ loading: false });
-          Alert.alert("Error","Something Went Wrong")
+          Alert.alert("Error","Something went wrong, Please check your inputs")
         })
-      }
-      else{
-        this.setState({ loading: false });
-        this.props.navigation.navigate("Add3",data)
-      }
     }
   };
 
   async componentDidMount() {
-    console.log("ROUTE PARAMS: ", this.props.route.params.editdata);
-    if(this.props.route.params.type=="edit"){
+    console.log("ROUTE PARAMS: ", this.props.route.params.editdata,"\n\n\n");
+    console.log("USER: ",this.props.route.params.editdata.user.company_reg_doc)
       let route = this.props.route.params.editdata
-      let cargoerror=true;
+      let cargoerror=route.cargo_document?false:true;
+      let companyerror=route.user.company_reg_doc?false:true;
       this.setState({
         product_min_qty:route.min_purchase_qty+"",
         product_max_qty:route.max_purchase_qty+"",
@@ -218,22 +209,20 @@ export default class AddProduct extends Component {
         product_return_switch:route.return_allowed,
         product_return:route.return_day+"",
         product_cancel_switch:route.cancel_allowed,
-        product_cancel:route.return_cancel+"",
+        product_cancel:route.cancel_day+"",
         product_condition:route.product_condition,
         product_packages:route.no_of_package+"",
         product_package_type:route.package_type+"",
-        cargo_type:{
-          value:route.cargo_type_id,
-          label:route.cargo_type_name
-        },
+        cargo_type_id:route.cargo_type_id,
+        cargo_type_name:route.cargo_type_name,
         product_stacking:route.stacking+"",
         company_document:route.user.company_reg_doc,
-        company_document_error:route.user.company_reg_doc.length>0?false:true,
+        company_document_Error:companyerror,
         cargo_document:route.cargo_document,
+        cargo_document_Error:cargoerror
 
       })
       console.log("OCUMNET: ",route.user.company_reg_doc)
-    }
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     APIProduct.getCargoTypeList().then((res) => {
       console.log("CARGO DATA: ", res);
@@ -441,13 +430,11 @@ export default class AddProduct extends Component {
           prompt={item.label}
           onValueChange={(itemValue, itemIndex) => {
             this.setState({ [item.stateValue]: itemValue });
-            if (item.stateValue == "product_condition") {
               console.log(
                 "ITEM VALUE:",
                 itemValue,
-                "\nITEM INDEX:" , itemIndex
+                "\nITEM INDEX:" , itemIndex,
               );
-            }
           }}
         >
           {this.state[item.items].map((it, index2) => (
@@ -600,9 +587,9 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>{this.props.route.params.type=="edit" && "Edit " }Shipping Info</Text>
+          <Text style={styles.headerText}>Edit Shipping Info</Text>
           <Progress.Bar
-            progress={this.props.route.params.type=="edit"?0.5:0.33}
+            progress={0.5}
             color="#6E91EC"
             width={
               screenwidth * 0.4

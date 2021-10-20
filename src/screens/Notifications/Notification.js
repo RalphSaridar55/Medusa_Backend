@@ -1,20 +1,12 @@
-import { Picker } from "@react-native-picker/picker";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  ImageBackground,
   ScrollView,
-  Dimensions,
-  TouchableOpacity,
   Image,
 } from "react-native";
-import CollapsibleList from "react-native-collapsible-list";
 import Spinner from "react-native-loading-spinner-overlay";
-import { TextInput } from "react-native-paper";
-import { useState } from "react/cjs/react.development";
-import * as apiService from "../../core/apis/apiChatServices";
-import styles from "./style_notification";
+import {styles} from "./style_notification";
 const data = {
   subject: "Changing the price",
   date: "01-03-2021",
@@ -35,18 +27,8 @@ const data = {
    ac tempor est neque scelerisque felis. Proin iaculis massa nulla.`,
 };
 
-const screenwidth = Dimensions.get("screen").width;
-const screenheight = Dimensions.get("screen").height;
-
 const Notification = () => {
-  const [replies, setReplies] = useState();
-  const [price, setPrice] = useState({ value: "", error: false });
-  const [reply, setReply] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-
-  const sendAction = () => {
-    console.log("Should send a text");
-  };
 
   useEffect(() => {
       setIsVisible(false);

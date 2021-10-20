@@ -7,9 +7,29 @@ import Addresses from "../screens/BuyerAccountDetails/addresses";
 import SellingDetail from "../screens/BuyerAccountDetails/sellingDetails";
 import DetailedProduct from "../screens/BuyerAccountDetails/detailedProduct";
 import AddVariant from "../screens/BuyerAccountDetails/addVariant";
+import edit1 from '../screens/BuyerAccountDetails/product_edit';
+import edit2 from '../screens/BuyerAccountDetails/product_edit2';
 
 const AStack = createStackNavigator();
 const PStack = createStackNavigator();
+const EStack = createStackNavigator();
+
+const editStack = ({navigation})=>{
+  return(
+    <EStack.Navigator>
+      <EStack.Screen
+      name="edit1"
+      component={edit1}
+      options={{ headerShown: false }}
+      navigation={navigation}/>
+      <EStack.Screen
+      name="edit2"
+      component={edit2}
+      options={{ headerShown: false }}
+      navigation={navigation}/>
+    </EStack.Navigator>
+  )
+}
 
 const ProductStack = ({navigation}) => {
   return(
@@ -31,6 +51,12 @@ const ProductStack = ({navigation}) => {
         component={AddVariant}
         options={{ headerShown: false }}
         navigation={navigation}
+        />
+      <PStack.Screen
+      name="Edit"
+      component={editStack}
+      options={{headerShown:false}}
+      navigation={navigation}
         />
   </PStack.Navigator>
   )

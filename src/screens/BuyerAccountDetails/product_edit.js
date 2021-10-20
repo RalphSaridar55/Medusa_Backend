@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import * as Progress from "react-native-progress";
-import { SubmitData } from "./submit";
 import * as APIProduct from "../../core/apis/apiProductServices";
 import * as APIPortfolio from "../../core/apis/apiPortfolioServices";
 import { addElements } from "./add_elements";
-import { addElements2 } from "./add_elements_2";
-import { addElements3 } from "./add_elements_3";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -31,10 +27,8 @@ import {
 import { TextInput, Switch } from "react-native-paper";
 import styles from "./add_style";
 import TagInput from "react-native-tags-input";
-import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -153,6 +147,7 @@ export default class AddProduct extends Component {
         services:arrayOfServices,
         images: arrayOfImages,
         tags: arrayOfTags,
+        product_id:this.props.route.params.id
       };
 
       console.log("PAYLOAD IS : ", payload);
@@ -185,17 +180,12 @@ export default class AddProduct extends Component {
 
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-      if(this.props.route.params.type){
-        this.props.navigation.navigate("Add2", {...payload,editdata:this.props.route.params,type:"edit"});
-      }
-      else
-      this.props.navigation.navigate("Add2", payload);
+      this.props.navigation.navigate("edit2", {screen:payload,editdata:{...this.props.route.params}});
     }
   };
 
   async componentDidMount() {
     console.log("ROUTE PARAMS: ",this.props.route.params)
-    if(this.props.route.params){
       let route = this.props.route.params;
       let images=[];
       let services=[];
@@ -234,7 +224,6 @@ export default class AddProduct extends Component {
         product_services:services,
 
       })
-    }
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     APIProduct.getServices().then((res) => {
       console.log("SERVICES FROM API: ", res);
@@ -271,11 +260,6 @@ export default class AddProduct extends Component {
         loading: false,
       });
     })
-    if(this.props.route.params){
-      /* this.setState({
-
-      }) */
-    };
   }
 
   chooseImages = async (type) => {
@@ -669,7 +653,7 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>{this.props.route.params.type=="edit" && "Edit "}Product Info</Text>
+          <Text style={styles.headerText}>Edit Product Info</Text>
           <Progress.Bar
             progress={0}
             color="#6E91EC"
