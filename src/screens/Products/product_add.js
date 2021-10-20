@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import * as Progress from "react-native-progress";
-import { SubmitData } from "./submit";
 import * as APIProduct from "../../core/apis/apiProductServices";
 import * as APIPortfolio from "../../core/apis/apiPortfolioServices";
 import { addElements } from "./add_elements";
-import { addElements2 } from "./add_elements_2";
-import { addElements3 } from "./add_elements_3";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -23,18 +19,13 @@ import {
   LogBox,
   Text,
   SafeAreaView,
-  ImageBackground,
   Dimensions,
-  Button,
-  Touchable,
 } from "react-native";
 import { TextInput, Switch } from "react-native-paper";
-import styles from "./add_style";
+import {styles} from "./add_style";
 import TagInput from "react-native-tags-input";
-import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -185,56 +176,11 @@ export default class AddProduct extends Component {
 
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-      if(this.props.route.params.type){
-        this.props.navigation.navigate("Add2", {...payload,editdata:this.props.route.params,type:"edit"});
-      }
-      else
       this.props.navigation.navigate("Add2", payload);
     }
   };
 
   async componentDidMount() {
-    console.log("ROUTE PARAMS: ",this.props.route.params)
-    if(this.props.route.params){
-      let route = this.props.route.params;
-      let images=[];
-      let services=[];
-      let tags=[]
-      route.images.map((item)=>{
-        images.push(item.media)
-      })
-      route.services.map((item)=>{
-        services.push({label:item.service_name,value:item.service_id})
-      })
-      route.tags.map((item)=>{
-        tags.push(item.tag_name)
-      })
-      this.setState({
-        product_name:route.product_name,
-        product_sku:route.product_sku,
-        product_weight:route.weight+"",
-        product_price:route.price+"",
-        product_offer_price:route.offered_price+"",
-        product_width:route.width+"",
-        product_height:route.height+"",
-        product_depth:route.depth+"",
-        product_description:route.description,
-        brand:{label:route.brand.brand_name,value:route.brand.id},
-        subCategory:{label:route.subCategory.sub_category_name,value:route.subCategory.id},
-        category:{label:route.category.category_name,value:route.category.id},
-        product_negotiable:route.is_negotiable,
-        product_shipping:route.shipping_included,
-        product_visible:route.is_visible,
-        product_discount:route.is_discount,
-        product_warranty:route.warranty_details,
-        tags:{
-          tag:"",tagsArray:tags
-        },
-        images:images,
-        product_services:services,
-
-      })
-    }
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     APIProduct.getServices().then((res) => {
       console.log("SERVICES FROM API: ", res);
@@ -271,11 +217,6 @@ export default class AddProduct extends Component {
         loading: false,
       });
     })
-    if(this.props.route.params){
-      /* this.setState({
-
-      }) */
-    };
   }
 
   chooseImages = async (type) => {
@@ -669,7 +610,7 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>{this.props.route.params.type=="edit" && "Edit "}Product Info</Text>
+          <Text style={styles.headerText}>Product Info</Text>
           <Progress.Bar
             progress={0}
             color="#6E91EC"

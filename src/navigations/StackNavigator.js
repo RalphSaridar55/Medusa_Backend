@@ -113,7 +113,7 @@ function CustomDrawer(props) {
               labelStyle={props.screenC=="Product" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() => {
                 props.changeScreen("Product")
-                props.navigation.navigate("Product");
+                props.navigation.navigate("Product",{userType:props.userType, screen:"List"});
               }}
               icon={() => <Feather name="box" size={24} color={props.screenC=="Product" ? "#6E91EC" : "black"} />}
             />
@@ -309,6 +309,7 @@ function CustomDrawer(props) {
               apiServices.logout().then((res) => {
                 console.log("WHEN LOGGING OUT: ", res);
                 AsyncStorage.clear();
+                props.changeScreen("Home")
                 props.navigation.navigate("Home")
               });
             }}

@@ -1,16 +1,10 @@
 import React, { Component } from "react";
 import * as Progress from "react-native-progress";
-import { SubmitData } from "./submit";
 import * as APIProduct from "../../core/apis/apiProductServices";
-import * as APIPortfolio from "../../core/apis/apiPortfolioServices";
-import { addElements } from "./add_elements";
 import { addElements2 } from "./add_elements_2";
-import { addElements3 } from "./add_elements_3";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
 import { Picker } from "@react-native-picker/picker";
-import * as ImagePicker from "expo-image-picker";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -23,18 +17,13 @@ import {
   LogBox,
   Text,
   SafeAreaView,
-  ImageBackground,
   Dimensions,
-  Button,
-  Touchable,
 } from "react-native";
 import { TextInput, Switch } from "react-native-paper";
-import styles from "./add_style";
-import TagInput from "react-native-tags-input";
+import {styles} from "./add_style";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -186,54 +175,13 @@ export default class AddProduct extends Component {
       }
       let data = {...this.props.route.params,...payload}
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-      if(this.props.route.params.type=="edit"){
-        /* this.props.navigation.navigate("Add3",{...data,editdata:this.props.route.params,type:"edit"}) */
-        APIProduct.editProduct(data).then((res)=>{  
-          this.setState({ loading: false });
-          Alert.alert("Successful",res,[
-            {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
-          ])
-        }).catch(err=>{
-          this.setState({ loading: false });
-          Alert.alert("Error","Something Went Wrong")
-        })
-      }
-      else{
         this.setState({ loading: false });
         this.props.navigation.navigate("Add3",data)
-      }
     }
   };
 
   async componentDidMount() {
-    console.log("ROUTE PARAMS: ", this.props.route.params.editdata);
-    if(this.props.route.params.type=="edit"){
-      let route = this.props.route.params.editdata
-      let cargoerror=true;
-      this.setState({
-        product_min_qty:route.min_purchase_qty+"",
-        product_max_qty:route.max_purchase_qty+"",
-        product_reserve_qty:route.max_reserve_qty+"",
-        product_downpayment:route.down_payment+"",
-        product_return_switch:route.return_allowed,
-        product_return:route.return_day+"",
-        product_cancel_switch:route.cancel_allowed,
-        product_cancel:route.return_cancel+"",
-        product_condition:route.product_condition,
-        product_packages:route.no_of_package+"",
-        product_package_type:route.package_type+"",
-        cargo_type:{
-          value:route.cargo_type_id,
-          label:route.cargo_type_name
-        },
-        product_stacking:route.stacking+"",
-        company_document:route.user.company_reg_doc,
-        company_document_error:route.user.company_reg_doc.length>0?false:true,
-        cargo_document:route.cargo_document,
-
-      })
-      console.log("OCUMNET: ",route.user.company_reg_doc)
-    }
+    console.log("ROUTE PARAMS: ", this.props.route.params);
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     APIProduct.getCargoTypeList().then((res) => {
       console.log("CARGO DATA: ", res);
@@ -388,7 +336,7 @@ export default class AddProduct extends Component {
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
                 >
-                  <Text style={styles.loginBtnText}>{this.props.route.params.type=="edit"?"Edit Product":item.label}</Text>
+                  <Text style={styles.loginBtnText}>{item.label}</Text>
                 </TouchableOpacity>
               );
             }
@@ -600,13 +548,13 @@ export default class AddProduct extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Spinner visible={this.state.loading} />
         <View style={styles.progressBarContainer}>
-          <Text style={styles.headerText}>{this.props.route.params.type=="edit" && "Edit " }Shipping Info</Text>
+          <Text style={styles.headerText}>Shipping Info</Text>
           <Progress.Bar
-            progress={this.props.route.params.type=="edit"?0.5:0.33}
+            progress={0.33}
             color="#6E91EC"
             width={
               screenwidth * 0.4
-            } /* indeterminateAnimationDuration={1000} indeterminate={true} */
+            }
           />
         </View>
         {this.drawScreenTwo()}

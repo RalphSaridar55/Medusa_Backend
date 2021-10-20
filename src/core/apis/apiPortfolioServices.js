@@ -30,10 +30,6 @@ export const getSellerCategories= async() =>{
 
 
 export async function getCategoryDetails () {
-    //return await apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.CATEGORIES}`).then((res) => {
-       //console.log(res.data.data.data);
-       //return res.data.data.data;
-    //})
         return [
         {
           category_name: "Electronics",

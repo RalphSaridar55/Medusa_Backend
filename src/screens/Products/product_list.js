@@ -1,7 +1,8 @@
 import React, { Component, createRef } from 'react';
 import SelectMultiple from "react-native-select-multiple";
 import * as apiPortFolioServices from "../../core/apis/apiPortfolioServices";
-
+import * as API from "../../core/apis/apiProductServices";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Overlay from 'react-native-modal-overlay';
 import {
     StyleSheet,
@@ -19,33 +20,10 @@ import { List, Checkbox, Button, Appbar, Searchbar, IconButton, Title } from 're
 import Slider from "react-native-sliders";
 import styles from './listing_style';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const actionSheetRef = createRef();
 const actionSheetCat = createRef();
-const colors=[
-    {label:'White',value:1,},
-    {label:'Red',value:2,},
-    {label:'Blue',value:3,},
-    {label:'Black',value:4,},
-]
-const brands=[
-    {label:'Samsung',value:1,},
-    {label:'Lenovo',value:2,},
-    {label:'Huawei',value:3,},
-    {label:'Apple',value:4,},
-]
-const data=[
-    { id: 1, name: "116 smart watch ", brand:'Lenovo' ,status: "$0.66 - $3.46", moq: "10", av: '100', color:'White',image: "https://sc04.alicdn.com/kf/H8620b8f47fd14c94b8cb5ae677418c2bl.jpg", topSelling:3000 ,date:'2019-10-02', category:'Electronics', subcategory:''},
-    { id: 2, name: "Q12 Smartwatch", brand:'Lenovo' ,status: "$0.76 - $3.46", moq: "20", av: '100', color:'White',image: "https://sc04.alicdn.com/kf/H5a25154aed3a441cb7bbaeefb22689baS.jpg", topSelling:2000 ,date:'2020-10-02', category:'Electronics', subcategory:''},
-    { id: 3, name: "Q12 Smartwatch", brand:'Lenovo' ,status: "$0.12 - $7.55", moq: "5", av: '200', color:'Blue',image: "https://sc04.alicdn.com/kf/Hd03ed87f7279473c89dd2bc3f01d050eI.jpg", topSelling:2000 ,date:'2018-10-02', category:'Electronics', subcategory:''},
-    { id: 4, name: "Z15 Smartwatch", brand:'Samsung' ,status: "$0.13 - $8.55", moq: "10", av: '100', color:'Blue',image: "https://sc04.alicdn.com/kf/Hbe79d59029f749bdb11318553a997740u.jpg", topSelling:1000 ,date:'2017-10-02', category:'Electronics', subcategory:''},
-    { id: 5, name: "Z15 Smartwatch", brand:'Samsung' ,status: "$0.12 - $7.55", moq: "1", av: '300', color:'Red',image: "https://sc04.alicdn.com/kf/Hbefda793d3084ed5819cc908183d6b71a.jpg", topSelling:2000,date:'2016-10-02', category:'Electronics', subcategory:''},
-    { id: 6, name: "G102 Gaming", brand:'Apple' ,status: "$0.66 - $3.46", moq: "10", av: '100', color:'Red',image: "https://sc04.alicdn.com/kf/Hb1a7df7c8ea041e780440827874d67ddn.jpg", topSelling:2000 ,date:'2015-09-02', category:'Electronics', subcategory:''},
-    { id: 8, name: "W11 headphone", brand:'Apple' ,status: "$0.66 - $5.46", moq: "100", av: '300', color:'Red',image: "https://sc04.alicdn.com/kf/H0fafa3dcf2d543dab6aa08623ff8ba2cA.jpg", topSelling:5000 ,date:'2014-10-02', category:'Beauty'},
-    { id: 9, name: "A12 headphone", brand:'Lenovo' ,status: "$0.66 - $6.46", moq: "10", av: '100', color:'Red',image: "https://sc04.alicdn.com/kf/H1f097508b28149c391b0d366d3e58922v.jpg", topSelling:1000 ,date:'2013-10-02', category:'Beauty'},
-    { id:10, name: "Q1 Smartwatch", brand:'Lenovo' ,status: "$0.66 - $4.46", moq: "40", av: '100', color:'Black',image: "https://sc04.alicdn.com/kf/Hd03ed87f7279473c89dd2bc3f01d050eI.jpg", topSelling:100 ,date:'2012-10-02', category:'Beauty'},
-    { id: 11, name: "Z1 Smartwatch", brand:'Lenovo' ,status: "$0.66 - $5.46", moq: "50", av: '100', color:'Black',image: "https://sc04.alicdn.com/kf/Hbefda793d3084ed5819cc908183d6b71a.jpg", topSelling:500 ,date:'2011-10-02', category:'Beauty'},
-];
 
 export default class ProductList extends Component {
 
@@ -53,18 +31,26 @@ export default class ProductList extends Component {
         super(props);
         this.state = {
             search:'',
-            data: data,
             List: true,
             showSearch: true,
             value: [0,1],
+            isVisible:true,
             category:[],
             subcategory:[],
             color:[],
             brand:[],
             sortByData:'',
-
+            userType:0,
+            showButton:false,
+            fetchedProducts:[],
+            filterProducts:[],
             fetchedCategories:[],
-            multiplier:10,
+            fetchedSubCategories:[],
+            fetchedSBProductsForFiltering:[],
+            fetchedBProductsForFiltering:[],
+            fetchedBrands:[],
+            apiCategoriesForFiltering:[],
+            multiplier:500,
             modalVisible:false,
         };
     }
@@ -80,14 +66,14 @@ export default class ProductList extends Component {
         //console.log(v);
         this.setState({value:v})
         //console.log(v[1])
-        let filteredData = data.filter(item=>{
-            return (parseInt(item.status.split(" - ")[1].substr(1))>=(parseInt(v[0]*this.state.multiplier)) && parseInt(item.status.split(" - ")[1].substr(1))<=(parseInt(v[1]*this.state.multiplier)))
+        let filteredData = this.state.filterProducts.filter(item=>{
+            return (item.price>=(parseInt(v[0]*this.state.multiplier)) && item.price<=(parseInt(v[1]*this.state.multiplier)))
          })
-        this.setState({data:filteredData})
+        this.setState({filterProducts:filteredData})
     }
 
     resetPriceRange = () =>{
-        this.setState({value:[0,1], data:data})
+        this.setState({value:[0,1], filterProducts:fetchedProducts})
     }
 
     clickEventListener(item) {
@@ -146,11 +132,11 @@ export default class ProductList extends Component {
             Alert.alert("Category Error","You can't pick more than one brand")
         }
         else if(selection.length==0){
-            this.setState({data:data,brand:[]})
+            this.setState({filterProducts:this.state.fetchedBProductsForFiltering,brand:[]})
         }
         else{
-            let result = this.state.data.filter((i)=>i.brand == selection[0].label)
-            this.setState({data:result,brand:selection})
+            let result = this.state.fetchedBProductsForFiltering.filter((i)=>i.brand.id == selection[0].value)
+            this.setState({filterProducts:result,brand:selection})
         }
     }    
 
@@ -161,42 +147,67 @@ export default class ProductList extends Component {
             Alert.alert("Category Error","You can't pick more than one category")
         }
         else if(selection.length==0){
-            this.setState({data:data,category:[]})
+            this.setState({filterProducts:this.state.fetchedSBProductsForFiltering,subcategory:[],fetchedBrands:[]})
         }
         else{
-            let result = this.state.data.filter((i)=>i.category == selection[0].label)
-            this.setState({data:result,subcategory:selection})
+            let array = [];
+            let result = this.state.fetchedSBProductsForFiltering.filter((i)=>i.subCategory.id == selection[0].value)
+            console.log("RESULT: ",result)
+            let fetchedSubrands = this.state.apiCategoriesForFiltering.find((i1)=>i1.id === this.state.category[0].value)
+            let fetchedBrands = fetchedSubrands.subcategory.find((i2)=>i2.id === selection[0].value)
+            fetchedBrands.brands.map((i3)=>{
+                array.push({label:i3.brand_name,value:i3.id})
+            })
+
+            this.setState({filterProducts:result,subcategory:selection,fetchedBrands:array,fetchedBProductsForFiltering:result})
         }
     }
    
 
     setCategory(selection){
-        console.log(selection)
+        console.log("SELECTION: ",selection)
         if(selection.length>1){
             Alert.alert("Category Error","You can't pick more than one category")
         }
         else if(selection.length==0){
-            this.setState({data:data,category:[]})
+            this.setState({filterProducts:this.state.fetchedProducts,category:[],fetchedSubCategories:[]})
         }
         else{
-            let result = this.state.data.filter((i)=>i.category == selection[0].label)
-            this.setState({data:result,category:selection})
+            let array = [];
+            let result = this.state.fetchedProducts.filter((i)=>i.category_id == selection[0].value)
+            console.log("RESULT: ",result)
+            let fetchedSub = this.state.apiCategoriesForFiltering.find((it)=>it.id===selection[0].value).subcategory.filter((item)=>item.category_id === selection[0].value)
+            fetchedSub.map((item2)=>{
+                array.push({label:item2.sub_category_name, value:item2.id})
+            })
+            this.setState({filterProducts:result,category:selection, fetchedSubCategories:array,fetchedSBProductsForFiltering:result})
         }
     }
 
-    componentDidMount(){
-        apiPortFolioServices.getCategoryDetails().then((result) => {
-          console.log(result);
-          let array = result;
-          let data = [];
-          array.map((item) => data.push({label:item.category_name,value:item.id}));
-          this.setState({ fetchedCategories: data});
-        });
+    async componentDidMount(){
+        console.log("ROUTE PARAMETERS ",this.props.route.params)
+        let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+        this.setState({userType:user.user_type, showButton:true})
+        console.log("USER DATA: ",user.user_type)
+        apiPortFolioServices.getCategories().then((result)=>{
+            console.log("CATEGORIES: ",result);
+            let array = result;
+            let data = [];
+            array.map((item) => data.push({label:item.category_name,value:item.id}));
+            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
+        })
+        API.getProducts().then((res)=>{
+            console.log("PRODUCTS FETCHED: ",res)
+            this.setState({ filterProducts:res,fetchedProducts:res,isVisible:false })
+        })
+
     }
+
 
     render() {
         return (
             <View style={styles.container}>
+                <Spinner visible={this.state.isVisible} />
                 <Overlay visible={this.state.modalVisible} onClose={()=>this.setState({modalVisible:false})} closeOnTouchOutside>
                     <Text style={{
                         fontSize: 21,
@@ -230,8 +241,8 @@ export default class ProductList extends Component {
                 </Overlay>
                 <View>
                     <Appbar style={{backgroundColor:"#E9F3FF" , color:"#fff"}}>
-                        <Appbar.Content title={this.state.data.filter
-                        (i=>i.name.toLowerCase().includes(this.state.search.toLowerCase())).length + " " + "Results"} onPress={this.setView} style={{ fontSize: 14 }} />
+                        <Appbar.Content title={this.state.filterProducts.filter
+                        (i=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase())).length + " " + "Results"} onPress={this.setView} style={{ fontSize: 14 }} />
                         <Appbar.Action icon="sort-descending" onPress={() => {
                             actionSheetRef.current?.setModalVisible();
                         }} />
@@ -250,8 +261,8 @@ export default class ProductList extends Component {
                 </View>
                 <FlatList style={styles.list}
                     contentContainerStyle={styles.listContainer}
-                    data={this.state.data.filter
-                        (i=>i.name.toLowerCase().includes(this.state.search.toLowerCase()))}
+                    data={this.state.filterProducts.filter
+                        (i=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase()))}
                     horizontal={false}
                     numColumns={2}
                     keyExtractor={(item) => {
@@ -262,13 +273,13 @@ export default class ProductList extends Component {
                             <TouchableOpacity style={styles.card} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
                                 <View style={styles.cardHeader}>
                                 </View>
-                                <Image style={styles.userImage} source={{ uri: item.image }} />
+                                <Image style={styles.userImage} source={{ uri: item.images[0].media }} />
                                 <View style={styles.cardFooter}>
                                     <View style={{ alignItems: "center", justifyContent: "center" }}>
-                                        <Text style={styles.name}>{item.name}</Text>
-                                        <Text style={styles.position}>{item.status} / Piece</Text>
-                                        <Text style={styles.position}>Available Qu. {item.av}</Text>
-                                        <Text style={styles.position}> Min. Order {item.moq}</Text>
+                                        <Text style={styles.name}>{item.product_name}</Text>
+                                        <Text style={styles.position}>${item.price} / Piece</Text>
+                                        <Text style={styles.position}>Available Qu. {item.current_stock}</Text>
+                                        <Text style={styles.position}> Min. Order {item.min_purchase_qty}</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -328,53 +339,61 @@ export default class ProductList extends Component {
                         <View >
                             <Title style={{ padding: 10 }}>Filter By </Title>
                             <List.AccordionGroup>
-                                <List.Accordion title="Categories" id="1" style={{ width: "100%" }}>
+                                <List.Accordion title="Categories" id="1" style={{ width: "100%" }}
+                                        theme={{
+                                        colors: { primary: "#6E91EC", underlineColor: "transparent" },
+                                        }}>
                                         <SelectMultiple
                                         items={this.state.fetchedCategories}
                                         selectedItems={this.state.category}
                                         onSelectionsChange={(e) => this.setCategory(e)}/>
                                 </List.Accordion>
 
-                                <List.Accordion title="Sub-Categories" id="2">
+                                <List.Accordion title="Sub-Categories" id="2" 
+                                        theme={{
+                                        colors: { primary: "#6E91EC", underlineColor: "transparent" },
+                                        }}> 
                                 <ScrollView style={{ maxHeight: 200 }}>
                                         {this.state.category.length==0
                                         ?(<Text style={{color:'red',textAlign:'center',paddingVertical:10}}>Please choose a category first</Text>)
                                         :(<SelectMultiple
-                                        items={this.state.fetchedCategories}
-                                        selectedItems={this.state.category}
+                                        items={this.state.fetchedSubCategories}
+                                        selectedItems={this.state.subcategory}
                                         onSelectionsChange={(e) => this.setSubCategory(e)}/>)}
                                     </ScrollView>
                                 </List.Accordion>
 
-                                <List.Accordion title="Brand" id="3">
+                                <List.Accordion title="Brand" id="3"
+                                        theme={{
+                                        colors: { primary: "#6E91EC", underlineColor: "transparent" },
+                                        }}>
                                 <ScrollView style={{ maxHeight: 200 }}>
                                         {this.state.category.length==0
                                         ?(<Text style={{color:'red',textAlign:'center',paddingVertical:10}}>Please choose a sub-category first</Text>)
                                         :(<SelectMultiple
-                                        items={brands}
+                                        items={this.state.fetchedBrands}
                                         selectedItems={this.state.brand}
                                         onSelectionsChange={(e) => this.setBrand(e)}/>)}
                                     </ScrollView>
                                 </List.Accordion>
 
-                                <List.Accordion title="Color" id="4">
-                                <ScrollView style={{ maxHeight: 200 }}>
-                                <SelectMultiple
-                                        items={colors}
-                                        selectedItems={this.state.color}
-                                        onSelectionsChange={(e) => this.setColor(e)}/>
-                                    </ScrollView>
-                                </List.Accordion>
-                                <List.Accordion title="Price Range" id="5">
+                                <List.Accordion title="Price Range" id="5"
+                                        theme={{
+                                        colors: { primary: "#6E91EC", underlineColor: "transparent" },
+                                        }}>
                                     <View style={styles.priceTextContainer}>
                                         <Text style={styles.priceText}>
                                             ${parseInt(this.state.value[0]*this.state.multiplier)} - ${parseInt(this.state.value[1]*this.state.multiplier)}
                                         </Text>
                                     </View>
                                     <Slider
+                                        style={{marginHorizontal:10}}
                                         value={this.state.value}
                                         onValueChange={value => this.filterPriceRange(value)
                                         }
+                                        minimumTrackTintColor="lightgray"
+                                        maximumTrackTintColor="#6E91EC"
+                                        thumbTintColor="#6E91EC"
                                     />
                                     <TouchableOpacity style={styles.resetButton}
                                     onPress={()=>this.resetPriceRange()}>
@@ -387,12 +406,12 @@ export default class ProductList extends Component {
                         </View>
                     </ScrollView>
                 </ActionSheet>
-                <TouchableOpacity
-                    style={styles.Btn}
+                {this.state.showButton && <TouchableOpacity
+                    style={[styles.Btn,this.state.userType==1?{display:'none',opacity:0}:null]}
                     onPress={() => this.setState({modalVisible:true})/* this.props.navigation.navigate("Add") */}
                 >
                     <Icon name="plus-thick" size={30} color="white" />
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
         );
     }

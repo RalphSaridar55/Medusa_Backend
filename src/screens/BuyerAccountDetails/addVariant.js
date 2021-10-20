@@ -52,9 +52,9 @@ export default class AddProduct extends Component {
 
       filter_variant_list: [],
       variant_type_list: [],
-      variant_type: {},
+      variant_type: 0,
       variant_value_list: [],
-      variant_value: {},
+      variant_value: 0,
       variantImage: "",
       loading: true,
 
@@ -181,7 +181,7 @@ export default class AddProduct extends Component {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     //4
     APIProduct.getVarientTypes(
-      4 /* this.props.route.params.category_id */
+      this.props.route.params.category_id
     ).then((res) => {
       let variants = [];
       let values = [];
@@ -198,9 +198,12 @@ export default class AddProduct extends Component {
     });
 
     if(this.props.route.params.type == "edit"){
+      let routeVar = this.props.route.params.productvariantopt;
+        this.setState({
+          variant_type: routeVar[0].varientType.id,
+        })
         console.log("SHOULD BE RUNNING")
         let route = this.props.route.params;
-        let routeVar = this.props.route.params.productvariantopt;
         console.log("VARIANT: ",route.variant_by_piece)
         console.log("VARIANT TYPE: ",{label:routeVar[0].varientType.varient_type, value:routeVar[0].varientType.id})
         console.log("VARIANT VALUE: ",{label:routeVar[0].varientValue.varient_value,value:routeVar[0].varientValue.id})
@@ -222,8 +225,7 @@ export default class AddProduct extends Component {
             variant_minqty_switch: route.is_variant_min_qty,
             variant_minqty: route.variant_min_qty+"",
             variant_minqty_error: 0,
-            variant_type: {label:routeVar[0].varientType.varient_type, value:routeVar[0].varientType.id},
-            variant_value: {label:routeVar[0].varientValue.varient_value,value:routeVar[0].varientValue.id},
+            variant_value: routeVar[0].varientValue.id,
             variantImage: route.variant_image,})
     }
   }

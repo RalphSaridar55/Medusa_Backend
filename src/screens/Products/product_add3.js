@@ -18,10 +18,9 @@ import {
   Text,
   SafeAreaView,
   Dimensions,
-  StyleSheet,
 } from "react-native";
 import { TextInput, Switch } from "react-native-paper";
-import styles from "./add_style";
+import {styles} from "./add_style";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -113,9 +112,6 @@ export default class AddProduct extends Component {
       };
 
       console.log("PAYLOAD IS : ",payload);
-      /* console.log("SHOUL BE: ",'is_variant_by_piece'.substring(3))
-      console.log("TESTING: ",payload['variant_by_piece'])
-      console.log("TESTING: ",payload['is_variant_by_piece'.substring(3)]) */
 
       for (var key of Object.keys(payload)) {
         console.log(key + " ---> " + payload[key]);

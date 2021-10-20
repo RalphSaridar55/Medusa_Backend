@@ -57,6 +57,14 @@ export const getVarientTypes= async(id) =>{
     })
 }
 
+//Get all sellers' products for guests
+export const getProducts = async()=>{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?limit=10000&page=1`).then((res)=>{
+            //console.log("RES FROM THE API:",res.data);
+            return res.data.data.data
+        })
+}
+
 //Post a new product
 export const createProduct = async(payload)=>{
     return await getToken().then((x)=>{

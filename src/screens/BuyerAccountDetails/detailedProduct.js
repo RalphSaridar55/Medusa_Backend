@@ -232,7 +232,7 @@ const detailedOrder = ({ navigation, route }) => {
             </View>
             <View style={{marginTop:10,display:'flex',alignItems:'flex-end'}}>
                 <TouchableOpacity style={{borderRadius:40,backgroundColor:'gray',padding:5}}
-                onPress={()=>navigation.navigate("AddVariant",{...item,type:'edit'})}>
+                onPress={()=>navigation.navigate("AddVariant",{...item,category_id:dataRoute.category_id,type:'edit'})}>
             <Icon name="pencil" size={24} color="white" style={{}}/>
                   </TouchableOpacity>
             </View>
