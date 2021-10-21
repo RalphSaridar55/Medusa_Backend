@@ -5,6 +5,8 @@ import { addElements3 } from "./add_elements_3";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
+import CollapsibleList from "react-native-collapsible-list";
+import SelectMultiple from "react-native-select-multiple";
 import moment from "moment";
 import DateRangePicker from "rn-select-date-range";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -53,7 +55,9 @@ export default class AddProduct extends Component {
       variant_type_list: [],
       variant_type: {},
       variant_value_list: [],
-      variant_value: {},
+      variant_value: [
+        {label:"Varient Value", value:0}
+      ],
       variantImage: "",
       loading: true,
 
@@ -329,6 +333,9 @@ export default class AddProduct extends Component {
             if (item.type === "switchInput") {
               return this.renderSwitchInput(item, index);
             }
+            if (item.type === "select") {
+              return this.renderCheckBox(item, index);
+            }
             if (item.type === "picker") {
               return this.renderPicker(item, index);
             }
@@ -365,6 +372,7 @@ export default class AddProduct extends Component {
                 <TouchableOpacity
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
+                  key={index}
                 >
                   <Text style={styles.loginBtnText}>Submit</Text>
                 </TouchableOpacity>
@@ -375,6 +383,51 @@ export default class AddProduct extends Component {
       </SafeAreaView>
     );
   };
+  
+  renderCheckBox(item, index) {
+    return (
+      <View style={{ marginVertical: 10, marginHorizontal: 20 }} key={index}>
+        <CollapsibleList
+          style={{ marginVertical: 10 }}
+          wrapperStyle={{
+            borderWidth: 0.2,
+            borderColor: "gray",
+            borderRadius: 5,
+          }}
+          buttonPosition="top"
+          numberOfVisibleItems={0}
+          buttonContent={
+            <View
+              style={[
+                styles.docPicker,
+                {
+                  borderColor: "#A6A6A6",
+                  backgroundColor: "#fff",
+                  marginVertical: 0,
+                },
+              ]}
+            >
+              <Text style={{ color: "gray", textAlignVertical: "center" }}>
+                {item.label}
+              </Text>
+            </View>
+          }
+        >
+          <SelectMultiple
+            items={
+              this.state[item.items].length > 0 ? this.state[item.items] : []
+            }
+            selectedItems={this.state[item.stateValue]}
+            labelStyle={{ color: "black" }}
+            selectedLabelStyle={{ color: "#698EB7" }}
+            onSelectionsChange={(selected) =>
+              this.setState({ [item.stateValue]: selected })
+            }
+          />
+        </CollapsibleList>
+      </View>
+    );
+  }
 
   renderPicker(item, index) {
     return (
@@ -436,7 +489,7 @@ export default class AddProduct extends Component {
           label={item.label}
           placeholder={item.placeholder}
           disabled={!this.state[item.stateValue]}
-          value={this.state[item.valueValue]}
+          value={this.state[item.valueValue].toString()}
           keyboardType={item.keyBoardType}
           multiline={item.multiline == "false" ? false : true}
           onChangeText={(text) => this.setState({ [item.valueValue]: text })}

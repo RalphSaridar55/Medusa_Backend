@@ -124,8 +124,8 @@ function CustomDrawer(props) {
               labelStyle={props.screenC=="Notifications" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{
                 props.changeScreen("Notifications")
-                props.navigation.navigate("Notifications"),{screen:'NegotiationList'}}
-              }
+                props.navigation.navigate("Notifications",{screen:'Notification'})
+              }}
               icon={() => (
                 <Ionicons
                   name="md-notifications-outline"
@@ -141,8 +141,8 @@ function CustomDrawer(props) {
               labelStyle={props.screenC=="Negotiations" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{
                 props.changeScreen("Negotiations")
-                props.navigation.navigate("Negotiations"),{screen:'NegotiationList'}}
-              }
+                props.navigation.navigate("Negotiations", {screen:'NegotiationList'})
+              }}
               icon={() => (
                 <FontAwesome5
                   name="handshake"

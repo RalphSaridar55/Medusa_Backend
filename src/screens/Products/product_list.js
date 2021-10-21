@@ -83,31 +83,31 @@ export default class ProductList extends Component {
     SortingByData(type){
         switch(type){
             case 'high':
-                this.setState({data:data.sort((a,b)=>
-                    parseFloat(a.status.split(' - ')[1].substr(1)) < parseFloat(b.status.split(' - ')[1].substr(1))? 1 : -1)
+                this.setState({filterProducts:this.state.filterProducts.sort((a,b)=>
+                    a.price < b.price? 1 : -1)
                 })
                 break;
             case 'low':
-                this.setState({data:data.sort((a,b)=>
-                    parseFloat(a.status.split(' - ')[1].substr(1)) > parseFloat(b.status.split(' - ')[1].substr(1))? 1 : -1)
+                this.setState({filterProducts:this.state.filterProducts.sort((a,b)=>
+                    a.price > b.price? 1 : -1)
                 })
                 break;
             case 'best':
-                this.setState({data:data.sort((a,b)=>
-                    a.topSelling < b.topSelling? 1 : -1)
+                this.setState({filterProducts:this.state.filterProducts.sort((a,b)=>
+                    a.current_stock < b.current_stock? 1 : -1)
                 })
                 break;
             case 'date':
-                this.setState({data:data.sort((a,b)=>{
+                this.setState({filterProducts:this.state.filterProducts.sort((a,b)=>{
                                         
-                        return new Date(a.date).getTime() - 
-                        new Date(b.date).getTime()
+                        return new Date(a.createdAt).getTime() - 
+                        new Date(b.createdAt).getTime()
                     }).reverse()
                     })
-                break;
+                break; 
             case 'reset':
-                this.setState({data:data.sort((a,b)=>
-                    a.name[0] > b.name[0]?1:-1)})
+                this.setState({filterProducts:fetchedProducts.sort((a,b)=>
+                    a.product_name[0] > b.product_name[0]?1:-1),category:[],subcategory:[],brand:[]})
                 break;
         }  
     }   
@@ -198,7 +198,8 @@ export default class ProductList extends Component {
         })
         API.getProducts().then((res)=>{
             console.log("PRODUCTS FETCHED: ",res)
-            this.setState({ filterProducts:res,fetchedProducts:res,isVisible:false })
+            let result = res.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false })
         })
 
     }
@@ -270,10 +271,10 @@ export default class ProductList extends Component {
                     }}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity style={styles.card} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
+                            <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
                                 <View style={styles.cardHeader}>
                                 </View>
-                                <Image style={styles.userImage} source={{ uri: item.images[0].media }} />
+                                <Image style={styles.userImage} source={{ uri: item.images[0].media }}  resizeMode="contain"/>
                                 <View style={styles.cardFooter}>
                                     <View style={{ alignItems: "center", justifyContent: "center" }}>
                                         <Text style={styles.name}>{item.product_name}</Text>
@@ -292,34 +293,36 @@ export default class ProductList extends Component {
                                 <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize}>
                                         <IconButton
-                                            icon="clock"
+                                            icon="clock-outline"
+                                            color="#6E91EC"
                                             size={20}
                                             onPress={()=>this.SortingByData("date")}
                                         />
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14 }}>Newset</Text>
+                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>Newset</Text>
                                 </View>
                                 <View style={{ flexDirection: "column", alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize}>
                                         <IconButton
-                                            icon="star-outline"
+                                            icon="chevron-up-box-outline"
+                                            color="#6E91EC"
                                             size={20}
                                             onPress={()=>this.SortingByData("best")}
                                         />
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14 }}>Best Selling</Text>
+                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>Available</Text>
                                 </View>
                                 <View style={{ flexDirection: "column", alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize} onPress={()=>this.SortingByData("low")}>
-                                        <Text style={{ fontSize: 18 }}>$</Text>
+                                        <Text style={{ fontSize: 18 ,color:"#6E91EC" }}>$</Text>
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14 }}>Low</Text>
+                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>Low</Text>
                                 </View>
                                 <View style={{ flexDirection: "column", alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize} onPress={()=>this.SortingByData("high")}>
-                                        <Text style={{ fontSize: 18 }}>$$</Text>
+                                        <Text style={{ fontSize: 18,color:"#6E91EC" }}>$$</Text>
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14 }}>High</Text>
+                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>High</Text>
                                 </View>
                             </View>
                             <View style={{ marginTop: 15, marginBottom: 10, marginHorizontal: 10, }} >

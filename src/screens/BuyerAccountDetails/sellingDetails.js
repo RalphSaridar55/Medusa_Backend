@@ -47,7 +47,7 @@ const SellingDetail = ({navigation}) =>{
     useEffect(()=>{
         API.getSellersOwnProducts().then((res)=>{
             console.log("RESULT FROM USEEFFECT: ",res)
-            setData(res);
+            setData(res.sort((a,b)=>a.product_name>b.product_name?1:-1));
         })
         
         apiPortFolioServices.getCategories().then((result) => {
@@ -317,11 +317,11 @@ return (
        }}
        renderItem={({ item }) => {
            return (
-               <TouchableOpacity style={styles.card}
+               <TouchableOpacity style={[styles.card,{borderRadius:15}]}
                onPress={()=>navigation.navigate("DetailedProduct",item)}>
                    <View style={styles.cardHeader}>
                    </View>
-                   <Image style={styles.userImage} source={{ uri: item.images[0].media }} />
+                   <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode="contain"/>
                    <View style={styles.cardFooter}>
                        <View style={{ alignItems: "center", justifyContent: "center" }}>
                            <Text style={styles.name}>{item.product_name}</Text>

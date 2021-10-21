@@ -85,12 +85,14 @@ export default class AddProduct extends Component {
         "Error",
         "Please make sure the maximum quantity is greater than the minimum"
       );
+    this.setState({loading:false})
       return;
     } else if (this.state.product_downpayment > 100) {
       Alert.alert(
         "Error",
         "Please make sure the down payment rate is lower than 100"
       );
+    this.setState({loading:false})
       return;
     } else if (
       (this.state.product_cancel_switch && this.state.product_cancel < 1) ||
@@ -100,6 +102,7 @@ export default class AddProduct extends Component {
         "Error",
         "Please make sure return and cancel day have positive values if switched on"
       );
+    this.setState({loading:false})
       return;
     } else {
       let payload = {
@@ -119,7 +122,7 @@ export default class AddProduct extends Component {
         cargo_type_name: this.state.cargo_type_list.filter(
           (item) => item.value === this.state.cargo_type
         )[0].label,
-        stacking: parseInt(this.state.product_stacking),
+        stacking: this.state.product_stacking?1:2,
         cargo_document: this.state.cargo_document,
       };
 
@@ -159,6 +162,7 @@ export default class AddProduct extends Component {
                   "Error",
                   `return days' input must be a positive number`
                 );
+                this.setState({ loading: false });
               } else if (
                 payload["cancel_allowed"] == true &&
                 payload["cancel_day"] < 1
@@ -167,6 +171,7 @@ export default class AddProduct extends Component {
                   "Error",
                   `cancel days' input must be a positive number`
                 );
+                this.setState({ loading: false });
               } else break;
             }
           case "object":
@@ -327,6 +332,9 @@ export default class AddProduct extends Component {
             if (item.type === "checkbox") {
               return this.renderCheckBox(item, index);
             }
+            if(item.type === 'switch'){
+              return this.renderSwitch(item,index)
+            }
             if (item.type == "document") {
               return this.renderDocument(item, index);
             }
@@ -335,6 +343,7 @@ export default class AddProduct extends Component {
                 <TouchableOpacity
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
+                  key={index}
                 >
                   <Text style={styles.loginBtnText}>{item.label}</Text>
                 </TouchableOpacity>
@@ -345,6 +354,23 @@ export default class AddProduct extends Component {
       </SafeAreaView>
     );
   };
+
+  
+
+  renderSwitch(item, index) {
+    return (
+      <View style={styles.switchContainer} key={index}>
+        <Text style={styles.switchText}>{item.label}</Text>
+        <Switch
+          value={this.state[item.stateValue]}
+          onValueChange={(i) => {
+            //console.log("CHOSEN: ",i);
+            this.setState({ [item.stateValue]: i });
+          }}
+        />
+      </View>
+    );
+  }
 
   renderDocument(item, index) {
     return (
@@ -416,7 +442,7 @@ export default class AddProduct extends Component {
           marginHorizontal: 20,
         }}
         label={item.label}
-        value={this.state[item.stateValue]}
+        value={this.state[item.stateValue].toString()}
         keyboardType={item.keyBoardType}
         multiline={item.multiline == "false" ? false : true}
         onChangeText={(text) => this.setState({ [item.stateValue]: text })}
@@ -458,7 +484,7 @@ export default class AddProduct extends Component {
           label={item.label}
           placeholder={item.placeholder}
           disabled={!this.state[item.stateValue]}
-          value={this.state[item.valueValue]}
+          value={this.state[item.valueValue].toString()}
           keyboardType={item.keyBoardType}
           multiline={item.multiline == "false" ? false : true}
           onChangeText={(text) => this.setState({ [item.valueValue]: text })}

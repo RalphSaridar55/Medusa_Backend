@@ -86,7 +86,7 @@ export let addElements2 = [
         stateValue:'cargo_type',
     },
     {
-        type: 'textInput',
+        type: 'switch',
         label: 'Stacking *',
         stateValue: 'product_stacking',
         returnKeyType: 'next',

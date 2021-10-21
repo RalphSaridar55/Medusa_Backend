@@ -6,10 +6,11 @@ export let addElements3 = [
         stateValue:'variant_type',
     },
     {
-        type:'picker',
+        type:'select',
         label:'Variant Value',
         items:'variant_value_list',
         stateValue:'variant_value',
+        placeholder:'Variant Value'
     },
     {
         type: 'switchInput',

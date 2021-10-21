@@ -4,6 +4,8 @@ import * as APIProduct from "../../core/apis/apiProductServices";
 import { addElements3 } from "./add_elements_3";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
+import CollapsibleList from "react-native-collapsible-list";
+import SelectMultiple from 'react-native-select-multiple';
 import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import DateRangePicker from "rn-select-date-range";
@@ -54,7 +56,7 @@ export default class AddProduct extends Component {
       variant_type_list: [],
       variant_type: 0,
       variant_value_list: [],
-      variant_value: 0,
+      variant_value: [{label:"Varient Value",value:0}],
       variantImage: "",
       loading: true,
 
@@ -75,6 +77,11 @@ export default class AddProduct extends Component {
     this.setState({loading:true})
     let start = 0;
     let end = 0;
+    if(this.state.variant_value.length<1){
+      Alert.alert("Error", "Please select atleast one value for the selected variant type");
+      this.setState({ loading: false });
+      return;
+    }
     if(this.state.variant_discount>100){
         Alert.alert("Error", "Variant discount must be lesser than 100");
         this.setState({ loading: false });
@@ -95,6 +102,10 @@ export default class AddProduct extends Component {
       this.setState({ loading: false });
       return;
     } else {
+      let variantValues = [];
+      this.state.variant_value.map((item)=>{
+        variantValues.push({variant_type_id:this.state.variant_type, variant_value_id:item.value})
+      })
       let payload = {
         variant_image: this.state.variantImage,
         is_variant_by_piece: this.state.variant_piece_qty_switch,
@@ -109,18 +120,10 @@ export default class AddProduct extends Component {
         variant_by_package: parseInt(this.state.variant_package_qty),
         variant_min_qty: parseInt(this.state.variant_minqty),
         variant_stock: parseInt(this.state.variant_stock_qty),
-        variant_types: [
-          {
-            variant_type_id: this.state.variant_type,
-            variant_value_id: this.state.variant_value,
-          },
-        ],
+        variant_types: variantValues
       };
 
       console.log("PAYLOAD IS : ",payload);
-      /* console.log("SHOUL BE: ",'is_variant_by_piece'.substring(3))
-      console.log("TESTING: ",payload['variant_by_piece'])
-      console.log("TESTING: ",payload['is_variant_by_piece'.substring(3)]) */
 
       for (var key of Object.keys(payload)) {
         console.log(key + " ---> " + payload[key]);
@@ -150,7 +153,7 @@ export default class AddProduct extends Component {
         this.setState({ loading: false });
         return;
       }
-      console.log("HERE YOU SOHOULD BE RUNNING THE SUCCESS:");
+      console.log("HERE YOU SHOULD BE RUNNING THE SUCCESS:");
       //let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
 
       //this.setState({loading:false})
@@ -163,26 +166,31 @@ export default class AddProduct extends Component {
           Alert.alert("Success","Variant has been edited successfully",[
               {text:"Ok",onPress:()=>this.props.navigation.goBack()}
           ]);
+        }).catch(err=>{
+          this.setState({loading:false})
+          Alert.alert("Error","Something went wrong, please check your inputs and try again");
         })
 
       }else{
-        payload={...payload,product_id: this.props.route.params,}
+        payload={...payload,product_id: this.props.route.params.product_id,}
         console.log("DATA TO SEND: ",payload);
         APIProduct.addVariant(payload).then((res)=>{
           console.log("RES: ",res);
           this.setState({loading:false})
           Alert.alert("Success","Variant has been created successfully");
+        }).catch(err=>{
+          this.setState({loading:false})
+          Alert.alert("Error","Something went wrong, please check your inputs and try again");
         })
       }
     }
   };
   async componentDidMount() {
-    console.log("ROUTE PARAMS: ", this.props.route.params);
+    let catid = this.props.route.params.category_id;
+    console.log("ROUTE PARAMS IN VARIANT: ", this.props.route.params);
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
-    //4
-    APIProduct.getVarientTypes(
-      this.props.route.params.category_id
-    ).then((res) => {
+
+    APIProduct.getVarientTypes(catid).then((res) => {
       let variants = [];
       let values = [];
       console.log("RESULT FROM PAGE 3", res);
@@ -291,6 +299,45 @@ export default class AddProduct extends Component {
       </>
     );
   }
+  renderSelection(item,index){
+    return(<View style={{ marginVertical: 10, marginHorizontal:20 }} key={index}>
+      <CollapsibleList
+        style={{ marginVertical: 10, }}
+        wrapperStyle={{
+          borderWidth: 0.2,
+          borderColor: "gray",
+          borderRadius: 5,
+        }}
+        buttonPosition="top"
+        numberOfVisibleItems={0}
+        buttonContent={
+          <View
+            style={[
+              styles.docPicker,
+              {
+                borderColor: "#A6A6A6",
+                backgroundColor:'#fff',
+                marginVertical: 0,
+                paddingHorizontal:20
+              },
+            ]}
+          >
+            <Text style={{color:'gray',fontSize:16,textAlignVertical:'center'}}>{item.placeholder}</Text>
+          </View>
+        }
+      >
+        <SelectMultiple
+          items={this.state[item.items]}
+          selectedItems={this.state[item.stateValue]}
+          labelStyle={{color:'black'}}
+          selectedLabelStyle	={{color:'#698EB7'}}
+          onSelectionsChange={(item) =>{console.log("ITEM SELECTED: ",item)
+            this.setState({variant_value:item})
+          }}
+        />
+      </CollapsibleList>
+    </View>)
+  }
 
   drawScreenThird = () => {
     //console.log("STATE CALLED FROM FUNCTION: ",this.state)
@@ -301,11 +348,11 @@ export default class AddProduct extends Component {
           {addElements3.map((item, index) => {
             //console.log("STATE VALUE: ",this.state)
             //console.log(`ITEM: ${index+1}`,item)
-            if (item.type == "textInput") {
-              return this.renderTextInput(item, index);
-            }
             if (item.type === "switchInput") {
               return this.renderSwitchInput(item, index);
+            }
+            if(item.type === "select"){
+              return this.renderSelection(item, index);
             }
             if (item.type === "picker") {
               return this.renderPicker(item, index);
@@ -370,10 +417,11 @@ export default class AddProduct extends Component {
         }}
       >
         <Picker
-          style={{ marginLeft: 5 }}
+          style={{ marginLeft:20 }}
           selectedValue={this.state[item.stateValue]}
           prompt={item.label}
           onValueChange={(itemValue, itemIndex) => {
+            console.log("CHOSEN ITEM VALUE: ",itemValue)
             this.setState({ [item.stateValue]: itemValue });
             this.handleCategories(item.stateValue, itemValue);
           }}
@@ -386,7 +434,7 @@ export default class AddProduct extends Component {
     );
   }
 
-  async handleCategories(type, value) {
+  handleCategories(type, value) {
     switch (type) {
       case "variant_type":
         let ar = [];
@@ -396,7 +444,7 @@ export default class AddProduct extends Component {
         res.varientvalue.map((item) => {
           ar.push({ label: item.varient_value, value: item.id });
         });
-        this.setState({ variant_value_list: ar });
+        this.setState({ variant_value_list: ar, variant_value:[] });
       default:
         break;
     }

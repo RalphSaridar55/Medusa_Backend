@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as API from "../../core/apis/apiProductServices";
@@ -35,12 +36,15 @@ const detailedOrder = ({ navigation, route }) => {
   const [dataRoute, setDataRoute] = useState();
   const [services, setServices] = useState([]);
   const [isVisible, setIsVisible] = useState(true);
+  const [blocked,setBlocked] = useState(false)
 
   useEffect(() => {
     apiPortFolioServices.getProductDetails(route.params.id).then((res)=>{
         console.log("PRODUCT DETAILS: ",res)
+        console.log("PRODUCT DETAILS productvariantopt: ",res.productvariant)
         setDataRoute(res);
         setIsVisible(false);
+        setBlocked(res.status==1?true:false)
     })
   }, []);
 
@@ -49,6 +53,7 @@ const detailedOrder = ({ navigation, route }) => {
         console.log("PRODUCT DETAILS: ",res)
         setDataRoute(res);
         setIsVisible(false);
+        setBlocked(res.status==1?true:false)
     })
     const willFocusSubscription = navigation.addListener('focus', () => {
       
@@ -61,6 +66,29 @@ const detailedOrder = ({ navigation, route }) => {
 
   return willFocusSubscription;
   },[])
+  
+  const deleteOrBlockProduct=(id)=>{
+    console.log("id:",id)
+    setIsVisible(true)
+    let payload={
+      product_status:id,
+      product_id: dataRoute.productvariant[0].product_id
+    }
+    API.blockOrDeleteProduct(payload).then((res)=>{
+      setIsVisible(false);
+      Alert.alert(`${id==3?"Delete":id==2?"Unblock":"Block"} Product`,res,[
+        {text:"Ok",onPress:()=>{
+          if(id==3)
+           navigation.goBack()
+        }}
+      ])
+    if(id ==1 || id==2)
+      setBlocked(!blocked)
+    }).catch(err=>{
+      setIsVisible(false);
+      Alert.alert("Error","Something Went Wrong")
+    })
+  }
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -86,11 +114,35 @@ const detailedOrder = ({ navigation, route }) => {
                   >
                     {dataRoute?.product_name}
                   </Text>
-                <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+                <View style={{display:'flex',flexDirection:'row'}}>
+                <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center',marginHorizontal:10}}>
+                    <TouchableOpacity style={{borderRadius:40,backgroundColor:'#698EB7',padding:5}}
+                    onPress={()=>{
+                      Alert.alert(`${blocked?"Unblock":"Block"} Product`,`Are you sure you want to ${blocked?"unblock":"block"} this product ?`,[
+                        {text:"No"},
+                        {text:"Yes",onPress:()=>{deleteOrBlockProduct(blocked?2:1)}},
+                      ])
+                    }}>
+                        <Icon name={blocked?"eye-off-outline":"eye-outline"} size={24} color="white" style={{}}/>
+                    </TouchableOpacity>
+                </View>
+                <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center',marginHorizontal:10}}>
+                    <TouchableOpacity style={{borderRadius:40,backgroundColor:'red',padding:5}}
+                    onPress={()=>{
+                      Alert.alert("Delete Product","Are you sure you want to delete this product ?",[
+                        {text:"No"},
+                        {text:"Yes",onPress:()=>{deleteOrBlockProduct(3)}},
+                      ])
+                    }}>
+                        <Icon name="trash-can" size={24} color="white" style={{}}/>
+                    </TouchableOpacity>
+                </View>
+                <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center',marginHorizontal:10}}>
                     <TouchableOpacity style={{borderRadius:40,backgroundColor:'gray',padding:5}}
                     onPress={()=>navigation.navigate("Edit",{screen:"edit1",params:{...dataRoute,product_id:dataRoute?.productvariant[0].product_id}})}>
                         <Icon name="pencil" size={24} color="white" style={{}}/>
                     </TouchableOpacity>
+                </View>
                 </View>
               </View>
           </View>
@@ -136,6 +188,7 @@ const detailedOrder = ({ navigation, route }) => {
               flexDirection: "row",
               flexWrap: "wrap",
               width: screenwidth * 0.5,
+              justifyContent:'center',
             }}
           >
             {dataRoute?.tags.map((item, index) => {
@@ -146,7 +199,7 @@ const detailedOrder = ({ navigation, route }) => {
                     style={{
                       color: "white",
                       backgroundColor: "#698EB7",
-                      paddingHorizontal: 6,
+                      paddingHorizontal: 10,
                       paddingVertical: 2,
                       borderRadius: 20,
                     }}
@@ -208,7 +261,7 @@ const detailedOrder = ({ navigation, route }) => {
                   Type: {item.productvariantopt[0].varientType?.varient_type}
                 </Text>
                 <Text>
-                  Value: {item.productvariantopt[0].varientValue?.varient_value}
+                  Value: {item.productvariantopt?.map((it,index)=>{return <Text>{it?.varientValue?.varient_value}{index!=item.productvariantopt.length-1?",":null} </Text>})}
                 </Text></>}
                 <Text>By Piece: {item.is_variant_by_piece ? "Yes" : "No"}</Text>
                 {item.is_variant_by_piece && <Text>Variant Piece: {item.variant_by_piece}</Text>}
@@ -243,7 +296,7 @@ const detailedOrder = ({ navigation, route }) => {
         <TouchableOpacity
           style={styles.Btn}
           onPress={
-            () =>navigation.navigate("AddVariant",dataRoute.id)
+            () =>navigation.navigate("AddVariant",{category_id:dataRoute.category_id,product_id:dataRoute?.productvariant[0].product_id})
           }
         >
           <Icon name="plus-thick" size={30} color="white" />

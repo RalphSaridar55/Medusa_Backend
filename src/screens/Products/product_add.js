@@ -174,6 +174,12 @@ export default class AddProduct extends Component {
         }
       }
 
+      if(this.state.product_price<this.state.product_offer_price){
+        Alert.alert("Error", `Offer price must not be lower than actual price`);
+        this.setState({ loading: false });
+        return;
+      }
+
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
       this.props.navigation.navigate("Add2", payload);
@@ -384,6 +390,7 @@ export default class AddProduct extends Component {
                 <TouchableOpacity
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
+                  key={index}
                 >
                   <Text style={styles.loginBtnText}>{item.label}</Text>
                 </TouchableOpacity>
@@ -476,7 +483,7 @@ export default class AddProduct extends Component {
           marginHorizontal: 20,
         }}
         label={item.label}
-        value={this.state[item.stateValue]}
+        value={this.state[item.stateValue].toString()}
         keyboardType={item.keyBoardType}
         multiline={item.multiline == "false" ? false : true}
         onChangeText={(text) => this.setState({ [item.stateValue]: text })}

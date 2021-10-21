@@ -91,6 +91,21 @@ export const editProduct = async(payload)=>{
     })
 }
 
+//Delete, Block and Unblock product
+export const blockOrDeleteProduct = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.put(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product-remove`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            console.log("RES FROM THE API:",res.data.message);
+            return res.data.message
+        })
+    })
+}
+
+
 //Add a variant for product
 export const addVariant = async(payload)=>{
     return await getToken().then((x)=>{
