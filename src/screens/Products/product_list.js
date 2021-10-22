@@ -4,6 +4,7 @@ import * as apiPortFolioServices from "../../core/apis/apiPortfolioServices";
 import * as API from "../../core/apis/apiProductServices";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Overlay from 'react-native-modal-overlay';
+import {NavigationEvents} from 'react-navigation';
 import {
     StyleSheet,
     Text,
@@ -15,6 +16,7 @@ import {
     FlatList,
     Touchable,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ActionSheet from "react-native-actions-sheet";
 import { List, Checkbox, Button, Appbar, Searchbar, IconButton, Title } from 'react-native-paper';
 import Slider from "react-native-sliders";
@@ -32,7 +34,7 @@ export default class ProductList extends Component {
         this.state = {
             search:'',
             List: true,
-            showSearch: true,
+            showSearch: false,
             value: [0,1],
             isVisible:true,
             category:[],
@@ -184,6 +186,29 @@ export default class ProductList extends Component {
         }
     }
 
+    /* componentDidMount() {
+  
+      this.focusListener = this.props.navigation.addListener("focus", async() => {
+        
+        console.log("ROUTE PARAMETERS ",this.props.route.params)
+        let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+        this.setState({userType:user.user_type, showButton:true})
+        console.log("USER DATA: ",user.user_type)
+        apiPortFolioServices.getCategories().then((result)=>{
+            console.log("CATEGORIES: ",result);
+            let array = result;
+            let data = [];
+            array.map((item) => data.push({label:item.category_name,value:item.id}));
+            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
+        })
+        API.getProducts().then((res)=>{
+            console.log("PRODUCTS FETCHED: ",res)
+            let result = res.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false })
+        })
+      });
+    } */
+
     async componentDidMount(){
         console.log("ROUTE PARAMETERS ",this.props.route.params)
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
@@ -208,21 +233,49 @@ export default class ProductList extends Component {
     render() {
         return (
             <View style={styles.container}>
+                {/* <NavigationEvents onDidFocus={async() => {
+                    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+                    this.setState({userType:user.user_type, showButton:true})
+                    console.log("USER DATA: ",user.user_type)
+                    apiPortFolioServices.getCategories().then((result)=>{
+                        console.log("CATEGORIES: ",result);
+                        let array = result;
+                        let data = [];
+                        array.map((item) => data.push({label:item.category_name,value:item.id}));
+                        this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
+                    })
+                    API.getProducts().then((res)=>{
+                        console.log("PRODUCTS FETCHED: ",res)
+                        let result = res.sort((a,b)=>a.product_name>b.product_name?1:-1)
+                        this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false })
+                    })
+                }} /> */}
                 <Spinner visible={this.state.isVisible} />
-                <Overlay visible={this.state.modalVisible} onClose={()=>this.setState({modalVisible:false})} closeOnTouchOutside>
-                    <Text style={{
-                        fontSize: 21,
-                        color: "#6E91EC",
-                        fontWeight: 'bold',
-                        marginBottom: 5}}>Product</Text>
-                    <View style={{flexDirection:'row',}}>
+                <Overlay visible={this.state.modalVisible} onClose={()=>this.setState({modalVisible:false})} 
+                containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
+                closeOnTouchOutside>
+                                
+                    <View style={styles.modalHeader}>
+                        <Text
+                        style={{
+                            fontSize: 21,
+                            color: "#31C2AA",
+                            fontWeight: "bold",
+                            marginBottom: 5,
+                        }}
+                        >
+                        Product Creation
+                        </Text>
+                        <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>setVisible({ ...visible, modal: false })}/>
+                    </View>
+                    <View style={{flexDirection:'column',marginTop:20}}>
                         <View style={{width:150,paddingHorizontal:10}}>
                             <TouchableOpacity
                                 onPress={()=>{
                                     this.setState({modalVisible:false});
                                     this.props.navigation.navigate("Add",{screen:"Add1"})}
                                 }
-                                style={[styles.loginBtn]}
+                                style={[styles.loginBtn,{height:40,marginTop:20}]}
                             >
                                 <Text style={styles.loginBtnText}>Add Product</Text>
                             </TouchableOpacity>
@@ -233,7 +286,7 @@ export default class ProductList extends Component {
                                     this.setState({modalVisible:false});
                                     this.props.navigation.navigate("Bulk")}
                                 }
-                                style={[styles.loginBtn]}
+                                style={[styles.loginBtn,{height:40,marginTop:20}]}
                             >
                                 <Text style={styles.loginBtnText}>Bulk Upload</Text>
                             </TouchableOpacity>
@@ -249,15 +302,15 @@ export default class ProductList extends Component {
                         }} />
                         <Appbar.Action icon="filter-menu" onPress={() => {
                             actionSheetCat.current?.setModalVisible();
-                        }} />
-                        <Appbar.Action icon="magnify" onPress={this.onclick} />
+                        }} /><Appbar.Action icon="magnify" onPress={()=> this.onclick()}
+                            style={!this.state.showSearch&&{backgroundColor:'#31C2AA'}}  color={!this.state.showSearch?"#E9F3FF":"black"}/>
                     </Appbar>
                 </View>
-                <View>
+                <View style={{paddingHorizontal:10,paddingVertical:10,}}>
                     <Searchbar
                         onChangeText={(e)=>this.setState({search:e})}
                         placeholder="Search"
-                        style={{ display: this.state.showSearch ? 'none' : 'flex' }}
+                        style={{ display: this.state.showSearch ? 'none' : 'flex', }}
                     />
                 </View>
                 <FlatList style={styles.list}

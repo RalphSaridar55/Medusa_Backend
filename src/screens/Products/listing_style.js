@@ -19,18 +19,27 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         alignItems:'center'
     },
+    modalHeader:{
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between',
+        width:screenwidth,
+        paddingHorizontal:20
+    },
     loginBtn: {
         marginTop:40,
-        backgroundColor: "#31C2AA",
+        borderColor: "#31C2AA",
+        borderWidth:1,
         borderRadius: 25,
         alignItems: "center",
         justifyContent: "center",
         height: 50
     },
     loginBtnText:{
-        color:'white',
+        color:'#31C2AA',
         fontSize:16,
-        fontWeight:'bold'
+        /* fontWeight:'bold' */
     },
     Btn: {
         backgroundColor: "#31C2AA",

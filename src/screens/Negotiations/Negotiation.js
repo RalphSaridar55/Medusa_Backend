@@ -10,6 +10,7 @@ import {
   TextInput,
   Alert
 } from "react-native";
+import RNPickerSelect from 'react-native-picker-select';
 import Spinner from "react-native-loading-spinner-overlay";
 import * as apiService from "../../core/apis/apiChatServices";
 import styles from "./style_negotiation";
@@ -225,12 +226,11 @@ const Negotiations = () => {
                   }}
                 />
               </View>
-              <View style={{flex:3,marginHorizontal:5,borderRadius:20,borderColor:'lightgray',borderWidth:1}}>
-                <Picker
-                style={{paddingLeft:15,backgroundColor:'#fff',textAlignVertical:'center',alignItems:'center',justifyContent:'center'}}
+              <View style={{flex:3,marginHorizontal:5,borderRadius:20,borderColor:'lightgray',borderWidth:1,paddingTop:5}}>
+                {<Picker
+                style={{paddingLeft:30,backgroundColor:'#fff',}}
                 selectedValue={reply}
-                prompt="Replies"
-                
+                prompt="Replies"numberOfLines={3}
                 onValueChange={(itemValue,itemIndex)=>{
                   console.log("Item Value: ",itemValue)
                   setReply(itemValue)
@@ -240,12 +240,11 @@ const Negotiations = () => {
                   :replies?.map((item,index)=>{
                     return(
                       <Picker.Item key={index}
-                      style={{flexWrap:'wrap',display:'flex'}}
                       numberOfLines={3} label={item.label} 
-                      value={item.value}/>
+                      value={item.value} />
                     )
                   })}
-                </Picker>
+                </Picker>}
               </View>
               <TouchableOpacity
                onPress={()=>{

@@ -291,9 +291,10 @@ return (
           //onPress={this.setView}
           style={{ fontSize: 14 }}
         /></>:<><Appbar.Content title="My Categories " color="black" /></>}
-        <Appbar.Action icon="plus" onPress={()=>changeScreen()} />
-        <Appbar.Action icon="magnify" onPress={()=>
-      setFilterData({...filterData, showFilter: !filterData.showFilter, showCategory:false })} />
+        <Appbar.Action icon="plus" onPress={()=>{changeScreen();}} style={filterData.showCategory&&{backgroundColor:'#31C2AA'}} color={filterData.showCategory?"white":"black"}/>
+        <Appbar.Action icon="magnify" onPress={()=> {if(!filterData.showCategory)
+      setFilterData({...filterData, showFilter: !filterData.showFilter, showCategory:false })}}
+      style={filterData.showFilter&&{backgroundColor:'#31C2AA'}}  color={filterData.showFilter?"#E9F3FF":"black"}/>
       </Appbar>
       <View style={{paddingHorizontal:10,paddingVertical:10,
         display: !filterData.showFilter ? "none" : "flex" }}>
@@ -305,35 +306,47 @@ return (
           placeholder="Search"
         />
       </View>
-      {!filterData.showCategory?<FlatList
-       style={styles.list}
-       contentContainerStyle={styles.listContainer}
-       data={data.filter
-           (i=>i.product_name.toLowerCase().includes(filterData.search.toLowerCase()))}
-       horizontal={false}
-       numColumns={2}
-       keyExtractor={(item) => {
-           return item.id;
-       }}
-       renderItem={({ item }) => {
-           return (
-               <TouchableOpacity style={[styles.card,{borderRadius:15}]}
-               onPress={()=>navigation.navigate("DetailedProduct",item)}>
-                   <View style={styles.cardHeader}>
-                   </View>
-                   <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode="contain"/>
-                   <View style={styles.cardFooter}>
-                       <View style={{ alignItems: "center", justifyContent: "center" }}>
-                           <Text style={styles.name}>{item.product_name}</Text>
-                           <Text style={[styles.position,{paddingVertical:10,textAlign:'center'}]}>{item.description}</Text>
-                           <Text style={styles.position}>${item.price} / Pc</Text>
-                           <Text style={styles.position}>Avai. qty {item.current_stock}</Text>
-                           <Text style={styles.position}> Min. qty {item.min_purchase_qty}</Text>
-                       </View>
-                   </View>
-               </TouchableOpacity>
-           )
-       }} />:<ScrollView>
+      {!filterData.showCategory?<View>
+        <FlatList
+         style={styles.list}
+         contentContainerStyle={styles.listContainer}
+         data={data.filter
+             (i=>i.product_name.toLowerCase().includes(filterData.search.toLowerCase()))}
+         horizontal={false}
+         numColumns={2}
+         keyExtractor={(item) => {
+             return item.id;
+         }}
+         renderItem={({ item }) => {
+             return (
+                 <TouchableOpacity style={[styles.card,{borderRadius:15}]}
+                 onPress={()=>navigation.navigate("DetailedProduct",item)}>
+                     <View style={styles.cardHeader}>
+                     </View>
+                     <View style={{flex:1}}>
+                     <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode="contain"/>
+                     <View style={styles.cardFooter}>
+                         <View style={{ alignItems: "center", justifyContent: "center" }}>
+                             <Text style={styles.name}>{item.product_name}</Text>
+                             <Text style={[styles.position,{paddingVertical:10,textAlign:'center'}]}>{item.description}</Text>
+                             <Text style={styles.position}>${item.price} / Pc</Text>
+                             <Text style={styles.position}>Avai. qty {item.current_stock}</Text>
+                             <Text style={styles.position}> Min. qty {item.min_purchase_qty}</Text>
+                         </View>
+                     </View>
+                     </View>
+                    <View style={{paddingTop:20,flex:1}}>
+                    <TouchableOpacity
+                      onPress={()=>navigation.navigate("Campaign")}
+                      style={styles.loginBtn}
+                    >
+                      <Text style={styles.loginBtnText}>Promote</Text>
+                    </TouchableOpacity>
+                 </View>
+                 </TouchableOpacity>
+             )
+         }} />
+      </View>:<ScrollView>
        <View style={{ marginVertical: 20, marginHorizontal:20 }}>
             <CollapsibleList
               style={{ marginVertical: 10 }}

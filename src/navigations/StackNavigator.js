@@ -36,7 +36,9 @@ import NotificationStack from "./NotificationsStack";
 import NegotiationStack from "./NegotiationStack";
 import DashboardStack from "../screens/Dashboard/Dashboard";
 //import SellingDetail from "../screens/BuyerAccountDetails/sellingDetails";
+import CampaignStack from "./CampaignStack";
 import AboutStack from "./AboutStack";
+import LoyaltyStack from "./LoyaltyStack";
 //
 import Negotiations from "../screens/Notifications/Notification";
 import Products from "../screens/Products/product_list";
@@ -152,6 +154,30 @@ function CustomDrawer(props) {
               )}
             />
           </View>
+          {props.userType==4?(<View>
+            <DrawerItem
+              label="Campaign"
+              labelStyle={props.screenC=="Campaign" ? { color: "#6E91EC" } : { color: "black" }}
+              onPress={() =>{ 
+                props.changeScreen("Campaign")
+                props.navigation.navigate("Campaign")}
+              }
+              icon={() => <Feather name="speaker" size={24} 
+              color={props.screenC=="Campaign" ? "#6E91EC" : "black"} />}
+            />
+          </View>):null}
+          {props.userType==4?(<View>
+            <DrawerItem
+              label="Loyalty Points"
+              labelStyle={props.screenC=="LoyaltyPoints" ? { color: "#6E91EC" } : { color: "black" }}
+              onPress={() =>{ 
+                props.changeScreen("LoyaltyPoints")
+                props.navigation.navigate("LoyaltyPoints",{screen:"Loyalty"})}
+              }
+              icon={() => <MaterialCommunityIcons name="chart-donut" size={24} 
+              color={props.screenC=="LoyaltyPoints" ? "#6E91EC" : "black"} />}
+            />
+          </View>):null}
           <View>
             <DrawerItem
               label="Orders"
@@ -526,6 +552,18 @@ class Nav extends Component {
       <Drawer.Screen
         name="Dashboard"
         component={DashboardStack}
+        navigation={navigation}
+        options={{ headerShown: true, title: "" }}
+      />
+      <Drawer.Screen
+        name="Campaign"
+        component={CampaignStack}
+        navigation={navigation}
+        options={{ headerShown: true, title: "" }}
+      />
+      <Drawer.Screen
+        name="LoyaltyPoints"
+        component={LoyaltyStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />

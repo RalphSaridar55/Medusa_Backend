@@ -12,6 +12,8 @@ export const styles = StyleSheet.create({
   loginBtn: {
       marginVertical:20,
       marginHorizontal:20,
+      position:'relative',
+      bottom:0,
       backgroundColor: "#31C2AA",
       borderRadius: 25,
       alignItems: "center",

@@ -164,6 +164,7 @@ export default class AddProduct extends Component {
                   "Error",
                   `return days' input must be a positive number`
                 );
+                this.setState({ loading: false });
               } else if (
                 payload["cancel_allowed"] == true &&
                 payload["cancel_day"] < 1
@@ -172,6 +173,7 @@ export default class AddProduct extends Component {
                   "Error",
                   `cancel days' input must be a positive number`
                 );
+                this.setState({ loading: false });
               } else break;
             }
           case "object":

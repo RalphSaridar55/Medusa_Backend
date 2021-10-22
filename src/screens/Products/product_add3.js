@@ -55,9 +55,7 @@ export default class AddProduct extends Component {
       variant_type_list: [],
       variant_type: {},
       variant_value_list: [],
-      variant_value: [
-        {label:"Varient Value", value:0}
-      ],
+      variant_value: [],
       variantImage: "",
       loading: true,
 
@@ -93,6 +91,10 @@ export default class AddProduct extends Component {
       this.setState({ loading: false });
       return;
     } else {
+      let variantValues = [];
+      this.state.variant_value.map((item)=>{
+        variantValues.push({variant_type_id:this.state.variant_type, variant_value_id:item.value})
+      })
       let payload = {
         variant_image: this.state.variantImage,
         is_variant_by_piece: this.state.variant_piece_qty_switch,
@@ -107,12 +109,7 @@ export default class AddProduct extends Component {
         variant_by_package: parseInt(this.state.variant_package_qty),
         variant_min_qty: parseInt(this.state.variant_minqty),
         variant_stock: parseInt(this.state.variant_stock_qty),
-        variant_types: [
-          {
-            variant_type_id: this.state.variant_type,
-            variant_value_id: this.state.variant_value,
-          },
-        ],
+        variant_types: variantValues
       };
 
       console.log("PAYLOAD IS : ",payload);

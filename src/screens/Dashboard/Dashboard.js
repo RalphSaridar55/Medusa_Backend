@@ -2,7 +2,6 @@ import React from 'react';
 import { View,ScrollView, Text, Image, Dimensions } from 'react-native';
 import {styles} from './Dashboard_style';
 import { StackedBarChart, BarChart } from 'react-native-chart-kit';
-import Grid from 'react-native-grid-component';
 
 const Dashboard = () =>{
     const data = [
