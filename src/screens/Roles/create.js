@@ -79,7 +79,7 @@ export default class AddRole extends Component {
                 Alert.alert("Role",res)
             }).catch(err=>{
                 console.log("Error:\n",err)
-                Alert.alert("Error","Something went wrong, please your inputs and try again");});
+                Alert.alert("Error",err.response.data.message);});
         }
     }
 

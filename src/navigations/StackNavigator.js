@@ -265,6 +265,17 @@ function CustomDrawer(props) {
                       Selling Details
                     </Text>
                   </TouchableOpacity>):null}
+                  {props.userType==4?(<TouchableOpacity
+                    onPress={() => {
+                      props.navigation.navigate("Adress",{screen:"Sponsored"});
+                      props.changeScreen("Sponsored")
+                    }}
+                    style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Feather name="dollar-sign" size={24} color={props.screenC =="Sponsored"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="Sponsored"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                      Promoted Products
+                    </Text>
+                  </TouchableOpacity>):null}
               </View>
             </CollapsibleList>
             {/* <DrawerItem label="Settings" onPress={() => alert('Link to help')}
@@ -564,6 +575,12 @@ class Nav extends Component {
       <Drawer.Screen
         name="LoyaltyPoints"
         component={LoyaltyStack}
+        navigation={navigation}
+        options={{ headerShown: true, title: "" }}
+      />
+      <Drawer.Screen
+        name="Checkout"
+        component={CheckoutStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />

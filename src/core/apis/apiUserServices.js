@@ -9,7 +9,7 @@ export let APIKit = axios.create({
   baseURL: "https://ecomstgapi.appskeeper.in/cashmystock/api/v1/",
   timeout: 10000,
   headers: {
-    "Content-Type": "application/json",
+    /* "Content-Type": "application/json", */
     language: "en",
     platform: "3",
     timezone: "+3",
@@ -71,7 +71,7 @@ export const verifyEmail = async (owner_email) => {
 };
 
 export const sendOtp = async (usernfo) => {
-  return await APIKit.post("/user/forgot-password", usernfo)
+  return await APIKit.post("/user/send-verification-code", usernfo)
     .then((res) => {
       return res.data;
     })
@@ -111,11 +111,14 @@ export const verifyOtp = async (userOtpAndMobile) => {
 export const resetPass = async (mobile, newPass) => {
   await getToken().then((x) => {
     var payload = {
-      token: x,
       owner_mobile_number: mobile,
       password: newPass,
     };
-    return APIKit.post("/user/reset-password", payload).then((res) => {
+    return APIKit.post("/user/reset-password", {
+      headers:{
+        Authorization:x,
+      }
+    },payload).then((res) => {
       return res.data.data;
     });
   });

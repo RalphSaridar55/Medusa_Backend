@@ -179,7 +179,7 @@ const SellingDetail = ({navigation}) =>{
         ])
       }).catch(err=>{
         setFilterData({...filterData,isVisible:false})
-        Alert.alert("Error","Something went wrong, please make sure you selected atleast one brand-subcategory-category.")
+        Alert.alert("Error",err.response.data.message)
       })
     }
 

@@ -75,8 +75,10 @@ export default function Login({ navigation }) {
       
       /* const [value, setValue] = useState(0); // integer state
       return () => setValue(value => value + 1); */
+      
     }).catch(err=>{
-      Alert.alert("Wrong Credentials","Wrong Email or Password");
+      console.log("ERROR: ",err.response.data.message);
+      Alert.alert("Alert",err.response.data.message);
       setLoading(false);
     });
   };

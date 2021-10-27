@@ -1,5 +1,9 @@
 
-import { StyleSheet, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, Dimensions } from 'react-native';
+
+const screenwidth = Dimensions.get('screen').width;
+const screenheight = Dimensions.get('screen').height;
+
 const styles = StyleSheet.create({
     cardContainer: {
         padding: 20,
@@ -7,6 +11,23 @@ const styles = StyleSheet.create({
     },
     containerStyle: {
         flex: 1,
+    },
+    modalHeader:{
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between',
+        width:screenwidth,
+        paddingHorizontal:20
+    },
+    modalBoxInputs:{
+        borderWidth:0.5,
+        borderColor:'#31c2aa',
+        borderRadius:10,
+        width:screenwidth*0.7,
+        paddingHorizontal:10,
+        paddingVertical:10,
+        marginVertical:5
     },
     container: {
         flex: 1,
@@ -74,6 +95,13 @@ const styles = StyleSheet.create({
         flex: 1,
         margin: 20,
         justifyContent: "center",
+    },
+    verifyNumber:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        marginHorizontal:20,
+        marginTop:10
     },
     docPicker:{
         borderWidth:1,

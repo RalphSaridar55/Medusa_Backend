@@ -142,7 +142,7 @@ export default class EditUsers extends Component {
       }).catch(err=>{
         console.log("Error:\n",err)
         this.setState({isLoading:false});
-        Alert.alert("Error","Something went wrong, please your inputs and try again");
+        Alert.alert("Error",err.response.data.message);
       });
     }
   };
@@ -152,6 +152,8 @@ export default class EditUsers extends Component {
     apiServices.deleteSubUsers(id).then((res) => {
       console.log("Deleted", res);
       this.props.navigation.navigate("UserList");
+    }).catch(err=>{
+      Alert.alert("Error",err.response.data.message);
     });
   };
 

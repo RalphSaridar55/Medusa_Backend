@@ -192,7 +192,7 @@ export default class AddProduct extends Component {
         }).catch(err=>{
           console.warn(err)
           this.setState({ loading: false });
-          Alert.alert("Error","Something went wrong, Please check your inputs")
+          Alert.alert("Error",err.response.data.message)
         })
     }
   };

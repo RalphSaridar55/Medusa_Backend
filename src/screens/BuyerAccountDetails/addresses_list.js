@@ -98,6 +98,9 @@ const AdressList = (props) => {
       console.log(res);
       setIsVisible(false);
       setDeleted(!deleted);
+    }).catch(err=>{
+      setIsVisible(false);
+      Alert.alert("Error",err.response.data.message)
     });
 
     setAdressList(adressList.filter((i) => i.id != id));

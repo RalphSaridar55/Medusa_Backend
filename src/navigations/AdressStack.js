@@ -9,10 +9,12 @@ import DetailedProduct from "../screens/BuyerAccountDetails/detailedProduct";
 import AddVariant from "../screens/BuyerAccountDetails/addVariant";
 import edit1 from '../screens/BuyerAccountDetails/product_edit';
 import edit2 from '../screens/BuyerAccountDetails/product_edit2';
+import SponsoredProducts from '../screens/BuyerAccountDetails/sponsored_products_list'
 
 const AStack = createStackNavigator();
 const PStack = createStackNavigator();
 const EStack = createStackNavigator();
+const PrStack = createStackNavigator();
 
 const editStack = ({navigation})=>{
   return(
@@ -62,6 +64,19 @@ const ProductStack = ({navigation}) => {
   )
 }
 
+const SponsoredStack = ({navigation, route}) =>{
+  return(
+    <PrStack.Navigator>
+    <PrStack.Screen
+      name="SponsoredList"
+      component={SponsoredProducts}
+      options={{ headerShown: false }}
+      navigation={navigation}
+    />
+    </PrStack.Navigator>
+  )
+}
+
 const AdressStack = ({ navigation, route }) => {
   return (
     <AStack.Navigator>
@@ -86,6 +101,12 @@ const AdressStack = ({ navigation, route }) => {
       <AStack.Screen
         name="Selling"
         component={ProductStack}
+        options={{ headerShown: false }}
+        navigation={navigation}
+      />
+      <AStack.Screen
+        name="Sponsored"
+        component={SponsoredStack}
         options={{ headerShown: false }}
         navigation={navigation}
       />

@@ -229,6 +229,10 @@ export default class AddProduct extends Component {
             onPress: () => this.props.navigation.navigate("Add1"),
           },
         ]);
+      }).catch(err=>{
+        this.setState({loading:false})
+        Alert.alert("Error",err.response.data.message)
+        return;
       })
     }
   };

@@ -100,7 +100,7 @@ export default class AddRole extends Component {
         apiServices.deleteRole(id).then((res)=>{
             console.log("From the component function:" ,res);
             this.props.navigation.goBack();
-        })
+        }).catch(err=>{Alert.alert("Error",err.response.data.message)})
     }
 
     editRole = (id) =>{
@@ -127,7 +127,7 @@ export default class AddRole extends Component {
             }).catch(err=>{
                 console.log("Error:\n",err)
                 this.setState({isLoading:false});
-                Alert.alert("Error","Something went wrong, please your inputs and try again");
+                Alert.alert("Error",err.response.data.message);
             })
         }
     }

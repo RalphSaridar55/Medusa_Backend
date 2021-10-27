@@ -28,13 +28,14 @@ const styles = StyleSheet.create({
         paddingHorizontal:20
     },
     loginBtn: {
-        marginTop:40,
+        marginBottom:10,
+        marginHorizontal:10,
         borderColor: "#31C2AA",
         borderWidth:1,
         borderRadius: 25,
         alignItems: "center",
         justifyContent: "center",
-        height: 50
+        height: 30
     },
     loginBtnText:{
         color:'#31C2AA',

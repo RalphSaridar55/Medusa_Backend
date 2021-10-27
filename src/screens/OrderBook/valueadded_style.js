@@ -9,6 +9,18 @@ export const styles = StyleSheet.create({
         height: screenheight*0.3,
         resizeMode:'stretch'
     },
+    buttonContainer:{
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-around',
+        paddingHorizontal:20,
+    },
+    headerContainer:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        marginBottom:20
+    },
     docPicker:{
         borderWidth:1,
         borderRadius:5,
@@ -29,7 +41,6 @@ export const styles = StyleSheet.create({
     name: {
         fontSize: 24,
         fontWeight: "bold",
-        marginBottom:20,
         color:'#698EB7'
     },
     priceContainer:{

@@ -16,16 +16,19 @@ const Bulk = () => {
   const [result,setResult]= useState();
 
   const uploadBulk = () =>{
-    if(document.value.length>1){
+    if(document.value?.name.length>1 && document.value.name!=null){
         setDocument({...document,spinner:true})
-        API.uploadBulk(document).then((res)=>{
+        /* var formdata = new FormData();
+        formdata.append("file", "test", document.value.uri);
+        console.log("FORMDATA: ",formdata,"\n",document.value) */
+        API.uploadBulk(document.value.uri).then((res)=>{
             if(res/* .includes('Error') */){
                 console.log("API RESPONSE: ",res.statusCode)
                 setDocument({...document,spinner:false})
                 //Alert.alert("Error","Excel file was not uploaded.\nPlease check your column names and values.")
             }
         }).catch(err=>{
-          Alert.alert("Error","Something went wrong,\n Please edit your file and try again.");
+          Alert.alert("Error",err.response.data.message);
           setDocument({...document,spinner:false})
         })
     }
@@ -41,7 +44,7 @@ const Bulk = () => {
       console.log(ext[ext.length - 1]);
     }
     if (doc.length < 1) return true;
-    else if (ext[ext.length - 1] != "xls" && ext[ext.length - 1] != "xlsx")
+    else if ( ext[ext.length - 1] != "xlsx")
       return true;
     return "";
   };
@@ -58,78 +61,6 @@ const Bulk = () => {
       .catch(error => {
         console.error(error);
       });
-    /* Linking.openURL("https://www.youtube.com/watch?v=_mrXOgg4VXg")
-    const path = `${FileSystem.cacheDirectory}12124`
-    const file = await FileSystem.downloadAsync("http://techslides.com/demos/sample-videos/small.mp4",path)
-    setResult(file.uri) */
-    /* const downloadResumable = FileSystem.createDownloadResumable(
-      'http://techslides.com/demos/sample-videos/small.mp4',
-      FileSystem.documentDirectory + 'small.mp4',
-      {},
-      (()=>console.log("Done"))
-    );
-
-    try {
-      const { uri } = await downloadResumable.downloadAsync();
-      console.log('Finished downloading to ', uri);
-    } catch (e) {
-      console.error(e);
-    } */
-
-    /* let filename = "small.mp4";
-    const fileUri = `${FileSystem.documentDirectory}${filename}`;
-    const downloadedFile = await FileSystem.downloadAsync("http://techslides.com/demos/sample-videos/small.mp4", fileUri);
-    
-    if (downloadedFile.status != 200) {
-      handleError();
-    } */
-    /* const pdfURI = await Asset.fromModule(require('./Lorem_ipsum.pdf')).uri;
-    console.log("URI :",pdfURI) */
-
-    /* const path = // absolute-path-to-my-local-file.
-    FileViewer.open(path)
-    .then(() => {
-      // success
-    })
-    .catch(error => {
-      // error
-    }); */
-    
-    /* 
-    const file = 'Lorem_ipsum.pdf'; // this is your file name
-
-  // feel free to change main path according to your requirements
-  const dest = `${RNFS.DocumentDirectoryPath}/${file}`;
-  
-  RNFS.copyFileAssets(file, dest)
-  .then(() => FileViewer.open(dest))
-  .then(() => {
-     // success
-     console.log(12)
-  })
-  .catch(error => {
-     console.log(error)
-  }); */
-    /* try {
-      const cUri = await FileSystem.getContentUriAsync(path);
-                 
-      await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-          data: cUri,
-          flags: 1,
-          type: "application/pdf",
-      });
-    }catch(e){
-        console.log(e.message);
-    } */
-    /* FileViewer.open(path)
-    .then(() => {
-      // success
-      console.log("True")
-    })
-    .catch(error => {
-      // error
-      console.log(error)
-    }); */
   }
 
   const pickDocument = async (e) => {
@@ -138,13 +69,13 @@ const Bulk = () => {
     if (test == true) {
       Alert.alert(
         "Wrong Extensions",
-        "Please only an excel file with the following Extensions (.xls, .xlsx)"
+        "Please only an excel file with the following Extensions (.xlsx)"
       );
       setDocument({ value: "", error: true });
     } else {
       //console.log(result);
       try {
-        setDocument({ value: result.uri, error: false });
+        setDocument({ value: result, error: false });
       } catch (error) {
         console.log(error);
       }
@@ -199,7 +130,7 @@ const Bulk = () => {
             color="#6E91EC"
           />
           <Text style={{ color: "gray", }}>
-            Upload your Excel file (.xls, .xlsx)
+            Upload your Excel file ( .xlsx)
           </Text>
           {document.error ? (
             <AntDesign name="closecircle" size={24} color="red" />
@@ -208,14 +139,14 @@ const Bulk = () => {
           )}
         </TouchableOpacity>
       </View>
-      <View style={{ paddingHorizontal: 20 }}>
-        <TouchableOpacity
-          onPress={() => uploadBulk()}
-          style={[styles.loginBtn]}
-        >
-          <Text style={styles.loginBtnText}>Upload Excel</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={{display:'flex',alignItems:'center',marginTop:20,}}>
+          <TouchableOpacity
+            onPress={() => uploadBulk()}
+            style={[styles.loginBtn,{width:'50%'}]}
+          >
+            <Text style={styles.loginBtnText}>Upload Excel</Text>
+          </TouchableOpacity>
+        </View>
     </ScrollView>
   );
 };

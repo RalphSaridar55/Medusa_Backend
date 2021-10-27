@@ -110,7 +110,6 @@ const List =({navigation}) =>{
       indicatorContainerStyle={{color:'red'}}
       contentContainerStyle={{color:'red'}}
       indicatorContainerStyle={{ color: 'red' }}
-      //initialLayout={{ width: layout.width }}
     />
     </>
   )

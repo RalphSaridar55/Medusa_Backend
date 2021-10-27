@@ -196,7 +196,7 @@ export default class Users extends Component {
           </View>
         </View>
 
-        <View style={styles.loginBtnContainer}>
+        <View style={[styles.loginBtnContainer,{marginHorizontal:20}]}>
           <TouchableOpacity
             style={styles.loginBtn}
             onPress={() => this.props.navigation.navigate("UserCreate")}

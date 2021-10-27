@@ -1,6 +1,7 @@
 ``;
 import React, { Component, createRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import * as APIOrder from '../../core/apis/apiOrderServices';
 import {
   StyleSheet,
   Text,
@@ -11,6 +12,7 @@ import {
   FlatList,
   ImageBackground,
   Dimensions,
+  Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
@@ -25,6 +27,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./orders_style";
 import { Picker } from "@react-native-picker/picker";
+import Spinner from "react-native-loading-spinner-overlay";
 const screenwidth = Dimensions.get('screen').width;
 const actionSheetCat = createRef();
 const data1 = [
@@ -153,6 +156,7 @@ export default class Orders extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      current:[],
       test: "test",
       filterStatus:null,
       filterStatuses:[
@@ -175,6 +179,8 @@ export default class Orders extends Component {
       filterData:data1,
       showSearch: true,
       showFilter: true,
+
+      spinner:true
     };
   }
 
@@ -201,27 +207,61 @@ export default class Orders extends Component {
 
   componentDidMount() {
     console.log(this.state.test);
+      this.setState({spinner:true})
+    //fetching current order book
+    APIOrder.getOrderBook(1).then((res)=>{
+      console.log("CURRENT ORDER BOOK: ",res)
+      this.setState({spinner:false,current:res})
+    })
+  }
+
+  componentDidMount() {
+    this.setState({spinner:true})
+    this.focusListener = this.props.navigation.addListener("focus", () => {
+      APIOrder.getOrderBook(1).then((res)=>{
+        console.log("CURRENT ORDER BOOK: ",res)
+        this.setState({spinner:false,current:res})
+      })
+    });
+  }
+
+  DeleteOrder(id){
+    Alert.alert("Delete","Are you sure you want to delete this order ?",[
+      {text:"No"},
+      {text:"Yes",onPress:()=>{
+        this.setState({spinner:true})
+        APIOrder.deleteOrder(id).then((res)=>{
+          Alert.alert("Delete",res)
+          this.setState({spinner:false})
+        }).catch(err=>{
+          Alert.alert("Error",err.response.data.message)
+          this.setState({spinner:false})
+        })
+      }}
+    ])
   }
 
   drawScreenOne = () => {
     return (
       <>
+      <Spinner visible={this.state.spinner} />
       <ScrollView style={{paddingHorizontal:10}}>
-        {data1.map((item, index) => {
+        {this.state.current?.map((item, index) => {
           return (
             <TouchableOpacity
               style={[styles.container, styles.content,{marginLeft:0}]}
               key={index}
-              onPress={()=>this.props.navigation.navigate('DetailedOrder')}
+              onPress={()=>this.props.navigation.navigate('DetailedOrder',{item})}
             >
               <View style={styles.imageContainer}>
-                <Image source={item.image} style={styles.image} />
+                <Image source={{uri: item.images[0].media}} style={styles.image} />
               </View>
               <View style={{ flex: 1 }}>
                 <View style={styles.contentContainer}>
                   <View style={styles.mainInfo}>
                     <Text style={styles.name}>{item.name}</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={()=>this.DeleteOrder(item.cart_id)}>
                       <MaterialCommunityIcons
                         name="close-thick"
                         size={24}
@@ -238,7 +278,7 @@ export default class Orders extends Component {
                   </Text>
                 </View>
                 <View style={[styles.contentContainer, { marginTop: 10 }]}>
-                  <Text>Price: ${item.price}</Text>
+                  <Text>Total: ${item.total}</Text>
                 </View>
                 <View
                   style={[
@@ -248,16 +288,16 @@ export default class Orders extends Component {
                 >
                   <TouchableOpacity
                     style={styles.iconTextContainer}
-                    onPress={() => this.props.navigation.navigate("ValueAdded")}
+                    onPress={() => this.props.navigation.navigate("ValueAdded",{item})}
                   >
                     <View style={styles.iconContainer}>
                       <MaterialCommunityIcons
-                        name="plus-thick"
+                        name={(this.state.current.value_added_services===null ||this.state.current.value_added_services.length<1 )?"close":"check"}
                         size={16}
-                        color="#6E91EC"
+                        color={(this.state.current.value_added_services===null ||this.state.current.value_added_services.length<1 )?"red":"#31C2AA"}
                       />
                     </View>
-                    <Text style={{ marginLeft: 5, color: "#6E91EC" }}>
+                    <Text style={{ marginLeft: 5, color: "#6E91EC", textDecorationLine:'underline'}}>
                       Value added services
                     </Text>
                   </TouchableOpacity>
@@ -271,7 +311,7 @@ export default class Orders extends Component {
         })}
       </ScrollView>
       <View style={styles.totalContainer}>
-        <Text style={styles.total}>Total Price: ${data1.reduce((pre,cur)=>({price:pre.price+cur.price}))['price']}</Text>
+        <Text style={styles.total}>Total Price: ${this.state.current.length>0 && this.state.current.reduce((pre,cur)=>({total:pre+cur.total},0))['total']}</Text>
         <TouchableOpacity
                 onPress={()=>console.log("Running")}
                 style={styles.placeOrderButton}>
@@ -287,7 +327,7 @@ export default class Orders extends Component {
     <TouchableOpacity
       style={[styles.container, styles.content,{marginLeft:0}]}
       key={index}
-      onPress={()=>this.props.navigation.navigate('DetailedOrder')}
+      onPress={()=>this.props.navigation.navigate('DetailedOrder',{item})}
     >
       <View style={styles.imageContainer}>
         <Image source={item.image} style={styles.image} />
@@ -317,6 +357,7 @@ export default class Orders extends Component {
   drawScreenTwo = () => {
     return (
       <>
+      <Spinner visible={this.state.spinner} />
         <Appbar style={{ backgroundColor: "#E9F3FF", color: "#fff" }}>
           <Appbar.Content
             title={

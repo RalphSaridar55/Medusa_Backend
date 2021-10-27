@@ -136,10 +136,15 @@ export const editVariant = async(payload)=>{
 export const uploadBulk = async(payload)=>{
     return await getToken().then((x)=>{
         return apiUserServices.post(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/import-product`,payload,{
-            headers:{
-                'Content-Type': 'multipart/form-data',
+             headers:{
+                 'Content-Type':'multipart/form-data',
+                 Authorization: x
+             }
+            /* headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json; ; charset=UTF-8' ,
                 Authorization: x
-            }
+            },
+            mode: 'no-cors', */
         }).then((res)=>{
             console.log("RES FROM THE API:",res.data.message)
         })

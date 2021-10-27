@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import SelectMultiple from "react-native-select-multiple";
 import CollapsibleList from "react-native-collapsible-list";
+import * as UserApi from '../../core/apis/apiUserServices'
 import {
   SafeAreaView,
   View,
@@ -9,6 +10,8 @@ import {
   TouchableOpacity,
   Alert,
   Touchable,
+  Dimensions,
+  TextInput as TI
 } from "react-native";
 import {
   Text,
@@ -16,6 +19,7 @@ import {
   IconButton,
   Card,
   RadioButton,
+  Checkbox 
 } from "react-native-paper";
 import Autocomplete from "react-native-autocomplete-input";
 import Header from "../../components/Header";
@@ -41,6 +45,9 @@ import * as registrationServices from "./registrationServices";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./registrationStyle";
 import { brand } from "expo-device";
+import Overlay from 'react-native-modal-overlay';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {terms} from './Terms'
 
 const typeList = [
   {
@@ -52,7 +59,7 @@ const typeList = [
     value: "2",
   },
 ];
-
+const screenwidth = Dimensions.get('screen').width;
 const dummyData = ["John", "Sara", "Jess"];
 
 export default class Registartion extends Component {
@@ -137,6 +144,13 @@ export default class Registartion extends Component {
       apiCategories: [],
       apiSubCategory: [],
       apiBrands: [],
+
+      overlay:"terms",
+      verifiedNumber:false,
+      checkRead:false,
+      showTerms:false,
+
+      otp:''
     };
   }
 
@@ -237,6 +251,31 @@ export default class Registartion extends Component {
         this.setState({ docs: result.uri })
         alert(result.uri); */
   };
+
+  verifyNumber = () =>{
+    if(!this.state.verifiedNumber){
+      if(this.state.phoneNumber<8 || this.state.countryCode<3){
+        Alert.alert("Error","Please insert a valid country code and phone number before verifying.");
+        return;
+      }
+      else{
+        let payload={
+          owner_country_code:this.state.countryCode,
+          owner_mobile_number:this.state.phoneNumber
+        }
+        UserApi.sendOtp(payload).then((res)=>{
+          console.log("RES:",res);
+          if(res.statusCode){
+            this.setState({overlay:"otp",showTerms:true})
+          }
+        }).catch(err=>{
+          Alert.alert("Error",err.response.data.message)
+        })
+      }
+    }else{
+      Alert.alert("Verification","Phone number already verified")
+    }
+  }
 
   onRegister = () => {
     const emailError = emailValidator(this.state.email);
@@ -429,6 +468,16 @@ export default class Registartion extends Component {
               }
           })
       })
+
+      if(!this.state.verifiedNumber){
+        Alert.alert("Error","Please verify your number");
+        return;
+      }
+
+      if(!this.state.checkRead){
+        Alert.alert("Error","Please agree to the terms and conditions before continuing");
+        return;
+      }
     
     if(!error){
       const payload = {
@@ -464,6 +513,7 @@ export default class Registartion extends Component {
           this.props.navigation.navigate("Login");
         })
         .catch((error) => {
+          console.log("ERROR REGISTERING: ",error)
           alert(error.response.data.message);
           this.setState({ loading: false });
         }); 
@@ -944,7 +994,65 @@ export default class Registartion extends Component {
         source={require("../../../assets/images/Login-bg.png")}
         resizeMode="cover"
         style={signupStyle.imgContainer}
-      >
+      ><Overlay visible={this.state.showTerms} onClose={()=>this.setState({showTerms:false})} 
+      containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
+      closeOnTouchOutside>
+                      
+          <View style={styles.modalHeader}>
+              <Text
+              style={{
+                  fontSize: 26,
+                  color: "#31C2AA",
+                  fontWeight: "bold",
+                  marginBottom: 5,
+              }}
+              >
+              {this.state.overlay=="terms"?"Terms and Conditions":"OTP Verification"}
+              </Text>
+              <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({showTerms:false,overlay:"terms"})}/>
+          </View>
+          <ScrollView style={{flexDirection:'column',marginTop:20}}>
+                {this.state.overlay=="terms"?<Text>{terms}</Text>:(<View style={{flex:1,flexDirection:'column',width:screenwidth,marginHorizontal:20}}>
+                    
+              <TI
+                selectionColor="#31c2aa"
+                placeholder="OTP"
+                style={styles.modalBoxInputs}
+                label="1234"
+                value={this.state.otp}
+                //value={this.state[element.stateValue]}
+                onChangeText={(text) =>this.setState({otp:text})}
+                autoCapitalize="none"
+                // keyboardType={element.keyBoardType}
+                outlineColor="#C4C4C4"
+                theme={{
+                  colors: { primary: "#31c2aa", underlineColor: "transparent" },
+                }}
+              />
+              <TouchableOpacity
+              onPress={() => {if(this.state.otp>3){
+                //call an api 
+                this.setState({verifiedNumber:true,overlay:'terms',showTerms:false})
+              }}}
+              style={{
+                backgroundColor: "#31C2AA",
+                borderRadius: 25,
+                alignItems: "center",
+                width:screenwidth*0.7,
+                justifyContent: "center",marginVertical:10,
+                height: 30,}}
+            >
+              <Text style={styles.loginBtnText}>Verify</Text>
+            </TouchableOpacity>
+                    {/* <TouchableOpacity
+                onPress={this.onRegister}
+                style={[signupStyle.loginBtn]}
+              >
+                <Text style={styles.loginBtnText}>Verify</Text>
+              </TouchableOpacity> */}
+                </View>)}
+          </ScrollView>
+      </Overlay>
         <SafeAreaView style={signupStyle.container}>
           <Spinner visible={this.state.loading} />
           <Header>Create Account</Header>
@@ -968,6 +1076,33 @@ export default class Registartion extends Component {
                 </View>
               </RadioButton.Group>
               {this.drawTextInputFields()}
+              <View style={styles.verifyNumber}>
+                <Text>{this.state.countryCode} {this.state.phoneNumber}</Text>
+                <View style={{flexDirection:'row',alignItems:'center'}}>
+                {!this.state.verifiedNumber ? (
+                  <AntDesign name="closecircle" size={20} style={{marginRight:5}} color="red" />
+                ) : (
+                  <AntDesign name="checkcircle" size={20} style={{marginRight:5}} color="green" />
+                )}
+                <TouchableOpacity
+                style={{height:30,padding:5}}
+                onPress={()=>this.verifyNumber()}>
+                  <Text style={{color:'#31C2AA',textDecorationLine:'underline'}}>Verify your number</Text>
+                </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.verifyNumber}>
+              <Checkbox
+                    /* theme={{
+                      colors: { primary: "#31c2aa", underlineColor: "transparent" },
+                    }} */
+                    status={this.state.checkRead ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      this.setState({checkRead:!this.state.checkRead});
+                    }}
+                  />
+              <Text>I Agree to the <Text style={{color:'#31C2AA',textDecorationLine:'underline'}} onPress={()=>this.setState({showTerms:true})}>Terms and conditions</Text></Text>
+              </View>
               <TouchableOpacity
                 onPress={this.onRegister}
                 style={[signupStyle.loginBtn]}

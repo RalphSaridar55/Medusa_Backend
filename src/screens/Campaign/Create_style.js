@@ -57,7 +57,6 @@ export const styles = StyleSheet.create({
         color:'gray'
     },
     bannerPrice:{
-        marginTop:20,
         fontSize:16,
         color:'#31C2AA'
     },

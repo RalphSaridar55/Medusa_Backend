@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as API from "../../core/apis/apiProductServices";
+import * as APIORder from '../../core/apis/apiOrderServices'
 import { styles } from "./valueadded_style";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
 import * as DocumentPicker from "expo-document-picker";
 import { AntDesign } from "@expo/vector-icons";
+import { docValidator } from "../../helpers/docValidator";
 
 const data = {
   name: "Product 1",
   description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
 };
 
-const ValueAdded = ({ navigation }) => {
+const ValueAdded = ({ navigation,route }) => {
   const [fetchedServices, setFetchedServices] = useState([]);
   const [services, setServices] = useState([]);
   const [isVisible, setIsVisible] = useState(true);
   const [total, setTotal] = useState(0);
+  const [routeData,setRouteData] = useState();
   const [document,setDocument] = useState({value:{},error:true});
 
   const calculateTotal = (value) => {
@@ -62,9 +65,51 @@ const ValueAdded = ({ navigation }) => {
         alert(result.uri); */
   };
 
+  const removeServices=()=>{
+    console.log("TEst")
+  }
+
+  const addValue=()=>{
+    setIsVisible(true)
+    if(services.length<1){
+      setIsVisible(false)
+      Alert.alert("Error","Please select atleast one service")
+      return
+    }
+    if(document.value.uri==null){
+      setIsVisible(false)
+      Alert.alert("Error","Please select a document")
+      return
+    }
+    let arr = [];
+    let doc =[];
+    doc.push(document.value.uri)
+    services.map((item)=>{
+      let res = fetchedServices.filter((item2) => {
+        return item2.value === item.value;
+      });
+      arr.push({service_id:item.value,service_name:item.label.split(" ")[0],price:res[0].cost,document:doc})
+    })
+    let payload={
+      cart_id:routeData.cart_id,
+      value_added_services:arr,
+    }
+    console.log("PAYLOAD BECOMES: ",payload)
+    APIORder.addValueAddedServices(payload).then((res)=>{
+      setIsVisible(false)
+      Alert.alert("Added Services",res,[
+        {text:"Ok",onPress:()=>navigation.goBack()}
+      ])
+    }).catch(err=>{
+      setIsVisible(false)
+      Alert.alert("Error",err.response.data.message)
+    })
+  }
+
   useEffect(() => {
+    console.log("ROTUE PARAMS: ",route.params)
     API.getServices().then((res) => {
-      console.log("RESULT: ", res);
+      console.log("RESULT: ", res.item);
       let array = [];
       res.map((item) => {
         array.push({
@@ -73,6 +118,7 @@ const ValueAdded = ({ navigation }) => {
           cost: item.service_cost,
         });
       });
+      setRouteData(route.params.item)
       setFetchedServices(array);
       setIsVisible(false);
     });
@@ -80,19 +126,22 @@ const ValueAdded = ({ navigation }) => {
   return (
     <ScrollView style={{flex:1}}>
       <Spinner visible={isVisible} />
-      <View style={{ backgroundColor: "red" }}>
+      <View>
         <Image
           resizeMode="contain"
-          source={require("../../../assets/images/mouse.jpg")}
+          source={{uri:routeData?.images[0].media}}
           style={styles.image}
         />
       </View>
       <View style={styles.mainContainer}>
-        <Text style={styles.name}>{data.name}</Text>
-        <Text>{data.description}</Text>
-        <View>
-          <Text>Here is services</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+          <Text style={styles.name}>{routeData?.product_name}</Text>
+          {routeData?.value_added_services!=null&&<AntDesign name="closecircle" size={24} color="red" onPress={()=>Alert.alert('Remove Services','Are you sure you want to remove added services',[
+            {text:"No"},
+            {text:"Yes",onPress:()=>removeServices()},
+          ])}/>}
         </View>
+        <Text>{routeData?.description}</Text>
         <View style={styles.priceContainer}>
           <Text style={{ fontWeight: "bold" }}>Cost:</Text>
           <Text style={{color:'#6E91EC'}}>USD {total}</Text>
@@ -158,7 +207,7 @@ const ValueAdded = ({ navigation }) => {
       <View
         style={styles.buttonsContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("OrderList")}
+            onPress={() => addValue()}
             style={styles.loginBtn}
           >
             <Text style={styles.loginBtnText}>Add Services</Text>

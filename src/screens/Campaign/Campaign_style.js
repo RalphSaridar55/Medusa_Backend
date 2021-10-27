@@ -5,8 +5,8 @@ export const styles = StyleSheet.create({
         backgroundColor:'#fff',
         borderWidth:1,
         display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
+        /* justifyContent:'center',
+        alignItems:'center', */
         borderColor:'lightgray',
         marginVertical: 20,
         paddingVertical:40,
@@ -30,10 +30,24 @@ export const styles = StyleSheet.create({
     infoContainer:{
         display:'flex',
         justifyContent:'flex-start',
-        marginVertical:20
     },
     bannerTitle:{
         fontSize:24
+    },
+    loginBtn: {
+        marginTop:40,
+        backgroundColor: "#31C2AA",
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 30,
+        paddingHorizontal:20,
+        paddingVertical:10
+    },
+    loginBtnText:{
+        color:'white',
+        fontSize:16,
+        fontWeight:'bold'
     },
     bannerInfo:{
         fontSize:12,
@@ -43,5 +57,23 @@ export const styles = StyleSheet.create({
         marginTop:20,
         fontSize:16,
         color:'#31C2AA'
+    },
+    myCampaignTitleContainer:{
+        alignItems:'flex-start',
+        paddingHorizontal:20,
+        paddingBottom:20,
+        width:'100%'
+    },
+    buttonContainer:{
+        width:'100%',
+        paddingHorizontal:20,
+        alignItems:'flex-end',
+    },
+    collapsibleButton:{
+        color:'#31C2AA',
+        fontSize:20,
+        marginHorizontal:20,
+        textDecorationColor:'#31C2AA',
+        textDecorationLine:'underline'
     }
 }) 

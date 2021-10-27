@@ -168,7 +168,7 @@ export default class AddProduct extends Component {
           ]);
         }).catch(err=>{
           this.setState({loading:false})
-          Alert.alert("Error","Something went wrong, please check your inputs and try again");
+          Alert.alert("Error",err.response.data.message);
         })
 
       }else{
@@ -180,7 +180,7 @@ export default class AddProduct extends Component {
           Alert.alert("Success","Variant has been created successfully");
         }).catch(err=>{
           this.setState({loading:false})
-          Alert.alert("Error","Something went wrong, please check your inputs and try again");
+          Alert.alert("Error",err.response.data.message);
         })
       }
     }
@@ -247,7 +247,8 @@ export default class AddProduct extends Component {
       return;
     }
 
-    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,mediaTypes:MediaTypeOptions.Images	});
     if (pickerResult.cancelled === true) {
       return;
     }
@@ -328,7 +329,7 @@ export default class AddProduct extends Component {
       >
         <SelectMultiple
           items={this.state[item.items]}
-          selectedItems={this.state[item.stateValue]}
+          selectedItems={this.state[item.stateValue].length>0 &&this.state[item.stateValue]}
           labelStyle={{color:'black'}}
           selectedLabelStyle	={{color:'#698EB7'}}
           onSelectionsChange={(item) =>{console.log("ITEM SELECTED: ",item)

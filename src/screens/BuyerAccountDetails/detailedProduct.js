@@ -86,7 +86,7 @@ const detailedOrder = ({ navigation, route }) => {
       setBlocked(!blocked)
     }).catch(err=>{
       setIsVisible(false);
-      Alert.alert("Error","Something Went Wrong")
+      Alert.alert("Error",err.response.data.message)
     })
   }
 

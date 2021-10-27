@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet,Dimensions } from "react-native";
+
+const screenWidth = Dimensions.get('screen').width;
+const screenHeight = Dimensions.get('screen').height;
 
 const styles = StyleSheet.create({
   Bcontainer: {
@@ -11,7 +14,38 @@ const styles = StyleSheet.create({
     borderColor: "#C4C4C4",
     borderWidth: 1,
     borderRadius: 10,
-    margin: 5,
+    marginHorizontal:10,
+  },
+  cartIconContainer:{
+    display:'flex',
+    alignItems:'flex-end',
+    justifyContent:'center',
+    marginHorizontal:20,
+    marginVertical:10
+  },
+  cartItemContainer:{
+    paddingHorizontal:10,
+    width:screenWidth,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  modalHeader:{
+      display:'flex',
+      flexDirection:'row',
+      alignItems:'center',
+      justifyContent:'space-between',
+      width:screenWidth,
+      paddingHorizontal:20,
+  },
+  cartHeader:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    marginHorizontal:15,
+    alignItems:'center',
+    marginVertical:20,
+    borderBottomWidth:1,
+    borderBottomColor:'lightgray'
   },
   priceHeader: {
     marginTop: 60,

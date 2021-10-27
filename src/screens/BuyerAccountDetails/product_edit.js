@@ -271,7 +271,7 @@ export default class AddProduct extends Component {
       return;
     }
 
-    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({allowsEditing:true,mediaTypes:MediaTypeOptions.Images	});
     if (pickerResult.cancelled === true) {
       return;
     }
