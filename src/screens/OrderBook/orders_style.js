@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     iconContainer:{
-        backgroundColor:'lightgray',
+        borderWidth:0.2,
         borderRadius:20,
         height:20,
         width:20,

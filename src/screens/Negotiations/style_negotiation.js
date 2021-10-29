@@ -6,7 +6,17 @@ const height = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
     container:{
         marginTop:0,
-        marginHorizontal:20
+        marginHorizontal:20,
+    },
+    container2:{
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    },
+    buttonApprove:{
+        padding:5,
+        borderRadius:20
     },
     loginBtn: {
         marginBottom:20,
@@ -72,7 +82,7 @@ const styles = StyleSheet.create({
         textAlignVertical:'center'
     },
     textContainer:{
-        marginVertical:10
+        marginVertical:20
     },
     date:{
         color:'gray',

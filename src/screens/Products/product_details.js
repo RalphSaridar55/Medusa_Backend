@@ -81,15 +81,16 @@ class ProductDetails extends Component {
 
   handleAddAndSub(type, addOrSub) {
     //console.log(type);
+    console.log(typeof this.state[type])
     if(this.state.selectedVariant==null){
       Alert.alert("Error","Please select a variant first")
       return
     }
     else{
       if (addOrSub == "add")
-        this.setState((prev) => ({ [type]: prev[type] + 1 }));
+        this.setState((prev) => ({ [type]: parseInt(prev[type]) + 1 }));
       else if (this.state[type] > 1)
-        this.setState((prev) => ({ [type]: prev[type] - 1 }));
+        this.setState((prev) => ({ [type]: parseInt(prev[type]) - 1 }));
     }
   }
 
@@ -128,30 +129,32 @@ class ProductDetails extends Component {
   }
 
   AddToCart = () =>{
-    if(this.state.dataFromApi.current_stock<1){
-      Alert.alert("Error","Product is no longer available")
-      return;
-    }0
+    console.log("type of chosenPieces: ",typeof this.state.chosenPieces)
+    console.log("type of chosenBoxes: ",typeof this.state.chosenBoxes)
+    console.log("TOTAL ITEMS: ",this.state.chosenPieces*this.state.chosenBoxes)
+    let pieces= parseInt(this.state.chosenPieces)
+    let boxes= parseInt(this.state.chosenBoxes)
+    console.log("TOTAL ITEMS: ",pieces*boxes)
     if(this.state.selectedVariant==null){
       Alert.alert("Error","Please select a variant first")
       return;
     }
-    if(this.state.chosenBoxes<1){
-      Alert.alert("Error","Please make sure number of boxes is greater than 0")
+    if(this.state.dataFromApi.current_stock<1){
+      Alert.alert("Error","Product is no longer available")
       return;
     }
     else{
-      if(this.state.chosenPieces<this.state.dataFromApi.min_purchase_qty || (this.state.chosenBoxes*this.state.chosenPieces)<this.state.dataFromApi.min_purchase_qty){
+      if(/* pieces<this.state.dataFromApi.min_purchase_qty ||  */(boxes*pieces)<this.state.dataFromApi.min_purchase_qty){
         Alert.alert("Error",`Please make sure your purchase quantity is greater than ${this.state.dataFromApi.min_purchase_qty}`)
         return;
       }
-      if(this.state.chosenPieces>this.state.dataFromApi.max_purchase_qty || (this.state.chosenPieces * this.state.chosenBoxes)>this.state.dataFromApi.max_purchase_qty){
+      if(/* pieces>this.state.dataFromApi.max_purchase_qty ||  */(pieces * boxes)>this.state.dataFromApi.max_purchase_qty){
         Alert.alert("Error",`Please make sure your purchase quantity is lesser than ${this.state.dataFromApi.max_purchase_qty}`)
         return;
       }
       let variant_qty = this.state.dataFromApi.productvariant.filter((i)=>i.id===this.state.variantId)[0].variant_stock
       console.log("VARIANT QTY IS: ",variant_qty)
-      if(this.state.chosenPieces>variant_qty || (this.state.chosenBoxes*this.state.chosenPieces)>variant_qty){
+      if(/* pieces>variant_qty ||  */(boxes*pieces)>variant_qty){
         Alert.alert("Error",`Please make sure your purchase quantity is lesser than ${variant_qty}`)
         return;
       }
@@ -580,7 +583,13 @@ class ProductDetails extends Component {
                       />
                     </TouchableOpacity>
                     <TextInput style={{ color: "#31C2AA", fontSize: 24 }} value={this.state.chosenPieces+""} keyboardType="numeric"
-                    onChangeText={(e)=>this.setState({chosenPieces:e})} />
+                    onChangeText={(e)=>{
+                      if(this.state.selectedVariant==null)
+                        Alert.alert("Error","Please select a variant first")
+                      else if(e.length==0)
+                        this.setState({chosenPieces:1})
+                      else this.setState({chosenPieces:e})
+                      }} />
                     <TouchableOpacity
                       onPress={() =>
                         this.handleAddAndSub("chosenPieces", "minus")
@@ -611,7 +620,11 @@ class ProductDetails extends Component {
                       />
                     </TouchableOpacity>
                     <TextInput style={{ color: "#31C2AA", fontSize: 24 }} value={this.state.chosenBoxes+""} keyboardType="numeric"
-                    onChangeText={(e)=>this.setState({chosenBoxes:e})} />
+                    onChangeText={(e)=>{
+                      if(this.state.selectedVariant==null)
+                        Alert.alert("Error","Please select a variant first")
+                      else this.setState({chosenBoxes:e})
+                      }} />
                     <TouchableOpacity
                       onPress={() =>
                         this.handleAddAndSub("chosenBoxes", "minus")

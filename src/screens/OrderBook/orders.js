@@ -1,5 +1,5 @@
 ``;
-import React, { Component, createRef } from "react";
+import React, { Component, createRef, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as APIOrder from '../../core/apis/apiOrderServices';
 import {
@@ -28,6 +28,8 @@ import { AntDesign } from "@expo/vector-icons";
 import styles from "./orders_style";
 import { Picker } from "@react-native-picker/picker";
 import Spinner from "react-native-loading-spinner-overlay";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setItemAsync } from "expo-secure-store";
 const screenwidth = Dimensions.get('screen').width;
 const actionSheetCat = createRef();
 const data1 = [
@@ -155,16 +157,26 @@ const data1 = [
 export default class Orders extends Component {
   constructor(props) {
     super(props);
+    this.filterRef = React.createRef();
     this.state = {
       current:[],
+      data:[],
       test: "test",
-      filterStatus:null,
+      userData:null,
+      filterStatusLabel:"Current",
+      filterStatus:10,
       filterStatuses:[
-        {value:1,label:"Reserved"},
-        {value:2,label:"Completed"},
-        {value:3,label:"Pending"},
-        {value:4,label:"In Progress"},
-        {value:5,label:"All"},
+        {value:1,label:"Pending"},
+        {value:2,label:"Picked up"},
+        {value:3,label:"Awaiting Shipment"},
+        {value:4,label:"Shipped "},
+        {value:5,label:"Awaiting Payment"},
+        {value:6,label:"Partly Paid"},
+        {value:7,label:"Paid"},
+        {value:8,label:"Reserved"},
+        {value:9,label:"Extended"},
+        {value:10,label:"Current"},
+        {value:11,label:"Completed"},
       ],
       forTab: {
         index: 0,
@@ -176,7 +188,7 @@ export default class Orders extends Component {
       filter:"",
       search: "",
       
-      filterData:data1,
+      filterData:[],
       showSearch: true,
       showFilter: true,
 
@@ -195,32 +207,46 @@ export default class Orders extends Component {
   };
 
   _changeFilter = (val) =>{
-    console.log("VALUE IS:",val)
-    if(val == 5)
-      this.setState({filterData:data1})
-    else{
-      var data = data1
-      var a = data.filter((i)=>i.status_id === val);
-      this.setState({filterData:a})
-    }
+    let label = this.state.filterStatuses.filter((i)=>i.value===val)[0].label ;
+    this.setState({spinner:true,filterStatus:val,filterStatusLabel:label})
+    APIOrder.getSellersOrder(val).then((res)=>{
+      console.log('API RES: ',res)
+      this.setState({data:res,filterData:res,spinner:false})
+    }).catch(err=>{
+      Alert.alert("Error",err.response.data.message)
+      this.setState({spinner:false})
+    })
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
     console.log(this.state.test);
-      this.setState({spinner:true})
+      this.setState({spinner:true, userData:userData})
     //fetching current order book
     APIOrder.getOrderBook(1).then((res)=>{
       console.log("CURRENT ORDER BOOK: ",res)
-      this.setState({spinner:false,current:res})
+      this.setState({current:res})
+    })
+    APIOrder.getSellersOrder(10).then((res)=>{
+      console.log("DATA: ",res)
+      this.setState({spinner:false,data:res,filterData:res})
     })
   }
 
   componentDidMount() {
-    this.setState({spinner:true})
-    this.focusListener = this.props.navigation.addListener("focus", () => {
+    /* let userData = await AsyncStorage.getItem('user_details');
+    this.setState({spinner:true}) */
+    this.focusListener = this.props.navigation.addListener("focus", async() => {
+      let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
+      console.log(this.state.test);
+        this.setState({spinner:true, userData:userData})
       APIOrder.getOrderBook(1).then((res)=>{
         console.log("CURRENT ORDER BOOK: ",res)
-        this.setState({spinner:false,current:res})
+        this.setState({current:res})
+      })
+      APIOrder.getSellersOrder(10).then((res)=>{
+        console.log("DATA: ",res)
+        this.setState({spinner:false,data:res,filterData:res})
       })
     });
   }
@@ -244,7 +270,6 @@ export default class Orders extends Component {
   drawScreenOne = () => {
     return (
       <>
-      <Spinner visible={this.state.spinner} />
       <ScrollView style={{paddingHorizontal:10}}>
         {this.state.current?.map((item, index) => {
           return (
@@ -272,9 +297,9 @@ export default class Orders extends Component {
                 </View>
                 <View style={styles.contentContainer}>
                   <Text style={{ width: "70%" }}>
-                    {item.description.length > 40
+                    {/* {item.description.length > 40
                       ? item.description.substring(0, 40) + "..."
-                      : item.description}
+                      : item.description} */}
                   </Text>
                 </View>
                 <View style={[styles.contentContainer, { marginTop: 10 }]}>
@@ -290,18 +315,19 @@ export default class Orders extends Component {
                     style={styles.iconTextContainer}
                     onPress={() => this.props.navigation.navigate("ValueAdded",{item})}
                   >
-                    <View style={styles.iconContainer}>
+                    <View style={[styles.iconContainer,(this.state.current.value_added_services===null ||this.state.current.value_added_services?.length<1 )?{borderColor:'red'}:{borderColor:'#31C2AA'}]}>
                       <MaterialCommunityIcons
-                        name={(this.state.current.value_added_services===null ||this.state.current.value_added_services.length<1 )?"close":"check"}
+                        name={(this.state.current.value_added_services==null ||this.state.current.value_added_services?.length<1 )?"close":"check"}
                         size={16}
-                        color={(this.state.current.value_added_services===null ||this.state.current.value_added_services.length<1 )?"red":"#31C2AA"}
+                        color={(this.state.current.value_added_services==null ||this.state.current.value_added_services?.length<1 )?"red":"#31C2AA"}
                       />
                     </View>
                     <Text style={{ marginLeft: 5, color: "#6E91EC", textDecorationLine:'underline'}}>
                       Value added services
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                  onPress={()=>this.props.navigation.navigate("Negotiations",{screen:"Negotiation",params:{fromOrder:item}})}>
                     <Ionicons name="chatbox" size={24} color="#6E91EC" />
                   </TouchableOpacity>
                 </View>
@@ -330,24 +356,24 @@ export default class Orders extends Component {
       onPress={()=>this.props.navigation.navigate('DetailedOrder',{item})}
     >
       <View style={styles.imageContainer}>
-        <Image source={item.image} style={styles.image} />
+        <Image source={item?.image} style={styles.image} />
       </View>
       <View style={{ flex: 1 }}>
         <View style={styles.contentContainer}>
           <View style={styles.mainInfo}>
-            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.name}>{item?.buyer_name}</Text>
             <Text style={styles.status}>{item.status}</Text>
           </View>
         </View>
         <View style={styles.contentContainer}>
           <Text style={{ width: "70%" }}>
-            {item.description.length > 40
+            {/* {item?.description.length > 40
               ? item.description.substring(0, 40) + "..."
-              : item.description}
+              : item.description} */}
           </Text>
         </View>
         <View style={[styles.contentContainer, { marginTop: 10 }]}>
-          <Text>Price: ${item.price}</Text>
+          <Text>Amount: ${item.amount}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -360,26 +386,27 @@ export default class Orders extends Component {
       <Spinner visible={this.state.spinner} />
         <Appbar style={{ backgroundColor: "#E9F3FF", color: "#fff" }}>
           <Appbar.Content
-            title={
+            title={this.state.filterStatusLabel}/* {
               this.state.filterData.filter((i) =>
-                i.name.toLowerCase().includes(this.state.search.toLowerCase())
+                i?.name.toLowerCase().includes(this.state.search.toLowerCase())
               ).length +
               " " +
               "Results"
-            }
+            } */
             onPress={this.setView}
             style={{ fontSize: 14 }}
           />
           <Appbar.Action
             icon="filter-menu"
             onPress={() => {
+              //console.log(this.filterRef)
+              this.filterRef.current.pickerRef.current.focus()
               this.setState({showFilter:!this.state.showFilter})
             }}
           />
           <Appbar.Action icon="magnify" onPress={this.onclick} />
         </Appbar>
-        <View style={{paddingHorizontal:10,paddingVertical:10,
-          display: this.state.showSearch ? "none" : "flex" }}>
+        <View style={{paddingHorizontal:10,paddingVertical:10,display: "none" }}>
           <Searchbar
             theme={{
               colors: { primary: "#6E91EC", underlineColor: "transparent" },
@@ -389,7 +416,7 @@ export default class Orders extends Component {
           />
         </View>
         <View style={{paddingHorizontal:10,paddingVertical:10,
-          display: this.state.showFilter ? "none" : "flex" }}>
+          display: "none"}}>
           <View
             style={{
               borderWidth: 1,
@@ -402,9 +429,11 @@ export default class Orders extends Component {
             }}
           >
             <Picker
+              ref={this.filterRef}
               style={{marginLeft:5}}
               selectedValue={this.state.filterStatus}
               onValueChange={(itemValue, itemIndex) =>{
+                console.log(itemValue)
                 this._changeFilter(itemValue)
               }
               }>{this.state.filterStatuses.map((item,index)=>{
@@ -414,11 +443,7 @@ export default class Orders extends Component {
           </View>
         </View>
         <ScrollView style={{paddingHorizontal:10}}>
-          {this.state.search.length>0?this.state.filterData.filter(i=>
-                i.name.toLowerCase().includes(this.state.search.toLowerCase())).map((item, index) => {
-                  return this.drawScreenTwoData(item,index)
-          })
-          :this.state.filterData.map((item, index) => {
+          {this.state.filterData.map((item, index) => {
                   return this.drawScreenTwoData(item,index)
           })}
           {/* <ActionSheet ref={actionSheetCat}>
@@ -472,29 +497,8 @@ export default class Orders extends Component {
 
   render() {
     return (
-      /*
-            <View style={{display:"flex",flexDirection:'row'}}>
-                <Image style={styles.image} source={{ uri: item.image }} />
-                <View>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.status}>{item.status}</Text>
-                </View>
-            </View>
-              <View style={styles.content}>
-                <View style={styles.contentHeader}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                  </View>
-                  <Text>{item.description}</Text>
-                  <Text style={styles.time}>WED, AUG 4, 08:51 AM</Text>
-                </View>
-              </View> */
-      <TabView
+
+      this.state.userData?.user_type==1?(<TabView
         navigationState={this.state.forTab}
         renderScene={this._renderScene}
         onIndexChange={this._handleIndexChange}
@@ -510,7 +514,7 @@ export default class Orders extends Component {
             )}
           />
         )}
-      />
+      />):this.drawScreenTwo()
     );
   }
 }

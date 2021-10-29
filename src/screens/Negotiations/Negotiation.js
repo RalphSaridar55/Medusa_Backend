@@ -15,6 +15,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import * as apiService from "../../core/apis/apiChatServices";
 import styles from "./style_negotiation";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const data = [
   {
@@ -131,23 +132,94 @@ const data = [
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
 
-const Negotiations = () => {
-  const [replies, setReplies] = useState();
-  const [price, setPrice] = useState('');
-  const [reply, setReply] = useState(0);
+const Negotiations = ({route,navigation}) => {
+  const [replies, setReplies] = useState([{label:"reply",value:0}]);
+  const [price, setPrice] = useState(0);
+  const [reply, setReply] = useState();
   const [isVisible,setIsVisible] = useState(true)
-
+  const [routeData, setRouteData] = useState();
+  const [userData,setUserData] = useState();
+  const [chat,setChat] = useState();
   const sendAction = () =>{
       console.log("Should send a text")
   }
+  
 
   useEffect(() => {
-    apiService.getChatReplies().then((res) => {
-      console.log("CHAT REPLIES: ", res);
-      setReplies(res);
-      setIsVisible(false)
-    });
+    const runEffect = async() =>{
+      let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
+      console.log("USER: ",userData)
+      console.log("ROTUE PARAMS: ",route.params.fromOrder)
+      setRouteData(route.params.fromOrder)
+      apiService.getChatReplies().then((res) => {
+        console.log("CHAT REPLIES: ", res);
+        setReplies(res);
+        setReply(res[0]);
+        setIsVisible(false);
+        setUserData(userData)
+      });
+      apiService.getChatDetails(route.params.fromOrder.product_id).then((res)=>{
+        console.log("FROM THE USEEFFECT: ",res)
+        setChat(res.sort((a,b)=>a.created_at>b.created_at?1:-1))
+      })
+    }
+    runEffect()
   }, []);
+
+  const Approve=(type)=>{
+    let payload ={ 
+      negotiate_id: routeData.id,
+      product_id:routeData.product_id,
+      status:type=="Approve"?4:5
+    }
+    console.log("PAYLOAD: ",payload)
+    Alert.alert(type,`Are you sure you want to ${type} this negotiation?`,[
+      {text:"No"},{text:"Yes",onPress:()=>apiService.approveOrDisapprove(payload).then((res)=>{
+        Alert.alert(type,res,[
+          {text:"Ok",onPress:()=>navigation.goBack()}
+        ])
+      }).catch(err=>{
+        console.log(err)
+        Alert.alert("Error",err.response.message)
+      })}
+    ])
+  }
+
+  const replyFunction=()=>{
+    console.log("REPLY:",reply)
+    setIsVisible(true)
+    if(reply==0){
+      setIsVisible(false);
+      Alert.alert("Error","Please choose a reply");
+      return;
+    }
+    let receiver_id =userData.user_type==1?routeData.seller_id:0;
+    //let negotiate_reply = replies.filter((i)=>i.value === reply)[0].label
+    console.log("PAY",reply,price)
+    let payload ={
+      negotiate_reply: reply?.label,
+      negotiate_reply_id: reply?.value,
+      chat_sender_name: routeData.chat_sender_name,
+      product_id: routeData.product_id,
+      receiver_id: routeData.receiver_id,
+      negotiate_price: price,
+      product_order_id: routeData.cart_id || chat[0].product_order_id,
+      buyer_virtual_id: routeData.buyer_virtual_id,
+      seller_virtual_id: routeData.seller_virtual_id
+    }
+    console.log("PAYLOAD: ",payload)
+    apiService.replyTo(payload).then((res)=>{
+      console.log("RESULT FROM REPLY API : ",res)
+      setIsVisible(false)
+      apiService.getChatDetails(route.params.fromOrder.product_id).then((res)=>{
+        console.log("FROM THE USEEFFECT: ",res)
+        setChat(res.sort((a,b)=>a.created_at>b.created_at?1:-1))
+      })
+    }).catch(err=>{
+      Alert.alert("Error",err.response.data.message);
+      setIsVisible(false)
+    })
+  }
 
   return (
     <ImageBackground
@@ -157,29 +229,33 @@ const Negotiations = () => {
     >
     <Spinner visible={isVisible}/>
     <View style={{flex:1,marginBottom:screenheight*0.1,marginTop:10}}>
-        <View style={styles.container}>
-          <Text style={styles.productTitle}>Product #33</Text>
+        <View style={[styles.container,styles.container2]}>
+          <Text style={[styles.productTitle,{flex:3}]}>Product: {routeData?.product_name}</Text>
+          <TouchableOpacity onPress={()=>Approve(routeData?.type==5?"Approve":"Disapprove")}
+          style={[styles.buttonApprove,{flex:1,backgroundColor:routeData?.type==5?"#5BC5B9":'red'}]}>
+            <Text style={{color:'white'}}>{routeData?.type==5?"Mark as approved":"Mark as disapproved"}</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.chatContainer}>
+        <View style={[styles.chatContainer,{height:screenheight*0.75}]}>
           <ScrollView
             style={{ paddingHorizontal: 20, marginBottom: 20 }}
             showsVerticalScrollIndicator={false}
           >
-            {data.map((i, index) => (
+            {chat?.map((i, index) => (
               <View style={styles.textContainer} key={index}>
                 <View style={styles.pictureAndUsernameContainer}>
                   <View
                     style={[
                       styles.pictureContainer,
-                      i.typePerson == "buyer"
+                      i.senderDetails.owner_email === userData?.owner_email
                         ? { backgroundColor: "#5BC5B9" }
                         : { backgroundColor: "#7F67A9" },
                     ]}
                   >
-                    <Text style={styles.name}>AB</Text>
+                    <Text style={styles.name}>{i.senderDetails.owner_email === userData?.owner_email?"You":i.chat_sender_name.substring(0,2).toUpperCase()}</Text>
                   </View>
                   <Text style={styles.username}>
-                    {i.typePerson == "buyer" ? `Virtual ${i.typePerson}` : "Me"}
+                    {i.senderDetails.owner_email}
                   </Text>
                 </View>
                 <View
@@ -189,21 +265,24 @@ const Negotiations = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Text style={{ width: screenwidth * 0.5 }}>{i.message}</Text>
-                  <Text style={styles.date}>{i.date}</Text>
+                  <Text style={{ width: screenwidth * 0.5 }}>{i.negotiate_reply}</Text>
+                  <Text style={styles.date}>{i.created_at.substring(0,10)}</Text>
                 </View>
-                <Text
+                <View>
+                {i.negotiate_price>1?<><TouchableOpacity style={[
+                    i.senderDetails.owner_email == userData?.owner_email
+                      ? { backgroundColor: "#5BC5B9",width:screenwidth*0.4,alignItems:'center',borderRadius:20,marginVertical:10,padding:5}
+                      : { backgroundColor: "#7F67A9",width:screenwidth*0.4,alignItems:'center',borderRadius:20,marginVertical:10,padding:5}
+                  ]}><Text
                   style={
-                    i.typePerson == "buyer"
-                      ? { color: "#5BC5B9", fontSize: 16 }
-                      : { color: "#7F67A9", fontSize: 16 }
+                    i.senderDetails.owner_email == userData?.owner_email
+                      ? { color: "#fff" }
+                      : { color: "#fff" }
                   }
                 >
-                  Suggested Price:{" "}
-                  <Text style={{ textDecorationLine: "underline" }}>
-                    {i.suggestedPrice} $
-                  </Text>
-                </Text>
+                  Suggested Price:  ${i.negotiate_price}
+                </Text></TouchableOpacity></>:null}
+                </View>
               </View>
             ))}
           </ScrollView>
@@ -235,9 +314,8 @@ const Negotiations = () => {
                   console.log("Item Value: ",itemValue)
                   setReply(itemValue)
                 }}>
-                  {replies?.length<1
-                  ?<Picker.Item label="Reply" value={0} />
-                  :replies?.map((item,index)=>{
+                  {
+                  replies?.map((item,index)=>{
                     return(
                       <Picker.Item key={index}
                       numberOfLines={3} label={item.label} 
@@ -251,6 +329,7 @@ const Negotiations = () => {
                  console.log(typeof(parseInt(price)),price)
                  if(price<0)
                   Alert.alert("Error","Price must be positive number")
+                 else replyFunction()
                  console.log("Reply: ",reply,"\nPrice: $",price)
                }}>
                 <MaterialCommunityIcons name="send-circle" size={40} color="#5BC5B9"

@@ -15,6 +15,10 @@ const Bulk = () => {
   const [document, setDocument] = useState({ value: "", error: true, spinner:false });
   const [result,setResult]= useState();
 
+  const openUrl = async() =>{
+    await Linking.openURL("https://cmsblobstorage1.blob.core.windows.net/cmsblobcontainer/bulk_upload_sheet.xls?sv=2020-06-12&st=2021-10-29T09%3A25%3A11Z&se=9999-12-31T00%3A00%3A00Z&sr=b&sp=r&sig=Dv7NliNCNq2oR4qzEsFn3QtFUlYy1MD7gkhjVipL1tA%3D");
+  }
+
   const uploadBulk = () =>{
     if(document.value?.name.length>1 && document.value.name!=null){
         setDocument({...document,spinner:true})
@@ -106,7 +110,7 @@ const Bulk = () => {
           color="#6E91EC"
           icon="file"
           mode="outlined"
-          onPress={() =>openDocumentRef()}
+          onPress={() =>openUrl()}
           style={[styles.docPicker]}
         >
           <AntDesign name="download" size={24} color="#6E91EC" />

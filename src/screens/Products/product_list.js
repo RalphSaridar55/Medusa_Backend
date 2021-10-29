@@ -68,14 +68,14 @@ export default class ProductList extends Component {
         //console.log(v);
         this.setState({value:v})
         //console.log(v[1])
-        let filteredData = this.state.filterProducts.filter(item=>{
+        let filteredData = this.state.fetchedProducts.filter(item=>{
             return (item.price>=(parseInt(v[0]*this.state.multiplier)) && item.price<=(parseInt(v[1]*this.state.multiplier)))
          })
         this.setState({filterProducts:filteredData})
     }
 
     resetPriceRange = () =>{
-        this.setState({value:[0,1], filterProducts:fetchedProducts})
+        this.setState({value:[0,1], filterProducts:this.state.fetchedProducts})
     }
 
     clickEventListener(item) {

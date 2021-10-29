@@ -74,6 +74,7 @@ export default class AddProduct extends Component {
   };
 
   submit = () => {
+    console.log("IMAGE: ",this.state.variantImage)
     this.setState({loading:true})
     let start = 0;
     let end = 0;
@@ -97,7 +98,8 @@ export default class AddProduct extends Component {
         this.setState({ loading: false });
         return;
     }
-    if (this.state.variantImage < 1) {
+    if (this.state.variantImage.length < 1) {
+      console.log("STATE IMAGE: ",this.state.variantImage)
       Alert.alert("Error", "Please insert an image for the variant");
       this.setState({ loading: false });
       return;
@@ -210,11 +212,11 @@ export default class AddProduct extends Component {
         this.setState({
           variant_type: routeVar[0].varientType.id,
         })
-        console.log("SHOULD BE RUNNING")
         let route = this.props.route.params;
+        console.log("SHOULD BE RUNNING",route.variant_image)
         console.log("VARIANT: ",route.variant_by_piece)
-        console.log("VARIANT TYPE: ",{label:routeVar[0].varientType.varient_type, value:routeVar[0].varientType.id})
-        console.log("VARIANT VALUE: ",{label:routeVar[0].varientValue.varient_value,value:routeVar[0].varientValue.id})
+        console.log("VARIANT TYPE: ",{label:routeVar[0].varientType?.varient_type, value:routeVar[0].varientType?.id})
+        console.log("VARIANT VALUE: ",{label:routeVar[0].varientValue?.varient_value,value:routeVar[0].varientValue?.id})
         this.setState({
             variant_stock_qty_switch: route.is_variant_stock,
             variant_stock_qty: route.variant_stock+"",
@@ -235,6 +237,7 @@ export default class AddProduct extends Component {
             variant_minqty_error: 0,
             variant_value: routeVar[0].varientValue.id,
             variantImage: route.variant_image,})
+            console.log("IMAGE BECOMES: ",this.state.variantImage)
     }
   }
 
@@ -248,17 +251,21 @@ export default class AddProduct extends Component {
     }
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,mediaTypes:MediaTypeOptions.Images	});
+      allowsEditing: true	});
     if (pickerResult.cancelled === true) {
       return;
     }
+    console.log("RESULT: ",pickerResult.uri)/* 
     if (type == "product") {
+      
+      console.log("Running here product")
       let ar = this.state.images;
       ar.push(pickerResult.uri);
       this.setState({ images: ar });
-    } else if (type == "variant") {
+    } else if (type == "variant") { */
+      console.log("Running here variants")
       this.setState({ variantImage: pickerResult.uri });
-    }
+    //}
   };
 
   removePic(id) {
@@ -272,7 +279,7 @@ export default class AddProduct extends Component {
     return (
       <>
         <TouchableOpacity onPress={() => this.chooseImages("variant")}>
-          {this.state.variantImage.length > 0 && (
+          {/* {this.state.variantImage.length > 0 && (
             <Ionicons
               style={{
                 position: "absolute",
@@ -284,15 +291,18 @@ export default class AddProduct extends Component {
               name="close-sharp"
               size={30}
               color="red"
-              onPress={() => this.setState({ variantImage: "" })}
+              //onPress={() => this.setState({ variantImage: "" })}
             />
-          )}
+          )} */}
           <Image
             source={
-              this.props.route.params.type=="edit"?{uri:this.props.route.params.variant_image}:
+              this.state.variantImage.length<1?
+              require("../../../assets/images/default-image.png")
+              : { uri: this.state.variantImage }/* 
+              this.props.route.params.type=="edit"?{uri:this.state.variantImage}:
               this.state.variantImage.length < 1
                 ? require("../../../assets/images/default-image.png")
-                : { uri: this.state.variantImage }
+                : { uri: this.state.variantImage } */
             }
             style={{ width: screenwidth, height: screenheight * 0.3 }}
           />
@@ -389,6 +399,7 @@ export default class AddProduct extends Component {
             if (item.type === "button") {
               return (
                 <TouchableOpacity
+                  key={index}
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
                 >
