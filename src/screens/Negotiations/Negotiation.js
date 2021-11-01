@@ -13,6 +13,7 @@ import {
 import RNPickerSelect from 'react-native-picker-select';
 import Spinner from "react-native-loading-spinner-overlay";
 import * as apiService from "../../core/apis/apiChatServices";
+import * as APIProduct from '../../core/apis/apiPortfolioServices';
 import styles from "./style_negotiation";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -140,6 +141,7 @@ const Negotiations = ({route,navigation}) => {
   const [routeData, setRouteData] = useState();
   const [userData,setUserData] = useState();
   const [chat,setChat] = useState();
+  const [productDetails,setProductDetails] = useState();
   const sendAction = () =>{
       console.log("Should send a text")
   }
@@ -151,6 +153,10 @@ const Negotiations = ({route,navigation}) => {
       console.log("USER: ",userData)
       console.log("ROTUE PARAMS: ",route.params.fromOrder)
       setRouteData(route.params.fromOrder)
+      APIProduct.getProductDetails(route.params.fromOrder.product_id).then((res)=>{
+        console.log("PRODUCT DETAILS: ",res);
+        setProductDetails(res);
+      })
       apiService.getChatReplies().then((res) => {
         console.log("CHAT REPLIES: ", res);
         setReplies(res);
@@ -193,15 +199,15 @@ const Negotiations = ({route,navigation}) => {
       Alert.alert("Error","Please choose a reply");
       return;
     }
-    let receiver_id =userData.user_type==1?routeData.seller_id:0;
+    let receiver_id = userData?.user_type==1?routeData.seller_id:routeData.receiverDetails.id;
     //let negotiate_reply = replies.filter((i)=>i.value === reply)[0].label
     console.log("PAY",reply,price)
     let payload ={
       negotiate_reply: reply?.label,
       negotiate_reply_id: reply?.value,
-      chat_sender_name: routeData.chat_sender_name,
+      //chat_sender_name: routeData.chat_sender_name,
       product_id: routeData.product_id,
-      receiver_id: routeData.receiver_id,
+      receiver_id: receiver_id,
       negotiate_price: price,
       product_order_id: routeData.cart_id || chat[0].product_order_id,
       buyer_virtual_id: routeData.buyer_virtual_id,
@@ -230,11 +236,11 @@ const Negotiations = ({route,navigation}) => {
     <Spinner visible={isVisible}/>
     <View style={{flex:1,marginBottom:screenheight*0.1,marginTop:10}}>
         <View style={[styles.container,styles.container2]}>
-          <Text style={[styles.productTitle,{flex:3}]}>Product: {routeData?.product_name}</Text>
-          <TouchableOpacity onPress={()=>Approve(routeData?.type==5?"Approve":"Disapprove")}
-          style={[styles.buttonApprove,{flex:1,backgroundColor:routeData?.type==5?"#5BC5B9":'red'}]}>
-            <Text style={{color:'white'}}>{routeData?.type==5?"Mark as approved":"Mark as disapproved"}</Text>
-          </TouchableOpacity>
+          <Text style={[styles.productTitle,{flex:3}]}>{productDetails?.product_name}</Text>
+          {userData?.user_type==4?<TouchableOpacity onPress={()=>Approve(routeData?.type==5?"Approve":"Disapprove")}
+          style={[styles.buttonApprove,{flex:2,backgroundColor:routeData?.type==5?"#5BC5B9":'red'}]}>
+            <Text style={{color:'white'}}>{routeData?.type==4?"Mark as approved":"Mark as disapproved"}</Text>
+          </TouchableOpacity>:null}
         </View>
         <View style={[styles.chatContainer,{height:screenheight*0.75}]}>
           <ScrollView

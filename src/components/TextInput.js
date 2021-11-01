@@ -5,7 +5,7 @@ import { TextInput as Input } from 'react-native-paper'
 
 export default function TextInput({ errorText, description, MV, ...props }) {
   return (
-    <View style={[styles.container,{marginVertical:MV}]}>
+    <View style={[styles.container/* ,{marginVertical:MV} */]}>
       <Input
         mode="outlined"
         {...props}

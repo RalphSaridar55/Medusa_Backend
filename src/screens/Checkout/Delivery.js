@@ -585,8 +585,8 @@ export default class Delivery extends Component {
               <View
                 style={{
                   flex: 1,
-                  marginLeft: 10,
-                  marginRight: 10,
+                  /* marginLeft: 10,
+                  marginRight: 10, */
                   paddingTop: 20,
                   backgroundColor: "#fff",
                   marginTop: 20,
