@@ -60,6 +60,8 @@ export default class Pickup extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            dataFromRoute:null,
+            products:[],
             visible: false,
             data: [
                 { id: 1, name: "116 smart watch ", image: "https://sc04.alicdn.com/kf/H8620b8f47fd14c94b8cb5ae677418c2bl.jpg", count: "100$", value: true },
@@ -97,15 +99,18 @@ export default class Pickup extends Component {
     }
 
     calculateTotal(){
-        let array = this.state.data.map(i=>(parseFloat(i.count.substring(0,this.state.data.length-1))))
-        //console.log(array)
-        const total = array.reduce((pre,curr)=>pre+curr);
+        let array = this.state.products.reduce((a,b)=>({total:a.total+b.total}))+""
+        //console.log(array)\
+        console.log("TOTAL: ",array)
+        //const total = array.reduce((pre,curr)=>pre+curr);
         //console.log(total)
-        this.setState({total:total})
+        this.setState({total:array})
     }
 
     componentDidMount(){
         this.calculateTotal()
+        let {products,orders} = this.props.route.params
+        this.setState({products:products,dataFromRoute:orders})
         //console.log(this.state.data.reduce((pre,cur)=>pre+cur))
         //this.setState({total:arr})
     }
@@ -125,24 +130,24 @@ export default class Pickup extends Component {
                         <FlatList
                             style={styles.contentList}
                             columnWrapperStyle={styles.listContainer}
-                            data={this.state.data}
+                            data={this.state.products}
                             // ItemSeparatorComponent={() => {
                             //     return (
                             //         <View style={styles.separator} />
                             //     )
                             // }}
                             keyExtractor={(item) => {
-                                return item.id;
+                                return item.product_id;
                             }}
                             renderItem={({ item }) => {
                                 return (
                                     <ScrollView>
                                         <TouchableOpacity style={styles.card} >
-                                            <Image style={styles.image} source={{ uri: item.image }} />
+                                            <Image style={styles.image} source={{ uri: item.images[0].media }} />
                                             <View style={styles.cardContent}>
-                                                <Text style={styles.name}>{item.name}</Text>
-                                                <Text style={{ display: item.value ? 'flex' : 'none', color: '#31C2AA' }}>Value added service </Text>
-                                                <Text style={styles.count}>Price {item.count}</Text>
+                                                <Text style={styles.name}>{item.product_name}</Text>
+                                                <Text style={{ display: item.value_added_services!==null ? 'flex' : 'none', color: '#31C2AA' }}>Value added service </Text>
+                                                <Text style={styles.count}>Price {item.total}</Text>
                                             </View>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <IconButton icon="dots-vertical" style={{ alignItems: 'flex-end' }} color="#698EB7" onPress={this.openMenu}></IconButton>

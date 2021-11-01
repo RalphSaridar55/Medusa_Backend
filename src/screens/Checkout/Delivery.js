@@ -7,8 +7,9 @@ import {
   Image,
   ScrollView,
   FlatList,
-  Alert
+  Alert,
 } from "react-native";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import styles from "./style_delivery";
 import * as apiServices from "../../core/apis/apiAddressServices";
 import {
@@ -21,10 +22,10 @@ import {
   Button,
   Avatar,
 } from "react-native-paper";
+import { Picker } from "@react-native-picker/picker";
 import {
   Colors,
   Dialog,
-  Picker,
   Assets,
   PanningProvider,
   Typography,
@@ -34,6 +35,7 @@ import dropdown from "../../../assets/down.png";
 import _ from "lodash";
 import Swipeout from "react-native-swipeout";
 import * as DocumentPicker from "expo-document-picker";
+import TextInput from "../../components/TextInput";
 // Buttons
 const swipeoutBtns = [
   {
@@ -98,6 +100,29 @@ export default class Delivery extends Component {
     super(props);
     this.state = {
       visible: false,
+      location: 0,
+      cargo_method: 0,
+      delivery_address: {
+        address_id: null,
+        address: null,
+      },
+      cargo_methods: [
+        { label: "Land", value: 1 },
+        { label: "Sea", value: 2 },
+        { label: "Air", value: 3 },
+      ],
+      payment: 0,
+      payments: [
+        { label: "Credit", value: 1 },
+        { label: "Cash", value: 2 },
+      ],
+      filterLocations: [],
+      filteredLocation: {
+        Country: "",
+        State: "",
+        City: "",
+        Street: "",
+      },
       data: [
         {
           id: 1,
@@ -148,15 +173,18 @@ export default class Delivery extends Component {
           value: false,
         },
       ],
-      Location:'',
-      countries:[],
+      Location: "",
+      countries: [],
       locations: [],
-      payments: "",
+      //payments: "",
       doc: "",
       docError: "",
       cargo: "",
       typeofservice: "",
       serviceLevel: "",
+
+      products: [],
+      dataFromRoute: null,
     };
   }
 
@@ -170,26 +198,94 @@ export default class Delivery extends Component {
     this.setState({ total: total });
   }
 
+  selectLocation(id) {
+    let state = this.state.locations.filter((i) => i.value === id)[0];
+    let filtResult = this.state.filterLocations.filter((i) => i.id === id)[0];
+    console.log("FILTER RESULT: ", filtResult);
+    let country = this.state.countries.filter(
+      (i) => i.value === filtResult.country_id
+    )[0];
+    console.log("COUNTRY ", country);
+    this.setState({
+      delivery_address: {
+        address_id: id,
+        adress: state.label,
+      },
+      filteredLocation: {
+        Country: country?.label,
+        State: filtResult.state,
+        City: filtResult.city,
+        Street: filtResult.street,
+      },
+    });
+    //console.log("COUNTRY CHOSEN: ",itemValue)
+  }
+
   componentDidMount() {
     this.calculateTotal();
-    apiServices.getCountries().then((res)=>{
-      console.log("RES COUNTRIES FROM THE FUNCTION:",res);
-      this.setState({countries:res})
-    })
-    apiServices.getAddresses().then((res)=>{
-      console.log("RES FROM THE FUNCTION:",res)
-      let addresses =res.data.map((it)=>{
-        let country_name = this.state.countries.filter((filtered)=>{
+    let { products, order } = this.props.route.params;
+    console.log("ROUTE PARAMS PRODUCTS: ", products);
+    this.setState({ products: products, dataFromRoute: order });
+    apiServices.getCountries().then((res) => {
+      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
+      this.setState({ countries: res });
+    });
+    apiServices.getAddresses().then((res) => {
+      console.log("RES FROM THE FUNCTION:", res);
+      let addresses = res.data.map((it) => {
+        let country_name = this.state.countries.filter((filtered) => {
           return filtered.value === it.country_id;
-        })
-        return ({...it,country_name:country_name[0].label})
-      })
-      
-      this.setState({locations:addresses})
-    })
+        });
+        return { ...it, country_name: country_name[0].label };
+      });
+
+      this.setState({ locations: addresses });
+    });
     //console.log(this.state.data.reduce((pre,cur)=>pre+cur))
     //this.setState({total:arr})
   }
+
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener("focus", () => {
+      // Call ur function here.. or add logic.
+      this.calculateTotal();
+      let { products, order } = this.props.route.params;
+      console.log("ROUTE PARAMS PRODUCTS: ", products);
+      this.setState({ products: products, dataFromRoute: order });
+      apiServices.getCountries().then((res) => {
+        //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
+        this.setState({ countries: res });
+      });
+      apiServices.getAddresses().then((res) => {
+        console.log("RES FROM THE FUNCTION:", res);
+        let ad = [];
+        res.data.map((it) => {
+          ad.push({ label: it.registered_address, value: it.id });
+          /* let country_name = this.state.countries.filter((filtered)=>{
+          return filtered.value === it.country_id;
+        })
+        return ({...it,country_name:country_name[0].label}) */
+        });
+
+        this.setState({ locations: ad, filterLocations: res.data });
+      });
+      //console.log(this.state.data.reduce((pre,cur)=>pre+cur))
+      //this.setState({total:arr})
+    });
+  }
+
+  removeItem = (id) => {
+    Alert.alert("Remove Item", "Are you sure you want to remove this item", [
+      { text: "No" },
+      {
+        text: "Yes",
+        onPress: () =>
+          this.setState({
+            products: this.state.products.filter((i) => i.product_id !== id),
+          }),
+      },
+    ]);
+  };
 
   pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
@@ -203,7 +299,7 @@ export default class Delivery extends Component {
     else {
       console.log(result);
       try {
-        this.setState({ doc: result });
+        this.setState({ doc: result.uri });
       } catch (error) {
         this.setState({ docError: error });
       }
@@ -225,10 +321,58 @@ export default class Delivery extends Component {
     });
   };
 
+  pay() {
+    console.log("PLACING ORDER DATA: ", this.state.dataFromRoute);
+    let { delivery_address, payment, cargo_method, doc } = this.state;
+    let payload = {
+      order_method_id: this.props.route.name == "Delivery" ? 1 : 2,
+      delivery_address: delivery_address,
+      payment_method_id: payment,
+      payment_token_id: "",
+      cargo_delivery_method: cargo_method,
+      service_type: 0,
+      service_level: 0,
+      document: doc,
+    };
+
+    console.log("PAYLOAD: ", payload);
+    Object.keys(payload).map((item, index) => {
+      switch (typeof item) {
+        case "number":
+          if (payload[item] == 0) {
+            Alert.alert(
+              "Error",
+              `Please fill the input ${item.replace(/_/g, " ")}`
+            );
+            break;
+          }
+        case "string":
+          if (payload[item] == "") {
+            Alert.alert(
+              "Error",
+              `Please fill the input ${item.replace(/_/g, " ")}`
+            );
+            break;
+          }
+        default:
+          if (payload[item].address_id == 0 || payload[item].address == "") {
+            Alert.alert(
+              "Error",
+              `Please fill the input ${item.replace(/_/g, " ")}`
+            );
+            break;
+          }
+      }
+    });
+  }
+
   render() {
     return (
       <Provider>
-        <ScrollView style={{marginTop:40}}>
+        <View style={{ margin: 10 }}>
+          <Text style={[styles.header]}>Delivery</Text>
+        </View>
+        <ScrollView style={{}}>
           <View style={styles.container}>
             <Text
               style={{
@@ -245,14 +389,14 @@ export default class Delivery extends Component {
             <FlatList
               style={styles.contentList}
               columnWrapperStyle={styles.listContainer}
-              data={this.state.data}
+              data={this.state.products}
               // ItemSeparatorComponent={() => {
               //     return (
               //         <View style={styles.separator} />
               //     )
               // }}
               keyExtractor={(item) => {
-                return item.id;
+                return item.product_id;
               }}
               renderItem={({ item }) => {
                 return (
@@ -266,28 +410,31 @@ export default class Delivery extends Component {
                       >
                         <Image
                           style={styles.image}
-                          source={{ uri: item.image }}
+                          source={{ uri: item.images[0].media }}
                         />
                         <View style={styles.cardContent}>
-                          <Text style={styles.name}>{item.name}</Text>
-                          <Text
-                            style={{
-                              display: item.value ? "flex" : "none",
-                              color: "#31C2AA",
-                            }}
-                          >
-                            Value added service{" "}
-                          </Text>
-                          <Text style={styles.count}>Price {item.count}</Text>
+                          <Text style={styles.name}>{item.product_name}</Text>
+                          {item.value_added_services !== null ? (
+                            <Text
+                              style={{
+                                display: item.value ? "flex" : "none",
+                                color: "#31C2AA",
+                              }}
+                            >
+                              Value added service{" "}
+                            </Text>
+                          ) : null}
+                          <Text style={styles.count}>Price ${item.total}</Text>
                         </View>
-                        <View style={{ flexDirection: "row" }}>
-                          <IconButton
-                            icon="dots-vertical"
-                            style={{ alignItems: "flex-end" }}
-                            color="#698EB7"
-                            onPress={this.openMenu}
-                          ></IconButton>
-                        </View>
+                        <TouchableOpacity
+                          onPress={() => this.removeItem(item.product_id)}
+                        >
+                          <MaterialCommunityIcons
+                            name="close-thick"
+                            size={20}
+                            color="red"
+                          />
+                        </TouchableOpacity>
                       </TouchableOpacity>
                     </Swipeout>
                   </ScrollView>
@@ -323,7 +470,12 @@ export default class Delivery extends Component {
                   color: "#31C2AA",
                 }}
               >
-                {this.state.total} ${" "}
+                $
+                {this.state.products.length > 0
+                  ? this.state.products.reduce((a, b) => ({
+                      total: a.total + b.total,
+                    }))["total"] + ""
+                  : "0"}
               </Text>
             </View>
           </View>
@@ -352,224 +504,159 @@ export default class Delivery extends Component {
               >
                 Shipment Details
               </Text>
-              {/* <Picker
-                                placeholder="Pick a Location"
-                                value={this.state.Location}
-                                onChange={items => this.setState({ Location: items })}
-                                //mode={Picker.modes.MULTI}
-                                //rightIconSource={dropdown}
-                                renderCustomModal={this.renderDialog}
-                                style={{ alignItems: 'center' }}
-
-                            >
-                                {_.map(Location, option => (
-                                    <Picker.Item
-                                        key={option.value}
-                                        value={option}
-                                        label={option.label}
-                                        disabled={option.disabled}
-                                    />
-                                ))}
-                            </Picker> */}
               <View
                 style={{
                   borderWidth: 1,
                   borderColor: "#C4C4C4",
                   borderRadius: 4,
-                  paddingVertical: 15,
+                  marginVertical: 10,
+                  height: 55,
+                  justifyContent: "center",
                   backgroundColor: "#fff",
                 }}
               >
                 <Picker
-                  selectedValue={this.state.Location}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ Location: itemValue })
-                  }
-                >
-                  {this.state.locations.map((option) => (
-                    <Picker.Item
-                      key={option.id}
-                      value={option.id}
-                      label={`${option.country_name}, ${option.city}, ${option.street}`}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              {/* <Picker
-                                placeholder="Choose a Payment Method"
-                                value={this.state.payments}
-                                onChange={items => this.setState({ payments: items })}
-                                //mode={Picker.modes.MULTI}
-                                //rightIconSource={dropdown}
-                                renderCustomModal={this.renderDialog}
-                            >
-                                {_.map(Payments, option => (
-                                    <Picker.Item
-                                        key={option.value}
-                                        value={option}
-                                        label={option.label}
-                                        disabled={option.disabled}
-                                    />
-                                ))}
-                            </Picker> */}
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#C4C4C4",
-                  borderRadius: 4,
-                  paddingVertical: 15,
-                  backgroundColor: "#fff",
-                }}
-              >
-                <Picker
-                  selectedValue={this.state.payments}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ payments: itemValue })
-                  }
-                >
-                  {Cargo.map((option) => (
-                    <Picker.Item
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              {/* <Picker
-                                placeholder="Choose a Cargo  Method"
-                                value={this.state.cargo}
-                                onChange={items => this.setState({ cargo: items })}
-                                //mode={Picker.modes.MULTI}
-                                //rightIconSource={dropdown}
-                                renderCustomModal={this.renderDialog}
-                            >
-                                {_.map(Cargo, option => (
-                                    <Picker.Item
-                                        key={option.value}
-                                        value={option}
-                                        label={option.label}
-                                        disabled={option.disabled}
-                                    />
-                                ))}
-                            </Picker> */}
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#C4C4C4",
-                  borderRadius: 4,
-                  paddingVertical: 15,
-                  backgroundColor: "#fff",
-                }}
-              >
-                <Picker
-                  selectedValue={this.state.cargo}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ cargo: itemValue })
-                  }
-                >
-                  {Air.map((option) => (
-                    <Picker.Item
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              {/* <Picker
-                                placeholder="Choose a Type Of Service "
-                                value={this.state.typeofservice}
-                                onChange={items => this.setState({ typeofservice: items })}
-                                //mode={Picker.modes.MULTI}
-                                //rightIconSource={dropdown}
-                                renderCustomModal={this.renderDialog}
-                            >
-                                {_.map(Air, option => (
-                                    <Picker.Item
-                                        key={option.value}
-                                        value={option}
-                                        label={option.label}
-                                        disabled={option.disabled}
-                                    />
-                                ))}
-                            </Picker> */}
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#C4C4C4",
-                  borderRadius: 4,
-                  paddingVertical: 15,
-                  backgroundColor: "#fff",
-                }}
-              >
-                <Picker
-                  selectedValue={this.state.serviceLevel}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ serviceLevel: itemValue })
-                  }
-                >
-                  {ServiceLevel.map((option) => (
-                    <Picker.Item
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              {/* <Picker
-                                placeholder="Choose a Level Of Service "
-                                value={this.state.serviceLevel}
-                                onChange={items => this.setState({ serviceLevel: items })}
-                                //mode={Picker.modes.MULTI}
-                                //rightIconSource={dropdown}
-                                renderCustomModal={this.renderDialog}
-                            >
-                                {_.map(ServiceLevel, option => (
-                                    <Picker.Item
-                                        key={option.value}
-                                        value={option}
-                                        label={option.label}
-                                        disabled={option.disabled}
-                                    />
-                                ))}
-                            </Picker> */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 5,
-                }}
-              >
-                <TouchableOpacity
-                      onPress={this.pickDocument}>
-                    <Avatar.Icon
-                      size={40}
-                      icon="plus"
-                      style={{ backgroundColor: "#698EB7", marginTop: 10 }}
-                      color="#fff"
-                    />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    marginLeft: 10,
-                    color: "#698EB7",
-                    fontWeight: "bold",
+                  style={{ marginLeft: 5 }}
+                  selectedValue={this.state.cargo_method}
+                  prompt="Cargo Delivery Method"
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ location: itemValue });
                   }}
                 >
-                  Upload Document
+                  {/* <Picker.Item label="Registered Address" value={0}/> */}
+                  {this.state.cargo_methods.map((item, index2) => (
+                    <Picker.Item
+                      label={item.label}
+                      value={item.value}
+                      key={index2}
+                    />
+                  ))}
+                </Picker>
+              </View>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#C4C4C4",
+                  borderRadius: 4,
+                  marginVertical: 10,
+                  height: 55,
+                  justifyContent: "center",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <Picker
+                  style={{ marginLeft: 5 }}
+                  selectedValue={this.state.location}
+                  prompt="Registered Address"
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.selectLocation(itemValue);
+                  }}
+                >
+                  {/* <Picker.Item label="Registered Address" value={0}/> */}
+                  {this.state.locations.map((item, index2) => (
+                    <Picker.Item
+                      label={item.label}
+                      value={item.value}
+                      key={index2}
+                    />
+                  ))}
+                </Picker>
+              </View>
+              {Object.keys(this.state.filteredLocation).map((i, index) => (
+                <TextInput
+                  MV={5}
+                  key={index}
+                  style={{ backgroundColor: "#fff", marginVertical: 0 }}
+                  label={i}
+                  disabled={true}
+                  value={this.state.filteredLocation[i]}
+                  autoCapitalize="none"
+                  // keyboardType={element.keyBoardType}
+                  outlineColor="#C4C4C4"
+                  theme={{
+                    colors: {
+                      primary: "#31c2aa",
+                      underlineColor: "transparent",
+                    },
+                  }}
+                />
+              ))}
+
+              <View
+                style={{
+                  flex: 1,
+                  marginLeft: 10,
+                  marginRight: 10,
+                  paddingTop: 20,
+                  backgroundColor: "#fff",
+                  marginTop: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    marginBottom: 20,
+                    color: "#698EB7",
+                  }}
+                >
+                  Payment Details
                 </Text>
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#C4C4C4",
+                    borderRadius: 4,
+                    marginVertical: 10,
+                    height: 55,
+                    justifyContent: "center",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Picker
+                    style={{ marginLeft: 5 }}
+                    selectedValue={this.state.payment}
+                    prompt="Payment Method"
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({ payment: itemValue });
+                    }}
+                  >
+                    {/* <Picker.Item label="Registered Address" value={0}/> */}
+                    {this.state.payments.map((item, index2) => (
+                      <Picker.Item
+                        label={item.label}
+                        value={item.value}
+                        key={index2}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+
+              <View>
+                <TouchableOpacity
+                  color="#6E91EC"
+                  icon="file"
+                  mode="outlined"
+                  onPress={() => this.pickDocument()}
+                  style={styles.docPicker}
+                >
+                  <AntDesign name="file1" size={24} color="#6E91EC" />
+                  <Text style={{ color: "gray" }}>.pdf .docx</Text>
+                  {this.state.doc.length < 1 ? (
+                    <AntDesign name="closecircle" size={24} color="red" />
+                  ) : (
+                    <AntDesign name="checkcircle" size={24} color="green" />
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
             <View>
-              <TouchableOpacity style={styles.loginBtn}>
-                <Text
-                  style={styles.loginText}
-                  onPress={() => this.props.navigation.navigate("Home")}
-                >
-                  Place Order
-                </Text>
+              <TouchableOpacity
+                style={[styles.loginBtn, { marginHorizontal: 40 }]}
+                onPress={() => this.pay()}
+              >
+                <Text style={styles.loginText}>Place Order</Text>
               </TouchableOpacity>
             </View>
           </View>

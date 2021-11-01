@@ -1,4 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const screenwidth = Dimensions.get('screen').width;
+const screenheight = Dimensions.get('screen').height;
 
 const styles = StyleSheet.create({
     root: {
@@ -9,6 +12,29 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'space-between',
         flex:1
+    },
+    modalHeader:{
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between',
+        width:screenwidth,
+        paddingHorizontal:20
+    },
+    loginBtn: {
+        marginBottom:10,
+        marginHorizontal:10,
+        borderColor: "#31C2AA",
+        borderWidth:1,
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 30
+    },
+    loginBtnText:{
+        color:'#31C2AA',
+        fontSize:16,
+        /* fontWeight:'bold' */
     },
     contentContainer:{
         flexDirection:'row'

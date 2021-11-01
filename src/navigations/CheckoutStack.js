@@ -18,7 +18,7 @@ const ProductStack = ({navigation,route}) => {
           navigation={navigation}
         />
         <CStack.Screen
-          name="Checkout"
+          name="CheckoutScreen"
           component={Checkout}
           options={{ headerShown: false }}
           navigation={navigation}

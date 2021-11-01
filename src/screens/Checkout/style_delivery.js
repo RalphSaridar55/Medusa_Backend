@@ -8,6 +8,23 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
     },
+    header: {
+      fontSize: 21,
+      color: "#6E91EC",
+      fontWeight: "bold",
+    },
+    docPicker:{
+        borderWidth:1,
+        borderRadius:5,
+        borderColor:'gray',
+        marginVertical:10,
+        height:55,
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:10,
+        alignItems:'center'
+    },
     contentList: {
         flex: 1,
     },

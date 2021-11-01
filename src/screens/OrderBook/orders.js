@@ -2,6 +2,7 @@
 import React, { Component, createRef, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as APIOrder from '../../core/apis/apiOrderServices';
+import Overlay from 'react-native-modal-overlay';
 import {
   StyleSheet,
   Text,
@@ -32,7 +33,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setItemAsync } from "expo-secure-store";
 const screenwidth = Dimensions.get('screen').width;
 const actionSheetCat = createRef();
-const data1 = [
+/* const data1 = [
   {
     id: 1,
     image: require("../../../assets/images/mouse.png"),
@@ -153,7 +154,7 @@ const data1 = [
     status: "In Progress",
     status_id:4
   },
-];
+]; */
 export default class Orders extends Component {
   constructor(props) {
     super(props);
@@ -161,7 +162,6 @@ export default class Orders extends Component {
     this.state = {
       current:[],
       data:[],
-      test: "test",
       userData:null,
       filterStatusLabel:"Current",
       filterStatus:10,
@@ -192,8 +192,130 @@ export default class Orders extends Component {
       showSearch: true,
       showFilter: true,
 
-      spinner:true
+      spinner:false,
+      overlay:false,
+      dataToCheckout:{
+        is_buy_now: false,
+        buyer_id: 0,
+        total_service_count: 0,
+        total_service_cost: 0,
+        order_details: [
+          {
+            seller_id: 0,
+            product_id: 0,
+            quantity: 0,
+            box: 0,
+            price: 0,
+            productvariant: [
+              {
+                id: 0,
+                variant_option_id: 0,
+                varientType: {
+                  id: 0,
+                  varient_type: "string"
+                },
+                varientValue: {
+                  id: 0,
+                  varient_value: "string"
+                }
+              }
+            ],
+            value_added_services: [
+              {
+                service_id: 0,
+                service_name: "string",
+                document: [
+                  "string"
+                ],
+                price: 0
+              }
+            ]
+          }
+        ],
+        cart_id: [
+          0
+        ],
+        order_method_id: 0,
+        location_id: 0,
+        delivery_address: {
+          address_id: 0,
+          address: "string"
+        },
+        payment_method_id: 0,
+        payment_token_id: "string",
+        total: 0,
+        cargo_delivery_method: 0,
+        service_type: 0,
+        service_level: 0,
+        document: "string"
+      },
     };
+  }
+  calculateTotalServiceAndCarts(){
+    let count = 0;
+    let price = 0;
+    let cart = [];
+    let total = 0;
+    this.state.current.map((item,index)=>{
+      cart.push(item.cart_id);
+      total+=item.total;
+      item.value_added_services?.map((item2,index2)=>{
+        count+=1;
+        price+=item2.price;
+      })
+    })
+    console.log("TOTAL: ",total)
+    return {count,price,cart,total};
+  }
+
+  fillDataForCheckout=()=>{
+    //let userdata = JSON.parse(AsyncStorage.getItem('user_details'));
+    console.log('USER DETAILS:' ,this.state.userData)
+    let order_details=[];
+    this.state.current.map((item,index)=>{
+      let data={};
+      let dataservices=[];
+      data.seller_id=item.seller_id;
+      //data.product_id=item.product_id;
+      //data.quantity=item.quantity;
+      //data.box=item.box;
+      //data.price=item.price;
+      item?.value_added_services?.map((item2,index2)=>{
+        dataservices.push({service_id:item2.service_id,service_name:item2.service_name,document:item2.document,price:item2.price})
+      })
+      data.value_added_services=dataservices;
+      console.log("Data becomes: ",data)
+      order_details.push(data)
+    })
+    let {count,price,cart,total} = this.calculateTotalServiceAndCarts()
+    let {id} = this.state.userData;
+    let reform = {
+      is_buy_now:false,
+      buyer_id:id,
+      total_service_count:10,
+      total_service_count:count,
+      total_service_cost:price,
+      cart_id:cart,
+      order_details:order_details,
+      total:total,
+
+      //order_method_id: 0,
+      //location_id: 0,
+      //delivery_address: {
+        //address_id: 0,
+        //address: "string"
+      //},
+      //payment_method_id: 0,
+      //payment_token_id: "string",
+      //total: 0,
+      //cargo_delivery_method: 0,
+      //service_type: 0,
+      //service_level: 0,
+      //document: "string"
+    }
+
+    console.log("Reform: ",reform)
+    this.setState({dataToCheckout:reform})
   }
 
   onclick = () => {
@@ -218,9 +340,12 @@ export default class Orders extends Component {
     })
   }
 
+  chooseTypeOfPlacement(){
+    this.setState({overlay:true})
+  }
+
   async componentDidMount() {
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
-    console.log(this.state.test);
       this.setState({spinner:true, userData:userData})
     //fetching current order book
     APIOrder.getOrderBook(1).then((res)=>{
@@ -231,6 +356,7 @@ export default class Orders extends Component {
       console.log("DATA: ",res)
       this.setState({spinner:false,data:res,filterData:res})
     })
+    setTimeout(()=>this.fillDataForCheckout(),2000)
   }
 
   componentDidMount() {
@@ -238,7 +364,6 @@ export default class Orders extends Component {
     this.setState({spinner:true}) */
     this.focusListener = this.props.navigation.addListener("focus", async() => {
       let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
-      console.log(this.state.test);
         this.setState({spinner:true, userData:userData})
       APIOrder.getOrderBook(1).then((res)=>{
         console.log("CURRENT ORDER BOOK: ",res)
@@ -248,6 +373,7 @@ export default class Orders extends Component {
         console.log("DATA: ",res)
         this.setState({spinner:false,data:res,filterData:res})
       })
+      setTimeout(()=>this.fillDataForCheckout(),2000)
     });
   }
 
@@ -258,7 +384,7 @@ export default class Orders extends Component {
         this.setState({spinner:true})
         APIOrder.deleteOrder(id).then((res)=>{
           Alert.alert("Delete",res)
-          this.setState({spinner:false})
+          this.setState({spinner:false,current:this.state.current.filter((i)=>i.cart_id !== id)})
         }).catch(err=>{
           Alert.alert("Error",err.response.data.message)
           this.setState({spinner:false})
@@ -269,7 +395,49 @@ export default class Orders extends Component {
 
   drawScreenOne = () => {
     return (
-      <>
+      <><Overlay visible={this.state.overlay} onClose={()=>this.setState({overlay:false})} 
+      containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
+      closeOnTouchOutside>
+                      
+          <View style={styles.modalHeader}>
+              <Text
+              style={{
+                  fontSize: 21,
+                  color: "#31C2AA",
+                  fontWeight: "bold",
+                  marginBottom: 5,
+              }}
+              >
+              Order Placement
+              </Text>
+              <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({overlay:false})}/>
+          </View>
+          <View style={{flexDirection:'column',marginTop:20}}>
+              <View style={{width:150,paddingHorizontal:10}}>
+                  <TouchableOpacity
+                      onPress={()=>{
+                          this.setState({overlay:false});
+                          this.props.navigation.navigate("Checkout",{screen:"Delivery",params:{products:this.state.current, order:this.state.dataToCheckout}})
+                        }}
+                      style={[styles.loginBtn,{height:40,marginTop:20}]}
+                  >
+                      <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Delivery</Text>
+                  </TouchableOpacity>
+              </View>
+              <View style={{width:150,paddingHorizontal:10}}>
+                  <TouchableOpacity
+                      onPress={()=>{
+                          this.setState({overlay:false});
+                          this.props.navigation.navigate("Checkout",{screen:"Pickup",params:{products:this.state.current, order:this.state.dataToCheckout}})
+                      }}
+                      
+                      style={[styles.loginBtn,{height:40,marginTop:20}]}
+                  >
+                      <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Pickup</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
+      </Overlay>
       <ScrollView style={{paddingHorizontal:10}}>
         {this.state.current?.map((item, index) => {
           return (
@@ -337,9 +505,9 @@ export default class Orders extends Component {
         })}
       </ScrollView>
       <View style={styles.totalContainer}>
-        <Text style={styles.total}>Total Price: ${this.state.current.length>0 && this.state.current.reduce((pre,cur)=>({total:pre+cur.total},0))['total']}</Text>
+        <Text style={styles.total}>Total Price: ${this.state.current.length>0 && this.state.current.reduce((pre,cur)=>({total:pre.total+cur.total}))["total"]+""}</Text>
         <TouchableOpacity
-                onPress={()=>console.log("Running")}
+                onPress={()=>this.chooseTypeOfPlacement()}
                 style={styles.placeOrderButton}>
                 <Text style={{color:'white'}}>Place Order</Text>
         </TouchableOpacity>
