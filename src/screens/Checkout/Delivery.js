@@ -1,4 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
+import Overlay from './overlay';
+import {ProductContext} from '../../../App';
+import {picker} from './map';
 import {
   StyleSheet,
   Text,
@@ -8,10 +11,12 @@ import {
   ScrollView,
   FlatList,
   Alert,
+  LogBox,
 } from "react-native";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import styles from "./style_delivery";
 import * as apiServices from "../../core/apis/apiAddressServices";
+import * as apiProducts from '../../core/apis/apiProductServices';
 import {
   Card,
   IconButton,
@@ -36,6 +41,7 @@ import _ from "lodash";
 import Swipeout from "react-native-swipeout";
 import * as DocumentPicker from "expo-document-picker";
 import TextInput from "../../components/TextInput";
+import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 // Buttons
 const swipeoutBtns = [
   {
@@ -95,13 +101,43 @@ renderDialog = (modalProps) => {
   );
 };
 
+const RenderPicker=(props)=>{
+  return(
+    <View
+              style={{
+                borderWidth: 1,
+                borderColor: "#C4C4C4",
+                borderRadius: 4,
+                marginVertical: 10,
+                height: 55,
+                justifyContent: "center",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Picker
+                style={{ marginLeft: 5 }}
+                {...props}
+              >
+                {/* <Picker.Item label="Registered Address" value={0}/> */}
+                {props.map.length>0&&props.map?.map((item, index2) => (
+                  <Picker.Item
+                    label={item.label}
+                    value={item.value}
+                    key={index2}
+                  />
+                ))}
+              </Picker>
+            </View>
+  )
+}
+
 export default class Delivery extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
       location: 0,
-      cargo_method: 0,
+      cargo_method: 1,
       delivery_address: {
         address_id: null,
         address: null,
@@ -111,7 +147,7 @@ export default class Delivery extends Component {
         { label: "Sea", value: 2 },
         { label: "Air", value: 3 },
       ],
-      payment: 0,
+      payment: 1,
       payments: [
         { label: "Credit", value: 1 },
         { label: "Cash", value: 2 },
@@ -185,8 +221,19 @@ export default class Delivery extends Component {
 
       products: [],
       dataFromRoute: null,
+      payment_method_id:0,
+      payment_method:'',
+      overlay:false,
+
+      fetchedServicesType:[],
+      fetchedServices:[],
+      serviceType:null,
+      service:null,
     };
   }
+  static product = ProductContext;
+
+  
 
   calculateTotal() {
     let array = this.state.data.map((i) =>
@@ -196,6 +243,11 @@ export default class Delivery extends Component {
     const total = array.reduce((pre, curr) => pre + curr);
     //console.log(total)
     this.setState({ total: total });
+  }
+
+  selectPayMethod(id){
+    let pay = this.state.payments.filter((i)=>i.value === id)[0]
+    this.setState({payment_method_id:pay.value,payment_method:pay.label})
   }
 
   selectLocation(id) {
@@ -222,7 +274,9 @@ export default class Delivery extends Component {
   }
 
   componentDidMount() {
+    console.log("FROM CONTEXT:",this.product)
     this.calculateTotal();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
     let { products, order } = this.props.route.params;
     console.log("ROUTE PARAMS PRODUCTS: ", products);
     this.setState({ products: products, dataFromRoute: order });
@@ -232,22 +286,31 @@ export default class Delivery extends Component {
     });
     apiServices.getAddresses().then((res) => {
       console.log("RES FROM THE FUNCTION:", res);
-      let addresses = res.data.map((it) => {
-        let country_name = this.state.countries.filter((filtered) => {
-          return filtered.value === it.country_id;
-        });
-        return { ...it, country_name: country_name[0].label };
+      let ad = [];
+      res.data.map((it) => {
+        ad.push({ label: it.registered_address, value: it.id });
+        /* let country_name = this.state.countries.filter((filtered)=>{
+        return filtered.value === it.country_id;
+      })
+      return ({...it,country_name:country_name[0].label}) */
       });
-
-      this.setState({ locations: addresses });
-    });
-    //console.log(this.state.data.reduce((pre,cur)=>pre+cur))
-    //this.setState({total:arr})
+      this.setState({ locations: ad, filterLocations: res.data });
+    }) 
+    apiProducts.getServiceLevels().then((res)=>{
+       console.log("RES FOR SERVICES: ",res)
+      let ar = [];
+      res.map((item)=>{
+        ar.push({label:item.service_level,value:item.id})
+      })
+      this.setState({fetchedServicesType:ar})
+    })
   }
 
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener("focus", () => {
       // Call ur function here.. or add logic.
+      console.log("FROM CONTEXT:",this.product)
+      LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
       this.calculateTotal();
       let { products, order } = this.props.route.params;
       console.log("ROUTE PARAMS PRODUCTS: ", products);
@@ -261,17 +324,30 @@ export default class Delivery extends Component {
         let ad = [];
         res.data.map((it) => {
           ad.push({ label: it.registered_address, value: it.id });
-          /* let country_name = this.state.countries.filter((filtered)=>{
-          return filtered.value === it.country_id;
-        })
-        return ({...it,country_name:country_name[0].label}) */
         });
-
         this.setState({ locations: ad, filterLocations: res.data });
+      })   
+      apiProducts.getServiceLevels().then((res)=>{
+         console.log("RES FOR SERVICES: ",res)
+        let ar = [];
+        res.map((item)=>{
+          ar.push({label:item.service_level,value:item.id})
+        })
+        this.setState({fetchedServicesType:ar})
+       }) 
       });
-      //console.log(this.state.data.reduce((pre,cur)=>pre+cur))
-      //this.setState({total:arr})
-    });
+  }
+
+  changeServiceType (id){
+    //console.log
+    apiProducts.getServiceType(id).then((res)=>{
+      console.log("SERVICE: ",res)
+      let ar = [];
+      res.map((item)=>{
+        ar.push({label:item.service_type,value:item.id})
+      })
+      this.setState({serviceType:id,fetchedServices:ar})
+    })
   }
 
   removeItem = (id) => {
@@ -328,14 +404,14 @@ export default class Delivery extends Component {
       order_method_id: this.props.route.name == "Delivery" ? 1 : 2,
       delivery_address: delivery_address,
       payment_method_id: payment,
-      payment_token_id: "",
+      //payment_token_id: "",
       cargo_delivery_method: cargo_method,
-      service_type: 0,
-      service_level: 0,
+      
       document: doc,
     };
 
     console.log("PAYLOAD: ", payload);
+    let error=false;
     Object.keys(payload).map((item, index) => {
       switch (typeof item) {
         case "number":
@@ -344,7 +420,8 @@ export default class Delivery extends Component {
               "Error",
               `Please fill the input ${item.replace(/_/g, " ")}`
             );
-            break;
+            error=true;
+            return;
           }
         case "string":
           if (payload[item] == "") {
@@ -352,7 +429,8 @@ export default class Delivery extends Component {
               "Error",
               `Please fill the input ${item.replace(/_/g, " ")}`
             );
-            break;
+            error=true;
+            return;
           }
         default:
           if (payload[item].address_id == 0 || payload[item].address == "") {
@@ -360,10 +438,14 @@ export default class Delivery extends Component {
               "Error",
               `Please fill the input ${item.replace(/_/g, " ")}`
             );
-            break;
+            error=true;
+            return;
           }
       }
     });
+    let payload2 = {...payload, service_type: this.state.service, service_level: this.state.serviceLevel,}
+    if(!error)
+      this.setState({overlay:true})
   }
 
   render() {
@@ -401,7 +483,7 @@ export default class Delivery extends Component {
               renderItem={({ item }) => {
                 return (
                   <ScrollView>
-                    <Swipeout right={swipeoutBtns}>
+                    <View>
                       <TouchableOpacity
                         style={styles.card}
                         onPress={() => {
@@ -436,7 +518,7 @@ export default class Delivery extends Component {
                           />
                         </TouchableOpacity>
                       </TouchableOpacity>
-                    </Swipeout>
+                    </View>
                   </ScrollView>
                 );
               }}
@@ -504,64 +586,35 @@ export default class Delivery extends Component {
               >
                 Shipment Details
               </Text>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#C4C4C4",
-                  borderRadius: 4,
-                  marginVertical: 10,
-                  height: 55,
-                  justifyContent: "center",
-                  backgroundColor: "#fff",
-                }}
-              >
-                <Picker
-                  style={{ marginLeft: 5 }}
+              <RenderPicker 
+                  selectedValue={this.state.serviceType}
+                  prompt="Service Level"
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.changeServiceType(itemValue)
+                  }}
+                  map={this.state.fetchedServicesType}/>
+                <RenderPicker 
+                  selectedValue={this.state.service}
+                  prompt="Service Type"
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ service: itemValue });
+                    
+                  }}
+                  map={this.state.fetchedServices}/>
+              <RenderPicker 
                   selectedValue={this.state.cargo_method}
                   prompt="Cargo Delivery Method"
                   onValueChange={(itemValue, itemIndex) => {
                     this.setState({ location: itemValue });
                   }}
-                >
-                  {/* <Picker.Item label="Registered Address" value={0}/> */}
-                  {this.state.cargo_methods.map((item, index2) => (
-                    <Picker.Item
-                      label={item.label}
-                      value={item.value}
-                      key={index2}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#C4C4C4",
-                  borderRadius: 4,
-                  marginVertical: 10,
-                  height: 55,
-                  justifyContent: "center",
-                  backgroundColor: "#fff",
-                }}
-              >
-                <Picker
-                  style={{ marginLeft: 5 }}
+                  map={this.state.cargo_methods}/>
+              <RenderPicker 
                   selectedValue={this.state.location}
                   prompt="Registered Address"
                   onValueChange={(itemValue, itemIndex) => {
                     this.selectLocation(itemValue);
                   }}
-                >
-                  {/* <Picker.Item label="Registered Address" value={0}/> */}
-                  {this.state.locations.map((item, index2) => (
-                    <Picker.Item
-                      label={item.label}
-                      value={item.value}
-                      key={index2}
-                    />
-                  ))}
-                </Picker>
-              </View>
+                  map={this.state.locations}/>
               {Object.keys(this.state.filteredLocation).map((i, index) => (
                 <TextInput
                   MV={5}
@@ -602,54 +655,24 @@ export default class Delivery extends Component {
                 >
                   Payment Details
                 </Text>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#C4C4C4",
-                    borderRadius: 4,
-                    marginVertical: 10,
-                    height: 55,
-                    justifyContent: "center",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  <Picker
-                    style={{ marginLeft: 5 }}
+                <RenderPicker 
                     selectedValue={this.state.payment}
                     prompt="Payment Method"
                     onValueChange={(itemValue, itemIndex) => {
                       this.setState({ payment: itemValue });
                     }}
-                  >
-                    {/* <Picker.Item label="Registered Address" value={0}/> */}
-                    {this.state.payments.map((item, index2) => (
-                      <Picker.Item
-                        label={item.label}
-                        value={item.value}
-                        key={index2}
-                      />
-                    ))}
-                  </Picker>
-                </View>
+                    map={this.state.payments}/>
               </View>
-
-              <View>
-                <TouchableOpacity
+                <TouchableDocumentPicker 
                   color="#6E91EC"
                   icon="file"
                   mode="outlined"
                   onPress={() => this.pickDocument()}
                   style={styles.docPicker}
-                >
-                  <AntDesign name="file1" size={24} color="#6E91EC" />
-                  <Text style={{ color: "gray" }}>.pdf .docx</Text>
-                  {this.state.doc.length < 1 ? (
-                    <AntDesign name="closecircle" size={24} color="red" />
-                  ) : (
-                    <AntDesign name="checkcircle" size={24} color="green" />
-                  )}
-                </TouchableOpacity>
-              </View>
+                  doc={this.state.doc}/>
+              
+        <Overlay visible={this.state.overlay}
+         onClose={()=>this.setState({overlay:false})}  />
             </View>
             <View>
               <TouchableOpacity

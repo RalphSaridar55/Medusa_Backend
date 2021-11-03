@@ -150,3 +150,29 @@ export const uploadBulk = async(payload)=>{
         })
     })
 }
+
+//Get Service Level
+export const getServiceLevels = async()=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/buyer/service-level',{
+             headers:{
+                 Authorization: x
+             }
+        }).then((res)=>{
+            return res.data.data;
+        })
+    })
+}
+
+//Get Service type 
+export const getServiceType = async(id)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/buyer/types-of-service/${id}`,{
+             headers:{
+                 Authorization: x
+             }
+        }).then((res)=>{
+            return res.data.data;
+        })
+    })
+}

@@ -134,7 +134,7 @@ const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
 
 const Negotiations = ({route,navigation}) => {
-  const [replies, setReplies] = useState([{label:"reply",value:0}]);
+  const [replies, setReplies] = useState();
   const [price, setPrice] = useState(0);
   const [reply, setReply] = useState();
   const [isVisible,setIsVisible] = useState(true)
@@ -150,9 +150,9 @@ const Negotiations = ({route,navigation}) => {
   useEffect(() => {
     const runEffect = async() =>{
       let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
-      console.log("USER: ",userData)
-      console.log("ROTUE PARAMS: ",route.params.fromOrder)
-      setRouteData(route.params.fromOrder)
+      console.log("USER: ",userData);
+      console.log("ROTUE PARAMS: ",route.params.fromOrder);
+      setRouteData(route.params.fromOrder);
       APIProduct.getProductDetails(route.params.fromOrder.product_id).then((res)=>{
         console.log("PRODUCT DETAILS: ",res);
         setProductDetails(res);
@@ -162,7 +162,7 @@ const Negotiations = ({route,navigation}) => {
         setReplies(res);
         setReply(res[0]);
         setIsVisible(false);
-        setUserData(userData)
+        setUserData(userData);
       });
       apiService.getChatDetails(route.params.fromOrder.product_id).then((res)=>{
         console.log("FROM THE USEEFFECT: ",res)
@@ -193,18 +193,20 @@ const Negotiations = ({route,navigation}) => {
 
   const replyFunction=()=>{
     console.log("REPLY:",reply)
+    let chosenReply = replies.filter((item)=>item.value === reply)[0]
     setIsVisible(true)
     if(reply==0){
       setIsVisible(false);
       Alert.alert("Error","Please choose a reply");
       return;
     }
-    let receiver_id = userData?.user_type==1?routeData.seller_id:routeData.receiverDetails.id;
+    let receiver_id = userData?.id==routeData.receiverDetails.id?routeData.senderDetails.id:routeData.receiverDetails.id;
     //let negotiate_reply = replies.filter((i)=>i.value === reply)[0].label
     console.log("PAY",reply,price)
+    console.log(`REPLIES: \n${chosenReply}\n${chosenReply}`)
     let payload ={
-      negotiate_reply: reply?.label,
-      negotiate_reply_id: reply?.value,
+      negotiate_reply: chosenReply?.label,
+      negotiate_reply_id: chosenReply?.value,
       //chat_sender_name: routeData.chat_sender_name,
       product_id: routeData.product_id,
       receiver_id: receiver_id,
@@ -336,7 +338,7 @@ const Negotiations = ({route,navigation}) => {
                  if(price<0)
                   Alert.alert("Error","Price must be positive number")
                  else replyFunction()
-                 console.log("Reply: ",reply,"\nPrice: $",price)
+                 console.log("Reply: ",typeof(reply),reply,"\nPrice: $",price)
                }}>
                 <MaterialCommunityIcons name="send-circle" size={40} color="#5BC5B9"
                 /* style={{transform: [{ rotate: "180deg" }]}} *//>

@@ -3,11 +3,15 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems:'center',
         backgroundColor: "#fff",
-        marginTop:40,
+        marginTop:20,
         marginLeft: 10,
         marginRight: 10,
+    },
+    header: {
+      fontSize: 21,
+      color: "#6E91EC",
+      fontWeight: "bold",
     },
     contentList: {
         flex: 1,
@@ -15,6 +19,18 @@ const styles = StyleSheet.create({
     separator: {
         height: 1,
         backgroundColor: "#CCCCCC"
+    },
+    docPicker:{
+        borderWidth:1,
+        borderRadius:5,
+        borderColor:'gray',
+        marginVertical:10,
+        height:55,
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:10,
+        alignItems:'center'
     },
     image: {
         width: 60,
