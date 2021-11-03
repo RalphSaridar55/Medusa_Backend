@@ -158,6 +158,15 @@ export default class Registartion extends Component {
     this.setState({ userRole: radioBtnValue });
   };
 
+  returnText = (arr) =>{
+    let str = '';
+    for(let i=0;i<2;i++)
+      str+=arr[i].label.split(" ")[0]+", "
+    if(arr.length>2)
+      str+= ' + ...'
+    return str;
+  }
+
   getCategoryDetails = () => {
     apiPortFolioServices.getCategoryDetails().then((response) => {
       console.log(response);
@@ -833,7 +842,7 @@ export default class Registartion extends Component {
                   },
                 ]}
               >
-                <Text style={{color:'gray'}}>{element.placeholder}</Text>
+                <Text style={{color:'gray'}}>{this.state[element.value].length<1?element.placeholder:this.state[element.value].length>1?/*( this.state[element.value].splice(0,2).map((item)=>(`${item.label.split(" ")[0]}, `)) */ this.returnText(this.state[element.value]):this.state[element.value][0].label.split(" ")[0]}</Text>
               </View>
             }
           >

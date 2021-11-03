@@ -7,6 +7,15 @@ const styles = StyleSheet.create({
         padding: 15,
         justifyContent: "center",
     },
+    picker:{
+              borderWidth: 1,
+              borderColor: "#C4C4C4",
+              borderRadius: 4,
+              marginVertical: 10,
+              height:55,
+              justifyContent:'center',
+              backgroundColor:'#fff'
+            },
     inputView: {
         backgroundColor: "#fff",
         marginBottom: 10,

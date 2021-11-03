@@ -4,8 +4,10 @@ import { getToken } from "./apiUserServices";
 
 export async function getCountries () {
   return await apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
-        return res.data.data.map(option => ({ value: option.id, label: option.name }));      
-    });
+        let ar =[]
+        res.data.data.map((option) => {ar.push({ value: option.id, label: option.name })});      
+        return ar
+      });
 };
 
 export async function getCategories (){

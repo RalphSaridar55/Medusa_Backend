@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { TouchableOpacity, View, ImageBackground, Alert } from "react-native";
 import { Text, Button } from "react-native-paper";
 import Header from "../../components/Header";
@@ -10,6 +10,7 @@ import { passwordValidator } from "../../helpers/passwordValidator";
 import * as Device from "expo-device";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as apiServices from "../../core/apis/apiUserServices";
+import {HeadContext} from '../../../App';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -23,7 +24,7 @@ export default function Login({ navigation }) {
    * @returns to login page when user credentials are validated
    */
 
-  
+  const { setUserData,userData,product,setProduct } = useContext(HeadContext);
 
   const storeData =async(key,value)=>{
     try {
@@ -59,6 +60,7 @@ export default function Login({ navigation }) {
     setLoading(true);
 
     apiServices.userLogin(payload).then((res) => {
+      console.log("CONTEXT: ",setUserData,userData,product,setProduct)
       console.log("---->", res.access_token);
       console.log("USER DETAILS: " , res.userDetails);
       apiServices.setToken(res.access_token);
@@ -67,7 +69,9 @@ export default function Login({ navigation }) {
       setLoading(false);
       storeData("company_name",res.userDetails.company_name)
       storeData("user_id",res.userDetails.id+"")
-      storeData("user_details",JSON.stringify(res.userDetails));
+      storeData("user_details",JSON.stringify(res.userDetails))
+      setUserData(123);
+
       if(res.userDetails.user_type===4 && res.userDetails.default_landing_page=="DASHBOARD")
         navigation.navigate("Dashboard");
       else

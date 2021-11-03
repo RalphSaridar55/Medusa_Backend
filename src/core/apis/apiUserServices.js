@@ -147,7 +147,7 @@ export const addSubUser = async (data) => {
         Authorization:x
       },
     }).then((res) => {
-      console.log(res.data.data);
+      //console.log(res.data.data);
       return res.data.message;
     });
   });
@@ -155,14 +155,14 @@ export const addSubUser = async (data) => {
 
 //Update Sub-user
 export const updateSubUser = async (data) => {
-  console.log("DATA FROM API, ",data)
+  //console.log("DATA FROM API, ",data)
   return await getToken().then((x) => {
     return APIKit.put("/user/sub-user", data,{
       headers:{
         Authorization: x,
       }
     }).then((res) => {
-      console.log(res);
+      //console.log(res);
     });
   });
 };

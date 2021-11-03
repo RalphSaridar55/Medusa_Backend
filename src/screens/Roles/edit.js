@@ -139,7 +139,7 @@ export default class AddRole extends Component {
                     flex: 1,
                 }}>
                 <Spinner visible={this.state.isLoading} />
-                <View style={{ flex: 1, padding: 15,marginTop:60}}>
+                <View style={{ flex: 1, padding: 15,marginTop:20}}>
                             
                     <View
                     style={{

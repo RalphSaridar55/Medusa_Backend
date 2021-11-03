@@ -6,6 +6,7 @@ import CollapsibleList from 'react-native-collapsible-list';
 import styles from "./style"
 import * as apiServices from '../../core/apis/apiUserServices'
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const width = Dimensions.get('screen').width
 const height = Dimensions.get('screen').height
@@ -18,6 +19,7 @@ export default class AddRole extends Component {
         user_type:0,
         role:'', roleError:false, roleErrorText:'',
         permissions:[],
+        visible:false,
         permission:[],
         fetchedRole: [
             {
@@ -62,8 +64,12 @@ export default class AddRole extends Component {
     }
 
     createRole = () =>{
-        if(this.state.roleError || this.state.permission.length<1 || this.state.role.length<1)
+        this.setState({visible:true})
+        if(this.state.roleError || this.state.permission.length<1 || this.state.role.length<1){
             Alert.alert("Role Error","Please fill the required fields")
+            this.setState({visible:false})
+            return;
+        }
         else{
             let formed_permissions = []
             this.state.permission.map((item)=>{
@@ -77,8 +83,10 @@ export default class AddRole extends Component {
             console.log("PAYLOAD SHOULD BE: ",payload)
             apiServices.addRole(payload).then((res)=>{
                 Alert.alert("Role",res)
+                this.setState({visible:false})
             }).catch(err=>{
                 console.log("Error:\n",err)
+                this.setState({visible:false})
                 Alert.alert("Error",err.response.data.message);});
         }
     }
@@ -89,7 +97,8 @@ export default class AddRole extends Component {
                 style={{
                     flex: 1,
                 }}>
-                <View style={{ flex: 1, padding: 15,marginTop:60}}>
+                <View style={{ flex: 1, padding: 15,marginTop:20}}>
+                    <Spinner visible={this.state.visible} />
                     <Headline style={{ marginBottom: 10, color: "#698EB7", fontWeight: "bold" }}>Create a Role</Headline>
                     <TextInput
                         label="Role name*"
@@ -114,7 +123,7 @@ export default class AddRole extends Component {
                       borderWidth: 0,
                       borderColor: "#A6A6A6",
                       borderRadius: 5,
-                      height:height*0.55
+                      height:height*0.4
                     }}
                     buttonPosition="top"
                     numberOfVisibleItems={0}

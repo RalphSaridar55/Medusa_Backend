@@ -9,6 +9,7 @@ import {
   TextInput,
 } from "react-native";
 import { styles } from "./Create_style";
+import { RenderPicker } from "../../components/Picker";
 import { Feather } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { RadioButton } from "react-native-paper";
@@ -143,26 +144,18 @@ const Create = ({ navigation, route }) => {
               setUserData({...userData,clicks:0})
             }}
           />
-          <View style={[styles.modalBoxInputs]}>
-            <Picker
+          {/* <View style={[styles.modalBoxInputs]}> */}
+            <RenderPicker
+              containerStyle={styles.modalBoxInputs}
               editable={isByClicks?false:true}
               prompt="Payment Method"
               selectedValue={userData.duration}
               onValueChange={(itemValue, itemIndex) =>
                 setUserData({ ...userData, duration: itemValue })
               }
-            >
-              {duration.map((item, index) => {
-                return (
-                  <Picker.Item
-                    label={item.label}
-                    value={item.value}
-                    key={index}
-                  />
-                );
-              })}
-            </Picker>
-          </View>
+              map={duration}
+            />
+          {/* </View> */}
           </View>
           <View style={{flexDirection:'row', alignItems:'center'}}>
             <RadioButton

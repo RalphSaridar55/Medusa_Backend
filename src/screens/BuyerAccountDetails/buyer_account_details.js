@@ -18,9 +18,13 @@ import * as apiPortFolioServices from "../../core/apis/apiPortfolioServices";
 import { FlatListSlider } from "react-native-flatlist-slider";
 import { AntDesign } from '@expo/vector-icons'; 
 import { validatePathConfig } from "@react-navigation/core";
+import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 import Spinner from "react-native-loading-spinner-overlay";
+import {HeadContext} from '../../../App';
 
 class BuyreAccount extends Component {
+  static contextType = HeadContext
+
   constructor(props) {
     super(props);
     this.state = {
@@ -74,6 +78,9 @@ class BuyreAccount extends Component {
     } */
 
   componentDidMount() {
+    //console.log("CONTEXT: ",this.context)
+    //console.log("COTEXT: ",this.context.setProduct("1235"),this.context.product)
+    //console.log("CONTEXT: ",this.context.userData)
     apiServices.getCountries().then((res) => {
       this.setState({ countries: res });
     });
@@ -112,7 +119,20 @@ class BuyreAccount extends Component {
   DrawTouchableOpacity = (e, i) => {
     return (
       <View key={i}>
-        <TouchableOpacity
+        <TouchableDocumentPicker
+          color="#6E91EC"
+          icon="file"
+          mode="outlined"
+          name={e.typeDoc}
+          doc={e.typeDoc=="Trading License"?this.state.trading:this.state.company}
+          onPress={() =>
+            e.typeDoc == "Trading License"
+              ? this.pickDocument("Trade")
+              : this.pickDocument("Passport")
+          }
+          style={styles.docPicker}
+        />
+        {/* <TouchableOpacity
           color="#6E91EC"
           icon="file"
           mode="outlined"
@@ -132,7 +152,7 @@ class BuyreAccount extends Component {
           ) : (
             <AntDesign name="checkcircle" size={24} color="green" />
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   };
@@ -152,8 +172,8 @@ class BuyreAccount extends Component {
       //console.log(result);
       try {
         e == "Trade"
-          ? this.setState({ trading: result, tradingError: false })
-          : this.setState({ company: result, companyError: false });
+          ? this.setState({ trading: result.uri, tradingError: false })
+          : this.setState({ company: result.uri, companyError: false });
       } catch (error) {
         console.log(error);
       }
@@ -164,7 +184,8 @@ class BuyreAccount extends Component {
   };
 
   _discardAction = () => {
-    console.log("running");
+    this.props.navigation.navigate("Home")
+    /* console.log("running");
     for(var key of Object.keys(this.state)){
       if(typeof(this.state[key]) ==="boolean"){
         this.setState({...this.state,[key]:false})
@@ -220,7 +241,7 @@ class BuyreAccount extends Component {
           {label:'Dashboard',value:'DASHBOARD'},
           {label:'Home',value:'HOME'}
       ]
-    });
+    }); */
   };
 
   _ApplyChanges = () => {
@@ -242,7 +263,7 @@ class BuyreAccount extends Component {
     else if(this.state.oldPassword.length<1 || this.state.oldPasswordError )
       Alert.alert("Edit Error","Please enter your password")
     else if(this.state.companyError ||
-    this.state.tradingError ){
+    this.state.tradingError || this.state.company.length<1 || this.state.trading.length<1 ){
         Alert.alert("Edit Error", "Please attach the required files");
     }
     else if(this.state.password != this.state.confirmPassword)  
@@ -272,7 +293,9 @@ class BuyreAccount extends Component {
             Alert.alert("Edit", res);
             this.setState({spinnerVisible:false})
         }).catch(err=>{
-          console.log("Error:\n",err)
+          console.log("Error:\n",err,[
+            {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
+          ])
           this.setState({spinnerVisible:false});
           Alert.alert("Error",err.response.data.message);})
     }

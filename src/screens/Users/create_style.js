@@ -15,6 +15,14 @@ const styles = StyleSheet.create({
         height: 50,
         color: "white"
     },
+    dropdown:{ 
+        borderWidth: 1,
+        borderColor: '#C4C4C4',
+        borderRadius: 4,
+        paddingVertical: 15,
+        backgroundColor: "#fff",
+        marginBottom:10,
+    },
     forgot: {
         color: "#31C2AA",
         fontSize: 11,

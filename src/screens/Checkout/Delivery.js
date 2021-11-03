@@ -1,7 +1,6 @@
 import React, { Component, useContext } from "react";
 import Overlay from './overlay';
-import {ProductContext} from '../../../App';
-import {picker} from './map';
+//import {ProductContext} from '../../../App';
 import {
   StyleSheet,
   Text,
@@ -18,31 +17,29 @@ import styles from "./style_delivery";
 import * as apiServices from "../../core/apis/apiAddressServices";
 import * as apiProducts from '../../core/apis/apiProductServices';
 import {
-  Card,
-  IconButton,
-  Searchbar,
-  Menu,
   Divider,
   Provider,
-  Button,
-  Avatar,
 } from "react-native-paper";
-import { Picker } from "@react-native-picker/picker";
+import { RenderPicker } from "../../components/Picker";
 import {
-  Colors,
   Dialog,
-  Assets,
   PanningProvider,
-  Typography,
-  ActionBar,
 } from "react-native-ui-lib";
-import dropdown from "../../../assets/down.png";
 import _ from "lodash";
-import Swipeout from "react-native-swipeout";
 import * as DocumentPicker from "expo-document-picker";
 import TextInput from "../../components/TextInput";
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
-// Buttons
+//// Buttons
+const containerStyle =
+{
+  borderWidth: 1,
+  borderColor: "#C4C4C4",
+  borderRadius: 4,
+  marginVertical: 10,
+  height: 55,
+  justifyContent: "center",
+  backgroundColor: "#fff",
+}
 const swipeoutBtns = [
   {
     text: "Delete",
@@ -100,36 +97,6 @@ renderDialog = (modalProps) => {
     </Dialog>
   );
 };
-
-const RenderPicker=(props)=>{
-  return(
-    <View
-              style={{
-                borderWidth: 1,
-                borderColor: "#C4C4C4",
-                borderRadius: 4,
-                marginVertical: 10,
-                height: 55,
-                justifyContent: "center",
-                backgroundColor: "#fff",
-              }}
-            >
-              <Picker
-                style={{ marginLeft: 5 }}
-                {...props}
-              >
-                {/* <Picker.Item label="Registered Address" value={0}/> */}
-                {props.map.length>0&&props.map?.map((item, index2) => (
-                  <Picker.Item
-                    label={item.label}
-                    value={item.value}
-                    key={index2}
-                  />
-                ))}
-              </Picker>
-            </View>
-  )
-}
 
 export default class Delivery extends Component {
   constructor(props) {
@@ -231,7 +198,7 @@ export default class Delivery extends Component {
       service:null,
     };
   }
-  static product = ProductContext;
+  //static product = ProductContext;
 
   
 
@@ -380,9 +347,6 @@ export default class Delivery extends Component {
         this.setState({ docError: error });
       }
     }
-    /* e.typeDoc==="Trade"?console.log("test"):console.log(123);
-          this.setState({ docs: result.uri })
-          alert(result.uri); */
   };
 
   openMenu = () => {
@@ -444,6 +408,7 @@ export default class Delivery extends Component {
       }
     });
     let payload2 = {...payload, service_type: this.state.service, service_level: this.state.serviceLevel,}
+    console.log("PAYLOAD2: ",payload2)
     if(!error)
       this.setState({overlay:true})
   }
@@ -586,14 +551,16 @@ export default class Delivery extends Component {
               >
                 Shipment Details
               </Text>
-              <RenderPicker 
+              <RenderPicker
+                  containerStyle={containerStyle} 
                   selectedValue={this.state.serviceType}
                   prompt="Service Level"
                   onValueChange={(itemValue, itemIndex) => {
                     this.changeServiceType(itemValue)
                   }}
                   map={this.state.fetchedServicesType}/>
-                <RenderPicker 
+                <RenderPicker
+                    containerStyle={containerStyle} 
                   selectedValue={this.state.service}
                   prompt="Service Type"
                   onValueChange={(itemValue, itemIndex) => {
@@ -601,7 +568,8 @@ export default class Delivery extends Component {
                     
                   }}
                   map={this.state.fetchedServices}/>
-              <RenderPicker 
+              <RenderPicker
+                  containerStyle={containerStyle} 
                   selectedValue={this.state.cargo_method}
                   prompt="Cargo Delivery Method"
                   onValueChange={(itemValue, itemIndex) => {
@@ -609,6 +577,7 @@ export default class Delivery extends Component {
                   }}
                   map={this.state.cargo_methods}/>
               <RenderPicker 
+                  containerStyle={containerStyle} 
                   selectedValue={this.state.location}
                   prompt="Registered Address"
                   onValueChange={(itemValue, itemIndex) => {
@@ -656,6 +625,7 @@ export default class Delivery extends Component {
                   Payment Details
                 </Text>
                 <RenderPicker 
+                  containerStyle={containerStyle} 
                     selectedValue={this.state.payment}
                     prompt="Payment Method"
                     onValueChange={(itemValue, itemIndex) => {

@@ -58,7 +58,7 @@ export const deleteAddresses = async (data) => {
             },
             data:data
         }).then((res)=>{
-            console.log(res)
+            //console.log(res)
         });
     });
   };

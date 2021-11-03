@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { emailValidator } from "../../helpers/emailValidator";
+import { RenderPicker } from "../../components/Picker";
 import {
   StyleSheet,
   Text,
@@ -33,10 +34,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MultiSelect from "react-native-multiple-select";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
+import * as apiPortfolio from '../../core/apis/apiPortfolioServices';
 import * as apiServices from "../../core/apis/apiUserServices";
 import * as DocumentPicker from "expo-document-picker";
 import styles from "./edit_style";
 import { Ionicons } from "@expo/vector-icons";
+import { subUser } from "../../../map";
 
 export default class EditUsers extends Component {
   state = {
@@ -45,9 +48,16 @@ export default class EditUsers extends Component {
     username: "",
     subject: "",
     message: "",
-    role: {
-      role_id: 0,
-      role_name: "",},
+    country_id:0,
+    countries:[],
+    country_code:'',
+    state:'',
+    city:'',
+    street:'',
+    phone:'',
+    postal:'',
+    role: 0,
+    role_name:'',
     permissions: "",
     docs: "",
     docsError: "",
@@ -97,7 +107,9 @@ export default class EditUsers extends Component {
       "\n",
       this.state.username,
       "\n",
-      this.state.role.role_name,
+      this.state.role,
+      "\n",
+      this.state.role_name,
       "\n",
       this.state.userPermissions,
       "\n",
@@ -105,8 +117,14 @@ export default class EditUsers extends Component {
     ); 
     if (
       this.state.username.length < 1 ||
-      this.state.role.role_name.length < 1 ||
-      this.state.userPermissions.length < 1
+      this.state.role_name.length < 1 ||
+      this.state.userPermissions.length < 1 ||
+      this.state.country_code.length < 1 ||
+      this.state.phone.length < 1 ||
+      this.state.state.length < 1 ||
+      this.state.city.length < 1 ||
+      this.state.street.length < 1 ||
+      this.state.postal.length < 1 
     )
       Alert.alert("Input Error", "Please Fill all fields");
     else if (emailValidator(this.state.email).length > 0)
@@ -127,10 +145,17 @@ export default class EditUsers extends Component {
         id:this.state.id,
         sub_user_email: this.state.email,
         //to be changed
+        country_code:this.state.country_code,
+        country_id:this.state.country_id,
+        mobile_number:this.state.phone,
+        state:this.state.state,
+        city:this.state.city,
+        street:this.state.street,
+        postal_code:this.state.postal,
         company_name: this.state.username,
         company_reg_doc: this.state.docs,
-        role_name: this.state.role.role_name,
-        role_id: this.state.role.role_id,
+        role_name: this.state.role_name,
+        role_id: parseInt(this.state.role),
         permissions: array,
       };
       console.log("PAYLOAD ",payload)
@@ -177,9 +202,20 @@ export default class EditUsers extends Component {
     }
   };
 
+  getCountries(){
+    apiPortfolio.getCountries().then((res)=>{
+      this.setState({countries:res})
+    })
+  }
+
   changeRole(selection) {
-    console.log(selection);
-    apiServices.getRoleDetails(selection.id).then((res) => {
+    console.log("SELECTION:",selection);
+    console.log("ROLES:",this.state.roles)
+    let resultFind = this.state.roles.filter((i)=>
+      i.id === selection
+    )
+    console.log("RESULT FIND: ",resultFind)
+    apiServices.getRoleDetails(selection).then((res) => {
       let array = [];
       res.data.permissions.map((item) => {
         array.push({
@@ -189,24 +225,23 @@ export default class EditUsers extends Component {
         });
         this.setState({
           userPermissions: array,
-          role: { role_id: selection.id, role_name: selection.name },
+          role: { role: resultFind.id, role_name: resultFind.role_name },
         });
-      });
+      }).catch(err=>Alert.alert("Error",err.response.data.message));
     });
   }
 
   componentDidMount() {
     console.log("ROUTE DATA: ",this.props.route.params.item)
     this.getCompanyName();
+    this.getCountries();
     this.getPermissions();
     this.getRoles();
     this.setState({
       userDataToEdit: this.props.route.params.item,
       userPermissions: this.props.route.params.item.permissions,
-      role: {
-        role_id: this.props.route.params.item.role_id,
-        role_name: this.props.route.params.item.role_name,
-      },
+      role: this.props.route.params.item.role_id,
+      role_name: this.props.route.params.item.role_name,
       id:this.props.route.params.item.id,
       username:this.props.route.params.item.username,
       email:this.props.route.params.item.email,
@@ -232,6 +267,38 @@ export default class EditUsers extends Component {
     });
   };
 
+  drawInputs(){
+    return subUser.map((item,index)=>{
+      switch(item.type){
+        case 'textfield':
+            return <TextInput
+              key={index}
+              label={item.label}
+              placeholder={item.placeholder}
+              keyboardType={item.keyboardType}
+              mode="outlined"
+              outlineColor="#C4C4C4"
+              onChangeText={(e)=>this.setState({[item.value]:e})}
+              theme={{ colors: { primary: "#31c2aa" } }}
+              style={styles.inputView}
+              value={this.state[item.value]}
+            />
+        case 'picker':
+          return <RenderPicker 
+          key={index}
+          containerStyle={styles.dropdown}
+          selectedValue={this.state[item.value]}
+          onValueChange={(itemValue, itemIndex) => 
+            this.setState({[item.value]:itemValue})
+          }
+          map={this.state[item.items]}
+          /* chosenLabel={this.state[item.chosenLabel]}
+          chosenValue={this.state[item.chosenValue]} */
+      />
+      }
+    })
+  }
+
   setPermission = async (callback) => {
     await this.setState((state) => ({
       permissions: callback(state.permissions),
@@ -240,7 +307,7 @@ export default class EditUsers extends Component {
 
   getPermissions = () => {
     apiServices.getPermissionsList().then((result) => {
-      //console.log('compo func',result);
+      console.log('compo func',result);
       let permissions = [];
       //console.log(result)
       result.data.map((i) => {
@@ -249,7 +316,7 @@ export default class EditUsers extends Component {
       this.setState({ permissions: permissions });
       console.log(this.state.permissions);
       //this.setState({roles:result})
-    });
+    }).catch(err=>Alert.alert("err",err.response.data.message));
   };
 
   render() {
@@ -271,7 +338,7 @@ export default class EditUsers extends Component {
               flex: 1,
               padding: 15,
               justifyContent: "center",
-              marginTop: 100,
+              marginTop: 20,
             }}
           >
             <View
@@ -304,50 +371,21 @@ export default class EditUsers extends Component {
                 }
               />
             </View>
-            <TextInput
-              label="Email"
-              placeholder="email@gmail.com"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              onChangeText={(e)=>this.setState({email:e})}
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              value={this.state.email}
-            />
-
-            <TextInput
-              label="Username"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              onChangeText={(e)=>this.setState({username:e})}
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              value={
-                this.state.username
-              }
-            />
-
-            <View style={styles.dropdown}>
-              <Picker
+            {this.drawInputs()}
+            <RenderPicker 
+                containerStyle={styles.dropdown}
                 selectedValue={this.state.role}
                 onValueChange={(itemValue, itemIndex) => 
                   this.changeRole(itemValue)
                 }
-              >
-                {this.state.roles?.map((option) => (
-                  <Picker.Item
-                  style={{color:'black'}}
-                  key={option.id}
-                  value={{ id: option.id, name: option.role_name }}
-                  label={option.role_name}
-                  />
-                ))}
-              </Picker>
-            </View>
+                map={this.state.roles}
+                chosenValue="id"
+                chosenLabel="role_name"
+            />
 
             <View
               style={{
-                marginVertical: 20,
+                marginVertical: 10,
                 borderWidth: 2,
                 borderRadius: 5,
                 borderColor: "#DCDCDC",
@@ -394,20 +432,6 @@ export default class EditUsers extends Component {
               </CollapsibleList>
             </View>
             
-            {/* <DropDownPicker
-            style={styles.dropDownPickerSellers}
-            listMode="FLATLIST"
-            categorySelectable={true}
-            //error when multiple={true}
-            multiple={false}
-            placeholder="Permissions"
-            searchable={false}
-            open={this.state.isOpen}
-            value={this.state.permissions}
-            items={permissions}
-            setOpen={this.setOpen}
-            setValue={this.setPermission}
-          /> */}
             <View
               style={{
                 flexDirection: "row",

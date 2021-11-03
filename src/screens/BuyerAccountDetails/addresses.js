@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {RenderPicker} from '../../components/Picker';
 import {
   StyleSheet,
   Text,
@@ -24,6 +25,7 @@ import { call } from "react-native-reanimated";
 import * as apiServices from "../../core/apis/apiAddressServices";
 import Spinner from "react-native-loading-spinner-overlay";
 import { Picker } from "@react-native-picker/picker";
+import { addresses } from "./map";
 
 class Addresses extends Component {
   constructor(props) {
@@ -39,7 +41,7 @@ class Addresses extends Component {
       stateError: false,
       street: "",
       streetError: false,
-      postal: 0,
+      postal: '',
       postalError: false,
       visible: false,
 
@@ -65,16 +67,7 @@ class Addresses extends Component {
         country:route.country_id
         });
         }
-    //this.setState({id:this.props.route.params.item.id})
-    // apiPortFolioServices.getCategoryDetails().then((response) => {
-    //     return (
-    //         this.setState({ ...this.state,...{categoryData: response}}),
-    //         this.setState({ ...this.state,...{fetchedcategories: registrationServices.filterCategory(response)}})
-    //     )
-    // })
     getCountries().then((result) => {
-      //console.log(result)
-      //console.log(result);
       let arr = [];
       result.map((i) => {
         arr.push({ label: i.label, value: i.value });
@@ -225,113 +218,36 @@ class Addresses extends Component {
               else this.setState({ adressError: false });
             }}
           />
-          <View
-            style={{
-              borderWidth: 1,
-              borderColor: "#C4C4C4",
-              borderRadius: 4,
-              marginVertical: 10,
-              height:55,
-              justifyContent:'center',
-              backgroundColor:'#fff'
-            }}
-          >
-            <Picker
+          <RenderPicker
+            containerStyle={styles.picker}
             enabled={this.state.type=="view"?false:true}
             selectedValue={this.state.country}
             onValueChange={(itemValue, itemIndex) =>
               this.setState({country:itemValue})
-            }>
-              <Picker.Item key={0} label="Country" value={0} />
-            {this.state.fetchedCountries.length>0?
-            this.state.fetchedCountries.map((item,index)=>(
-              <Picker.Item key={index} label={item.label} value={item.value}/>
-            ))
-            :
-            <Picker.Item label="Country" value={0}/>}
-            </Picker>
-            </View>
-            
-          <TextInput
+            } 
+            map={this.state.fetchedCountries}/>
+  
+          { addresses.map((item,index)=><TextInput
+            key={index}
             disabled={this.state.type=="view"?true:false}
-            error={this.state.cityError}
+            error={this.state[item.error]}
             mode="outlined"
-            label="City*"
+            label={item.label}
             outlineColor="#C4C4C4"
             style={styles.inputView}
-            value={this.state.city}
+            value={this.state[item.value]}
             onChangeText={(e) => {
-              this.setState({ city: e });
+              this.setState({ [item.value]: e });
             }}
             onBlur={() => {
               if (this.state.city.length < 1)
-                this.setState({ cityError: true });
-              else this.setState({ cityError: false });
+                this.setState({ [item.error]: true });
+              else this.setState({ [item.error]: false });
             }}
             theme={{
               colors: { primary: "#31c2aa", underlineColor: "transparent" },
             }}
-          />
-          <TextInput
-            disabled={this.state.type=="view"?true:false}
-            mode="outlined"
-            label="State *"
-            outlineColor="#C4C4C4"
-            style={styles.inputView}
-            value={this.state.state}
-            onBlur={() => {
-              if (this.state.state.length < 1)
-                this.setState({ stateError: true });
-              else this.setState({ stateError: false });
-            }}
-            onChangeText={(e) => {
-              this.setState({ state: e });
-            }}
-            theme={{
-              colors: { primary: "#31c2aa", underlineColor: "transparent" },
-            }}
-          />
-          <TextInput
-            disabled={this.state.type=="view"?true:false}
-            error={this.state.streetError}
-            mode="outlined"
-            label="Street*"
-            outlineColor="#C4C4C4"
-            style={styles.inputView}
-            value={this.state.street}
-            onChangeText={(e) => {
-              this.setState({ street: e });
-            }}
-            onBlur={() => {
-              if (this.state.street.length < 1)
-                this.setState({ streetError: true });
-              else this.setState({ streetError: false });
-            }}
-            theme={{
-              colors: { primary: "#31c2aa", underlineColor: "transparent" },
-            }}
-          />
-          <TextInput
-            disabled={this.state.type=="view"?true:false}
-            error={this.state.postalError}
-            mode="outlined"
-            label="Postal Code*"
-            keyboardType="numeric"
-            outlineColor="#C4C4C4"
-            style={styles.inputView}
-            value={this.state.postal+""}
-            onChangeText={(e) => {
-              this.setState({ postal: e });
-            }}
-            onBlur={() => {
-              if (this.state.postal.length < 1)
-                this.setState({ postalError: true });
-              else this.setState({ postalError: false });
-            }}
-            theme={{
-              colors: { primary: "#31c2aa", underlineColor: "transparent" },
-            }}
-          />
+          />)}
           <View
             style={this.state.type=="view"?{display:'none'}:
             {
@@ -349,11 +265,6 @@ class Addresses extends Component {
               <Text style={styles.textButton}>
                 {this.state.type == "add" ? "Add" : "Edit"}
               </Text>
-              {/*                         <IconButton
-                            icon="plus"
-                            size={20}
-                            onPress={() => console.log('Pressed')}
-                        /> */}
             </TouchableOpacity>
           </View>
         </View>

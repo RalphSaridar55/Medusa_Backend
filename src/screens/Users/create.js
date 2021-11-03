@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import SelectMultiple from "react-native-select-multiple";
+import * as apiPortfolio from '../../core/apis/apiPortfolioServices';
 import Spinner from "react-native-loading-spinner-overlay";
 import CollapsibleList from "react-native-collapsible-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { emailValidator } from "../../helpers/emailValidator";
+import { RenderPicker } from "../../components/Picker";
+import { subUser } from "../../../map";
 import {
   Text,
   View,
@@ -27,27 +30,34 @@ export default class AddUsers extends Component {
     message: "",
     company_name:"",
     username: "",
+    country_id:0,
+    countries:[],
+    country_code:'',
+    state:'',
+    city:'',
+    street:'',
+    phone:'',
+    postal:'',
     role: {
       role_id: 0,
       role_name: "",
     },
-    docs: {},
+    docs: "",
     docsError: "",
     userPermissions: [],
     selectedItems: [],
 
     roles: [
       {
-        id: 1,
-        num_of_permission: 1,
-        role_name: "role 1",
-        status: 2,
-      },
+        created_at: "2021-09-29T14:06:03.480Z",
+        id: 0,
+        num_of_permission: 9,
+        role_name: "Role 1",
+        status: 3,
+        updated_at: "2021-09-29T14:51:56.502Z",
+      }
     ],
-    permissions: [
-      { label: "permission 1", id: 1 },
-      { label: "permission 2", id: 2 },
-    ],
+    permissions: "",
     docError: true,
     openPermissions: false,
     isLoading:false,
@@ -70,10 +80,26 @@ export default class AddUsers extends Component {
       "\n",
       this.state.docs
     ); */
+    console.log(
+      this.state.username,
+      this.state.role.role_name,
+      this.state.userPermissions,
+      this.state.country_code,
+      this.state.phone,
+      this.state.state,
+      this.state.city,
+      this.state.street,
+      this.state.postal,)
     if (
       this.state.username.length < 1 ||
       this.state.role.role_name.length < 1 ||
-      this.state.userPermissions.length < 1
+      this.state.userPermissions.length < 1 ||
+      this.state.country_code.length < 1 ||
+      this.state.phone.length < 1 ||
+      this.state.state.length < 1 ||
+      this.state.city.length < 1 ||
+      this.state.street.length < 1 ||
+      this.state.postal.length < 1 
     )
       Alert.alert("Input Error", "Please Fill all fields");
     else if (emailValidator(this.state.email).length > 0)
@@ -87,13 +113,21 @@ export default class AddUsers extends Component {
       this.setState({isLoading:true})
       //Alert.alert("Success", "Signup should run");
        let payload = {
+        //id:this.state.id,
         sub_user_email: this.state.email,
         //to be changed
+        country_code:this.state.country_code,
+        country_id:this.state.country_id,
+        mobile_number:this.state.phone,
+        state:this.state.state,
+        city:this.state.city,
+        street:this.state.street,
+        postal_code:this.state.postal,
         company_name: this.state.username,
-        company_reg_doc: this.state.docs.uri,
+        company_reg_doc: this.state.docs,
         role_name: this.state.role.role_name,
         role_id: this.state.role.role_id,
-        permissions: this.state.userPermissions,
+        permissions: array,
       };
       console.log("PAYLOAD ",payload)
       apiServices.addSubUser(payload).then((res) => {
@@ -119,8 +153,16 @@ export default class AddUsers extends Component {
       //this.setState({roles:result})
     });
   };
+  
+
+  getCountries(){
+    apiPortfolio.getCountries().then((res)=>{
+      this.setState({countries:res})
+    })
+  }
 
   componentDidMount() {
+    this.getCountries();
     this.getRoles();
     //this.getCompanyName();
   }
@@ -139,10 +181,10 @@ export default class AddUsers extends Component {
     }
   }
 
-  componentDidUpdate() {
+  /* componentDidUpdate() {
     this.state.permissions;
     this.state.userPermissions;
-  }
+  } */
 
   onSelectedItemsChange = (selectedItems) => {
     this.setState({ selectedItems });
@@ -156,12 +198,12 @@ export default class AddUsers extends Component {
         "Wrong Extensions",
         "Please only upload pdf or png type of files"
       );
-      this.setState({docError:true})
+      this.setState({docError:true, docs:""})
       }
     else {
       console.log(result);
       try {
-        this.setState({ docs: result, docError: false });
+        this.setState({ docs: result.uri, docError: false });
       } catch (error) {
         this.setState({ docError: true });
       }
@@ -172,9 +214,9 @@ export default class AddUsers extends Component {
   }
 
   changeRole(selection) {
-    console.log(selection);
-    if (selection.id != 0) {
-      apiServices.getRoleDetails(selection.id).then((res) => {
+    console.log("SELECTION:",selection);
+    if (selection != 0) {
+      apiServices.getRoleDetails(selection).then((res) => {
         let array = [];
         res.data.permissions.map((item) => {
           array.push({
@@ -198,12 +240,44 @@ export default class AddUsers extends Component {
       });
     }
   }
+  
+  drawInputs(){
+    return subUser.map((item,index)=>{
+      switch(item.type){
+        case 'textfield':
+            return <TextInput
+              key={index}
+              label={item.label}
+              placeholder={item.placeholder}
+              keyboardType={item.keyboardType}
+              mode="outlined"
+              outlineColor="#C4C4C4"
+              onChangeText={(e)=>this.setState({[item.value]:e})}
+              theme={{ colors: { primary: "#31c2aa" } }}
+              style={styles.inputView}
+              value={this.state[item.value]}
+            />
+        case 'picker':
+          return <RenderPicker 
+          key={index}
+          containerStyle={styles.dropdown}
+          selectedValue={this.state[item.value]}
+          onValueChange={(itemValue, itemIndex) => 
+            this.setState({[item.value]:itemValue})
+          }
+          map={this.state[item.items]}
+          /* chosenLabel={this.state[item.chosenLabel]}
+          chosenValue={this.state[item.chosenValue]} */
+      />
+      }
+    })
+  }
 
-  onSelectionsChange = (selectedFruits) => {
-    // selectedFruits is array of { label, value }
-    this.setState({ userPermissions: selectedFruits });
+  /* onSelectionsChange = (item) => {
+    // item is array of { label, value }
+    this.setState({ userPermissions: item });
     console.log(this.state.userPermissions);
-  };
+  }; */
 
   render() {
     const { selectedItems } = this.state;
@@ -224,57 +298,23 @@ export default class AddUsers extends Component {
               flex: 1,
               padding: 15,
               justifyContent: "center",
-              marginTop: 100,
+              marginTop: 20,
             }}
           >
             <Headline style={{ marginBottom: 10, color: "#698EB7" }}>
               Create Sub User
             </Headline>
-            <TextInput
-              label="Email"
-              placeholder="email@gmail.com"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              onChangeText={(e) => this.setState({ email: e})}
-            />
-            <TextInput
-              label="Username"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              onChangeText={(e) => this.setState({ username: e})}
-            />
-            {/* Drop down  */}
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: "#C4C4C4",
-                borderRadius: 4,
-                paddingVertical: 15,
-                backgroundColor: "#fff",
-              }}
-            >
-              <Picker
+            {this.drawInputs()}
+            <RenderPicker 
+                containerStyle={styles.dropdown}
                 selectedValue={this.state.role}
-                onValueChange={(itemValue, itemIndex) =>
+                onValueChange={(itemValue, itemIndex) => 
                   this.changeRole(itemValue)
                 }
-              >
-                <Picker.Item value={{ id: 0, name: "Roles" }} label="Roles" style={{color:'gray'}}/>
-                {this.state.roles.map((option) => (
-                  <Picker.Item
-                    style={{color:'black'}}
-                    key={option.id}
-                    value={{ id: option.id, name: option.role_name }}
-                    label={option.role_name}
-                  />
-                ))}
-              </Picker>
-            </View>
-            {/* should be a list  */}
+                map={this.state.roles}
+                chosenValue="id"
+                chosenLabel="role_name"
+            />
             <View
               style={{
                 marginVertical: 20,
@@ -305,6 +345,7 @@ export default class AddUsers extends Component {
                   {this.state.userPermissions.length > 0 ? (
                     this.state.userPermissions.map((i,index) => (
                       <Text
+                        key={index}
                         style={{
                           paddingBottom: 5,
                           borderBottomColor: "#DCDCDC",
