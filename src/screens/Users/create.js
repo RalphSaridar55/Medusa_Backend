@@ -24,48 +24,53 @@ import * as apiServices from "../../core/apis/apiUserServices";
 import { AntDesign } from "@expo/vector-icons";
 
 export default class AddUsers extends Component {
-  state = {
-    email: "",
-    subject: "",
-    message: "",
-    company_name:"",
-    username: "",
-    country_id:0,
-    countries:[],
-    country_code:'',
-    state:'',
-    city:'',
-    street:'',
-    phone:'',
-    postal:'',
-    role: {
-      role_id: 0,
-      role_name: "",
-    },
-    docs: "",
-    docsError: "",
-    userPermissions: [],
-    selectedItems: [],
+  constructor(props){
+    super(props)
+    this.myRef = React.createRef();
+    this.state = {
+      email: "",
+      subject: "",
+      message: "",
+      company_name:"",
+      username: "",
+      country_id:0,
+      countries:[],
+      country_code:'',
+      state:'',
+      city:'',
+      street:'',
+      phone:'',
+      postal:'',
+      role: {
+        role_id: 0,
+        role_name: "",
+      },
+      docs: "",
+      docsError: "",
+      userPermissions: [],
+      selectedItems: [],
+  
+      roles: [
+        {
+          created_at: "2021-09-29T14:06:03.480Z",
+          id: 0,
+          num_of_permission: 9,
+          role_name: "Role 1",
+          status: 3,
+          updated_at: "2021-09-29T14:51:56.502Z",
+        }
+      ],
+      permissions: "",
+      docError: true,
+      openPermissions: false,
+      isLoading:false,
+    };
+  }
+  
 
-    roles: [
-      {
-        created_at: "2021-09-29T14:06:03.480Z",
-        id: 0,
-        num_of_permission: 9,
-        role_name: "Role 1",
-        status: 3,
-        updated_at: "2021-09-29T14:51:56.502Z",
-      }
-    ],
-    permissions: "",
-    docError: true,
-    openPermissions: false,
-    isLoading:false,
-  };
-
-  onSelectedItemsChange = (selectedItems) => {
+  /* onSelectedItemsChange = (selectedItems) => {
     this.setState({ selectedItems });
-  };
+  }; */
 
   createUser = () => {
     /* console.log(
@@ -133,7 +138,9 @@ export default class AddUsers extends Component {
       apiServices.addSubUser(payload).then((res) => {
         console.log("RES:\n",res)
         this.setState({isLoading:false});
-        Alert.alert("User Creation",res);
+        Alert.alert("User Creation",res,[
+          {text:"Ok",onPress:()=>this.props.navigation.goBack()}
+        ]);
       }).catch(err =>{
         console.log("Error:\n",err)
         this.setState({isLoading:false});
@@ -156,6 +163,7 @@ export default class AddUsers extends Component {
   
 
   getCountries(){
+    console.log("RUNNING COUNTRIES")
     apiPortfolio.getCountries().then((res)=>{
       this.setState({countries:res})
     })
@@ -164,6 +172,7 @@ export default class AddUsers extends Component {
   componentDidMount() {
     this.getCountries();
     this.getRoles();
+    console.log("REF: ",this.myRef.current.state.collapsed)
     //this.getCompanyName();
   }
 
@@ -186,9 +195,9 @@ export default class AddUsers extends Component {
     this.state.userPermissions;
   } */
 
-  onSelectedItemsChange = (selectedItems) => {
+  /* onSelectedItemsChange = (selectedItems) => {
     this.setState({ selectedItems });
-  };
+  }; */
 
   pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
@@ -280,7 +289,7 @@ export default class AddUsers extends Component {
   }; */
 
   render() {
-    const { selectedItems } = this.state;
+    /* const { selectedItems } = this.state; */
 
     return (
       <ImageBackground
@@ -293,6 +302,7 @@ export default class AddUsers extends Component {
       >
         <ScrollView>
       <Spinner visible={this.state.isLoading} />
+          
           <View
             style={{
               flex: 1,
@@ -301,7 +311,13 @@ export default class AddUsers extends Component {
               marginTop: 20,
             }}
           >
-            <Headline style={{ marginBottom: 10, color: "#698EB7" }}>
+            <Headline style={{ marginBottom: 10, color: "#698EB7" }} onPress={()=>{
+              console.log("PRESSED");
+              if(this.myRef.current.state.collapsed)
+                this.myRef.current.toggle();
+              /* this.myRef.current.state.collapsed=!this.myRef.current.state.collapsed; */
+              console.log("COLLAPSED: ",this.myRef.current.state.collapsed)
+              }}>
               Create Sub User
             </Headline>
             {this.drawInputs()}
@@ -324,6 +340,7 @@ export default class AddUsers extends Component {
               }}
             >
               <CollapsibleList
+                ref={this.myRef}
                 numberOfVisibleItems={0}
                 buttonPosition="top"
                 wrapperStyle={{ backgroundColor: "#fff" }}

@@ -262,6 +262,7 @@ export default class Registartion extends Component {
   };
 
   verifyNumber = () =>{
+    this.setState({overlay:"otp",showTerms:true})
     if(!this.state.verifiedNumber){
       if(this.state.phoneNumber<8 || this.state.countryCode<3){
         Alert.alert("Error","Please insert a valid country code and phone number before verifying.");
@@ -272,6 +273,7 @@ export default class Registartion extends Component {
           owner_country_code:this.state.countryCode,
           owner_mobile_number:this.state.phoneNumber
         }
+        //this.setState({overlay:"otp",showTerms:true})
         UserApi.sendOtp(payload).then((res)=>{
           console.log("RES:",res);
           if(res.statusCode){
@@ -1004,7 +1006,7 @@ export default class Registartion extends Component {
         resizeMode="cover"
         style={signupStyle.imgContainer}
       ><Overlay visible={this.state.showTerms} onClose={()=>this.setState({showTerms:false})} 
-      containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
+      containerStyle={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
       closeOnTouchOutside>
                       
           <View style={styles.modalHeader}>

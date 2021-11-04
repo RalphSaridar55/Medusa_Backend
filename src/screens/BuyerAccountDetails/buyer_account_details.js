@@ -10,6 +10,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
+import { accountDetails1, addresses, telephone } from "./map";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInput } from "react-native-paper";
 import styles from "./style_buyer";
@@ -20,10 +21,11 @@ import { AntDesign } from '@expo/vector-icons';
 import { validatePathConfig } from "@react-navigation/core";
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 import Spinner from "react-native-loading-spinner-overlay";
-import {HeadContext} from '../../../App';
+//import {HeadContext} from '../../../App';
+import { RenderPicker } from "../../components/Picker";
 
 class BuyreAccount extends Component {
-  static contextType = HeadContext
+  //static contextType = HeadContext
 
   constructor(props) {
     super(props);
@@ -132,27 +134,6 @@ class BuyreAccount extends Component {
           }
           style={styles.docPicker}
         />
-        {/* <TouchableOpacity
-          color="#6E91EC"
-          icon="file"
-          mode="outlined"
-          onPress={() =>
-            e.typeDoc == "Trading License"
-              ? this.pickDocument("Trade")
-              : this.pickDocument("Passport")
-          }
-          style={styles.docPicker}
-        >
-          <AntDesign name="file1" size={24} color="#6E91EC" />
-          <Text style={{ color: "gray" }}>{e.typeDoc}</Text>
-          {(e.typeDoc == "Company Registration" &&
-            this.state.companyError == true) ||
-          (e.typeDoc == "Trading License" && this.state.tradingError == true) ? (
-            <AntDesign name="closecircle" size={24} color="red" />
-          ) : (
-            <AntDesign name="checkcircle" size={24} color="green" />
-          )}
-        </TouchableOpacity> */}
       </View>
     );
   };
@@ -178,70 +159,10 @@ class BuyreAccount extends Component {
         console.log(error);
       }
     }
-    /* e.typeDoc==="Trade"?console.log("test"):console.log(123);
-        this.setState({ docs: result.uri })
-        alert(result.uri); */
   };
 
   _discardAction = () => {
     this.props.navigation.navigate("Home")
-    /* console.log("running");
-    for(var key of Object.keys(this.state)){
-      if(typeof(this.state[key]) ==="boolean"){
-        this.setState({...this.state,[key]:false})
-      }
-      else if(typeof(this.state[key]) ==="string"){
-        this.setState({...this.state,[key]:""})
-      }
-      else if(typeof(this.state[key]) ==="number"){
-        this.setState({...this.state,[key]:0})
-      }
-    }
-    this.setState({
-      email: "",
-      emailError: false,
-      address:'',
-      addressError:false,
-      oldPassword: "",
-      oldPasswordError: false,
-      password: "",
-      passwordError: false,
-      confirmPassword: "",
-      confirmPasswordError: false,
-      country:[{
-          label:'Country',
-          value:0
-      }],
-      website: "",
-      websiteError: false,
-      code: "",
-      codeError: false,
-      phone: "",
-      phoneError: false,
-      phone: "",
-      phoneError: false,
-      state:"",
-      stateError:false,
-      city:"",
-      cityError:false,
-      street:"",
-      streetError:false,
-      postal:"",
-      postalError:false,
-      hideOldPassword: true,
-      hidePassword: true,
-      hideConfirmPassword: true,
-      trading:'',
-      tradingError:true,
-      company:'',
-      companyError:true,
-
-      defaultLanding:"DASHBOARD",
-      defaultLandingPages:[
-          {label:'Dashboard',value:'DASHBOARD'},
-          {label:'Home',value:'HOME'}
-      ]
-    }); */
   };
 
   _ApplyChanges = () => {
@@ -302,6 +223,32 @@ class BuyreAccount extends Component {
     
   };
 
+  drawInput=()=>{
+    return accountDetails1.map((item,index)=>{
+      return(
+        <TextInput
+              key={index}
+              error={this.state[item.error]}
+              label={item.label}
+              placeholder={item.placeholder}
+              mode="outlined"
+              outlineColor="#C4C4C4"
+              theme={{ colors: { primary: "#31c2aa" } }}
+              style={styles.inputView}
+              value={this.state[item.value]}
+              onChangeText={(e) => this.setState({ [item.value]: e })}
+              
+              onBlur={()=>{
+                if(this.state[item.value].length<1)
+                    this.setState({[item.error]:true})
+                else
+                    this.setState({[item.error]:false})
+            }}
+            />
+      )
+    })
+  }
+
   render() {
     //should apply validation
     //for the inputText
@@ -326,105 +273,26 @@ class BuyreAccount extends Component {
           <ScrollView
           showsVerticalScrollIndicator={false}>
             <Text style={styles.header}>Account Details</Text>
-            <TextInput
-              error={this.state.emailError}
-              label="Email"
-              placeholder="email@gmail.com"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              value={this.state.email}
-              onBlur={() => {
-                if (
-                  this.state.email.length > 1 &&
-                  !/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(
-                    this.state.email
-                  )
-                )
-                  this.setState({ emailError: true });
-                else {
-                  this.setState({ emailError: false });
-                }
-              }}
-              onChangeText={(e) => this.setState({ email: e })}
-            />
-            <TextInput
-              error={this.state.addressError}
-              label="Registered Address"
-              placeholder="Address"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              value={this.state.address}
-              onBlur={()=>{
-                    if(this.state.address.length<1)
-                        this.setState({addressError:true})
-                    else
-                        this.setState({addressError:false})
-              }}
-              onChangeText={(e) => this.setState({ address: e })}
-            />
-            <TextInput
-              error={this.state.websiteError}
-              label="Website"
-              placeholder="web.com"
-              mode="outlined"
-              outlineColor="#C4C4C4"
-              theme={{ colors: { primary: "#31c2aa" } }}
-              style={styles.inputView}
-              value={this.state.website}
-              onBlur={() => {
-                if (
-                  this.state.website.length > 1 &&
-                  !/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/.test(
-                    this.state.website
-                  )
-                )
-                  this.setState({ websiteError: true });
-                else this.setState({ websiteError: false });
-              }}
-              onChangeText={(e) => this.setState({ website: e })}
-            />
+            {this.drawInput()}
             <View style={{ flexDirection: "row" }}>
-              <TextInput
-                error={this.state.codeError}
-                label="Code"
-                placeholder="+961"
+              {telephone.map((item,index)=><TextInput
+                key={index}
+                error={this.state[item.error]}
+                label={item.label}
+                placeholder={item.placeholder}
                 mode="outlined"
                 outlineColor="#C4C4C4"
                 theme={{ colors: { primary: "#31c2aa" } }}
                 style={styles.inputV}
-                value={this.state.code}
-                onBlur={() => {
-                  if (
-                    !/^(\++\d{3,4})$/.test(this.state.code) &&
-                    this.state.code.length > 0
-                  )
-                    this.setState({ codeError: true });
-                  else this.setState({ codeError: false });
-                }}
-                onChangeText={(e) => this.setState({ code: e })}
-              />
-              <TextInput
-                error={this.state.phoneError}
-                label="Phone Number"
-                placeholder="70909090"
-                keyboardType="numeric"
-                mode="outlined"
-                outlineColor="#C4C4C4"
-                theme={{ colors: { primary: "#31c2aa" } }}
-                style={styles.input_V}
-                value={this.state.phone}
+                value={this.state[item.value]}
+                onChangeText={(e) => this.setState({ [item.value]: e })}
                 onBlur={()=>{
-                    if(this.state.phone.length<1)
-                        this.setState({phoneError:true})
-                    else
-                        this.setState({phoneError:false})
-                }}
-                onChangeText={(e) => this.setState({ phone: e })}
-              />
+                  if(this.state[item.value].length<1)
+                      this.setState({[item.error]:true})
+                  else
+                      this.setState({[item.error]:false})
+              }}
+              />)}
             </View>
             <TextInput
               error={this.state.oldPasswordError}
@@ -510,8 +378,9 @@ class BuyreAccount extends Component {
                 />
               }
             />
-            <View
-              style={{
+            <RenderPicker 
+              selectedValue={this.state.country}
+              containerStyle={{
                 borderWidth: 1,
                 marginVertical:10,
                 borderColor: "#C4C4C4",
@@ -519,93 +388,36 @@ class BuyreAccount extends Component {
                 paddingVertical: 15,
                 backgroundColor: "#fff",
               }}
-            >
-            <Picker
-              selectedValue={this.state.country}
               onValueChange={(itemValue, itemIndex) =>{
                 this.setState({ country: itemValue })
                 console.log("COUNTRY VALUE: ",itemValue)
-                }
-              }
-            >
-                {this.state.countries?.map((item,index)=>(
-                    <Picker.Item key={index} label={item.label} value={item.value} />
-                ))}
-            </Picker>
-            </View>
-            <TextInput
-                error={this.state.stateError}
-                label="State"
-                placeholder="State"
-                mode="outlined"
-                outlineColor="#C4C4C4"
-                theme={{ colors: { primary: "#31c2aa" } }}
-                style={styles.input_V}
-                value={this.state.state}
-                onBlur={()=>{
-                    if(this.state.state.length<1)
-                        this.setState({stateError:true})
-                    else
-                        this.setState({stateError:false})
                 }}
-                onChangeText={(e) => this.setState({ state: e })}
-              />
-            <TextInput
-                error={this.state.cityError}
-                label="City"
-                placeholder="City"
-                mode="outlined"
-                outlineColor="#C4C4C4"
-                theme={{ colors: { primary: "#31c2aa" } }}
-                style={styles.input_V}
-                value={this.state.city}
-                onBlur={()=>{
-                    if(this.state.city.length<1)
-                        this.setState({cityError:true})
-                    else
-                        this.setState({cityError:false})
-                }}
-                onChangeText={(e) => this.setState({ city: e })}
+              map={this.state.countries}
             />
-            <TextInput
-                error={this.state.streetError}
-                label="Street"
-                placeholder="Street"
+            {addresses.map((item,index)=><TextInput
+                key={index}
+                error={this.state[item.error]}
+                label={item.label}
+                placeholder={item.placeholder}
                 mode="outlined"
                 outlineColor="#C4C4C4"
                 theme={{ colors: { primary: "#31c2aa" } }}
                 style={styles.input_V}
-                value={this.state.street}
+                value={this.state[item.value]}
                 onBlur={()=>{
-                    if(this.state.street.length<1)
-                        this.setState({streetError:true})
+                    if(this.state[item.value].length<1)
+                        this.setState({[item.error]:true})
                     else
-                        this.setState({streetError:false})
+                        this.setState({[item.error]:false})
                 }}
-                onChangeText={(e) => this.setState({ street: e })}
-              />
-              <TextInput
-                  error={this.state.postalError}
-                  label="Postal Code"
-                  placeholder="Postal Code"
-                  mode="outlined"
-                  outlineColor="#C4C4C4"
-                  theme={{ colors: { primary: "#31c2aa" } }}
-                  style={styles.input_V}
-                  value={this.state.postal}
-                  onBlur={()=>{
-                      if(this.state.postal.length<1)
-                          this.setState({postalError:true})
-                      else
-                          this.setState({postalError:false})
-                  }}
-                  onChangeText={(e) => this.setState({ postal: e })}
-                />
+                onChangeText={(e) => this.setState({ [item.value]: e })}
+              />)}
               {this.DrawTouchableOpacity({typeDoc:"Company Registration"},1)}
               {this.DrawTouchableOpacity({typeDoc:"Trading License"},2)}
             
-              {this.state.userdata?.user_type==4&&<View
-              style={{
+              {this.state.userdata?.user_type==4&&<RenderPicker 
+              selectedValue={this.state.defaultLanding}
+              containerStyle={{
                 borderWidth: 1,
                 marginVertical:10,
                 borderColor: "#C4C4C4",
@@ -613,20 +425,11 @@ class BuyreAccount extends Component {
                 paddingVertical: 15,
                 backgroundColor: "#fff",
               }}
-            >  
-            <Picker
-              selectedValue={this.state.defaultLanding}
               onValueChange={(itemValue, itemIndex) =>{
                 this.setState({ defaultLanding: itemValue })
                 console.log("COUNTRY VALUE: ",itemValue)
-                }
-              }
-            >
-                {this.state.defaultLandingPages?.map((item,index)=>(
-                    <Picker.Item key={index} label={`Landing Page: ${item.label}`} value={item.value} />
-                ))}
-            </Picker>
-            </View>}
+                }}
+              map={this.state.defaultLandingPages}/>}
           </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>

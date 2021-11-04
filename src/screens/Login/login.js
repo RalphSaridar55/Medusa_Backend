@@ -10,7 +10,7 @@ import { passwordValidator } from "../../helpers/passwordValidator";
 import * as Device from "expo-device";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as apiServices from "../../core/apis/apiUserServices";
-import {HeadContext} from '../../../App';
+/* import {HeadContext} from '../../../App'; */
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -24,7 +24,7 @@ export default function Login({ navigation }) {
    * @returns to login page when user credentials are validated
    */
 
-  const { setUserData,userData,product,setProduct } = useContext(HeadContext);
+  //const { setUserData,userData,product,setProduct } = useContext(HeadContext);
 
   const storeData =async(key,value)=>{
     try {
