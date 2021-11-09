@@ -173,7 +173,7 @@ class CustomDrawer extends Component {
               icon={() => (
                 <FontAwesome5
                   name="handshake"
-                  size={24}
+                  size={20}
                   color={this.props.screenC=="Negotiations" ? "#6E91EC" : "black"}
                 />
               )}

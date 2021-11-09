@@ -9,6 +9,12 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 5
       },
+      inputView: {
+        backgroundColor: "#fff",
+        marginBottom: 10,
+        borderRadius: 25,
+        flex: 1
+    },
       cardContainer:{
         backgroundColor:'#fff',
         borderWidth:1,
@@ -62,11 +68,21 @@ export const styles = StyleSheet.create({
     },
     modalBoxInputs:{
         borderWidth:0.5,
-        borderColor:'#31c2aa',
-        borderRadius:10,
-        width:screenWidth*0.7,
-        paddingHorizontal:10,
-        paddingVertical:10,
-        marginVertical:5
+        borderRadius:5,
+        paddingHorizontal:5,
+        paddingVertical:14,
+        marginVertical:5,
+        borderColor:"#C4C4C4",
+        color:"#C4C4C4",
+        flex:1,
     },
+    pickerstyle:{
+        borderWidth:0.5,
+        borderRadius:5,
+        paddingHorizontal:5,
+        paddingVertical:14,
+        marginVertical:5,
+        borderColor:"#C4C4C4",
+        color:"#C4C4C4"
+    }
 })

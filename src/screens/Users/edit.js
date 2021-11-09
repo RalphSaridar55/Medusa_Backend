@@ -163,16 +163,6 @@ export default class EditUsers extends Component {
     }
   };
 
-
-  deleteSubUser = (id) => {
-    apiServices.deleteSubUsers(id).then((res) => {
-      console.log("Deleted", res);
-      this.props.navigation.navigate("UserList");
-    }).catch(err=>{
-      Alert.alert("Error",err.response.data.message);
-    });
-  };
-
   pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
     let test = docValidator(result.name);
@@ -356,25 +346,7 @@ export default class EditUsers extends Component {
               }}
             >
               <Headline style={{ color: "#698EB7" }}>Edit Sub User</Headline>
-              <Ionicons
-                name="trash-outline"
-                size={30}
-                color="red"
-                onPress={() =>
-                  Alert.alert(
-                    "Delete Sub-user",
-                    "Are you sure you want to delete this sub-user?",
-                    [
-                      { text: "No", onPress: () => console.log("refused") },
-                      {
-                        text: "Yes",
-                        onPress: () =>
-                          this.deleteSubUser(this.state.userDataToEdit.id),
-                      },
-                    ]
-                  )
-                }
-              />
+              
             </View>
             {this.drawInputs()}
             
