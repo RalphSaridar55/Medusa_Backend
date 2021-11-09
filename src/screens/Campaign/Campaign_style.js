@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
         alignItems:'center', */
         borderColor:'lightgray',
         marginVertical: 20,
-        paddingVertical:40,
+        paddingVertical:20,
         borderRadius:20,
         shadowColor: "#000",
         shadowOffset: {

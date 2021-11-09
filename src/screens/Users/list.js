@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../../components/Header";
 import { Headline } from "react-native-paper";
 import styles from "./list_style";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const height = Dimensions.get("screen").height;
 const width = Dimensions.get("screen").width;
@@ -140,9 +141,8 @@ export default class Users extends Component {
             this.props.navigation.navigate("UserEdit", { item: item })
           }
         >
-          <View style={styles.row}>
-            <Image source={{ uri: this.state.image }} style={styles.pic} />
-            <View>
+        <View style={styles.Container}>
+          <View style={styles.leftContainer}>
               <View style={styles.nameContainer}>
                 <Text
                   style={styles.nameTxt}
@@ -152,15 +152,38 @@ export default class Users extends Component {
                   {item.username}
                 </Text>
               </View>
-              <View style={styles.msgContainer}>
-                <Text style={styles.msgTxt}>{item.role_name}</Text>
-              </View>
             </View>
-          </View>
-            <View>
-              <Text style={styles.mblTxt}>
-                Last Active {item.last_login.substr(0, 10)}
-              </Text>
+            <View style={styles.rightContainer}>
+              <View style={styles.iconsContainer}>
+                <Icon
+                  name="pencil-outline"
+                  color="gray"
+                  size={24}
+                  style={{ position: "relative", right: 20 }}
+                  onPress={() =>
+                    props.navigation.navigate("Addresses", {
+                      type: "edit",
+                      item: i,
+                    })
+                  }
+                />
+                <Icon
+                  name="trash-can-outline"
+                  color="red"
+                  size={24}
+                  onPress={() =>
+                    Alert.alert(
+                      "Delete Address",
+                      "Are you sure you want to delete this address?",
+                      [
+                        { text: "No", onPress: () => console.log("refused") },
+                        { text: "Yes", onPress: () => deleteAdress(i.id) },
+                      ]
+                    )
+                  }
+                />
+                </View>
+              </View>
             </View>
         </TouchableOpacity>
       </View>

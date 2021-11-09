@@ -79,6 +79,7 @@ class CustomDrawer extends Component {
     let user = JSON.parse( await AsyncStorage.getItem('user_details'));
     let change = {...user,user_type:currentType==4?1:4}
     AsyncStorage.setItem('user_details',JSON.stringify(change))
+    this.props.userType=currentType==4?1:4;
   }
 
   render(){
@@ -360,6 +361,7 @@ class CustomDrawer extends Component {
           <TouchableOpacity
             onPress={() => {
               this.closeCollapsible();
+              this.props.navigation.navigate('Home');
               this.changeUserType(this.props.userType)
             }}
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}

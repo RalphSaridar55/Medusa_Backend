@@ -1,11 +1,18 @@
 import { StyleSheet } from "react-native";
+import {
+    responsiveScreenHeight,
+    responsiveScreenWidth,
+    responsiveScreenFontSize,
+    responsiveHeight,
+    responsiveWidth,
+  } from "react-native-responsive-dimensions";
 
 const styles = StyleSheet.create({
-    mainContainer:{
+    /* mainContainer:{
         display:'flex',
         justifyContent:'center',
         //marginTop:20,
-    },  
+    },   */
     row: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -20,6 +27,7 @@ const styles = StyleSheet.create({
         height: 40,
     },
     nameContainer: {
+        justifyContent: "space-between",
     },
     touchable:{
         display: "flex",
@@ -35,6 +43,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#222',
         fontSize: 18,
+        alignItems: "flex-end",
     },
     mblTxt: {
         fontWeight: '200',
@@ -50,6 +59,7 @@ const styles = StyleSheet.create({
         color: '#008B8B',
         fontSize: 12,
         marginLeft: 15,
+        alignItems: "flex-start",
     },
     loginBtnContainer:{
         //backgroundColor:'red'
@@ -60,12 +70,42 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        margin: 15,
+        marginHorizontal: 70,
     },
     loginText: {
         color: "white",
         fontSize:18
     },
+    listIcon: {
+        marginRight: 15,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      rightContainer: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        width: responsiveWidth(15),
+      },
+      iconsContainer: {
+        display: "flex",
+        flexDirection: "row",
+      },
+      Container: {
+        display: "flex",
+        flexDirection: "row",
+      },
+      leftContainer: {
+        flexDirection: "column",
+        justifyContent: "space-between",
+        width: responsiveWidth(65),
+      },
+      pic: {
+        borderRadius: 30,
+        width: 40,
+        height: 40,
+      },
 });
 
 export default styles;
