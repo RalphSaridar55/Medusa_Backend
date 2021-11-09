@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../../components/Header";
 import { Headline } from "react-native-paper";
 import styles from "./list_style";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const height = Dimensions.get("screen").height;
 const width = Dimensions.get("screen").width;
@@ -24,78 +25,9 @@ const width = Dimensions.get("screen").width;
 export default class Users extends Component {
   constructor(props) {
     super(props);
-    //this.getSubUsers();
     this.state = {
       isLoading: true,
-      image:
-        "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
       users: [],
-      calls: [
-        {
-          id: 1,
-          name: "User 1",
-          status: "Last Active 1/2/2021 ",
-          role: "Admin",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 2,
-          name: "User 2",
-          status: "Last Active 1/2/2021 ",
-          role: "Employee",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 3,
-          name: "User 3",
-          status: "Last Active 1/2/2021 ",
-          role: "Admin",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 4,
-          name: "User 4",
-          status: "Last Active 1/2/2021 ",
-          role: "Manager",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 5,
-          name: "Erick Doe",
-          status: "Last Active 1/2/2021 ",
-          role: "Manager",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 6,
-          name: "Francis Doe",
-          status: "Last Active 1/2/2021 ",
-          role: "Admin",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 8,
-          name: "Matilde Doe",
-          status: "Last Active 1/2/2021 ",
-          role: "Employee",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-        {
-          id: 9,
-          name: "John Doe",
-          status: "Last Active 1/2/2021 ",
-          role: "Admin",
-          image:
-            "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
-        },
-      ],
     };
   }
 
@@ -140,9 +72,8 @@ export default class Users extends Component {
             this.props.navigation.navigate("UserEdit", { item: item })
           }
         >
-          <View style={styles.row}>
-            <Image source={{ uri: this.state.image }} style={styles.pic} />
-            <View>
+          <View style={styles.Container}>
+            <View style={styles.leftContainer}>
               <View style={styles.nameContainer}>
                 <Text
                   style={styles.nameTxt}
@@ -151,17 +82,44 @@ export default class Users extends Component {
                 >
                   {item.username}
                 </Text>
-              </View>
-              <View style={styles.msgContainer}>
                 <Text style={styles.msgTxt}>{item.role_name}</Text>
+                <Text style={styles.mblTxt}>
+                  Last Active {item.last_login.substr(0, 10)}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.rightContainer}>
+              <View style={styles.iconsContainer}>
+                <Icon
+                  name="pencil-outline"
+                  color="gray"
+                  size={24}
+                  style={{ position: "relative", right: 20 }}
+                  onPress={() =>
+                    props.navigation.navigate("Addresses", {
+                      type: "edit",
+                      item: i,
+                    })
+                  }
+                />
+                <Icon
+                  name="trash-can-outline"
+                  color="red"
+                  size={24}
+                  onPress={() =>
+                    Alert.alert(
+                      "Delete Address",
+                      "Are you sure you want to delete this address?",
+                      [
+                        { text: "No", onPress: () => console.log("refused") },
+                        { text: "Yes", onPress: () => deleteAdress(i.id) },
+                      ]
+                    )
+                  }
+                />
               </View>
             </View>
           </View>
-            <View>
-              <Text style={styles.mblTxt}>
-                Last Active {item.last_login.substr(0, 10)}
-              </Text>
-            </View>
         </TouchableOpacity>
       </View>
     );
@@ -177,7 +135,7 @@ export default class Users extends Component {
             flexDirection: "column",
           }}
         >
-          <View style={styles.mainContainer}>
+          <View>
             <Headline
               style={{ margin: 20, marginVertical: 20, color: "#698EB7" }}
             >
@@ -194,9 +152,7 @@ export default class Users extends Component {
               renderItem={this.renderItem}
             />
           </View>
-        </View>
 
-        <View style={[styles.loginBtnContainer,{marginHorizontal:20}]}>
           <TouchableOpacity
             style={styles.loginBtn}
             onPress={() => this.props.navigation.navigate("UserCreate")}

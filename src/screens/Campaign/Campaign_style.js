@@ -5,11 +5,9 @@ export const styles = StyleSheet.create({
         backgroundColor:'#fff',
         borderWidth:1,
         display:'flex',
-        /* justifyContent:'center',
-        alignItems:'center', */
         borderColor:'lightgray',
         marginVertical: 20,
-        paddingVertical:40,
+        paddingVertical:20,
         borderRadius:20,
         shadowColor: "#000",
         shadowOffset: {

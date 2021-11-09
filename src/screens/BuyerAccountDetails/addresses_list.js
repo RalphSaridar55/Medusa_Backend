@@ -15,22 +15,6 @@ import { Headline } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 
 const AdressList = (props) => {
-  const data = [
-    {
-      id: 1,
-      country: "India1",
-      city: "Lorem",
-      street: "Lorem Ipsum Lorem Lorem Ipsum Lorem",
-      current: true,
-    },
-    {
-      id: 2,
-      country: "India2",
-      city: "Lorem",
-      street: "Lorem Ipsum Lorem Lorem Ipsum Lorem",
-      current: false,
-    },
-  ];
   const [deleted, setDeleted] = useState(false);
   const [adressList, setAdressList] = useState();
   const [countries, setCountries] = useState([]);
@@ -47,26 +31,8 @@ const AdressList = (props) => {
     });
     apiServices.getAddresses().then((res) => {
       console.log("API DATA", res.data);
-      //getUserId(res
-      console.log("RESULT: ", res.data);
       setAdressList(res.data);
       setIsVisible(false);
-      /*  
-      let arr=[]
-      let arr2=[]
-      res.data.map((i)=>{
-        countries.filter((id)=>{
-          return id.value === i.country_id
-        }).then((re)=>{
-          arr.push(re[0].label)
-        })
-      })
-      res.data.map((i,index)=>{
-        console.log("DATA IS: ",arr[index])
-        arr2.push({...i,country_name:arr[index]})
-      })
-      console.log("ARRAY BECOMES, ",arr2)
-      setAdressList(arr2);  */
     });
   }, []);
 
@@ -77,15 +43,10 @@ const AdressList = (props) => {
   useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
       handleAddresses();
-      //Put your Data loading function here instead of my loadData()
     });
 
     return unsubscribe;
   }, [props.navigation]);
-
-  const handleAdd = () => {
-    //api function
-  };
 
   const deleteAdress = (id) => {
     //api function
@@ -94,39 +55,21 @@ const AdressList = (props) => {
     let payload = {
       address_id: id,
     };
-    apiServices.deleteAddresses(payload).then((res) => {
-      console.log(res);
-      setIsVisible(false);
-      setDeleted(!deleted);
-    }).catch(err=>{
-      setIsVisible(false);
-      Alert.alert("Error",err.response.data.message)
-    });
+    apiServices
+      .deleteAddresses(payload)
+      .then((res) => {
+        console.log(res);
+        setIsVisible(false);
+        setDeleted(!deleted);
+      })
+      .catch((err) => {
+        setIsVisible(false);
+        Alert.alert("Error", err.response.data.message);
+      });
 
     setAdressList(adressList.filter((i) => i.id != id));
   };
 
-  const fetchData = () => {};
-
-  /* const getUserId = async (res) => {
-    try {
-      console.log("+++Inside the AsyncStorage Function");
-      const value = await AsyncStorage.getItem("user_id");
-      console.log("user id is ", value);
-
-      if (value !== null) {
-        // We have data!!
-        setUserId(value);
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
-  }; */
-
-  const changeCurrentAdress = (id) => {
-    console.log(id);
-    //api function
-  };
   return (
     <ImageBackground
       source={require("../../../assets/images/Login-bg.png")}
@@ -137,36 +80,36 @@ const AdressList = (props) => {
       }}
     >
       <Spinner visible={isVisible} />
-      <Headline style={{ margin: 15, marginTop: 20, color: "#698EB7" }}>
-        Addresses
-      </Headline>
+
       <ScrollView
         style={{ flex: 1, paddingHorizontal: 15, marginTop: 20 }}
         showsVerticalScrollIndicator={false}
       >
         {adressList?.map((i, index) => (
           <TouchableOpacity
-            onPress={() =>
-              props.navigation.navigate("Addresses", { type: "view", item: i })
-            }
             key={index}
             style={styles.listContainer}
+            onPress={() =>
+              props.navigation.navigate("Addresses", {
+                type: "edit",
+                item: i,
+              })
+            }
           >
-            <View style={styles.listIcon}>
-              <Icon name="home-outline" size={40} color="gray" />
-            </View>
-            <View>
-              <Text style={styles.listCountry}>
-                {
-                  countries?.filter((s) => s.value === i.country_id)[0]?.label}
-              </Text>
-              <Text style={styles.listCity}>{i.city}</Text>
-              <Text style={styles.listStreet}>{i.street.substr(0, 100)}</Text>
+            <View style={styles.Container}>
+              <View style={styles.listIcon}>
+                <Icon name="home-outline" size={30} color="gray" />
+              </View>
+              <View style={styles.leftContainer}>
+                <Text style={styles.listCountry}>
+                  {countries?.filter((s) => s.value === i.country_id)[0]?.label}
+                </Text>
+                <Text style={styles.listCity}>
+                  {i.city + "," + i.state + "," + i.street}
+                </Text>
+              </View>
             </View>
             <View style={styles.rightContainer}>
-              <View style={styles.postalContainer}>
-                <Text style={{ color: "#C0C0C0" }}>{i.postal_code + ""}</Text>
-              </View>
               <View style={styles.iconsContainer}>
                 <Icon
                   name="pencil-outline"
@@ -199,18 +142,15 @@ const AdressList = (props) => {
             </View>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity
+          style={styles.Btn}
+          onPress={() =>
+            props.navigation.navigate("Addresses", { type: "add" })
+          }
+        >
+          <Text style={{ color: "#fff" }}>ADD NEW ADDRESS</Text>
+        </TouchableOpacity>
       </ScrollView>
-      <TouchableOpacity
-        style={styles.Btn}
-        onPress={() => props.navigation.navigate("Addresses", { type: "add" })}
-      >
-        <Icon name="plus-thick" size={30} color="white" />
-        {/*                     <IconButton
-             icon="plus"
-             size={20}
-             onPress={() => console.log('Pressed')}
-         /> */}
-      </TouchableOpacity>
     </ImageBackground>
   );
 };
