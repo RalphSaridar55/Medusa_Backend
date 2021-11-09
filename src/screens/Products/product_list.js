@@ -108,13 +108,13 @@ export default class ProductList extends Component {
                     })
                 break; 
             case 'reset':
-                this.setState({filterProducts:fetchedProducts.sort((a,b)=>
+                this.setState({filterProducts:this.state.fetchedProducts.sort((a,b)=>
                     a.product_name[0] > b.product_name[0]?1:-1),category:[],subcategory:[],brand:[]})
                 break;
         }  
     }   
 
-    setColor(selection){
+    /* setColor(selection){
         console.log(selection)
         if(selection.length>1){
             Alert.alert("Category Error","You can't pick more than one color")
@@ -126,7 +126,7 @@ export default class ProductList extends Component {
             let result = this.state.data.filter((i)=>i.color == selection[0].label)
             this.setState({data:result,color:selection})
         }
-    }    
+    }     */
 
     setBrand(selection){
         console.log(selection)
@@ -142,6 +142,15 @@ export default class ProductList extends Component {
         }
     }    
 
+    resetEverything(){
+        this.setState({
+            category:[],
+            subcategory:[],
+            brand:[],
+        })
+        this.SortingByData('reset');
+        this.resetPriceRange();
+    }
 
     setSubCategory(selection){
         console.log(selection)
@@ -303,42 +312,47 @@ export default class ProductList extends Component {
                         <Appbar.Action icon="filter-menu" onPress={() => {
                             actionSheetCat.current?.setModalVisible();
                         }} /><Appbar.Action icon="magnify" onPress={()=> this.onclick()}
-                            style={!this.state.showSearch&&{backgroundColor:'#31C2AA'}}  color={!this.state.showSearch?"#E9F3FF":"black"}/>
+                            style={this.state.showSearch&&{backgroundColor:'#31C2AA'}}  color={this.state.showSearch?"#E9F3FF":"black"}/>
                     </Appbar>
                 </View>
-                <View style={{paddingHorizontal:10,paddingVertical:10,}}>
+                <View style={{paddingHorizontal:10,paddingVertical:10,marginHorizontal:10}}>
                     <Searchbar
                         onChangeText={(e)=>this.setState({search:e})}
                         placeholder="Search"
-                        style={{ display: this.state.showSearch ? 'none' : 'flex', }}
+                        style={{ display: !this.state.showSearch ? 'none' : 'flex', }}
                     />
                 </View>
-                <FlatList style={styles.list}
-                    contentContainerStyle={styles.listContainer}
-                    data={this.state.filterProducts.filter
-                        (i=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase()))}
-                    horizontal={false}
-                    numColumns={2}
-                    keyExtractor={(item) => {
-                        return item.id;
-                    }}
-                    renderItem={({ item }) => {
-                        return (
-                            <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
-                                <View style={styles.cardHeader}>
-                                </View>
-                                <Image style={styles.userImage} source={{ uri: item.images[0].media }}  resizeMode="contain"/>
-                                <View style={styles.cardFooter}>
-                                    <View style={{ alignItems: "center", justifyContent: "center" }}>
-                                        <Text style={styles.name}>{item.product_name}</Text>
-                                        <Text style={styles.position}>${item.price} / Piece</Text>
-                                        <Text style={styles.position}>Available Qu. {item.current_stock}</Text>
-                                        <Text style={styles.position}> Min. Order {item.min_purchase_qty}</Text>
+                {this.state.category.length>0 && <View style={styles.filterContainer}>
+                    <Text style={styles.filterText}>Filtered By: {this.state.category[0]?.label} {this.state.subcategory[0]?.label} {this.state.brand[0]?.label}</Text>
+                </View>}
+                <ScrollView>
+                    <FlatList style={styles.list}
+                        contentContainerStyle={styles.listContainer}
+                        data={this.state.filterProducts.filter
+                            (i=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase()))}
+                        horizontal={false}
+                        numColumns={2}
+                        keyExtractor={(item) => {
+                            return item.id;
+                        }}
+                        renderItem={({ item }) => {
+                            return (
+                                <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
+                                    <View style={styles.cardHeader}>
                                     </View>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    }} />
+                                    <Image style={styles.userImage} source={{ uri: item.images[0].media }}  resizeMode="contain"/>
+                                    <View style={styles.cardFooter}>
+                                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                                            <Text style={styles.name}>{item.product_name}</Text>
+                                            <Text style={styles.position}>${item.price} / Piece</Text>
+                                            <Text style={styles.position}>Available Qu. {item.current_stock}</Text>
+                                            <Text style={styles.position}> Min. Order {item.min_purchase_qty}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        }} />
+                </ScrollView>
                 <ActionSheet ref={actionSheetRef}>
                     <ScrollView >
                         <View style={{ flexDirection: 'column', padding: 10 }} >
@@ -392,8 +406,21 @@ export default class ProductList extends Component {
                 </ActionSheet>
                 <ActionSheet ref={actionSheetCat}>
                     <ScrollView >
-                        <View >
-                            <Title style={{ padding: 10 }}>Filter By </Title>
+                        <View>
+                            <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
+                                <Title style={{ padding: 10,flex:1 }}>Filter By </Title>
+                                <Title style={{ padding: 10,flex:1, alignItems:'flex-end',paddingHorizontal:20,color:'#6E91EC'},styles.resetButton }
+                                onPress={()=>{
+                                    //console.log("Test")
+                                    this.resetEverything()
+                                }}>Reset </Title>
+                                        {/* <TouchableOpacity style={[styles.resetButton,{paddingHorizontal:10,alignSelf:'center',justifyContent:'center'}]}
+                                                onPress={()=>this.resetPriceRange()}>
+                                                    <Text style={styles.resetText}>
+                                                        Reset
+                                                    </Text>
+                                        </TouchableOpacity> */}
+                            </View>
                             <List.AccordionGroup>
                                 <List.Accordion title="Categories" id="1" style={{ width: "100%" }}
                                         theme={{
@@ -451,13 +478,16 @@ export default class ProductList extends Component {
                                         maximumTrackTintColor="#6E91EC"
                                         thumbTintColor="#6E91EC"
                                     />
-                                    <TouchableOpacity style={styles.resetButton}
-                                    onPress={()=>this.resetPriceRange()}>
-                                        <Text style={styles.resetText}>
-                                            Reset
-                                        </Text>
-                                    </TouchableOpacity>
+                                    <View>
+                                        <TouchableOpacity style={styles.resetButton}
+                                        onPress={()=>this.resetPriceRange()}>
+                                            <Text style={styles.resetText}>
+                                                Reset
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </List.Accordion>
+                                    
                             </List.AccordionGroup>
                         </View>
                     </ScrollView>

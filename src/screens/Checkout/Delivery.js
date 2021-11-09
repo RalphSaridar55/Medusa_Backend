@@ -1,4 +1,5 @@
 import React, { Component, useContext } from "react";
+import Spinner from 'react-native-loading-spinner-overlay';
 import Overlay from './overlay';
 //import {ProductContext} from '../../../App';
 import {
@@ -29,6 +30,8 @@ import _ from "lodash";
 import * as DocumentPicker from "expo-document-picker";
 import TextInput from "../../components/TextInput";
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
+import * as apiPayment from '../../core/apis/apiPaymentServices';
+
 //// Buttons
 const containerStyle =
 {
@@ -102,6 +105,7 @@ export default class Delivery extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       visible: false,
       location: 0,
       cargo_method: 1,
@@ -114,11 +118,8 @@ export default class Delivery extends Component {
         { label: "Sea", value: 2 },
         { label: "Air", value: 3 },
       ],
-      payment: 1,
-      payments: [
-        { label: "Credit", value: 1 },
-        { label: "Cash", value: 2 },
-      ],
+      payment: 2,
+      payments: [],
       filterLocations: [],
       filteredLocation: {
         Country: "",
@@ -194,8 +195,11 @@ export default class Delivery extends Component {
 
       fetchedServicesType:[],
       fetchedServices:[],
-      serviceType:null,
+      serviceLevel:null,
+      serviceLevelString:null,
       service:null,
+      payment_token:null,
+      cardInfo:null,
     };
   }
   //static product = ProductContext;
@@ -213,8 +217,15 @@ export default class Delivery extends Component {
   }
 
   selectPayMethod(id){
+    console.log("ID: ",id)
     let pay = this.state.payments.filter((i)=>i.value === id)[0]
-    this.setState({payment_method_id:pay.value,payment_method:pay.label})
+    this.setState({payment_method_id:pay.value,payment_method:pay.label,payment:id})
+    if(id==1){
+      apiPayment.getClientToken().then((res)=>{
+        this.setState({payment_token:res})
+      });
+      this.setState({overlay:true});
+    }
   }
 
   selectLocation(id) {
@@ -246,6 +257,7 @@ export default class Delivery extends Component {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
     let { products, order } = this.props.route.params;
     console.log("ROUTE PARAMS PRODUCTS: ", products);
+    console.log("ROUTE PARAMS ORDER: ", order);
     this.setState({ products: products, dataFromRoute: order });
     apiServices.getCountries().then((res) => {
       //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
@@ -269,11 +281,16 @@ export default class Delivery extends Component {
       res.map((item)=>{
         ar.push({label:item.service_level,value:item.id})
       })
-      this.setState({fetchedServicesType:ar})
+      this.setState({fetchedServicesType:ar,loading:false})
+    })
+
+    apiPayment.getPaymentMethods().then((res)=>{
+      console.log("Result Payment: ",res)
+      this.setState({payments:res})
     })
   }
 
-  componentDidMount() {
+  /* componentDidMount() {
     this.focusListener = this.props.navigation.addListener("focus", () => {
       // Call ur function here.. or add logic.
       console.log("FROM CONTEXT:",this.product)
@@ -303,17 +320,23 @@ export default class Delivery extends Component {
         this.setState({fetchedServicesType:ar})
        }) 
       });
-  }
+  } */
 
   changeServiceType (id){
     //console.log
+    /* console.log("LEVEL: ",id)*/
+    console.log("STATE: ",this.state.fetchedServicesType) 
+    let result = this.state.fetchedServicesType.filter((item)=>{
+      return  item.value==id
+    })[0];
+    console.log("RESULT: ",result)
     apiProducts.getServiceType(id).then((res)=>{
-      console.log("SERVICE: ",res)
+      //console.log("SERVICE: ",res)
       let ar = [];
       res.map((item)=>{
         ar.push({label:item.service_type,value:item.id})
       })
-      this.setState({serviceType:id,fetchedServices:ar})
+      this.setState({serviceLevel:id,serviceLevelString:result?.label,fetchedServices:ar,})
     })
   }
 
@@ -329,6 +352,11 @@ export default class Delivery extends Component {
       },
     ]);
   };
+
+  changeData(e){
+    //console.log("Test 1234",e,"+++++");
+    /* this.setState({cardInfo:e}) */
+  }
 
   pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
@@ -365,7 +393,7 @@ export default class Delivery extends Component {
     console.log("PLACING ORDER DATA: ", this.state.dataFromRoute);
     let { delivery_address, payment, cargo_method, doc } = this.state;
     let payload = {
-      order_method_id: this.props.route.name == "Delivery" ? 1 : 2,
+      order_method_id: this.props.route.name == "Delivery" ? 2 : 1,
       delivery_address: delivery_address,
       payment_method_id: payment,
       //payment_token_id: "",
@@ -375,7 +403,7 @@ export default class Delivery extends Component {
     };
 
     console.log("PAYLOAD: ", payload);
-    let error=false;
+    let error = false;
     Object.keys(payload).map((item, index) => {
       switch (typeof item) {
         case "number":
@@ -407,15 +435,22 @@ export default class Delivery extends Component {
           }
       }
     });
-    let payload2 = {...payload, service_type: this.state.service, service_level: this.state.serviceLevel,}
+    let payload2 = {...payload, ...this.state.dataFromRoute,service_type: this.state.service, service_level: this.state.serviceLevel,}
     console.log("PAYLOAD2: ",payload2)
-    if(!error)
-      this.setState({overlay:true})
+    if(!error){
+      apiPayment.placeOrder(payload2).then((res)=>{
+        console.log("SHOUDL BE SUCCESSFUL");
+      }).catch(err=>{
+  
+        Alert.alert("Error",err.response.data.message)
+      })
+    }
   }
 
   render() {
     return (
       <Provider>
+        <Spinner visible={this.state.loading} />
         <View style={{ margin: 10 }}>
           <Text style={[styles.header]}>Delivery</Text>
         </View>
@@ -553,7 +588,7 @@ export default class Delivery extends Component {
               </Text>
               <RenderPicker
                   containerStyle={containerStyle} 
-                  selectedValue={this.state.serviceType}
+                  selectedValue={this.state.serviceLevel}
                   prompt="Service Level"
                   onValueChange={(itemValue, itemIndex) => {
                     this.changeServiceType(itemValue)
@@ -603,47 +638,52 @@ export default class Delivery extends Component {
                   }}
                 />
               ))}
-
-              <View
-                style={{
-                  flex: 1,
-                  /* marginLeft: 10,
-                  marginRight: 10, */
-                  paddingTop: 20,
-                  backgroundColor: "#fff",
-                  marginTop: 20,
-                }}
-              >
-                <Text
+              </View>
+          </View>
+          <View style={{
+                      marginRight:10,
+                      marginLeft:10
+                      }}>
+                <View
                   style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    marginBottom: 20,
-                    color: "#698EB7",
+                    flex: 1,
+                    padding: 10,
+                    paddingTop: 20,
+                    backgroundColor: "#fff",
+                    marginTop: 20,
                   }}
                 >
-                  Payment Details
-                </Text>
-                <RenderPicker 
-                  containerStyle={containerStyle} 
-                    selectedValue={this.state.payment}
-                    prompt="Payment Method"
-                    onValueChange={(itemValue, itemIndex) => {
-                      this.setState({ payment: itemValue });
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      marginBottom: 20,
+                      color: "#698EB7",
                     }}
-                    map={this.state.payments}/>
+                  >
+                    Payment Details
+                  </Text>
+                  <RenderPicker
+                    containerStyle={containerStyle}
+                      selectedValue={this.state.payment}
+                      prompt="Payment Method"
+                      onValueChange={(itemValue, itemIndex) => {
+                        this.selectPayMethod(itemValue);
+                      }}
+                      map={this.state.payments}/>
+                  <TouchableDocumentPicker
+                    color="#6E91EC"
+                    icon="file"
+                    mode="outlined"
+                    onPress={() => this.pickDocument()}
+                    style={styles.docPicker}
+                    doc={this.state.doc}/>
+                      
+                  <Overlay visible={this.state.payment==1?true:false}
+                  onClose={()=>this.setState({overlay:false})}
+                  onchange={this.changeData}  />
+                      </View>
               </View>
-                <TouchableDocumentPicker 
-                  color="#6E91EC"
-                  icon="file"
-                  mode="outlined"
-                  onPress={() => this.pickDocument()}
-                  style={styles.docPicker}
-                  doc={this.state.doc}/>
-              
-        <Overlay visible={this.state.overlay}
-         onClose={()=>this.setState({overlay:false})}  />
-            </View>
             <View>
               <TouchableOpacity
                 style={[styles.loginBtn, { marginHorizontal: 40 }]}
@@ -652,7 +692,6 @@ export default class Delivery extends Component {
                 <Text style={styles.loginText}>Place Order</Text>
               </TouchableOpacity>
             </View>
-          </View>
         </ScrollView>
       </Provider>
     );

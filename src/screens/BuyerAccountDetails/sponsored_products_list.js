@@ -39,7 +39,7 @@ const SponsoredProducts = () =>{
                     style={!visible.search&&{backgroundColor:'#31C2AA'}}  color={!visible.search?"#E9F3FF":"black"}/>
             </Appbar>
         </View>
-        <View style={{paddingHorizontal:10,paddingVertical:10,}}>
+        <View style={{paddingHorizontal:15,paddingVertical:10,}}>
             <Searchbar
                 onChangeText={(e)=>setSearch(e)}
                 placeholder="Search"

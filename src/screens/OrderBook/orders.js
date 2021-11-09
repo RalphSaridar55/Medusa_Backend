@@ -271,18 +271,21 @@ export default class Orders extends Component {
   fillDataForCheckout=()=>{
     //let userdata = JSON.parse(AsyncStorage.getItem('user_details'));
     console.log('USER DETAILS:' ,this.state.userData)
+    console.log('ORDER DETAILS: ',this.state.current)
     let order_details=[];
     this.state.current.map((item,index)=>{
-      let data={};
-      let dataservices=[];
-      data.seller_id=item.seller_id;
-      //data.product_id=item.product_id;
-      //data.quantity=item.quantity;
-      //data.box=item.box;
-      //data.price=item.price;
+      let data= {};
+      let dataservices = [];
+      let datavariants = [];
+      data.seller_id = item.seller_id;
+      data.product_id = item.product_id;
+      data.quantity = item.quantity;
+      data.box = item.box;
+      data.price = item.price;
       item?.value_added_services?.map((item2,index2)=>{
         dataservices.push({service_id:item2.service_id,service_name:item2.service_name,document:item2.document,price:item2.price})
       })
+      data.productvariant = datavariants;
       data.value_added_services=dataservices;
       console.log("Data becomes: ",data)
       order_details.push(data)
@@ -297,6 +300,7 @@ export default class Orders extends Component {
       total_service_cost:price,
       cart_id:cart,
       order_details:order_details,
+
       total:total,
 
       //order_method_id: 0,

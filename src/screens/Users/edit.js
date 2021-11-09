@@ -39,7 +39,7 @@ import * as apiServices from "../../core/apis/apiUserServices";
 import * as DocumentPicker from "expo-document-picker";
 import styles from "./edit_style";
 import { Ionicons } from "@expo/vector-icons";
-import { subUser } from "../../../map";
+import { subUser } from "./map";
 
 export default class EditUsers extends Component {
   state = {
@@ -56,21 +56,12 @@ export default class EditUsers extends Component {
     street:'',
     phone:'',
     postal:'',
-    role: 0,
+    role: null,
     role_name:'',
     permissions: "",
     docs: "",
     docsError: "",
-    roles:[
-      {
-        created_at: "2021-09-29T14:06:03.480Z",
-        id: 0,
-        num_of_permission: 9,
-        role_name: "Role 1",
-        status: 3,
-        updated_at: "2021-09-29T14:51:56.502Z",
-      }
-    ],
+    roles:[],
     selectedItems: [],
     userPermissions: [],
 
@@ -78,7 +69,7 @@ export default class EditUsers extends Component {
     userDataToEdit: {},
     isOpen: false,
     showModal: false,
-    isLoading: false,
+    isLoading: true,
     docError:false,
   };
 
@@ -117,7 +108,7 @@ export default class EditUsers extends Component {
     ); 
     if (
       this.state.username.length < 1 ||
-      this.state.role_name.length < 1 ||
+      this.state.role.role_name.length < 1 ||
       this.state.userPermissions.length < 1 ||
       this.state.country_code.length < 1 ||
       this.state.phone.length < 1 ||
@@ -135,10 +126,10 @@ export default class EditUsers extends Component {
         "Please attach the required file"
       );
     else {
-      let array=[];
+      /* let array=[];
       this.state.userPermissions.map((i)=>{
         array.push({permission_id:i.permission_id,permission_name:i.permission_name,permission_module_name: i.permission_module_name,})
-      })
+      }) */
       this.setState({isLoading:true})
       //Alert.alert("Success", "Signup should run");
        let payload = {
@@ -154,9 +145,9 @@ export default class EditUsers extends Component {
         postal_code:this.state.postal,
         company_name: this.state.username,
         company_reg_doc: this.state.docs,
-        role_name: this.state.role_name,
-        role_id: parseInt(this.state.role),
-        permissions: array,
+        role_name: this.state.role.role_name,
+        role_id: /* this.state.role?.role?this.state.role.role: */this.state.role.role_id,
+        permissions: this.state.userPermissions,
       };
       console.log("PAYLOAD ",payload)
       apiServices.updateSubUser(payload).then((res) => {
@@ -210,11 +201,11 @@ export default class EditUsers extends Component {
 
   changeRole(selection) {
     console.log("SELECTION:",selection);
-    console.log("ROLES:",this.state.roles)
+    /* console.log("ROLES:",this.state.roles)
     let resultFind = this.state.roles.filter((i)=>
       i.id === selection
-    )
-    console.log("RESULT FIND: ",resultFind)
+    ) */
+    //console.log("RESULT FIND: ",resultFind)
     apiServices.getRoleDetails(selection).then((res) => {
       let array = [];
       res.data.permissions.map((item) => {
@@ -223,11 +214,12 @@ export default class EditUsers extends Component {
           permission_module_name: item.permission_name,
           permission_name: item.permission_name,
         });
-        this.setState({
-          userPermissions: array,
-          role: { role: resultFind.id, role_name: resultFind.role_name },
-        });
-      }).catch(err=>Alert.alert("Error",err.response.data.message));
+      })
+      this.setState({
+        userPermissions: array,
+        role: { role_id: res.data.id, role_name: res.data.role_name },
+        isLoading:false
+      });
     });
   }
 
@@ -240,12 +232,21 @@ export default class EditUsers extends Component {
     this.setState({
       userDataToEdit: this.props.route.params.item,
       userPermissions: this.props.route.params.item.permissions,
-      role: this.props.route.params.item.role_id,
-      role_name: this.props.route.params.item.role_name,
+      role: {
+        role_id:this.props.route.params.item.role_id,
+        role_name: this.props.route.params.item.role_name
+      },
       id:this.props.route.params.item.id,
       username:this.props.route.params.item.username,
       email:this.props.route.params.item.email,
-      docs:this.props.route.params.item.company_reg_doc
+      docs:this.props.route.params.item.company_reg_doc,
+      state:this.props.route.params.item.state,
+      city:this.props.route.params.item.city,
+      street:this.props.route.params.item.street,
+      country_id:this.props.route.params.item.country_id,
+      country_code:this.props.route.params.item.country_code,
+      postal:this.props.route.params.item.postal_code+"",
+      phone:this.props.route.params.item.mobile_number
     });
   }
 
@@ -257,12 +258,16 @@ export default class EditUsers extends Component {
   
   getRoles = () => {
     apiServices.getRoleList().then((result) => {
-      /* let roles = []
-    result.data.data.map((i)=>{
+       let roles = []
+    /*result.data.data.map((i)=>{
         roles.push(i.role_name)
     }) */
-      this.setState({ roles: result.data.data.sort((a,b)=>a.id===this.props.route.params.item.role_id) });
-      console.log("roles \n", result.data.data);
+      result.data.data.map((item)=>{
+        roles.push({label:item.role_name,value:item.id})
+      })
+      this.setState({ roles: roles, });
+      //this.changeRole(roles[0].value);
+      this.setState({isLoading:false})
       //this.setState({roles:result})
     });
   };
@@ -372,16 +377,15 @@ export default class EditUsers extends Component {
               />
             </View>
             {this.drawInputs()}
-            <RenderPicker 
+            
+            {this.state.roles.length>0 &&<RenderPicker 
                 containerStyle={styles.dropdown}
-                selectedValue={this.state.role}
+                selectedValue={this.state.role.role_id}
                 onValueChange={(itemValue, itemIndex) => 
                   this.changeRole(itemValue)
                 }
                 map={this.state.roles}
-                chosenValue="id"
-                chosenLabel="role_name"
-            />
+            />}
 
             <View
               style={{

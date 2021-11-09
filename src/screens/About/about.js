@@ -7,27 +7,36 @@ import { Paragraph, List } from "react-native-paper";
 
 const BannerWidth = Dimensions.get("window").width;
 const BannerHeight = 200;
-const countries = ['Lebanon','India','Bahrain','Dubai','USA','UK'];
-const faq = [
-  {question:"Qestion 1",answer:"Answer Answer Answer Answer Answer Answer Answer "},
-  {question:"Qestion 2",answer:"Answer Answer Answer Answer Answer Answer Answer "},
-  {question:"Qestion 3",answer:"Answer Answer Answer Answer Answer Answer Answer "},
-  {question:"Qestion 4",answer:"Answer Answer Answer Answer Answer Answer Answer "},
-  {question:"Qestion 5",answer:"Answer Answer Answer Answer Answer Answer Answer "},
-  {question:"Qestion 6",answer:"Answer Answer Answer Answer Answer Answer Answer "},
-]
+
 const images = [
-  "https://images.zoodmall.com/app/banner/main_banner_60ebe5af36df7.jpg",
-  "https://images.zoodmall.com/app/banner/main_banner_60dc615c5fceb.jpg",
-  "https://images.zoodmall.com/app/banner/main_banner_60face123151e.jpg",
+  require('../../../assets/about1.jpg'),
+  require('../../../assets/about2.jpg'),
+  require('../../../assets/about3.jpg'),
 ];
+const data = [
+  {title:'Our Vision',text:`Cupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.\n\nCupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.`,
+  image:images[0]},
+  {title:'Our Approach',text:`Cupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.\n\nCupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.`,
+  image:images[1]},
+  {title:'Our Process',text:`Cupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.\n\nCupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.`,
+  image:images[2]},
+]
+const countries = ['Lebanon', 'India', 'Bahrain', 'Dubai', 'USA', 'UK'];
+const faq = [
+  { question: "Qestion 1", answer: "Answer Answer Answer Answer Answer Answer Answer " },
+  { question: "Qestion 2", answer: "Answer Answer Answer Answer Answer Answer Answer " },
+  { question: "Qestion 3", answer: "Answer Answer Answer Answer Answer Answer Answer " },
+  { question: "Qestion 4", answer: "Answer Answer Answer Answer Answer Answer Answer " },
+  { question: "Qestion 5", answer: "Answer Answer Answer Answer Answer Answer Answer " },
+  { question: "Qestion 6", answer: "Answer Answer Answer Answer Answer Answer Answer " },
+]
 export default class About extends Component {
   renderPage(image, index) {
     return (
       <View key={index}>
         <Image
           style={{ width: BannerWidth, height: BannerHeight }}
-          source={{ uri: image }}
+          source={image}
         />
       </View>
     );
@@ -37,17 +46,34 @@ export default class About extends Component {
     return (
       <View style={aboutStyle.container}>
         <Headline style={aboutStyle.headLine}>About us </Headline>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View>
+        <ScrollView showsVerticalScrollIndicator={false} style={aboutStyle.scrollview}>
+          {data.map((item,index)=>
+          <>
+            <View style={aboutStyle.textContainer}>
+              <Text style={aboutStyle.title}>
+                {item.title}
+              </Text>
+              <Text style={aboutStyle.descritpion}>
+                {item.text}
+              </Text>
+            </View>
+            
             <Image
               style={aboutStyle.img}
-              source={{
-                uri: "https://cdn.corporatefinanceinstitute.com/assets/team-cohesion.jpeg",
-              }}
-            ></Image>
-          </View>
-          <View>
-            <List.Section>
+              source={item.image}
+              resizeMode='center'
+            />
+          </>
+          )}
+          
+        </ScrollView>
+      </View>
+    );
+  }
+}
+
+
+{/* <List.Section>
               <List.Accordion
                 theme={{
                   colors: { primary: "#6E91EC", underlineColor: "transparent" },
@@ -120,10 +146,4 @@ export default class About extends Component {
                 })}
                 </View>
               </List.Accordion>
-            </List.Section>
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-}
+            </List.Section> */}

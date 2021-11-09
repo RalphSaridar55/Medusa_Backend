@@ -6,7 +6,7 @@ import CollapsibleList from "react-native-collapsible-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { emailValidator } from "../../helpers/emailValidator";
 import { RenderPicker } from "../../components/Picker";
-import { subUser } from "../../../map";
+import { subUser } from "./map";
 import {
   Text,
   View,
@@ -34,16 +34,17 @@ export default class AddUsers extends Component {
       company_name:"",
       username: "",
       country_id:0,
-      countries:[],
+      countries:[
+      ],
       country_code:'',
       state:'',
       city:'',
       street:'',
       phone:'',
       postal:'',
-      role: {
-        role_id: 0,
-        role_name: "",
+      role:{
+        role_id:0,
+        role_name:"Role 1"
       },
       docs: "",
       docsError: "",
@@ -51,19 +52,15 @@ export default class AddUsers extends Component {
       selectedItems: [],
   
       roles: [
-        {
-          created_at: "2021-09-29T14:06:03.480Z",
-          id: 0,
-          num_of_permission: 9,
-          role_name: "Role 1",
-          status: 3,
-          updated_at: "2021-09-29T14:51:56.502Z",
-        }
+        /* {
+          label:"Role 1",
+          value:0
+        } */
       ],
       permissions: "",
       docError: true,
       openPermissions: false,
-      isLoading:false,
+      isLoading:true,
     };
   }
   
@@ -129,10 +126,10 @@ export default class AddUsers extends Component {
         street:this.state.street,
         postal_code:this.state.postal,
         company_name: this.state.username,
-        company_reg_doc: this.state.docs,
+        company_reg_doc: this.state.docs.uri,
         role_name: this.state.role.role_name,
         role_id: this.state.role.role_id,
-        permissions: array,
+        permissions: this.state.userPermissions,
       };
       console.log("PAYLOAD ",payload)
       apiServices.addSubUser(payload).then((res) => {
@@ -151,12 +148,19 @@ export default class AddUsers extends Component {
 
   getRoles = () => {
     apiServices.getRoleList().then((result) => {
+      
+      console.log("roles \n", result.data.data);
       /* let roles = []
     result.data.data.map((i)=>{
         roles.push(i.role_name)
     }) */
-      this.setState({ roles: result.data.data });
-      console.log("roles \n", result.data.data);
+      let roles = [];
+      result.data.data.map((item)=>{
+        roles.push({label:item.role_name,value:item.id})
+      })
+      this.setState({ roles: roles, });
+      this.changeRole(roles[0].value);
+      this.setState({isLoading:false})
       //this.setState({roles:result})
     });
   };
@@ -165,6 +169,7 @@ export default class AddUsers extends Component {
   getCountries(){
     console.log("RUNNING COUNTRIES")
     apiPortfolio.getCountries().then((res)=>{
+      //console.log("COUNTRIES: ",res)
       this.setState({countries:res})
     })
   }
@@ -212,20 +217,18 @@ export default class AddUsers extends Component {
     else {
       console.log(result);
       try {
-        this.setState({ docs: result.uri, docError: false });
+        this.setState({ docs: result, docError: false });
       } catch (error) {
         this.setState({ docError: true });
       }
     }
   };
-  onMultiChange() {
-    console.log();
-  }
 
   changeRole(selection) {
     console.log("SELECTION:",selection);
     if (selection != 0) {
       apiServices.getRoleDetails(selection).then((res) => {
+        //console.log("RES: ",res)
         let array = [];
         res.data.permissions.map((item) => {
           array.push({
@@ -233,10 +236,10 @@ export default class AddUsers extends Component {
             permission_module_name: item.permission_name,
             permission_name: item.permission_name,
           });
-          this.setState({
-            userPermissions: array,
-            role: { role_id: selection.id, role_name: selection.name },
-          });
+        });
+        this.setState({
+          userPermissions: array,
+          role: { role_id: res.data.id, role_name: res.data.role_name },
         });
       });
     } else {
@@ -269,14 +272,12 @@ export default class AddUsers extends Component {
         case 'picker':
           return <RenderPicker 
           key={index}
-          containerStyle={styles.dropdown}
+          containerStyle={[styles.dropdown,{marginBottom:10}]}
           selectedValue={this.state[item.value]}
           onValueChange={(itemValue, itemIndex) => 
             this.setState({[item.value]:itemValue})
           }
           map={this.state[item.items]}
-          /* chosenLabel={this.state[item.chosenLabel]}
-          chosenValue={this.state[item.chosenValue]} */
       />
       }
     })
@@ -321,16 +322,15 @@ export default class AddUsers extends Component {
               Create Sub User
             </Headline>
             {this.drawInputs()}
-            <RenderPicker 
+            {this.state.roles.length>0 &&<RenderPicker 
+                prompt="Roles"
                 containerStyle={styles.dropdown}
-                selectedValue={this.state.role}
+                selectedValue={this.state.role.role_id}
                 onValueChange={(itemValue, itemIndex) => 
                   this.changeRole(itemValue)
                 }
                 map={this.state.roles}
-                chosenValue="id"
-                chosenLabel="role_name"
-            />
+            />}
             <View
               style={{
                 marginVertical: 20,

@@ -3,7 +3,8 @@ import {View,} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 
 export const RenderPicker=(props)=>{
-  console.log("MAP IS: ",props.map)
+  //console.log("MAP IS: ",props.map)
+  //console.log("RUNNING")
   return(
     <View
               style={props.containerStyle}

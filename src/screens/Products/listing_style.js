@@ -19,6 +19,23 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         alignItems:'center'
     },
+    filterContainer:{
+        paddingHorizontal:20,
+        paddingVertical:10,
+        borderColor:'lightgray',
+        borderWidth:0.8,
+        marginVertical:5,
+        marginBottom:20,
+        backgroundColor:'#fff',
+        marginHorizontal:20,
+        borderRadius:5,
+        justifyContent:'center'
+    },
+    filterText:{
+        fontSize:18,
+        color:'gray',
+        textAlignVertical:'center'
+    },
     modalHeader:{
         display:'flex',
         flexDirection:'row',

@@ -60,7 +60,7 @@ export default function Login({ navigation }) {
     setLoading(true);
 
     apiServices.userLogin(payload).then((res) => {
-      console.log("CONTEXT: ",setUserData,userData,product,setProduct)
+      //console.log("CONTEXT: ",setUserData,userData,product,setProduct)
       console.log("---->", res.access_token);
       console.log("USER DETAILS: " , res.userDetails);
       apiServices.setToken(res.access_token);
@@ -70,7 +70,7 @@ export default function Login({ navigation }) {
       storeData("company_name",res.userDetails.company_name)
       storeData("user_id",res.userDetails.id+"")
       storeData("user_details",JSON.stringify(res.userDetails))
-      setUserData(123);
+      //setUserData(123);
 
       if(res.userDetails.user_type===4 && res.userDetails.default_landing_page=="DASHBOARD")
         navigation.navigate("Dashboard");
@@ -81,7 +81,7 @@ export default function Login({ navigation }) {
       return () => setValue(value => value + 1); */
       
     }).catch(err=>{
-      console.log("ERROR: ",err.response.data.message);
+      console.log("ERROR: ",err/* .response.data.message */);
       Alert.alert("Alert",err.response.data.message);
       setLoading(false);
     });

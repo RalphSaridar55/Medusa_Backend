@@ -235,7 +235,7 @@ export default class AddProduct extends Component {
     }
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing:true,mediaTypes:MediaTypeOptions.Images	
+      allowsEditing:true
     });
     if (pickerResult.cancelled === true) {
       return;

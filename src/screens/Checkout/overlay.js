@@ -14,16 +14,30 @@ const OverlayComp = (props) =>{
     
     const { confirmPayment } = useStripe(); 
     const [data,setData] = useState({});
-
+    /* useEffect(()=>{
+        console.log("PROPS:",props)
+    },[]) */
     const check = async() =>{
         const {error} = await confirmPayment();
         Alert.alert("Error",error.message)
     }
     
+    const sendBack=()=>{
+        props.onchange();
+    }
+
     const StripeRender = () =>{
+        //console.log("PROPS CHILD: ",props)
         return(
             <SafeAreaView style={[styles2.docPicker,{display:!props.visible?"none":"flex"}]}>
-                <CardField style={{height:50,}} postalCodeEnabled={false}/>
+                <CardField style={{height:50,}} 
+                postalCodeEnabled={false} 
+                onCardChange={(t)=>{
+                    console.log(t);
+                    setData(t)
+                    //props.onchange(t)/* ; */
+                    /* props.onchange() */
+                }}/>
             </SafeAreaView>
         )
     }
@@ -63,7 +77,7 @@ const OverlayComp = (props) =>{
                     </View>
                 </Overlay> */
                         <StripeProvider publishableKey="key" merchantIdentifier="merchant.identifier">
-                            <StripeRender/>
+                            <StripeRender props={{...props}}/>
                         </StripeProvider>
     )
 }
@@ -81,8 +95,9 @@ const styles2 = StyleSheet.create({
     docPicker:{
         borderWidth:1,
         borderRadius:5,
-        borderColor:'gray',
+        borderColor:'lightgray',
         marginBottom:20,
+        marginTop:10,
         paddingHorizontal:5,
         justifyContent:'center',
     },

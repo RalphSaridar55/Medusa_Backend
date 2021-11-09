@@ -25,18 +25,18 @@ export const addresses = [
         value:'postal',
         label:'Postal Code*',
         placeholder:"Postal ",
-        keyboardType:'default'
+        keyboardType:'numeric'
     },
 ]
 
 export const accountDetails1 = [
-    {
+    /* {
       label:"Email",
       placeholder:"email@gmail.com",
       value:'email',
       error:'emailError',
       type:'textinput'
-    },
+    }, */
     {
        label:'Registered Address',
        placeholder:"Address",

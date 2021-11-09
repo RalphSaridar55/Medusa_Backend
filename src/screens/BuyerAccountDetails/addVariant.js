@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import { TextInput, Switch } from "react-native-paper";
 import styles from "./add_style";
+import { RenderPicker } from "../../components/Picker";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -56,7 +57,7 @@ export default class AddProduct extends Component {
       variant_type_list: [],
       variant_type: 0,
       variant_value_list: [],
-      variant_value: [{label:"Varient Value",value:0}],
+      variant_value: [],
       variantImage: "",
       loading: true,
 
@@ -191,19 +192,30 @@ export default class AddProduct extends Component {
     let catid = this.props.route.params.category_id;
     console.log("ROUTE PARAMS IN VARIANT: ", this.props.route.params);
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
-
+    
     APIProduct.getVarientTypes(catid).then((res) => {
+      let routeVar = this.props.route.params.productvariantopt;
       let variants = [];
       let values = [];
-      console.log("RESULT FROM PAGE 3", res);
+      console.log("VARIENT TYPES", res);
       res.map((item1) => {
         variants.push({ value: item1.id, label: item1.varient_type });
       });
+      routeVar.map((item2)=>{
+        values.push({label:item2.varientValue.varient_value,value:item2.varientValue.id})
+      })
+      console.log("VALUES: ",values)
       this.setState({
+        filter_variant_list: res,
         dataFromRoute:this.props.route.params,
         loading: false,
         variant_type_list: variants,
-        filter_variant_list: res,
+      },()=>{
+        if(this.props.route.params.type == "edit"){
+          this.handleCategories("variant_type",this.props.route.params.productvariantopt[0].varientType.id)
+          this.setState({
+            variant_value: values,})
+        }
       });
     });
 
@@ -212,6 +224,8 @@ export default class AddProduct extends Component {
         this.setState({
           variant_type: routeVar[0].varientType.id,
         })
+        
+        //this.handleCategories("variant_type",routeVar[0].varientType.id)
         let route = this.props.route.params;
         console.log("SHOULD BE RUNNING",route.variant_image)
         console.log("VARIANT: ",route.variant_by_piece)
@@ -238,7 +252,7 @@ export default class AddProduct extends Component {
             variant_value: routeVar[0].varientValue.id,
             variantImage: route.variant_image,})
             console.log("IMAGE BECOMES: ",this.state.variantImage)
-    }
+   }
   }
 
   chooseImages = async (type) => {
@@ -415,17 +429,22 @@ export default class AddProduct extends Component {
 
   renderPicker(item, index) {
     return (
-      <View
+      <RenderPicker 
+      key={index}
+      containerStyle={styles.picker}
+        
+        selectedValue={this.state[item.stateValue]}
+        prompt={item.label}
+        onValueChange={(itemValue, itemIndex) => {
+          console.log("CHOSEN ITEM VALUE: ",itemValue)
+          this.setState({ [item.stateValue]: itemValue });
+          this.handleCategories(item.stateValue, itemValue);
+        }}
+        map={this.state[item.items]}
+        />
+      /* <View
         key={index}
         style={{
-          borderWidth: 1,
-          borderColor: "#C4C4C4",
-          borderRadius: 4,
-          marginHorizontal: 20,
-          marginVertical: 10,
-          height: 55,
-          justifyContent: "center",
-          backgroundColor: "#fff",
         }}
       >
         <Picker
@@ -442,17 +461,18 @@ export default class AddProduct extends Component {
             <Picker.Item label={it.label} value={it.value} key={index2} />
           ))}
         </Picker>
-      </View>
+      </View> */
     );
   }
 
   handleCategories(type, value) {
+    console.log("RUNNING",value);
     switch (type) {
       case "variant_type":
         let ar = [];
-        let res = this.state.filter_variant_list.filter(
-          (item) => item.id === value
-        )[0];
+        let res = this.state.filter_variant_list.filter((item) => item.id == value)[0];
+        console.log("RESULT2:",res)
+        console.log("STATE: ",this.state.filter_variant_list)
         res.varientvalue.map((item) => {
           ar.push({ label: item.varient_value, value: item.id });
         });

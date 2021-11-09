@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         paddingVertical: 15,
         backgroundColor: "#fff",
-        marginBottom:10,
+        marginTop:10,
     },
     forgot: {
         color: "#31C2AA",

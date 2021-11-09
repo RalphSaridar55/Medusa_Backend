@@ -13,6 +13,16 @@ const styles = StyleSheet.create({
     container: {
       margin: 50,
     },
+    picker:{
+        borderWidth: 1,
+        borderColor: "#C4C4C4",
+        borderRadius: 4,
+        marginHorizontal: 20,
+        marginVertical: 10,
+        height: 55,
+        justifyContent: "center",
+        backgroundColor: "#fff",
+    },
     selectedDateContainerStyle: {
       height: 35,
       width: "100%",

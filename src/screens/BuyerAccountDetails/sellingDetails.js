@@ -42,19 +42,19 @@ const SellingDetail = ({navigation}) =>{
     const [allData,setAllData] = useState({categories:[], subcategories:[], brands:[]})
     const [usersAllData,setUsersAllData] = useState({categories:[], subcategories:[], brands:[]})
 
-    
-
-    useEffect(()=>{
-        API.getSellersOwnProducts().then((res)=>{
-            console.log("RESULT FROM USEEFFECT: ",res)
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      
+          API.getSellersOwnProducts().then((res)=>{
+            //console.log("RESULT FROM USEEFFECT: ",res)
             setData(res.sort((a,b)=>a.product_name>b.product_name?1:-1));
         })
-        
+    
         apiPortFolioServices.getCategories().then((result) => {
           let cat = [];
           let subcat = [];
           let brands = [];
-          console.log("USER ALL DATA: ",usersAllData)
+          //console.log("USER ALL DATA: ",usersAllData)
           //console.log("RESULT CATEGORIES :" ,result);
           result.map((item1)=>{
             cat.push({label:item1.category_name,value:item1.id})
@@ -66,14 +66,17 @@ const SellingDetail = ({navigation}) =>{
               })
             })
           })
-          console.log("BRANDS BECOMES: ",brands)
+          //console.log("BRANDS BECOMES: ",brands)
           //setUsersAllData({categories:cat,subcategories:subcat,brands:brands})
           setAllData({categories:cat,subcategories:subcat,brands:brands})
           setFilterData({...filterData,isVisible:false,subcategories:subcat,brands:brands})
           setApiData({categories:cat})
         });
-    },[])
+    });
 
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
 
 
@@ -87,11 +90,11 @@ const SellingDetail = ({navigation}) =>{
           return sub.category_id === item.value
         }) 
         subcategories.map((map)=>{
-          console.log("Sub Categories Item:", map)
+          //console.log("Sub Categories Item:", map)
           array.push({...map,category_id:map.category_id})
         })
       })
-      console.log("SUBCATEGORIES BECOMES: ",array)
+      //console.log("SUBCATEGORIES BECOMES: ",array)
       setChosen({...chosen,categories:value})
       //setUsersAllData({...usersAllData,categories:value})
       setApiData({...apiData,subcategories:array});
@@ -306,7 +309,7 @@ return (
           placeholder="Search"
         />
       </View>
-      {!filterData.showCategory?<View>
+      {!filterData.showCategory?<ScrollView>
         <FlatList
          style={styles.list}
          contentContainerStyle={styles.listContainer}
@@ -346,7 +349,7 @@ return (
                  </TouchableOpacity>
              )
          }} />
-      </View>:<ScrollView>
+      </ScrollView>:<ScrollView>
        <View style={{ marginVertical: 20, marginHorizontal:20 }}>
             <CollapsibleList
               style={{ marginVertical: 10 }}

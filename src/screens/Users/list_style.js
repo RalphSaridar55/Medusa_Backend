@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         marginLeft: 15,
     },
     loginBtnContainer:{
-        backgroundColor: "#E9F3FF",
+        //backgroundColor:'red'
     },
     loginBtn: {
         backgroundColor: "#31C2AA",

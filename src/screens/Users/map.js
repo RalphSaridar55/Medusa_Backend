@@ -33,6 +33,7 @@ export const subUser=[
         value:"country_id",
         items:"countries",
         type:"picker",
+        
     },
     {
         label:"State",

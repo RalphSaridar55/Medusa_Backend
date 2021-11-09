@@ -185,6 +185,7 @@ export default class AddProduct extends Component {
   };
 
   async componentDidMount() {
+    LogBox.ignoreLogs([`Unhandled promise rejection: ReferenceError: Can't find variable: item`]);
     console.log("ROUTE PARAMS: ",this.props.route.params)
       let route = this.props.route.params;
       let images=[];
@@ -271,7 +272,7 @@ export default class AddProduct extends Component {
       return;
     }
 
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({allowsEditing:true,mediaTypes:MediaTypeOptions.Images	});
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({allowsEditing:true	});
     if (pickerResult.cancelled === true) {
       return;
     }
@@ -311,6 +312,7 @@ export default class AddProduct extends Component {
   };
 
   drawImages = () => {
+    console.log("LENGTH: ",this.state.images.length)
     return (
       <>
         <TouchableOpacity
@@ -475,8 +477,9 @@ export default class AddProduct extends Component {
     }
   }
 
-  renderPicker(item, index) {
+  renderPicker(test, index) {
     /* if(this.state[item.items].length>0) */
+    console.log("ERROR ITEM:",test)
     return (
       <View
         key={index}
@@ -493,17 +496,16 @@ export default class AddProduct extends Component {
       >
         <Picker
           style={{ marginLeft: 5 }}
-          selectedValue={this.state[item.stateValue]}
-          prompt={item.label}
+          selectedValue={this.state[test.stateValue]}
+          prompt={test.label}
           onValueChange={(itemValue, itemIndex) => {
-            this.setState({ [item.stateValue]: itemValue });
-            this.handleCategories(item.stateValue, itemValue);
+            this.setState({ [test.stateValue]: itemValue });
+            this.handleCategories(test.stateValue, itemValue);
           }}
-        >
-          {this.state[item.items].length > 0 &&
-            this.state[item.items].map((it, index2) => (
+        >   
+            {this.state[test.items]?.map((it, index2) => 
               <Picker.Item label={it.label} value={it.value} key={index2} />
-            ))}
+            )}
         </Picker>
       </View>
     );

@@ -53,7 +53,7 @@ class BuyreAccount extends Component {
       cityError:false,
       street:"",
       streetError:false,
-      postal:"",
+      postal:0,
       postalError:false,
       hideOldPassword: true,
       hidePassword: true,
@@ -89,9 +89,9 @@ class BuyreAccount extends Component {
     this.getUserData();
   }
 
-  getUserData= async()=>{
+  setUserData = async (data) =>{
     try {
-      const value = JSON.parse(await AsyncStorage.getItem('user_details'));
+      await AsyncStorage.setItem('user_details',JSON.stringify(data));
       if (value !== null) {
         // We have data!!
         console.log("DATA RECEIVED FROM ASYNC STORAGE: ",value)
@@ -115,6 +115,37 @@ class BuyreAccount extends Component {
       }
     } catch (error) {
       // Error retrieving data
+      console.log("ERROR ASYNCSTORAGE: ",error)
+    }
+  }
+
+  getUserData= async()=>{
+    try {
+      const value = JSON.parse(await AsyncStorage.getItem('user_details'));
+      if (value !== null) {
+        // We have data!!
+        console.log("DATA RECEIVED FROM ASYNC STORAGE: ",value)
+        this.setState({
+            userdata:value,
+            //email:value.owner_email,
+            website:value.website,
+            code:value.owner_country_code,
+            phone:value.owner_mobile_number,
+            country:value.country_id,
+            state:value.state,
+            city:value.city,
+            street:value.street,
+            postal:value.postal_code+"",
+            trading:value.trading_license_doc,
+            company:value.company_reg_doc,
+            address:value.registered_address,
+            defaultLanding:value.default_landing_page,
+            spinnerVisible:false,
+        })
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log("ERROR ASYNCSTORAGE: ",error)
     }
   };
 
@@ -167,7 +198,7 @@ class BuyreAccount extends Component {
 
   _ApplyChanges = () => {
     if (
-      this.state.emailError ||
+      //this.state.emailError ||
       this.state.passwordError ||
       this.state.confirmPasswordError ||
       this.state.websiteError ||
@@ -201,9 +232,9 @@ class BuyreAccount extends Component {
             state:this.state.state,
             city:this.state.city,
             street:this.state.street,
-            postal_code:this.state.postal,
+            postal_code:parseInt(this.state.postal),
             company_reg_doc:this.state.company,
-            trading_licence_doc:this.state.trading,
+            trading_license_doc:this.state.trading,
             default_landing_page:this.state.defaultLanding
         }
         console.log("PAYLOAD: ",payload)
@@ -211,14 +242,35 @@ class BuyreAccount extends Component {
         apiPortFolioServices.updateUserProfile(payload)
         .then((res)=>{
             console.log("FROM THE COMPONENT: ",res)
-            Alert.alert("Edit", res);
+            Alert.alert("Edit", "Your profile has been updated");
+            let {
+              owner_email,owner_mobile_number,website,country_id,
+              city,state,street,company_reg_doc,trading_license_doc,
+              postal_code,registered_address,default_landing_page,
+              owner_country_code} = res.data
+            this.setState({
+              email:owner_email,
+              phone:owner_mobile_number,
+              code: owner_country_code,
+              website: website,
+              country:country_id,
+              city:city,
+              street:street,
+              state:state,
+              company:company_reg_doc,
+              trading:trading_license_doc,
+              postal:postal_code,
+              address:registered_address,
+              defaultLanding:default_landing_page,
+            })
+            this.setUserData(res.data);
             this.setState({spinnerVisible:false})
         }).catch(err=>{
-          console.log("Error:\n",err,[
-            {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
-          ])
+          console.log("ERROR:",err.message)
+          Alert.alert("Error:\n",err.message)
           this.setState({spinnerVisible:false});
-          Alert.alert("Error",err.response.data.message);})
+          //Alert.alert("Error",err.response.data.message);
+        })
     }
     
   };
@@ -325,17 +377,12 @@ class BuyreAccount extends Component {
             <TextInput
               error={this.state.passwordError}
               mode="outlined"
-              label="Password*"
+              label="New Password"
               secureTextEntry={this.state.hidePassword}
               outlineColor="#C4C4C4"
               onChangeText={(e) => this.setState({ password: e })}
               style={styles.inputView}
               value={this.state.password}
-              onBlur={() => {
-                if (this.state.password.length < 8)
-                  this.setState({ passwordError: true });
-                else this.setState({ passwordError: false });
-              }}
               theme={{
                 colors: { primary: "#31c2aa", underlineColor: "transparent" },
               }}
@@ -353,17 +400,12 @@ class BuyreAccount extends Component {
             <TextInput
               error={this.state.confirmPasswordError}
               mode="outlined"
-              label="Confirm Password*"
+              label="Confirm Password"
               secureTextEntry={this.state.hideConfirmPassword}
               outlineColor="#C4C4C4"
               onChangeText={(e) => this.setState({ confirmPassword: e })}
               style={styles.inputView}
               value={this.state.confirmPassword}
-              onBlur={() => {
-                if (this.state.confirmPassword !== this.state.password)
-                  this.setState({ confirmPasswordError: true });
-                else this.setState({ confirmPasswordError: false });
-              }}
               theme={{
                 colors: { primary: "#31c2aa", underlineColor: "transparent" },
               }}
@@ -403,7 +445,8 @@ class BuyreAccount extends Component {
                 outlineColor="#C4C4C4"
                 theme={{ colors: { primary: "#31c2aa" } }}
                 style={styles.input_V}
-                value={this.state[item.value]}
+                keyboardType={item.keyboardType}
+                value={this.state[item.value]+""}
                 onBlur={()=>{
                     if(this.state[item.value].length<1)
                         this.setState({[item.error]:true})
