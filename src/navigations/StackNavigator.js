@@ -154,7 +154,7 @@ function CustomDrawer(props) {
               )}
             />
           </View>
-          {props.userType==4?(<View>
+          <View>
             <DrawerItem
               label="Campaign"
               labelStyle={props.screenC=="Campaign" ? { color: "#6E91EC" } : { color: "black" }}
@@ -165,7 +165,7 @@ function CustomDrawer(props) {
               icon={() => <Feather name="speaker" size={24} 
               color={props.screenC=="Campaign" ? "#6E91EC" : "black"} />}
             />
-          </View>):null}
+          </View>
           {props.userType==4?(<View>
             <DrawerItem
               label="Loyalty Points"

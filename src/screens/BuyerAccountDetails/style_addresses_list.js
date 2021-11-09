@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
    
   },
+  
   Container:{
     display: "flex",
     flexDirection: "row",

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import SelectMultiple from "react-native-select-multiple";
 import CollapsibleList from "react-native-collapsible-list";
-import * as UserApi from '../../core/apis/apiUserServices'
+import * as UserApi from "../../core/apis/apiUserServices";
 import {
   SafeAreaView,
   View,
@@ -11,7 +11,7 @@ import {
   Alert,
   Touchable,
   Dimensions,
-  TextInput as TI
+  TextInput as TI,
 } from "react-native";
 import {
   Text,
@@ -19,7 +19,7 @@ import {
   IconButton,
   Card,
   RadioButton,
-  Checkbox 
+  Checkbox,
 } from "react-native-paper";
 import Autocomplete from "react-native-autocomplete-input";
 import Header from "../../components/Header";
@@ -45,9 +45,9 @@ import * as registrationServices from "./registrationServices";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./registrationStyle";
 import { brand } from "expo-device";
-import Overlay from 'react-native-modal-overlay';
+import Overlay from "react-native-modal-overlay";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {terms} from './Terms'
+import { terms } from "./Terms";
 
 const typeList = [
   {
@@ -59,7 +59,7 @@ const typeList = [
     value: "2",
   },
 ];
-const screenwidth = Dimensions.get('screen').width;
+const screenwidth = Dimensions.get("screen").width;
 const dummyData = ["John", "Sara", "Jess"];
 
 export default class Registartion extends Component {
@@ -105,7 +105,7 @@ export default class Registartion extends Component {
       subcategoriesError: "",
 
       brandsError: "",
-      country: {value:0,label:"Country"},
+      country: { value: 0, label: "Country" },
       countryError: "",
       docs: "",
 
@@ -145,12 +145,12 @@ export default class Registartion extends Component {
       apiSubCategory: [],
       apiBrands: [],
 
-      overlay:"terms",
-      verifiedNumber:false,
-      checkRead:false,
-      showTerms:false,
+      overlay: "terms",
+      verifiedNumber: false,
+      checkRead: false,
+      showTerms: false,
 
-      otp:''
+      otp: "",
     };
   }
 
@@ -252,30 +252,34 @@ export default class Registartion extends Component {
         alert(result.uri); */
   };
 
-  verifyNumber = () =>{
-    if(!this.state.verifiedNumber){
-      if(this.state.phoneNumber<8 || this.state.countryCode<3){
-        Alert.alert("Error","Please insert a valid country code and phone number before verifying.");
+  verifyNumber = () => {
+    if (!this.state.verifiedNumber) {
+      if (this.state.phoneNumber < 8 || this.state.countryCode < 3) {
+        Alert.alert(
+          "Error",
+          "Please insert a valid country code and phone number before verifying."
+        );
         return;
+      } else {
+        let payload = {
+          owner_country_code: this.state.countryCode,
+          owner_mobile_number: this.state.phoneNumber,
+        };
+        UserApi.sendOtp(payload)
+          .then((res) => {
+            console.log("RES:", res);
+            if (res.statusCode) {
+              this.setState({ overlay: "otp", showTerms: true });
+            }
+          })
+          .catch((err) => {
+            Alert.alert("Error", err.response.data.message);
+          });
       }
-      else{
-        let payload={
-          owner_country_code:this.state.countryCode,
-          owner_mobile_number:this.state.phoneNumber
-        }
-        UserApi.sendOtp(payload).then((res)=>{
-          console.log("RES:",res);
-          if(res.statusCode){
-            this.setState({overlay:"otp",showTerms:true})
-          }
-        }).catch(err=>{
-          Alert.alert("Error",err.response.data.message)
-        })
-      }
-    }else{
-      Alert.alert("Verification","Phone number already verified")
+    } else {
+      Alert.alert("Verification", "Phone number already verified");
     }
-  }
+  };
 
   onRegister = () => {
     const emailError = emailValidator(this.state.email);
@@ -358,7 +362,7 @@ export default class Registartion extends Component {
     );
 
     if (
-      streetError  ||
+      streetError ||
       emailError ||
       passwordError ||
       confirmPasswordError ||
@@ -389,10 +393,9 @@ export default class Registartion extends Component {
       this.setState({ postalCodeError: postalCodeError });
       this.setState({ termsError: termsError });
       this.setState({ countryError: countryError });
-    }else if(passportError || tradeError){
-      Alert.alert("Document Error","Please add the required document(s)")
-    }
-    else if (this.state.password !== this.state.confirmPassword) {
+    } else if (passportError || tradeError) {
+      Alert.alert("Document Error", "Please add the required document(s)");
+    } else if (this.state.password !== this.state.confirmPassword) {
       alert("Password Error", "Passwords don't match");
     } else {
       let catdata = [];
@@ -403,7 +406,7 @@ export default class Registartion extends Component {
             "Sign Up Error",
             "Please choose a category before registering"
           );
-          error=true;
+          error = true;
         } else {
           console.log("FORMULATING DATA:");
           this.state.apiCategories?.map((i, index) => {
@@ -419,15 +422,15 @@ export default class Registartion extends Component {
               this.state.apiBrands.map((k, kindex) => {
                 console.log("J:", j);
                 console.log("K:", k);
-                let res = j[0].brands.filter((h)=>{
-                  return h.id === k[0].id
-                })
-                console.log("RES: ",res)
+                let res = j[0].brands.filter((h) => {
+                  return h.id === k[0].id;
+                });
+                console.log("RES: ", res);
                 //if (k[0].sub_category_id === j[0].id){
-                  if(res.length>0){
-                    console.log("PUSHING TO ARRAY BRAND");
-                    brandsdata.push({ brand_id: res[0].id });
-                  }
+                if (res.length > 0) {
+                  console.log("PUSHING TO ARRAY BRAND");
+                  brandsdata.push({ brand_id: res[0].id });
+                }
                 //}
                 //console.log("BRANDSDATA BECOMES:",brandsdata)
               });
@@ -437,86 +440,95 @@ export default class Registartion extends Component {
                   brands: brandsdata,
                 });
               }
-              brandsdata=[]
-            console.log("SUB-CAT-DATA:",subcatdata)
-            if(subcatdata[jindex]?.brands.length<1){
-            Alert.alert("Brand Error",`Please choose a brand for sub category:${j[0].sub_category_name}`);
-            error=true;
-            return;
+              brandsdata = [];
+              console.log("SUB-CAT-DATA:", subcatdata);
+              if (subcatdata[jindex]?.brands.length < 1) {
+                Alert.alert(
+                  "Brand Error",
+                  `Please choose a brand for sub category:${j[0].sub_category_name}`
+                );
+                error = true;
+                return;
               }
             });
             catdata.push({ category_id: i[0].id, subCategory: subcatdata });
-            if(catdata[index]?.subCategory.length<1){
-              Alert.alert("Sub Category Error",`Please choose a sub category for category:${i[0].category_name}`);
-              error=true;
+            if (catdata[index]?.subCategory.length < 1) {
+              Alert.alert(
+                "Sub Category Error",
+                `Please choose a sub category for category:${i[0].category_name}`
+              );
+              error = true;
               return;
-              }
-              brandsdata=[];
-              subcatdata=[];
-            });
+            }
+            brandsdata = [];
+            subcatdata = [];
+          });
           console.log("DATA FOR POST BECOMES:", catdata);
-
-          
         }
       }
 
-      catdata.map((i)=>{
-          i.subCategory.map((j)=>{
-            if(j.brands.length<1){
-              Alert.alert("Sub Category Error","Please make sure you chose a brand for every sub category");
-              error=true;
-              }
+      catdata.map((i) => {
+        i.subCategory.map((j) => {
+          if (j.brands.length < 1) {
+            Alert.alert(
+              "Sub Category Error",
+              "Please make sure you chose a brand for every sub category"
+            );
+            error = true;
+          }
+        });
+      });
+
+      if (!this.state.verifiedNumber) {
+        Alert.alert("Error", "Please verify your number");
+        return;
+      }
+
+      if (!this.state.checkRead) {
+        Alert.alert(
+          "Error",
+          "Please agree to the terms and conditions before continuing"
+        );
+        return;
+      }
+
+      if (!error) {
+        const payload = {
+          owner_email: this.state.email,
+          owner_country_code: this.state.countryCode,
+          owner_mobile_number: this.state.phoneNumber,
+          password: this.state.password,
+          company_name: this.state.company_name,
+          website: this.state.website,
+          financial_number: this.state.financialNumber,
+          registered_address: this.state.registeredAddress,
+          country_id: this.state.country,
+          state: this.state.state,
+          city: this.state.city,
+          street: this.state.street,
+          postal_code: this.state.postalCode,
+          user_type: this.state.userRole == "buyer" ? 1 : 4, //parseInt(this.state.accountType),
+          company_reg_doc: this.state.passport.uri,
+          trading_license_doc: this.state.trade.uri,
+          categories: this.state.userRole == "buyer" ? [] : catdata,
+        };
+
+        // Show spinner when call is made
+        this.setState({ loading: true });
+
+        // api call
+        apiUserServices
+          .post(`/${ROUTE_LIST.REGISTER}`, payload)
+          .then((res) => {
+            alert(res.data.message);
+            this.setState({ loading: false });
+            this.props.navigation.navigate("Login");
           })
-      })
-
-      if(!this.state.verifiedNumber){
-        Alert.alert("Error","Please verify your number");
-        return;
-      }
-
-      if(!this.state.checkRead){
-        Alert.alert("Error","Please agree to the terms and conditions before continuing");
-        return;
-      }
-    
-    if(!error){
-      const payload = {
-        owner_email: this.state.email,
-        owner_country_code: this.state.countryCode,
-        owner_mobile_number: this.state.phoneNumber,
-        password: this.state.password,
-        company_name: this.state.company_name,
-        website: this.state.website,
-        financial_number: this.state.financialNumber,
-        registered_address: this.state.registeredAddress,
-        country_id: this.state.country,
-        state: this.state.state,
-        city: this.state.city,
-        street: this.state.street,
-        postal_code: this.state.postalCode,
-        user_type: this.state.userRole == "buyer" ? 1 : 4, //parseInt(this.state.accountType),
-        company_reg_doc: this.state.passport.uri,
-        trading_license_doc: this.state.trade.uri,
-        categories: this.state.userRole == "buyer" ? [] : catdata,
-      };
-
-     
-      // Show spinner when call is made
-      this.setState({ loading: true });
-
-      // api call
-      apiUserServices
-        .post(`/${ROUTE_LIST.REGISTER}`, payload)
-        .then((res) => {
-          alert(res.data.message);
-          this.setState({ loading: false });
-          this.props.navigation.navigate("Login");
-        })
-        .catch((error) => {
-          console.log("ERROR REGISTERING: ",error)
-          alert(error.response.data.message);
-          this.setState({ loading: false });
-        }); 
+          .catch((error) => {
+            console.log("ERROR REGISTERING: ", error);
+            alert(error.response.data.message);
+            this.setState({ loading: false });
+          });
       }
     }
   };
@@ -663,7 +675,10 @@ export default class Registartion extends Component {
 
           //2-fetching subcategories
           res[0].subcategory.map((i3) => {
-            r.push({ label: i3.sub_category_name+` ( ${res[0].category_name})`, value: i3.id });
+            r.push({
+              label: i3.sub_category_name + ` ( ${res[0].category_name})`,
+              value: i3.id,
+            });
           });
         });
 
@@ -711,7 +726,7 @@ export default class Registartion extends Component {
               i3.brands.map((i4) => {
                 if (i4.sub_category_id === i.value)
                   r2.push({
-                    label: i4.brand_name+` ( ${i3.sub_category_name} )`,
+                    label: i4.brand_name + ` ( ${i3.sub_category_name} )`,
                     value: i4.id,
                     subcat_id: i4.sub_category_id,
                   });
@@ -828,26 +843,26 @@ export default class Registartion extends Component {
                   styles.docPicker,
                   {
                     borderColor: "#A6A6A6",
-                    backgroundColor:'#fff',
+                    backgroundColor: "#fff",
                     marginVertical: 0,
                   },
                 ]}
               >
-                <Text style={{color:'gray'}}>{element.placeholder}</Text>
+                <Text style={{ color: "gray" }}>{element.placeholder}</Text>
               </View>
             }
           >
             <SelectMultiple
               items={this.state[element.items]}
               selectedItems={this.state[element.value]}
-              labelStyle={{color:'black'}}
-              selectedLabelStyle	={{color:'#698EB7'}}
+              labelStyle={{ color: "black" }}
+              selectedLabelStyle={{ color: "#698EB7" }}
               onSelectionsChange={(item) =>
                 this.fetchCategories(item, [element.query])
               }
               /* renderLabel={(label)=>{
                 [element.value]=="category"?tlabel:<Text>Label</Text>
-              }} */	
+              }} */
             />
           </CollapsibleList>
         </View>
@@ -867,12 +882,12 @@ export default class Registartion extends Component {
                   styles.docPicker,
                   {
                     borderColor: "#A6A6A6",
-                    backgroundColor:'#fff',
+                    backgroundColor: "#fff",
                     marginVertical: 0,
                   },
                 ]}
               >
-                <Text style={{color:'gray'}}>{element.placeholder}</Text>
+                <Text style={{ color: "gray" }}>{element.placeholder}</Text>
               </View>
             }
           >
@@ -896,24 +911,26 @@ export default class Registartion extends Component {
           borderColor: "#C4C4C4",
           borderRadius: 4,
           marginVertical: 10,
-          height:55,
-          justifyContent:'center',
-          backgroundColor:'#fff'
+          height: 55,
+          justifyContent: "center",
+          backgroundColor: "#fff",
         }}
       >
         <Picker
-          style={{marginLeft:5}}
+          style={{ marginLeft: 5 }}
           selectedValue={this.state[dropDownElement.value]}
-          onValueChange={(itemValue, itemIndex) =>{
-            this.setState({country:itemValue});
-            console.log("COUNTRY CHOSEN: ",itemValue)
-          }
-          }>
-            {this.state[dropDownElement.items].length<1?
-             <Picker.Item label="Country" value={0}/>
-             :this.state[dropDownElement.items].map((item,index2)=>(
-             <Picker.Item label={item.label} value={item.value} key={index2}/>
-            ))}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ country: itemValue });
+            console.log("COUNTRY CHOSEN: ", itemValue);
+          }}
+        >
+          {this.state[dropDownElement.items].length < 1 ? (
+            <Picker.Item label="Country" value={0} />
+          ) : (
+            this.state[dropDownElement.items].map((item, index2) => (
+              <Picker.Item label={item.label} value={item.value} key={index2} />
+            ))
+          )}
         </Picker>
       </View>
     );
@@ -929,7 +946,7 @@ export default class Registartion extends Component {
         return (
           <TextInput
             key={index}
-            style={{backgroundColor:'#fff'}}
+            style={{ backgroundColor: "#fff" }}
             label={element.label}
             returnKeyType={element.returnKeyType}
             value={this.state[element.stateValue]}
@@ -994,65 +1011,98 @@ export default class Registartion extends Component {
         source={require("../../../assets/images/Login-bg.png")}
         resizeMode="cover"
         style={signupStyle.imgContainer}
-      ><Overlay visible={this.state.showTerms} onClose={()=>this.setState({showTerms:false})} 
-      containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
-      closeOnTouchOutside>
-                      
+      >
+        <Overlay
+          visible={this.state.showTerms}
+          onClose={() => this.setState({ showTerms: false })}
+          containerStyle={[{ backgroundColor: `rgba(255,255,255,0.95)` }]}
+          closeOnTouchOutside
+        >
           <View style={styles.modalHeader}>
-              <Text
+            <Text
               style={{
-                  fontSize: 26,
-                  color: "#31C2AA",
-                  fontWeight: "bold",
-                  marginBottom: 5,
+                fontSize: 26,
+                color: "#31C2AA",
+                fontWeight: "bold",
+                marginBottom: 5,
               }}
-              >
-              {this.state.overlay=="terms"?"Terms and Conditions":"OTP Verification"}
-              </Text>
-              <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({showTerms:false,overlay:"terms"})}/>
-          </View>
-          <ScrollView style={{flexDirection:'column',marginTop:20}}>
-                {this.state.overlay=="terms"?<Text>{terms}</Text>:(<View style={{flex:1,flexDirection:'column',width:screenwidth,marginHorizontal:20}}>
-                    
-              <TI
-                selectionColor="#31c2aa"
-                placeholder="OTP"
-                style={styles.modalBoxInputs}
-                label="1234"
-                value={this.state.otp}
-                //value={this.state[element.stateValue]}
-                onChangeText={(text) =>this.setState({otp:text})}
-                autoCapitalize="none"
-                // keyboardType={element.keyBoardType}
-                outlineColor="#C4C4C4"
-                theme={{
-                  colors: { primary: "#31c2aa", underlineColor: "transparent" },
-                }}
-              />
-              <TouchableOpacity
-              onPress={() => {if(this.state.otp>3){
-                //call an api 
-                this.setState({verifiedNumber:true,overlay:'terms',showTerms:false})
-              }}}
-              style={{
-                backgroundColor: "#31C2AA",
-                borderRadius: 25,
-                alignItems: "center",
-                width:screenwidth*0.7,
-                justifyContent: "center",marginVertical:10,
-                height: 30,}}
             >
-              <Text style={styles.loginBtnText}>Verify</Text>
-            </TouchableOpacity>
-                    {/* <TouchableOpacity
+              {this.state.overlay == "terms"
+                ? "Terms and Conditions"
+                : "OTP Verification"}
+            </Text>
+            <MaterialCommunityIcons
+              name="close"
+              size={24}
+              color="red"
+              onPress={() =>
+                this.setState({ showTerms: false, overlay: "terms" })
+              }
+            />
+          </View>
+          <ScrollView style={{ flexDirection: "column", marginTop: 20 }}>
+            {this.state.overlay == "terms" ? (
+              <Text>{terms}</Text>
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  width: screenwidth,
+                  marginHorizontal: 20,
+                }}
+              >
+                <TI
+                  selectionColor="#31c2aa"
+                  placeholder="OTP"
+                  style={styles.modalBoxInputs}
+                  label="1234"
+                  value={this.state.otp}
+                  //value={this.state[element.stateValue]}
+                  onChangeText={(text) => this.setState({ otp: text })}
+                  autoCapitalize="none"
+                  // keyboardType={element.keyBoardType}
+                  outlineColor="#C4C4C4"
+                  theme={{
+                    colors: {
+                      primary: "#31c2aa",
+                      underlineColor: "transparent",
+                    },
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    if (this.state.otp > 3) {
+                      //call an api
+                      this.setState({
+                        verifiedNumber: true,
+                        overlay: "terms",
+                        showTerms: false,
+                      });
+                    }
+                  }}
+                  style={{
+                    backgroundColor: "#31C2AA",
+                    borderRadius: 25,
+                    alignItems: "center",
+                    width: screenwidth * 0.7,
+                    justifyContent: "center",
+                    marginVertical: 10,
+                    height: 30,
+                  }}
+                >
+                  <Text style={styles.loginBtnText}>Verify</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity
                 onPress={this.onRegister}
                 style={[signupStyle.loginBtn]}
               >
                 <Text style={styles.loginBtnText}>Verify</Text>
               </TouchableOpacity> */}
-                </View>)}
+              </View>
+            )}
           </ScrollView>
-      </Overlay>
+        </Overlay>
         <SafeAreaView style={signupStyle.container}>
           <Spinner visible={this.state.loading} />
           <Header>Create Account</Header>
@@ -1077,31 +1127,62 @@ export default class Registartion extends Component {
               </RadioButton.Group>
               {this.drawTextInputFields()}
               <View style={styles.verifyNumber}>
-                <Text>{this.state.countryCode} {this.state.phoneNumber}</Text>
-                <View style={{flexDirection:'row',alignItems:'center'}}>
-                {!this.state.verifiedNumber ? (
-                  <AntDesign name="closecircle" size={20} style={{marginRight:5}} color="red" />
-                ) : (
-                  <AntDesign name="checkcircle" size={20} style={{marginRight:5}} color="green" />
-                )}
-                <TouchableOpacity
-                style={{height:30,padding:5}}
-                onPress={()=>this.verifyNumber()}>
-                  <Text style={{color:'#31C2AA',textDecorationLine:'underline'}}>Verify your number</Text>
-                </TouchableOpacity>
+                <Text>
+                  {this.state.countryCode} {this.state.phoneNumber}
+                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  {!this.state.verifiedNumber ? (
+                    <AntDesign
+                      name="closecircle"
+                      size={20}
+                      style={{ marginRight: 5 }}
+                      color="red"
+                    />
+                  ) : (
+                    <AntDesign
+                      name="checkcircle"
+                      size={20}
+                      style={{ marginRight: 5 }}
+                      color="green"
+                    />
+                  )}
+                  <TouchableOpacity
+                    style={{ height: 30, padding: 5 }}
+                    onPress={() => this.verifyNumber()}
+                  >
+                    <Text
+                      style={{
+                        color: "#31C2AA",
+                        textDecorationLine: "underline",
+                      }}
+                    >
+                      Verify your number
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
               <View style={styles.verifyNumber}>
-              <Checkbox
-                    /* theme={{
+                <Checkbox
+                  /* theme={{
                       colors: { primary: "#31c2aa", underlineColor: "transparent" },
                     }} */
-                    status={this.state.checkRead ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                      this.setState({checkRead:!this.state.checkRead});
+                  status={this.state.checkRead ? "checked" : "unchecked"}
+                  onPress={() => {
+                    this.setState({ checkRead: !this.state.checkRead });
+                  }}
+                />
+                <Text>
+                  I Agree to the{" "}
+                  <Text
+                    style={{
+                      color: "#31C2AA",
+                      textDecorationLine: "underline",
                     }}
-                  />
-              <Text>I Agree to the <Text style={{color:'#31C2AA',textDecorationLine:'underline'}} onPress={()=>this.setState({showTerms:true})}>Terms and conditions</Text></Text>
+                    onPress={() => this.setState({ showTerms: true })}
+                  >
+                    Terms and conditions
+                  </Text>
+                </Text>
               </View>
               <TouchableOpacity
                 onPress={this.onRegister}
