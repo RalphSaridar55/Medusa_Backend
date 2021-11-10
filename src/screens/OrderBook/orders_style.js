@@ -21,6 +21,15 @@ const styles = StyleSheet.create({
         width:screenwidth,
         paddingHorizontal:20
     },
+    pickerContainer:{
+        borderWidth: 1,
+        borderColor: "#C4C4C4",
+        borderRadius: 4,
+        marginVertical: 10,
+        height:55,
+        justifyContent:'center',
+        backgroundColor:'#fff'
+    },
     loginBtn: {
         marginBottom:10,
         marginHorizontal:10,

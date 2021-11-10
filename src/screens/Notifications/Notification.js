@@ -9,10 +9,12 @@ const data = {
   Message: `Cras sagittis tempus tortor.Aliquam non justo porttitor, hendrerit velit quis, porttitor elit. Donec finibus tempus eros eget aliquet. Donec malesuada consequat mauris, nec convallis neque tempus ,`,
 };
 
-const Notification = () => {
+const Notification = ({route}) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [routeData,setRouteData] = useState();
 
   useEffect(() => {
+    setRouteData(route.params)
     setIsVisible(false);
   }, []);
 
@@ -21,8 +23,8 @@ const Notification = () => {
       <Spinner visible={isVisible} />
       <Card>
         <Card.Title
-          title={data.subject}
-          subtitle={data.date}
+          title={routeData?.senderData.name}
+          subtitle={routeData?.created_at.substring(0,10)}
           left={(props) => <Avatar.Icon size={20} {...props} icon="bell" />}
         />
         <Card.Content>
@@ -30,7 +32,7 @@ const Notification = () => {
             style={styles.messageContainer}
             showsVerticalScrollIndicator={false}
           >
-            <Paragraph>{data.Message}</Paragraph>
+            <Paragraph>{routeData?.message}</Paragraph>
           </ScrollView>
         </Card.Content>
       </Card>

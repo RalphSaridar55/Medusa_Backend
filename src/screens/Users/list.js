@@ -116,7 +116,7 @@ export default class Users extends Component {
                       "Are you sure you want to delete this sub-user?",
                       [
                         { text: "No", onPress: () => console.log("refused") },
-                        { text: "Yes", onPress: () => deleteSubUser(i.id) },
+                        { text: "Yes", onPress: () => this.deleteSubUser(i.id) },
                       ]
                     )
                   }

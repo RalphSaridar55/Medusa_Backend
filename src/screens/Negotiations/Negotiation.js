@@ -17,6 +17,7 @@ import * as APIProduct from '../../core/apis/apiPortfolioServices';
 import styles from "./style_negotiation";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RenderPicker } from "../../components/Picker";
 
 const data = [
   {
@@ -313,15 +314,19 @@ const Negotiations = ({route,navigation}) => {
                   }}
                 />
               </View>
-              <View style={{flex:3,marginHorizontal:5,borderRadius:20,borderColor:'lightgray',borderWidth:1,paddingTop:5}}>
-                {<Picker
+              {replies?.length>0&&<RenderPicker 
+                containerStyle={styles.pickerContainer}
                 style={{paddingLeft:30,backgroundColor:'#fff',}}
                 selectedValue={reply}
-                prompt="Replies"numberOfLines={3}
+                prompt="Replies"
                 onValueChange={(itemValue,itemIndex)=>{
                   console.log("Item Value: ",itemValue)
                   setReply(itemValue)
-                }}>
+                }}
+                map={replies}
+              />}
+              {/* <View style={}>
+                {<Picker>
                   {
                   replies?.map((item,index)=>{
                     return(
@@ -331,7 +336,7 @@ const Negotiations = ({route,navigation}) => {
                     )
                   })}
                 </Picker>}
-              </View>
+              </View> */}
               <TouchableOpacity
                onPress={()=>{
                  console.log(typeof(parseInt(price)),price)

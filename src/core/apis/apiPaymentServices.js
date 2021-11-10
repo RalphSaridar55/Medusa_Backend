@@ -27,6 +27,7 @@ export const placeOrder = async(data) =>{
           }
       }).then((res)=>{
           console.log(res.data)
+          return res.data.message
       });
   });
 }

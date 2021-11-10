@@ -6,6 +6,7 @@ const screenheight = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        //backgroundColor:'#E9F3FF',
     },
     docPicker:{
         borderWidth:1,

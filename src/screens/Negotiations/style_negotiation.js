@@ -14,6 +14,14 @@ const styles = StyleSheet.create({
         justifyContent:'space-between',
         alignItems:'center'
     },
+    pickerContainer:{
+        flex:3,
+        marginHorizontal:5,
+        borderRadius:20,
+        borderColor:'lightgray',
+        borderWidth:1,
+        paddingTop:5
+    },
     buttonApprove:{
         padding:5,
         borderRadius:20

@@ -105,6 +105,7 @@ export default class Delivery extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      cardComplete:false,
       loading: true,
       visible: false,
       location: 0,
@@ -220,9 +221,10 @@ export default class Delivery extends Component {
     console.log("ID: ",id)
     let pay = this.state.payments.filter((i)=>i.value === id)[0]
     this.setState({payment_method_id:pay.value,payment_method:pay.label,payment:id})
-    if(id==1){
+    if(id==4){
       apiPayment.getClientToken().then((res)=>{
         this.setState({payment_token:res})
+        console.log("Fetched Client Token:",res)
       });
       this.setState({overlay:true});
     }
@@ -239,7 +241,7 @@ export default class Delivery extends Component {
     this.setState({
       delivery_address: {
         address_id: id,
-        adress: state.label,
+        address: state.label,
       },
       filteredLocation: {
         Country: country?.label,
@@ -252,7 +254,7 @@ export default class Delivery extends Component {
   }
 
   componentDidMount() {
-    console.log("FROM CONTEXT:",this.product)
+    //console.log("FROM CONTEXT:",this.product)
     this.calculateTotal();
     LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
     let { products, order } = this.props.route.params;
@@ -353,7 +355,12 @@ export default class Delivery extends Component {
     ]);
   };
 
-  changeData(e){
+  changeData=(e)=>{
+    //console.log("TEST:",e)
+    if(e.complete==true){
+      console.log("true")
+      this.setState({cardComplete: e.complete})
+    }
     //console.log("Test 1234",e,"+++++");
     /* this.setState({cardInfo:e}) */
   }
@@ -390,6 +397,7 @@ export default class Delivery extends Component {
   };
 
   pay() {
+    this.setState({loading:true})
     console.log("PLACING ORDER DATA: ", this.state.dataFromRoute);
     let { delivery_address, payment, cargo_method, doc } = this.state;
     let payload = {
@@ -408,6 +416,7 @@ export default class Delivery extends Component {
       switch (typeof item) {
         case "number":
           if (payload[item] == 0) {
+            this.setState({loading:false})
             Alert.alert(
               "Error",
               `Please fill the input ${item.replace(/_/g, " ")}`
@@ -417,6 +426,7 @@ export default class Delivery extends Component {
           }
         case "string":
           if (payload[item] == "") {
+            this.setState({loading:false})
             Alert.alert(
               "Error",
               `Please fill the input ${item.replace(/_/g, " ")}`
@@ -426,6 +436,7 @@ export default class Delivery extends Component {
           }
         default:
           if (payload[item].address_id == 0 || payload[item].address == "") {
+            this.setState({loading:false})
             Alert.alert(
               "Error",
               `Please fill the input ${item.replace(/_/g, " ")}`
@@ -438,12 +449,25 @@ export default class Delivery extends Component {
     let payload2 = {...payload, ...this.state.dataFromRoute,service_type: this.state.service, service_level: this.state.serviceLevel,}
     console.log("PAYLOAD2: ",payload2)
     if(!error){
-      apiPayment.placeOrder(payload2).then((res)=>{
-        console.log("SHOUDL BE SUCCESSFUL");
-      }).catch(err=>{
-  
-        Alert.alert("Error",err.response.data.message)
-      })
+      if(this.state.payment!=4){  
+        apiPayment.placeOrder(payload2).then((res)=>{
+          console.log("SHOUDL BE SUCCESSFUL");
+          this.setState({loading:false})
+          Alert.alert("Payment",res,[
+            {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
+          ])
+        }).catch(err=>{
+          this.setState({loading:false})
+          Alert.alert("Error",err.response.data.message)
+        })
+      }
+      else{
+        if(!this.state.cardComplete){
+          this.setState({loading:false})
+          Alert.alert("Error","Please check your credit card credentials");
+          return;
+        }
+      }
     }
   }
 
@@ -679,9 +703,10 @@ export default class Delivery extends Component {
                     style={styles.docPicker}
                     doc={this.state.doc}/>
                       
-                  <Overlay visible={this.state.payment==1?true:false}
+                  {this.state.payment_token?.length>0&&<Overlay visible={this.state.payment==4?true:false}
+                  token={this.state.payment_token}
                   onClose={()=>this.setState({overlay:false})}
-                  onchange={this.changeData}  />
+                  onchange={this.changeData}  />}
                       </View>
               </View>
             <View>

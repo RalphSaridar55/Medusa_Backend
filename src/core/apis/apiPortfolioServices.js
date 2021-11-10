@@ -30,161 +30,6 @@ export const getSellerCategories= async() =>{
   })
 }
 
-
-export async function getCategoryDetails () {
-        return [
-        {
-          category_name: "Electronics",
-          id: 101,
-          subcategory: [
-            {
-              id: 1,
-              category_id: 101,
-              sub_category_name: "Phone",
-              status: 2,
-              created_a: "2021-05-18T12:58:16.536Z",
-              brands: [
-                {
-                  id: 21,
-                  sub_category_id: 1,
-                  brand_name: "Samsung",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                },
-                {
-                  id: 22,
-                  sub_category_id: 1,
-                  brand_name: "Apple",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                },
-                {
-                  id: 23,
-                  sub_category_id: 1,
-                  brand_name: "Nokia",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                },
-                {
-                  id: 24,
-                  sub_category_id: 1,
-                  brand_name: "LG",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                }
-              ]
-            },
-            {
-              id: 102,
-              category_id: 1,
-              sub_category_name: "Laptops",
-              status: 2,
-              created_at: "2021-05-18T12:58:16.536Z",
-              brands: [
-                {
-                  id: 25,
-                  sub_category_id: 1,
-                  brand_name: "Samsung Laptop",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                },
-                {
-                  id: 26,
-                  sub_category_id: 1,
-                  brand_name: "Apple Laptop",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                },
-                {
-                  id: 27,
-                  sub_category_id: 1,
-                  brand_name: "Nokia Laptop",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                },
-                {
-                  id: 28,
-                  sub_category_id: 1,
-                  brand_name: "LG Laptop",
-                  status: 2,
-                  created_at: "2021-05-18T12:58:16.536Z"
-                }]
-            },
-            {
-              id: 103,
-              category_id: 1,
-              sub_category_name: "Chargers",
-              status: 2,
-              created_at: "2021-05-18T12:58:16.536Z",
-              brands: [{
-                id: 29,
-                sub_category_id: 1,
-                brand_name: "Wireless Charger",
-                status: 2,
-                created_at: "2021-05-18T12:58:16.536Z"
-              }]
-            },
-            {
-              id: 104,
-              category_id: 1,
-              sub_category_name: "Cables",
-              status: 2,
-              created_at: "2021-05-18T12:58:16.536Z",
-              brands: []
-            }
-          ]
-        },
-        
-        //
-
-        {
-            category_name: "food",
-            id: 222,
-            subcategory: [
-              {
-                id: 301,
-                category_id: 101,
-                sub_category_name: "pizza",
-                status: 2,
-                created_a: "2021-05-18T12:58:16.536Z",
-                brands: [
-                  {
-                    id: 31,
-                    sub_category_id: 301,
-                    brand_name: "peperoni",
-                    status: 2,
-                    created_at: "2021-05-18T12:58:16.536Z"
-                  },
-                  {
-                    id: 32,
-                    sub_category_id: 301,
-                    brand_name: "vegy",
-                    status: 2,
-                    created_at: "2021-05-18T12:58:16.536Z"
-                  },
-                ]
-              },
-              {
-                id: 302,
-                category_id: 1,
-                sub_category_name: "burgers",
-                status: 2,
-                created_at: "2021-05-18T12:58:16.536Z",
-                brands: [
-                  {
-                    id: 402,
-                    sub_category_id: 302,
-                    brand_name: "deek duke",
-                    status: 2,
-                    created_at: "2021-05-18T12:58:16.536Z"
-                  },
-                ]
-              },
-            ]
-          },
-      ] 
-    }
-
 export async function getProductDetails (id) {
   console.log('inside get prod details')
   return await getToken().then((x)=>{
@@ -210,5 +55,30 @@ export async function updateUserProfile(data){
       console.log("RES FROM THE API:",res.data)
       return res.data
     }).catch(err=>console.log("API ERROR: ",err))
+  })
+}
+
+export async function getNotifications(){
+  return await getToken().then((x)=>{
+    return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/notification-list?limit=100&page=1',{
+    headers:{
+      Authorization:x
+      }
+    }).then((res)=>{
+      console.log("RES FROM THE API:",res.data)
+      return res.data.data.data.sort((a)=>a.read_status!=false)
+    }).catch(err=>console.log("API ERROR: ",err))
+  })
+}
+
+export async function readNotification(id){
+  return await getToken().then((x)=>{
+    return apiUserServices.patch('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/notification-read',id,{
+    headers:{
+      Authorization:x
+      }
+    }).then((res)=>{
+      console.log("RES READ:",res.data)
+    }).catch(err=>console.log("API ERROR: ",err.response.data.message))
   })
 }

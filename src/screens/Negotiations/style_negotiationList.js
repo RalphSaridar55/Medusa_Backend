@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     chatsContainer:{
+        //backgroundColor:'#E9F3FF'
     },
     containerChat:{
         marginVertical:10,

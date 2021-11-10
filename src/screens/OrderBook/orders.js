@@ -31,141 +31,21 @@ import { Picker } from "@react-native-picker/picker";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setItemAsync } from "expo-secure-store";
+import { withNavigationFocus } from "react-navigation";
 const screenwidth = Dimensions.get('screen').width;
 const actionSheetCat = createRef();
-/* const data1 = [
-  {
-    id: 1,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 1",
-    status: "Reserved",
-    status_id:1
-  },
-  {
-    id: 2,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 2",
-    status: "Reserved",
-    status_id:1
-  },
-  {
-    id: 3,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 3",
-    status: "Reserved",
-    status_id:1
-  },
-  {
-    id: 4,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 4",
-    status: "Completed",
-    status_id:2
-  },
-  {
-    id: 5,
-    image: require("../../../assets/images/mouse.jpg"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 5",
-    status: "Completed",
-    status_id:2
-  },
-  {
-    id: 6,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 6",
-    status: "Completed",
-    status_id:2
-  },
-  {
-    id: 7,
-    image: require("../../../assets/images/keyboard.jpg"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 7",
-    status: "Pending",
-    status_id:3
-  },
-  {
-    id: 8,
-    image: require("../../../assets/images/mouse.jpg"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 8",
-    status: "Pending",
-    status_id:3
-  },
-  {
-    id: 9,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 9",
-    status: "Pending",
-    status_id:3
-  },
-  {
-    id: 10,
-    image: require("../../../assets/images/keyboard.jpg"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 10",
-    status: "In Progress",
-    status_id:4
-  },
-  {
-    id: 11,
-    image: require("../../../assets/images/mouse.jpg"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 11",
-    status: "In Progress",
-    status_id:4
-  },
-  {
-    id: 12,
-    image: require("../../../assets/images/mouse.png"),
-    description:
-      "Item Description Item Description Item Description Item Description Item Description Item Description Item Description",
-    price: 100,
-    name: "Product 12",
-    status: "In Progress",
-    status_id:4
-  },
-]; */
-export default class Orders extends Component {
-  constructor(props) {
+
+ class Orders extends Component {
+
+  constructor(props) {    
+    
     super(props);
     this.filterRef = React.createRef();
     this.state = {
       current:[],
       data:[],
       userData:null,
-      filterStatusLabel:"Current",
-      filterStatus:10,
-      filterStatuses:[
+      filterStatusesSeller :[
         {value:1,label:"Pending"},
         {value:2,label:"Picked up"},
         {value:3,label:"Awaiting Shipment"},
@@ -178,6 +58,15 @@ export default class Orders extends Component {
         {value:10,label:"Current"},
         {value:11,label:"Completed"},
       ],
+  
+      filterStatusesBuyer  :[
+        {value:2,label:"Completed Order"},
+        {value:3,label:"Reserved Order"},
+        {value:4,label:"Pending Order"},
+      ],
+      filterStatusLabel:"Current",
+      filterStatus:10,
+      filterStatuses:[],
       forTab: {
         index: 0,
         routes: [
@@ -335,23 +224,54 @@ export default class Orders extends Component {
   _changeFilter = (val) =>{
     let label = this.state.filterStatuses.filter((i)=>i.value===val)[0].label ;
     this.setState({spinner:true,filterStatus:val,filterStatusLabel:label})
-    APIOrder.getSellersOrder(val).then((res)=>{
-      console.log('API RES: ',res)
-      this.setState({data:res,filterData:res,spinner:false})
-    }).catch(err=>{
-      Alert.alert("Error",err.response.data.message)
-      this.setState({spinner:false})
-    })
+    if(this.state.userData.user_type==4){
+      APIOrder.getSellersOrder(val).then((res)=>{
+        console.log('API RES: ',res)
+        this.setState({data:res,filterData:res,spinner:false})
+      }).catch(err=>{
+        Alert.alert("Error",err.response.data.message)
+        this.setState({spinner:false})
+      })
+    }
+    else{
+      APIOrder.getOrderBook(val).then((res)=>{
+        console.log('API RES: ',res)
+        this.setState({data:res,filterData:res,spinner:false})
+      }).catch(err=>{
+        Alert.alert("Error",err.response.data.message)
+        this.setState({spinner:false})
+      })
+    }
   }
 
   chooseTypeOfPlacement(){
-    this.setState({overlay:true})
+    if(this.state.current.length<1)
+      Alert.alert('Error','Your current orderbook is empty')
+    else
+      this.setState({overlay:true})
+  }
+  
+  async componentDidUpdate(prevProps){
+    if(prevProps.isFocus !== this.props.isFocused){
+      let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
+      console.log("USER DATA: ",userData)
+      this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
+      APIOrder.getOrderBook(1).then((res)=>{
+        console.log("CURRENT ORDER BOOK: ",res)
+        this.setState({current:res})
+      })
+      APIOrder.getSellersOrder(10).then((res)=>{
+        console.log("DATA: ",res)
+        this.setState({spinner:false,data:res,filterData:res})
+      })
+      setTimeout(()=>this.fillDataForCheckout(),2000)
+    }
   }
 
-  async componentDidMount() {
+  async componentDidMount(){
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
-      this.setState({spinner:true, userData:userData})
-    //fetching current order book
+    console.log("USER DATA: ",userData)
+    this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
     APIOrder.getOrderBook(1).then((res)=>{
       console.log("CURRENT ORDER BOOK: ",res)
       this.setState({current:res})
@@ -364,11 +284,10 @@ export default class Orders extends Component {
   }
 
   componentDidMount() {
-    /* let userData = await AsyncStorage.getItem('user_details');
-    this.setState({spinner:true}) */
     this.focusListener = this.props.navigation.addListener("focus", async() => {
       let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
-        this.setState({spinner:true, userData:userData})
+      console.log("USER DATA: ",userData)
+      this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
       APIOrder.getOrderBook(1).then((res)=>{
         console.log("CURRENT ORDER BOOK: ",res)
         this.setState({current:res})
@@ -618,45 +537,6 @@ export default class Orders extends Component {
           {this.state.filterData.map((item, index) => {
                   return this.drawScreenTwoData(item,index)
           })}
-          {/* <ActionSheet ref={actionSheetCat}>
-          <ScrollView >
-              <View >
-                  <Title style={{ padding: 10 }}>Filter By </Title>
-                  <List.AccordionGroup>
-                      <List.Accordion title="Categories" id="1" style={{ width: "100%" }}>
-                              <Text>Test</Text>
-                      </List.Accordion>
-
-                      <List.Accordion title="Sub-Categories" id="2">
-                      <ScrollView style={{ maxHeight: 200 }}>
-                              <Text>Test</Text>
-                          </ScrollView>
-                      </List.Accordion>
-
-                      <List.Accordion title="Brand" id="3">
-                      <ScrollView style={{ maxHeight: 200 }}>
-                              <Text>Test</Text>
-                          </ScrollView>
-                      </List.Accordion>
-
-                      <List.Accordion title="Color" id="4">
-                      <ScrollView style={{ maxHeight: 200 }}>
-                              <Text>Test</Text>
-                          </ScrollView>
-                      </List.Accordion>
-                      <List.Accordion title="Price Range" id="5">
-                              <Text>Test</Text>
-                          
-                              <Text>Test</Text>
-                          <TouchableOpacity style={styles.resetButton}
-                          onPress={()=>this.resetPriceRange()}>
-                          <Text>Test</Text>
-                          </TouchableOpacity>
-                      </List.Accordion>
-                  </List.AccordionGroup>
-              </View>
-          </ScrollView>
-      </ActionSheet> */}
       </ScrollView>
       </>
     );
@@ -670,7 +550,7 @@ export default class Orders extends Component {
   render() {
     return (
 
-      this.state.userData?.user_type==1?(<TabView
+       this.state.userData?.user_type==1?( <TabView
         navigationState={this.state.forTab}
         renderScene={this._renderScene}
         onIndexChange={this._handleIndexChange}
@@ -686,7 +566,9 @@ export default class Orders extends Component {
             )}
           />
         )}
-      />):this.drawScreenTwo()
-    );
+      />) :this.drawScreenTwo()
+     );
   }
 }
+
+export default withNavigationFocus(Orders)
