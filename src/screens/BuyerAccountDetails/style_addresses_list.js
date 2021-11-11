@@ -19,6 +19,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "space-between",
   },
+  nameContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 280,
+  },
+  nameTxt: {
+      marginLeft: 15,
+      fontWeight: '600',
+      color: '#222',
+      fontSize: 18,
+      width: 170,
+  },
   listIcon: {
     marginRight: 15,
     display: "flex",

@@ -147,7 +147,7 @@ export default class AddUsers extends Component {
   };
 
   getRoles = () => {
-    apiServices.getRoleList().then((result) => {
+    apiServices.getRoleList(1,"user").then((result) => {
       
       console.log("roles \n", result.data.data);
       /* let roles = []

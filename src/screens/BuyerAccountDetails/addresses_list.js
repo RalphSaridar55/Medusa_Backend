@@ -76,25 +76,24 @@ const AdressList = (props) => {
       resizeMode="cover"
       style={{
         flex: 1,
+        marginTop:10,
         justifyContent: "center",
       }}
     >
       <Spinner visible={isVisible} />
-
+      <Headline
+        style={{ margin: 20, color: "#698EB7" }}
+        >
+        Addresses
+      </Headline>
       <ScrollView
         style={{ flex: 1, paddingHorizontal: 15, marginTop: 20 }}
         showsVerticalScrollIndicator={false}
       >
         {adressList?.map((i, index) => (
-          <TouchableOpacity
+          <View
             key={index}
             style={styles.listContainer}
-            onPress={() =>
-              props.navigation.navigate("Addresses", {
-                type: "edit",
-                item: i,
-              })
-            }
           >
             <View style={styles.Container}>
               <View style={styles.listIcon}>
@@ -105,7 +104,7 @@ const AdressList = (props) => {
                   {countries?.filter((s) => s.value === i.country_id)[0]?.label}
                 </Text>
                 <Text style={styles.listCity}>
-                  {i.city + "," + i.state + "," + i.street}
+                  {i.city + ", " + i.state + ", " + i.street}
                 </Text>
               </View>
             </View>
@@ -140,7 +139,7 @@ const AdressList = (props) => {
                 />
               </View>
             </View>
-          </TouchableOpacity>
+          </View>
         ))}
         <TouchableOpacity
           style={styles.Btn}

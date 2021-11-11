@@ -467,6 +467,9 @@ export default class Delivery extends Component {
           Alert.alert("Error","Please check your credit card credentials");
           return;
         }
+        /* else{
+
+        } */
       }
     }
   }

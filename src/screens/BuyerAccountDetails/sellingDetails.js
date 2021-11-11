@@ -1,4 +1,4 @@
-import React, { Component, createRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { categories_data } from "./categories_map";
 import {
@@ -41,13 +41,15 @@ const SellingDetail = ({navigation}) =>{
     const [apiData,setApiData] = useState({categories:[], subcategories:[], brands:[]});
     const [allData,setAllData] = useState({categories:[], subcategories:[], brands:[]})
     const [usersAllData,setUsersAllData] = useState({categories:[], subcategories:[], brands:[]})
+    const [page,setPage] = useState({page:1,totalCount:0});
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       
-          API.getSellersOwnProducts().then((res)=>{
-            //console.log("RESULT FROM USEEFFECT: ",res)
-            setData(res.sort((a,b)=>a.product_name>b.product_name?1:-1));
+          API.getSellersOwnProducts(1).then((res)=>{
+            //console.log("RESULT FROM: ",res)
+            setData(res.data.sort((a,b)=>a.product_name>b.product_name?1:-1));
+            setPage({page:1,totalCount:res.totalCount})
         })
     
         apiPortFolioServices.getCategories().then((result) => {
@@ -227,6 +229,22 @@ const SellingDetail = ({navigation}) =>{
 
     }
 
+   
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+      const paddingToBottom = 20;
+      return layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom;
+    };  
+
+  const loadMore= (page) =>{
+      setFilterData({...filterData,isVisible:true})
+      API.getSellersOwnProducts(page).then((res)=>{
+          let result = data.concat(res.data);
+          setFilterData({...filterData,isVisible:false})
+          setData(result)
+      })
+  }
+
     const renderCategories = () =>{
      return  (<>{categories_data.map((item,index)=>{
 
@@ -309,7 +327,7 @@ return (
           placeholder="Search"
         />
       </View>
-      {!filterData.showCategory?<ScrollView>
+      {!filterData.showCategory?<View style={{flex:1}}>
         <FlatList
          style={styles.list}
          contentContainerStyle={styles.listContainer}
@@ -317,6 +335,15 @@ return (
              (i=>i.product_name.toLowerCase().includes(filterData.search.toLowerCase()))}
          horizontal={false}
          numColumns={2}
+         onEndReachedThreshold={5}
+         onScroll={({nativeEvent}) => {
+           console.log(page.totalCount)
+          if (isCloseToBottom(nativeEvent) && data.length<page.totalCount) {
+              //console.log("REACHED END ")
+              let p = page.page + 1; 
+              loadMore(p);
+          }
+        }}
          keyExtractor={(item) => {
              return item.id;
          }}
@@ -349,7 +376,7 @@ return (
                  </TouchableOpacity>
              )
          }} />
-      </ScrollView>:<ScrollView>
+      </View>:<ScrollView>
        <View style={{ marginVertical: 20, marginHorizontal:20 }}>
             <CollapsibleList
               style={{ marginVertical: 10 }}

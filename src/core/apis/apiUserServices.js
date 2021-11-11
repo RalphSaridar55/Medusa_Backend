@@ -181,13 +181,13 @@ export const deleteSubUsers = async (id) => {
 };
 
 //Get Role list
-export const getRoleList = async () => {
+export const getRoleList = async (page,type) => {
  return await getToken().then((x) => {
-    return APIKit.get("/user/role?pageNo=1&limit=1000&isOwnRole=true", {
+    return APIKit.get(`/user/role?pageNo=${page}&limit=${type="user"?1000:10}&isOwnRole=true`, {
       headers: {
         Authorization: x,
       }}).then((res) => {
-      console.log("from api",res.data.data);
+      console.log("from api",res.data.data.data.length);
       return res.data
   });
   });
@@ -309,14 +309,15 @@ export const userAdress = async () =>{
 
 //Get seller's products
 
-export const getSellersOwnProducts = async () => {
+export const getSellersOwnProducts = async (page) => {
   return await getToken().then((x)=>{
-      return APIKit.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product_list?limit=10000&page=1',{
+      return APIKit.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/product_list?limit=10&page=${page}`,{
           headers:{
               Authorization: x
           }
       }).then((res)=>{
-          return res.data.data.data
+          //console.log("API: ",res.data.data.totalCount)
+          return res.data.data
       });
   });
 };

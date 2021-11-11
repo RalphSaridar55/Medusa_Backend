@@ -32,6 +32,7 @@ export default class ProductList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            total:0,
             search:'',
             List: true,
             showSearch: false,
@@ -54,6 +55,7 @@ export default class ProductList extends Component {
             apiCategoriesForFiltering:[],
             multiplier:500,
             modalVisible:false,
+            page:1,
         };
     }
 
@@ -217,25 +219,40 @@ export default class ProductList extends Component {
         })
       });
     } */
-
+    
     async componentDidMount(){
-        console.log("ROUTE PARAMETERS ",this.props.route.params)
+        //console.log("ROUTE PARAMETERS ",this.props.route.params)
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
         this.setState({userType:user.user_type, showButton:true})
-        console.log("USER DATA: ",user.user_type)
+        //console.log("USER DATA: ",user.user_type)
         apiPortFolioServices.getCategories().then((result)=>{
-            console.log("CATEGORIES: ",result);
+            //console.log("CATEGORIES: ",result);
             let array = result;
             let data = [];
             array.map((item) => data.push({label:item.category_name,value:item.id}));
             this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
         })
-        API.getProducts().then((res)=>{
-            console.log("PRODUCTS FETCHED: ",res)
-            let result = res.sort((a,b)=>a.product_name>b.product_name?1:-1)
-            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false })
+        API.getProducts(1).then((res)=>{
+            //console.log("FROM comp ",res)
+            //console.log("PRODUCTS FETCHED: ",res)
+            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
         })
 
+    }
+
+    isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        const paddingToBottom = 20;
+        return layoutMeasurement.height + contentOffset.y >=
+          contentSize.height - paddingToBottom;
+      };
+    
+    loadMore=(page)=>{
+        this.setState({isVisible:true,page:page});
+        API.getProducts(page).then((res)=>{
+            let result = this.state.filterProducts.concat(res.data);
+            this.setState({filterProducts:result,isVisible:false})
+        })
     }
 
 
@@ -325,13 +342,21 @@ export default class ProductList extends Component {
                 {this.state.category.length>0 && <View style={styles.filterContainer}>
                     <Text style={styles.filterText}>Filtered By: {this.state.category[0]?.label} {this.state.subcategory[0]?.label} {this.state.brand[0]?.label}</Text>
                 </View>}
-                <ScrollView>
+                <View style={{flex:1}}>
                     <FlatList style={styles.list}
                         contentContainerStyle={styles.listContainer}
                         data={this.state.filterProducts.filter
                             (i=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase()))}
                         horizontal={false}
                         numColumns={2}
+                        onEndReachedThreshold={5}
+                        onScroll={({nativeEvent}) => {
+                            //console.log("length",this.state.total)
+                            if (this.isCloseToBottom(nativeEvent) && this.state.filterProducts.length<this.state.total) {
+                                let page = this.state.page + 1; 
+                                this.loadMore(page);
+                            }
+                          }}
                         keyExtractor={(item) => {
                             return item.id;
                         }}
@@ -352,7 +377,7 @@ export default class ProductList extends Component {
                                 </TouchableOpacity>
                             )
                         }} />
-                </ScrollView>
+                </View>
                 <ActionSheet ref={actionSheetRef}>
                     <ScrollView >
                         <View style={{ flexDirection: 'column', padding: 10 }} >

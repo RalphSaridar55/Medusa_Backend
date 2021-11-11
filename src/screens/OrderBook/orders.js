@@ -31,7 +31,7 @@ import { Picker } from "@react-native-picker/picker";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setItemAsync } from "expo-secure-store";
-import { withNavigationFocus } from "react-navigation";
+import { withNavigation } from "react-navigation";
 const screenwidth = Dimensions.get('screen').width;
 const actionSheetCat = createRef();
 
@@ -251,7 +251,7 @@ const actionSheetCat = createRef();
       this.setState({overlay:true})
   }
   
-  async componentDidUpdate(prevProps){
+  /* async componentDidUpdate(prevProps){
     if(prevProps.isFocus !== this.props.isFocused){
       let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
       console.log("USER DATA: ",userData)
@@ -266,16 +266,18 @@ const actionSheetCat = createRef();
       })
       setTimeout(()=>this.fillDataForCheckout(),2000)
     }
-  }
+  } */
 
-  async componentDidMount(){
+async componentDidMount(){
+    console.log(1234)
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
     console.log("USER DATA: ",userData)
     this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
+    userData.user_type==1?
     APIOrder.getOrderBook(1).then((res)=>{
       console.log("CURRENT ORDER BOOK: ",res)
-      this.setState({current:res})
-    })
+      this.setState({spinner:false,current:res})
+    }):
     APIOrder.getSellersOrder(10).then((res)=>{
       console.log("DATA: ",res)
       this.setState({spinner:false,data:res,filterData:res})
@@ -283,8 +285,9 @@ const actionSheetCat = createRef();
     setTimeout(()=>this.fillDataForCheckout(),2000)
   }
 
-  componentDidMount() {
-    this.focusListener = this.props.navigation.addListener("focus", async() => {
+
+ /*  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', async() => {
       let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
       console.log("USER DATA: ",userData)
       this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
@@ -297,8 +300,10 @@ const actionSheetCat = createRef();
         this.setState({spinner:false,data:res,filterData:res})
       })
       setTimeout(()=>this.fillDataForCheckout(),2000)
-    });
-  }
+    })
+    
+  } */ 
+    
 
   DeleteOrder(id){
     Alert.alert("Delete","Are you sure you want to delete this order ?",[
@@ -428,7 +433,7 @@ const actionSheetCat = createRef();
         })}
       </ScrollView>
       <View style={styles.totalContainer}>
-        <Text style={styles.total}>Total Price: ${this.state.current.length>0 && this.state.current.reduce((pre,cur)=>({total:pre.total+cur.total}))["total"]+""}</Text>
+        <Text style={styles.total}>Total Price: ${this.state.current.length>0 ? this.state.current.reduce((pre,cur)=>({total:pre.total+cur.total}))["total"]+"":"0"}</Text>
         <TouchableOpacity
                 onPress={()=>this.chooseTypeOfPlacement()}
                 style={styles.placeOrderButton}>
@@ -571,4 +576,4 @@ const actionSheetCat = createRef();
   }
 }
 
-export default withNavigationFocus(Orders)
+export default Orders

@@ -82,16 +82,16 @@ class ProductDetails extends Component {
   handleAddAndSub(type, addOrSub) {
     //console.log(type);
     console.log(typeof this.state[type])
-    if(this.state.selectedVariant==null){
+    /* if(this.state.selectedVariant==null){
       Alert.alert("Error","Please select a variant first")
       return
-    }
-    else{
+    } */
+    ///else{
       if (addOrSub == "add")
         this.setState((prev) => ({ [type]: parseInt(prev[type]) + 1 }));
       else if (this.state[type] > 1)
         this.setState((prev) => ({ [type]: parseInt(prev[type]) - 1 }));
-    }
+    //}
   }
 
   async componentDidMount() {
@@ -148,6 +148,10 @@ class ProductDetails extends Component {
         Alert.alert("Error",`Please make sure your purchase quantity is greater than ${this.state.dataFromApi.min_purchase_qty}`)
         return;
       }
+      if(/* pieces<this.state.dataFromApi.min_purchase_qty ||  */(boxes*pieces)>this.state.dataFromApi.current_stock){
+        Alert.alert("Error",`Available product quantity is: ${this.state.dataFromApi.current_stock}`)
+        return;
+      }
       if(/* pieces>this.state.dataFromApi.max_purchase_qty ||  */(pieces * boxes)>this.state.dataFromApi.max_purchase_qty){
         Alert.alert("Error",`Please make sure your purchase quantity is lesser than ${this.state.dataFromApi.max_purchase_qty}`)
         return;
@@ -155,7 +159,7 @@ class ProductDetails extends Component {
       let variant_qty = this.state.dataFromApi.productvariant.filter((i)=>i.id===this.state.variantId)[0].variant_stock
       console.log("VARIANT QTY IS: ",variant_qty)
       if(/* pieces>variant_qty ||  */(boxes*pieces)>variant_qty){
-        Alert.alert("Error",`Please make sure your purchase quantity is lesser than ${variant_qty}`)
+        Alert.alert("Error",`Variant quantity for this product is: ${variant_qty}`)
         return;
       }
       let payload = {
@@ -321,11 +325,7 @@ class ProductDetails extends Component {
         </View>
     </View></>
     case 'cart':
-      return <View>
-        {/* <View style={{flexDirection:'row',justifyContent:'space-between',marginHorizontal:20}}>
-          <Text>Total:</Text>
-          <Text>$2100</Text>
-        </View> */}
+      return {/* <View>
         <ScrollView style={{flexDirection:'column'}}>
       <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
         <View style={styles.cartItemContainer}>
@@ -432,7 +432,7 @@ class ProductDetails extends Component {
           <Text>Variant Value: Test</Text>
         </View>
       </View>
-  </ScrollView></View>
+  </ScrollView></View> */}
   
     }
   }
@@ -499,10 +499,10 @@ class ProductDetails extends Component {
               </View>
           </Card> */}
           <Card>
-            <View style={styles.cartIconContainer}>
+            {/* <View style={styles.cartIconContainer}>
               <MaterialCommunityIcons name="cart" size={30} color="#6E91EC" style={{paddingTop:5}}
               onPress={()=>this.setState({modalVisible:true,typeOverlay:'cart'})}/>
-            </View>
+            </View> */}
             <Card.Title title="Variations" style={{ fontSize: 15 }} />
             <Card.Content>
               {this.state.dataFromApi?.productvariant.map((variant,index) => (
@@ -584,11 +584,11 @@ class ProductDetails extends Component {
                     </TouchableOpacity>
                     <TextInput style={{ color: "#31C2AA", fontSize: 24 }} value={this.state.chosenPieces+""} keyboardType="numeric"
                     onChangeText={(e)=>{
-                      if(this.state.selectedVariant==null)
-                        Alert.alert("Error","Please select a variant first")
-                      else if(e.length==0)
-                        this.setState({chosenPieces:1})
-                      else this.setState({chosenPieces:e})
+                      //if(this.state.selectedVariant==null)
+                        //Alert.alert("Error","Please select a variant first")
+                      /* else if(e.length==0)
+                        this.setState({chosenPieces:0})
+                      else  */this.setState({chosenPieces:e})
                       }} />
                     <TouchableOpacity
                       onPress={() =>
@@ -621,8 +621,10 @@ class ProductDetails extends Component {
                     </TouchableOpacity>
                     <TextInput style={{ color: "#31C2AA", fontSize: 24 }} value={this.state.chosenBoxes+""} keyboardType="numeric"
                     onChangeText={(e)=>{
-                      if(this.state.selectedVariant==null)
+                      /* if(this.state.selectedVariant==null)
                         Alert.alert("Error","Please select a variant first")
+                      else  */if(e.length==0)
+                          this.setState({chosenPieces:1})
                       else this.setState({chosenBoxes:e})
                       }} />
                     <TouchableOpacity

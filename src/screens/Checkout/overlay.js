@@ -4,6 +4,7 @@ import { CardField, confirmPayment, StripeProvider, useStripe } from '@stripe/st
 import styles from '../Products/listing_style';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Alert, SafeAreaView } from 'react-native'
+import { stripePk } from "../../config/env";
 
 const screenwidth = Dimensions.get('screen').width;
 const screenheight = Dimensions.get('screen').height;
@@ -22,17 +23,28 @@ const OverlayComp = (props) => {
         Alert.alert("Error", error.message)
     }
 
-    const sendBack = (t) => {
+    const sendBack = async(t) => {
         console.log("TEST: ",t)
         if(t.complete==true){
             props.onchange(t);
-            apiPayment.complete
-
+            console.log(props.token)
+            //console.log(stripePk.)
+           const {error} = await confirmPayment(props.token,{
+                type:'Card',
+                billingDetails:{
+                    email:'joe@doe.com'
+                }
+            });
+            if(error)
+                console.log("Error: ",error)
+            else
+                Alert.alert("Payment","Successful")
+            //apiPayment.complete
         }
     }
 
     return (
-        <StripeProvider publishableKey={process.env.STRIPE_PK} merchantIdentifier="merchant.identifier">
+        <StripeProvider publishableKey={stripePk.STRIPE_PK} merchantIdentifier="merchant.identifier">
             <SafeAreaView style={[styles2.docPicker, { display: !props.visible ? "none" : "flex" }]}>
                 <CardField style={{ height: 50, }}
                     postalCodeEnabled={false}

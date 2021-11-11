@@ -54,7 +54,7 @@ export const table =[
         value:"price",
         additional:" $"
     },
-    {
+    {   
         label:"Offered Price",
         value:"offered_price",
         additional:" $"

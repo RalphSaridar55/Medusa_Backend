@@ -247,7 +247,7 @@ export default class EditUsers extends Component {
   };
   
   getRoles = () => {
-    apiServices.getRoleList().then((result) => {
+    apiServices.getRoleList(1,"user").then((result) => {
        let roles = []
     /*result.data.data.map((i)=>{
         roles.push(i.role_name)

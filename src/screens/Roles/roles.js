@@ -23,6 +23,8 @@ export default class Roles extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            page:1,
+            total_roles:0,
             calls: [
                 { id: 1, name: "Role A", status: "4 " },
                 { id: 2, name: "Role C", status: "14 ", },
@@ -69,25 +71,39 @@ export default class Roles extends Component {
     }
 
     componentDidMount(){
-        apiUserServices.getRoleList().then((res)=>{
+        apiUserServices.getRoleList(1,"role").then((res)=>{
             console.log('FROM FUNCTION: ',res.data.data)
-            this.setState({roles:res.data.data,isLoading:false})
+            this.setState({roles:res.data.data,isLoading:false,total_roles:res.data.total_count})
         })
     }
 
     componentDidMount() {
-        apiUserServices.getRoleList().then((res)=>{
+        apiUserServices.getRoleList(1,"role").then((res)=>{
             console.log('FROM FUNCTION: ',res.data.data)
-            this.setState({roles:res.data.data,isLoading:false})
+            this.setState({roles:res.data.data,isLoading:false,total_roles:res.data.total_count})
         })
   
       this.focusListener = this.props.navigation.addListener("focus", () => {
         
-        apiUserServices.getRoleList().then((res)=>{
+        apiUserServices.getRoleList(1,"role").then((res)=>{
             console.log('FROM FUNCTION: ',res.data.data)
-            this.setState({roles:res.data.data,isLoading:false})
+            this.setState({roles:res.data.data,isLoading:false,total_roles:res.data.total_count})
         })
       });
+    }
+
+    isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        const paddingToBottom = 20;
+        return layoutMeasurement.height + contentOffset.y >=
+          contentSize.height - paddingToBottom;
+      };
+
+    loadMore=(page)=>{
+        this.setState({isLoading:true,page:page});
+        apiUserServices.getRoleList(page,"role").then((res)=>{
+            let result = this.state.roles.concat(res.data.data);
+            this.setState({roles:result,isLoading:false})
+        })
     }
 
     render() {
@@ -100,7 +116,14 @@ export default class Roles extends Component {
                 Roles
                 </Headline>
                 <View style={{ maxHeight: height*0.9,flex:1}}>
-                        <ScrollView style={{ maxHeight: height*0.75,marginHorizontal:20}} showsVerticalScrollIndicator={false}>
+                        <ScrollView style={{ maxHeight: height*0.75,marginHorizontal:20}} showsVerticalScrollIndicator={false}
+                        onScroll={({nativeEvent}) => {
+                            if (this.isCloseToBottom(nativeEvent) && this.state.roles.length<this.state.total_roles) {
+                                let page = this.state.page + 1; 
+                                this.loadMore(page);
+                            }
+                          }}
+                        >
                             {this.state.roles?.map((i,index)=>(
                             <TouchableOpacity 
                             style={styles.touchable}
@@ -108,9 +131,11 @@ export default class Roles extends Component {
                             onPress={()=>{
                                 this.props.navigation.navigate("Edit",{item:i})
                             }}>
-                                <View style={{ paddingTop: 20, paddingBottom: 20, display:'flex', flexDirection:'row',justifyContent:'space-between' }}>
-                                    <Text>{i.role_name}</Text>
-                                    <Text numeric style={{ marginRight: 15,color:'#C4C4C4' }}>{i.num_of_permission} Permissions</Text>
+                                <View style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
+                                    <View style={{ paddingTop: 20, paddingBottom: 20, display:'flex', flexDirection:'column',justifyContent:'space-between' }}>
+                                        <Text>{i.role_name}</Text>
+                                        <Text numeric style={{ marginRight: 15,color:'#C4C4C4' }}>{i.num_of_permission} Permissions</Text>
+                                    </View>
                                 </View>
                             </TouchableOpacity>
                             ))
