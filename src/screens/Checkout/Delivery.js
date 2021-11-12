@@ -222,8 +222,9 @@ export default class Delivery extends Component {
     let pay = this.state.payments.filter((i)=>i.value === id)[0]
     this.setState({payment_method_id:pay.value,payment_method:pay.label,payment:id})
     if(id==4){
+      this.setState({loading:true})
       apiPayment.getClientToken().then((res)=>{
-        this.setState({payment_token:res})
+        this.setState({payment_token:res,loading:false})
         console.log("Fetched Client Token:",res)
       });
       this.setState({overlay:true});
@@ -253,7 +254,7 @@ export default class Delivery extends Component {
     //console.log("COUNTRY CHOSEN: ",itemValue)
   }
 
-  componentDidMount() {
+  /* componentDidMount() {
     //console.log("FROM CONTEXT:",this.product)
     this.calculateTotal();
     LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
@@ -270,10 +271,6 @@ export default class Delivery extends Component {
       let ad = [];
       res.data.map((it) => {
         ad.push({ label: it.registered_address, value: it.id });
-        /* let country_name = this.state.countries.filter((filtered)=>{
-        return filtered.value === it.country_id;
-      })
-      return ({...it,country_name:country_name[0].label}) */
       });
       this.setState({ locations: ad, filterLocations: res.data });
     }) 
@@ -290,39 +287,48 @@ export default class Delivery extends Component {
       console.log("Result Payment: ",res)
       this.setState({payments:res})
     })
-  }
-
-  /* componentDidMount() {
-    this.focusListener = this.props.navigation.addListener("focus", () => {
-      // Call ur function here.. or add logic.
-      console.log("FROM CONTEXT:",this.product)
-      LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
-      this.calculateTotal();
-      let { products, order } = this.props.route.params;
-      console.log("ROUTE PARAMS PRODUCTS: ", products);
-      this.setState({ products: products, dataFromRoute: order });
-      apiServices.getCountries().then((res) => {
-        //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
-        this.setState({ countries: res });
-      });
-      apiServices.getAddresses().then((res) => {
-        console.log("RES FROM THE FUNCTION:", res);
-        let ad = [];
-        res.data.map((it) => {
-          ad.push({ label: it.registered_address, value: it.id });
-        });
-        this.setState({ locations: ad, filterLocations: res.data });
-      })   
-      apiProducts.getServiceLevels().then((res)=>{
-         console.log("RES FOR SERVICES: ",res)
-        let ar = [];
-        res.map((item)=>{
-          ar.push({label:item.service_level,value:item.id})
-        })
-        this.setState({fetchedServicesType:ar})
-       }) 
-      });
   } */
+
+   componentDidMount() {
+    this.focusListener = this.props.navigation.addListener("focus", () => {
+      //console.log("FROM CONTEXT:",this.product)
+    this.calculateTotal();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
+    let { products, order } = this.props.route.params;
+    console.log("ROUTE PARAMS PRODUCTS: ", products);
+    console.log("ROUTE PARAMS ORDER: ", order);
+    this.setState({ products: typeof(products)=="Array"?products:[products], dataFromRoute: order });
+    apiServices.getCountries().then((res) => {
+      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
+      this.setState({ countries: res });
+    });
+    apiServices.getAddresses().then((res) => {
+      console.log("RES FROM THE FUNCTION:", res);
+      let ad = [];
+      res.data.map((it) => {
+        ad.push({ label: it.registered_address, value: it.id });
+        /* let country_name = this.state.countries.filter((filtered)=>{
+        return filtered.value === it.country_id;
+      })
+      return ({...it,country_name:country_name[0].label}) */
+    });
+    this.setState({ locations: ad, filterLocations: res.data });
+  }) 
+  apiProducts.getServiceLevels().then((res)=>{
+     console.log("RES FOR SERVICES: ",res)
+    let ar = [];
+    res.map((item)=>{
+      ar.push({label:item.service_level,value:item.id})
+    })
+    this.setState({fetchedServicesType:ar,loading:false})
+  })
+
+  apiPayment.getPaymentMethods().then((res)=>{
+    console.log("Result Payment: ",res)
+    this.setState({payments:res})
+  })
+      });
+  } 
 
   changeServiceType (id){
     //console.log
@@ -523,7 +529,7 @@ export default class Delivery extends Component {
                         />
                         <View style={styles.cardContent}>
                           <Text style={styles.name}>{item.product_name}</Text>
-                          {item.value_added_services !== null ? (
+                          {item?.value_added_services !== null ? (
                             <Text
                               style={{
                                 display: item.value ? "flex" : "none",
@@ -533,7 +539,7 @@ export default class Delivery extends Component {
                               Value added service{" "}
                             </Text>
                           ) : null}
-                          <Text style={styles.count}>Price ${item.total}</Text>
+                          <Text style={styles.count}>Price ${this.state?.dataFromRoute.is_buy_now?item.price:item.total}</Text>
                         </View>
                         <TouchableOpacity
                           onPress={() => this.removeItem(item.product_id)}
@@ -580,11 +586,11 @@ export default class Delivery extends Component {
                 }}
               >
                 $
-                {this.state.products.length > 0
+                {(this.state.products.length > 0 &&!this.state?.dataFromRoute?.is_buy_now)
                   ? this.state.products.reduce((a, b) => ({
                       total: a.total + b.total,
                     }))["total"] + ""
-                  : "0"}
+                  : this.state?.dataFromRoute?.total}
               </Text>
             </View>
           </View>

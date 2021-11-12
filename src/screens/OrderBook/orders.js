@@ -1,6 +1,6 @@
 ``;
 import React, { Component, createRef, useRef } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import * as APIOrder from '../../core/apis/apiOrderServices';
 import Overlay from 'react-native-modal-overlay';
 import {
@@ -444,6 +444,23 @@ async componentDidMount(){
     );
   };
 
+  drawScreenTwoDataBuyer = (item,index) =>{
+    return(<TouchableOpacity
+      style={[styles.container, styles.content,{marginLeft:0}]}
+      key={index}
+      onPress={()=>this.props.navigation.navigate('DetailedOrder',{item})}
+    >
+      <View style={{ flex: 1, flexDirection:'row', justifyContent:'space-between',alignItems:'center' }}>
+        <Text style={styles.orderText}>Order Number #{item.order_id}</Text>
+        <View style={{ flexDirection:'row', justifyContent:'space-between',alignItems:'center'}}>
+          <Text style={styles.orderQty}>{item.box}</Text>
+          <Feather name="box" size={24} color="#6E91EC" />
+        </View>
+      </View>
+    </TouchableOpacity>
+    )
+  }
+
   drawScreenTwoData = (item,index) =>{
     return (
     <TouchableOpacity
@@ -538,11 +555,13 @@ async componentDidMount(){
             </Picker>
           </View>
         </View>
-        <ScrollView style={{paddingHorizontal:10}}>
-          {this.state.filterData.map((item, index) => {
-                  return this.drawScreenTwoData(item,index)
-          })}
-      </ScrollView>
+        <View style={{flex:1}}>
+          <ScrollView style={{paddingHorizontal:10}}>
+            {this.state.filterData.map((item, index) => {
+                    return this.state.userData?.user_type==1?this.drawScreenTwoDataBuyer(item,index):this.drawScreenTwoData(item,index)
+            })}
+                </ScrollView>
+        </View>
       </>
     );
   };

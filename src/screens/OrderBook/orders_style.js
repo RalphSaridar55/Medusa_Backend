@@ -8,6 +8,14 @@ const styles = StyleSheet.create({
         // backgroundColor: "#ffffff",
 
     },
+    orderText:{
+        fontSize:16,
+    }, 
+    orderQty:{
+        marginRight:10,
+        color:'#6E91EC',
+        fontSize:16
+    },
     mainInfo:{
         flexDirection:'row',
         justifyContent:'space-between',
@@ -55,8 +63,8 @@ const styles = StyleSheet.create({
         marginRight:20
     },  
     container: {
-        paddingRight: 16,
-        paddingVertical: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 20,
         flexDirection: 'row',
         alignItems: "center",
         backgroundColor: "#ffffff",

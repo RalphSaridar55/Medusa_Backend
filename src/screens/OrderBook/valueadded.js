@@ -9,6 +9,7 @@ import SelectMultiple from "react-native-select-multiple";
 import * as DocumentPicker from "expo-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
+import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 
 const data = {
   name: "Product 1",
@@ -21,7 +22,7 @@ const ValueAdded = ({ navigation,route }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [total, setTotal] = useState(0);
   const [routeData,setRouteData] = useState();
-  const [document,setDocument] = useState({value:{},error:true});
+  const [document,setDocument] = useState({value:"",error:true});
 
   const calculateTotal = (value) => {
     console.log("VALUE IS: ", value);
@@ -51,11 +52,11 @@ const ValueAdded = ({ navigation,route }) => {
         "Wrong Extensions",
         "Please only upload pdf or docx type of files"
       );
-      setDocument({document,error:true})
+      setDocument({...document,error:true})
     } else {
       //console.log(result);
       try {
-        setDocument({value:result,error:false})
+        setDocument({value:result.uri,error:false})
       } catch (error) {
         console.log(error);
       }
@@ -186,32 +187,18 @@ const ValueAdded = ({ navigation,route }) => {
         </View>
 
         
-      </View><View>
-        <TouchableOpacity
+      </View>
+        <TouchableDocumentPicker
           color="#6E91EC"
           icon="file"
           mode="outlined"
-          onPress={() =>pickDocument()
-          }
+          onPress={() =>pickDocument()}
           style={[styles.docPicker,{marginHorizontal:20,backgroundColor:'#fff',borderColor:'#808080'}]}
-        >
-          <AntDesign name="file1" size={24} color="#6E91EC" />
-          <Text style={{ color: "gray" }}>Documents Needed:</Text>
-          {document.error ? (
-            <AntDesign name="closecircle" size={24} color="red" />
-          ) : (
-            <AntDesign name="checkcircle" size={24} color="green" />
-          )}
-        </TouchableOpacity>
-      </View>
+          doc={document.value}
+          />
       <View
         style={styles.buttonsContainer}>
-          <TouchableOpacity
-            onPress={() => addValue()}
-            style={styles.loginBtn}
-          >
-            <Text style={styles.loginBtnText}>Add Services</Text>
-          </TouchableOpacity>
+          
           <TouchableOpacity
             onPress={() => {
               setServices([]);
@@ -220,6 +207,12 @@ const ValueAdded = ({ navigation,route }) => {
             style={[styles.loginBtn, { backgroundColor: "red" }]}
           >
             <Text style={styles.loginBtnText}>Discard</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => addValue()}
+            style={styles.loginBtn}
+          >
+            <Text style={styles.loginBtnText}>Add Services</Text>
           </TouchableOpacity>
         </View>
     </ScrollView>

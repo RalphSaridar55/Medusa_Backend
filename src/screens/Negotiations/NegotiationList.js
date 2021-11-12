@@ -7,55 +7,52 @@ import * as API from '../../core/apis/apiChatServices';
 
 const List =({navigation}) =>{
   
-  const [active,setActive] = useState()
-  const [approved,setApproved] = useState()
-  const [rejected,setRejected] = useState()
-  const [all,setAll] = useState()
+  //const [active,setActive] = useState({data:[],total:0})
+  //const [approved,setApproved] = useState({data:[],total:0})
+  //const [rejected,setRejected] = useState({data:[],total:0})
+  const [all,setAll] = useState({dataAll:[],totalAll:0,dataRejected:[],totalRejected:0,dataApproved:[],totalApproved:0,dataActive:[],totalActive:0,})
   const [visible,setVisible] = useState(true)
+  const [page,setPage] = useState(1)
+  //const [total,setTotal] = useState(0)
 
   const screenwidth = Dimensions.get("screen").width;
   const screenheight = Dimensions.get("screen").height;
-  const dummyData = [
-    {username:`User`,key:1,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Active'},
-    {username:`Username`,key:2,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Active'},
-    {username:`User`,key:3,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Active'},
-    {username:`Username`,key:4,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Active'},
-    {username:`User`,key:5,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Active'},
-    {username:`Username`,key:6,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`User`,key:7,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`Username`,key:8,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`User`,key:9,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`Username`,key:10,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`User`,key:11,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`Username`,key:12,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`User`,key:13,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Approved'},
-    {username:`Username`,key:14,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:15,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`Username`,key:16,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:17,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`Username`,key:18,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:19,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`Username`,key:20,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:21,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`Username`,key:22,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:23,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`Username`,key:24,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:25,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`Username`,key:26,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-    {username:`User`,key:27,subject:"Changing price",text:'Please do change the price of this item. Please do change the price of this item', date:'02-07-2021',status:'Rejected'},
-  ]
+  
+  const loadMore = (page,data) => {
+    setVisible(true)
+    API.getChatList(data.status,page).then((res)=>{
+      let resultArray = data.concat(res.data)
+      switch (data.status){
+        case 2:
+            setAll({...all,dataActive:resultArray,totalActive:resultArray.length})
+        case 4:
+            setAll({...all,dataApproved:resultArray,totalApproved:resultArray.length})
+        case 5:
+            setAll({...all,dataRejected:resultArray,totalRedataRejected:resultArray.length})
+        case 6:
+            setAll({...all,dataAll:resultArray,totalAll:resultArray.length})
+      setVisible(false)    
+      }
+      setPage(page)
+    })
+  }
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+      const paddingToBottom = 20;
+      return layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom;
+    };
 
   useEffect(()=>{
       setVisible(true)
-    API.getChatList(6).then((res)=>{
+    API.getChatList(6,page).then((res)=>{
       console.log("API RESULT: ",res)
-      setAll(res)
-      const active = res.filter((i)=>i.status===2)
-      const approved = res.filter((i)=>i.status===4)
-      const rejected = res.filter((i)=>i.status===5)
-      setActive(active);
-      setApproved(approved);
-      setRejected(rejected);
+      const active = res.data.filter((i)=>i.status===2)
+      const approved = res.data.filter((i)=>i.status===4)
+      const rejected = res.data.filter((i)=>i.status===5)
+      setAll({dataAll:res.data,totalAll:res.data.length,dataRejected:rejected,totalRejected:rejected.length,dataApproved:approved,totalApproved:approved.length,dataActive:active,totalActive:active.length,})
+      //setActive({data:active,total:active.length});
+      //setApproved({data:approved,total:approved.length});
+      //setRejected({data:rejected,total:rejected.length});
       setVisible(false)
       console.log("ACTIVE: ",active)
     })
@@ -64,15 +61,15 @@ const List =({navigation}) =>{
   useEffect(()=>{
     const unsubscribe = navigation.addListener('focus', () => {
         setVisible(true)
-      API.getChatList(6).then((res)=>{
+      API.getChatList(6,page).then((res)=>{
         console.log("API RESULT: ",res)
-        setAll(res)
-        const active = res.filter((i)=>i.status===2)
-        const approved = res.filter((i)=>i.status===4)
-        const rejected = res.filter((i)=>i.status===5)
-        setActive(active);
-        setApproved(approved);
-        setRejected(rejected);
+        const active = res.data.filter((i)=>i.status===2)
+        const approved = res.data.filter((i)=>i.status===4)
+        const rejected = res.data.filter((i)=>i.status===5)
+        setAll({dataAll:res.data,totalAll:res.data.length,dataRejected:rejected,totalRejected:rejected.length,dataApproved:approved,totalApproved:approved.length,dataActive:active,totalActive:active.length,})
+        //setActive({data:active,total:active.length});
+        //setApproved({data:approved,total:approved.length});
+        //setRejected({data:rejected,total:rejected.length});
         setVisible(false)
         console.log("ACTIVE: ",active)
       })
@@ -83,7 +80,15 @@ const List =({navigation}) =>{
   }, [navigation]);
 
   const screenRenderer = (status) =>{
-    return <ScrollView style={styles.chatsContainer}>{status?.map((item,key)=>{
+    //console.log("STATUS: ",status)
+    return <ScrollView style={styles.chatsContainer}
+    onScroll={({nativeEvent}) => {
+        if (isCloseToBottom(nativeEvent) && status.length<this.state.total_roles) {
+            let pa = page + 1; 
+            loadMore(pa,status);
+        }
+      }}
+    >{status?.map((item,key)=>{
       return(
         <TouchableOpacity key={key} style={styles.containerChat}
         onPress={()=>navigation.navigate("Negotiation",{fromOrder:{...item,type:item.status}})}>
@@ -109,10 +114,10 @@ const List =({navigation}) =>{
     })}</ScrollView>
   }
 
-  const firstScreen = () => {return screenRenderer(active)}
-  const secondScreen = () =>{ return screenRenderer(approved)}
-  const thirdScreen = () =>{ return screenRenderer(rejected)}
-  const fourthScreen = () =>{ return screenRenderer(all)}
+  const firstScreen = () => {return screenRenderer(all.dataActive)}
+  const secondScreen = () =>{ return screenRenderer(all.dataApproved)}
+  const thirdScreen = () =>{ return screenRenderer(all.dataRejected)}
+  const fourthScreen = () =>{ return screenRenderer(all.dataAll)}
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([

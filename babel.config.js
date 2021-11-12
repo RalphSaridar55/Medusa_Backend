@@ -7,13 +7,13 @@ module.exports = function(api) {
         moduleName: "@env",
         path: ".env",
       }],
-      [
-        "@stripe/stripe-react-native",
+     /*  [
+        "module:@stripe/stripe-react-native",
         {
           merchantIdentifier: "merchant.identifier",
           enableGooglePay: false
         }
-      ]
+      ] */
     ]
   };
 };

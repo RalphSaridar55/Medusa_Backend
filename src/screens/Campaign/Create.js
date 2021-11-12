@@ -33,7 +33,6 @@ const Create = ({ navigation, route }) => {
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      mediaTypes: MediaTypeOptions.Images,
     });
     if (pickerResult.cancelled === true) {
       return;
@@ -138,7 +137,7 @@ const Create = ({ navigation, route }) => {
             ) : (
               <Image
                 source={{ uri: userData.image }}
-                resizeMode="contain"
+                resizeMode="center"
                 style={{
                   flex: 1,
                   width: screenWidth * 0.8,
@@ -343,7 +342,7 @@ const Create = ({ navigation, route }) => {
                   onPress={() => setVisible({ ...visible, modal: true })}
                   style={[
                     styles.loginBtn,
-                    { backgroundColor: "red" /* #6E91EC */ },
+                    { backgroundColor: "#7F67A9" /* #6E91EC */ },
                   ]}
                 >
                   <Text style={[styles.loginBtnText]}>Discard</Text>

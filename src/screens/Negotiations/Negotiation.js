@@ -182,9 +182,7 @@ const Negotiations = ({route,navigation}) => {
     console.log("PAYLOAD: ",payload)
     Alert.alert(type,`Are you sure you want to ${type} this negotiation?`,[
       {text:"No"},{text:"Yes",onPress:()=>apiService.approveOrDisapprove(payload).then((res)=>{
-        Alert.alert(type,res,[
-          {text:"Ok",onPress:()=>navigation.goBack()}
-        ])
+        navigation.goBack()
       }).catch(err=>{
         console.log(err)
         Alert.alert("Error",err.response.message)
@@ -241,8 +239,8 @@ const Negotiations = ({route,navigation}) => {
         <View style={[styles.container,styles.container2]}>
           <Text style={[styles.productTitle,{flex:3}]}>{productDetails?.product_name}</Text>
           {userData?.user_type==4?<TouchableOpacity onPress={()=>Approve(routeData?.type==5?"Approve":"Disapprove")}
-          style={[styles.buttonApprove,{flex:2,backgroundColor:routeData?.type==5?"#5BC5B9":'red'}]}>
-            <Text style={{color:'white'}}>{routeData?.type==4?"Mark as approved":"Mark as disapproved"}</Text>
+          style={[styles.buttonApprove,{flex:2,backgroundColor:routeData?.type==5?"#5BC5B9":'#7F67A9'}]}>
+            <Text style={{color:'white'}}>{routeData?.type==4?"Mark as disapproved":"Mark as approved"}</Text>
           </TouchableOpacity>:null}
         </View>
         <View style={[styles.chatContainer,{height:screenheight*0.75}]}>

@@ -21,14 +21,14 @@ export const getChatReplies = async () => {
   };
 
 //Get chat list
-export const getChatList = async (id) => {
+export const getChatList = async (id,page) => {
     return await getToken().then((x)=>{
-        return apiUserServices.get(`/user/negotiation?status=${id}&limit=1000&page=1`,{
+        return apiUserServices.get(`/user/negotiation?status=${id}&limit=50&page=${page}`,{
             headers:{
                 Authorization: x
             }
         }).then((res)=>{
-            return res.data.data.data
+            return res.data.data
         });
     });
   };

@@ -48,6 +48,7 @@ class ProductDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      order:null,
       visible: false,
       modalVisible:false,
       typeOverlay:'buy',
@@ -106,29 +107,7 @@ class ProductDetails extends Component {
     this.setState({ dataFromRoute: this.props.route.params.item, userData:user,seller:this.props.route.params.item.user });
   }
 
-  showDialog = () => {
-    this.setState({ visible: true });
-  };
-
-  handleCancel = () => {
-    this.setState({ visible: false });
-  };
-
-  handleDelete = () => {
-    this.setState({ visible: false });
-  };
-
-  BuyNow = () =>{
-    if(this.state.dataFromApi.current_stock<1){
-      Alert.alert("Error","Product is no longer available")
-      return;
-    }
-    else{
-      this.setState({modalVisible:true})
-    }
-  }
-
-  AddToCart = () =>{
+  AddToCart = (type) =>{
     console.log("type of chosenPieces: ",typeof this.state.chosenPieces)
     console.log("type of chosenBoxes: ",typeof this.state.chosenBoxes)
     console.log("TOTAL ITEMS: ",this.state.chosenPieces*this.state.chosenBoxes)
@@ -162,6 +141,8 @@ class ProductDetails extends Component {
         Alert.alert("Error",`Variant quantity for this product is: ${variant_qty}`)
         return;
       }
+    }
+      console.log("TST")
       let payload = {
         buyer_id:this.state.userData.id,
         seller_id:this.state.seller.id,
@@ -185,36 +166,65 @@ class ProductDetails extends Component {
         ],
         total:this.state.chosenPieces*this.state.dataFromApi.offered_price
       }
-      this.setState({spinner:true})
       console.log("PAYLOAD BECOMES: ",payload)
-      //api shouldnt be there
-      //it should be called after the user chooses all the variants he wants
-      APIOrder.addToOrderBook(payload).then((res)=>{
-        console.log("RESULT FROM ADD TO ORDER BOOK API: ",res)
-        this.setState({
-          spinner:false,
-          variantId:0,
-          variant_id:0,
-          variant_option_id:0,
-          varientType: {
-            id: 0,
-            varient_type: ""
-          },
-          varientValue: {
-            id: 0,
-            varient_value: ""
-          },
-          selectedVariant:null,
-          chosenPieces: 1,
-          chosenBoxes: 1,
-        })
-        Alert.alert("Order",res)
-      }).catch(err=>{
-        Alert.alert("Error",err.response?.data.message)
-        this.setState({spinner:false})
-      })
+      if(type=="order"){
+        this.setState({spinner:true})
+        //api shouldnt be there
+        //it should be called after the user chooses all the variants he wants
+        //dont delete
+        /* APIOrder.addToOrderBook(payload).then((res)=>{
+          console.log("RESULT FROM ADD TO ORDER BOOK API: ",res)
+          this.setState({
+            spinner:false,
+            variantId:0,
+            variant_id:0,
+            variant_option_id:0,
+            varientType: {
+              id: 0,
+              varient_type: ""
+            },
+            varientValue: {
+              id: 0,
+              varient_value: ""
+            },
+            selectedVariant:null,
+            chosenPieces: 1,
+            chosenBoxes: 1,
+          })
+          Alert.alert("Order",res)
+        }).catch(err=>{
+          Alert.alert("Error",err.response?.data.message)
+          this.setState({spinner:false})
+        }) */
+      }
+      else if(type=="buy"){
+        let {buyer_id,box,price,seller_id,product_id,quantity,productvariant,total} = payload;
+       
+        sendToRoute ={
+          is_buy_now:true,
+          buyer_id:buyer_id,
+          total_service_count: 0,
+          total_service_cost: 0,
+          order_details:[
+            {
+              seller_id:seller_id,
+              box:box,
+              price:price,
+              product_id:product_id,
+              quantity:quantity,
+              productvariant:  productvariant,
+            }
+          ],
+          total:total
+        }
+
+        console.log("TIS TATE : ",this.state.dataFromApi)
+        this.setState({modalVisible:true,order:sendToRoute,})
+      }
+      else{
+        console.log("TEST 123")
+      }
     }
-  }
 
   NegotiatePrice = () =>{
     if(this.state.dataFromApi.current_stock<1){
@@ -297,144 +307,58 @@ class ProductDetails extends Component {
     );
   }
 
-  renderTypeOverlay(type){
-    switch(type){
-      case 'buy':
-        return <><View style={{flexDirection:'column',marginTop:20,alignItems:'center'}}>
-        <View style={{width:150,paddingHorizontal:10}}>
-            <TouchableOpacity
-                onPress={()=>{
-                    this.setState({modalVisible:false});
-                    this.props.navigation.navigate("Checkout",{screen:"Pickup"})}
-                }
-                style={[styles.loginBtn,{height:40,marginTop:20},{ backgroundColor:'#fff',borderColor:'#31C2AA', borderWidth:1, }]}
-            >
-                <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Pickup</Text>
-            </TouchableOpacity>
-        </View>
-        <View style={{width:150,paddingHorizontal:10}}>
-            <TouchableOpacity
-                onPress={()=>{
-                    this.setState({modalVisible:false});
-                    this.props.navigation.navigate("Checkout",{screen:"Delivery"})}
-                }
-                style={[styles.loginBtn,{height:40,marginTop:20},{ backgroundColor:'#fff',borderColor:'#31C2AA', borderWidth:1, }]}
-            >
-                <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Delivery</Text>
-            </TouchableOpacity>
-        </View>
-    </View></>
-    case 'cart':
-      return {/* <View>
-        <ScrollView style={{flexDirection:'column'}}>
-      <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View><View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View><View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5,marginBottom:10}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View><View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View>
-      <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View>
-      <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View>
-      <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View>
-      <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View>
-      <View style={{flexDirection:'column',borderBottomColor:'lightgray',borderBottomWidth:0.5,paddingBottom:5}}>
-        <View style={styles.cartItemContainer}>
-          <Image source={require('../../../assets/images/mouse.png')} style={{width:100,height:100}} resizeMode="contain" />
-          <Text style={{color:'#31C2AA',fontSize:18}}> x 90</Text>
-          <Text style={{color:'#31C2AA',fontSize:18}}> total: $300</Text>
-          <MaterialCommunityIcons name="close" size={18} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
-        </View>
-        <View style={[styles.cartItemContainer,{justifyContent:'space-around'}]}>
-          <Text>Variant Type: Test</Text>
-          <Text>Variant Value: Test</Text>
-        </View>
-      </View>
-  </ScrollView></View> */}
-  
+  fillDataForCheckout=()=>{
+    //let userdata = JSON.parse(AsyncStorage.getItem('user_details'));
+    //console.log('USER DETAILS:' ,this.state.userData)
+    console.log('ORDER DETAILS: ',this.state.current)
+    let order_details=[];
+    this.state.current.map((item,index)=>{
+      let data= {};
+      let dataservices = [];
+      let datavariants = [];
+      data.seller_id = item.seller_id;
+      data.product_id = item.product_id;
+      data.quantity = item.quantity;
+      data.box = item.box;
+      data.price = item.price;
+      item?.value_added_services?.map((item2,index2)=>{
+        dataservices.push({service_id:item2.service_id,service_name:item2.service_name,document:item2.document,price:item2.price})
+      })
+      data.productvariant = datavariants;
+      data.value_added_services=dataservices;
+      console.log("Data becomes: ",data)
+      order_details.push(data)
+    })
+    let {count,price,cart,total} = this.calculateTotalServiceAndCarts()
+    let {id} = this.state.userData;
+    let reform = {
+      is_buy_now:false,
+      buyer_id:id,
+      total_service_count:10,
+      total_service_count:count,
+      total_service_cost:price,
+      cart_id:cart,
+      order_details:order_details,
+
+      total:total,
+
+      //order_method_id: 0,
+      //location_id: 0,
+      //delivery_address: {
+        //address_id: 0,
+        //address: "string"
+      //},
+      //payment_method_id: 0,
+      //payment_token_id: "string",
+      //total: 0,
+      //cargo_delivery_method: 0,
+      //service_type: 0,
+      //service_level: 0,
+      //document: "string"
     }
+
+    console.log("Reform: ",reform)
+    this.setState({dataToCheckout:reform})
   }
 
   render() {
@@ -454,11 +378,35 @@ class ProductDetails extends Component {
                   marginBottom: 5,
               }}
               >
-                {this.state.typeOverlay=="buy"?"Buying Options":"My Cart"}
+                Order Placement
               </Text>
               <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
           </View>
-          <View style={{width:Dimensions.get('screen').width}}>{this.renderTypeOverlay(this.state.typeOverlay)}</View>
+          <View style={{flexDirection:'column',marginTop:20}}>
+              <View style={{width:150,paddingHorizontal:10}}>
+                  <TouchableOpacity
+                      onPress={()=>{
+                          this.setState({modalVisible:false});
+                          this.props.navigation.navigate("Checkout",{screen:"Delivery",params:{products:this.state.dataFromApi, order:this.state.order,type:"buy"}})
+                        }}
+                      style={styles.overlayButton}
+                  >
+                      <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Delivery</Text>
+                  </TouchableOpacity>
+              </View>
+              <View style={{width:150,paddingHorizontal:10}}>
+                  <TouchableOpacity
+                      onPress={()=>{
+                          this.setState({modalVisible:false});
+                          this.props.navigation.navigate("Checkout",{screen:"Pickup",params:{products:this.state.dataFromApi, order:this.state.order,type:"buy"}})
+                      }}
+                      
+                      style={styles.overlayButton}
+                  >
+                      <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Pickup</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
       </Overlay>
         <ScrollView>
           <View style={styles.Bcontainer}>
@@ -624,7 +572,7 @@ class ProductDetails extends Component {
                       /* if(this.state.selectedVariant==null)
                         Alert.alert("Error","Please select a variant first")
                       else  */if(e.length==0)
-                          this.setState({chosenPieces:1})
+                          this.setState({chosenBoxes:1})
                       else this.setState({chosenBoxes:e})
                       }} />
                     <TouchableOpacity
@@ -648,7 +596,7 @@ class ProductDetails extends Component {
               </View>
               <View style={{marginHorizontal:60,marginVertical:10}}>
                   <TouchableOpacity
-                    onPress={() => this.BuyNow()}
+                    onPress={() => this.AddToCart("buy")}
                     style={[styles.loginBtn, { flex: 2 }]}
                   >
                     <Text style={styles.loginBtnText}>Buy Now</Text>
@@ -656,7 +604,7 @@ class ProductDetails extends Component {
               </View>
               <View style={{marginHorizontal:60,marginVertical:10}}>
                   <TouchableOpacity
-                    onPress={() => this.AddToCart()}
+                    onPress={() => this.AddToCart("order")}
                     style={[styles.loginBtn, { flex: 2 }]}
                   >
                     <Text style={styles.loginBtnText}>Add to Cart</Text>

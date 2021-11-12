@@ -58,6 +58,17 @@ const styles = StyleSheet.create({
     borderBottomColor: "lightgray",
     borderBottomWidth: 1,
   },
+  overlayButton:{
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    height:40,
+    marginTop:20,
+    backgroundColor:'white',
+    borderColor:'#31C2AA',
+     borderWidth:1,
+  },
   loginBtn: {
     paddingHorizontal: 20,
     backgroundColor: "#31C2AA",

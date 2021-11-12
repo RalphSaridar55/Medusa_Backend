@@ -18,6 +18,7 @@ import Header from "../../components/Header";
 import { Headline } from "react-native-paper";
 import styles from "./list_style";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 const height = Dimensions.get("screen").height;
 const width = Dimensions.get("screen").width;
@@ -34,17 +35,20 @@ export default class Users extends Component {
   getSubUsers = () => {
     apiServices.getSubUsers().then((result) => {
       console.log("USER LIST", result);
-      this.setState({ users: result, isLoading: false });
+      this.setState({users:result})
     });
   };
 
   componentDidMount() {
     this.getSubUsers();
-    this.retrieveData();
+    this.retrieveData(); 
+    this.setState({ isLoading: false });
+    
 
     this.focusListener = this.props.navigation.addListener("focus", () => {
       this.getSubUsers();
-      this.retrieveData();
+      this.retrieveData(); 
+      this.setState({ isLoading: false });
     });
   }
 
@@ -72,9 +76,10 @@ export default class Users extends Component {
     });
   };
 
-  renderItem = ({ item }) => {
+  renderItem = ( item,index ) => {
+    console.log("ITEM: ",item)
     return (
-      <View style={{ marginHorizontal: 20 }}>
+      <View style={{ marginHorizontal: 20 }} key={index}>
         <Spinner visible={this.state.isLoading} />
         <View
           style={styles.touchable}
@@ -131,40 +136,44 @@ export default class Users extends Component {
 
   render() {
     return (
-      <>
         <View
-          style={{
-            flex: 1,
+          style={{flex:1,
             backgroundColor: "#E9F3FF",
-            flexDirection: "column",
           }}
         >
-          <View>
-            <Headline
-              style={{ margin: 20, marginVertical: 20, color: "#698EB7" }}
-            >
-              Manage Users
-            </Headline>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              extraData={this.state}
-              data={this.state.users}
-              style={{ height: height * 0.7 }}
-              keyExtractor={(item) => {
-                return parseInt(item.id);
-              }}
-              renderItem={this.renderItem}
-            />
+          <View style={{flex:1,
+            marginBottom:10,}}>
+            
+              <Headline
+                style={{ margin: 20, marginVertical: 10, color: "#698EB7" }}
+              >
+                Manage Users
+              </Headline>
+              <View style={{flex:1}}>
+                <ScrollView>
+                  {this.state.users?.map((item,index)=>{
+                    return this.renderItem(item,index)
+                  })}
+                </ScrollView>
+              </View>
+              {/* <FlatList
+                showsVerticalScrollIndicator={false}
+                extraData={this.state}
+                data={this.state.users}
+                style={{ height: height * 0.7 }}
+                keyExtractor={(item) => {
+                  return parseInt(item.id);
+                }}
+                renderItem={this.renderItem}
+              /> */}
+              <TouchableOpacityButton
+                containerStyle={{paddingVertical:10}}
+                buttonStyle={styles.loginBtn}
+                textStyle={styles.loginText}
+                onPress={() => this.props.navigation.navigate("UserCreate")}
+                text="Add User" />
           </View>
-
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => this.props.navigation.navigate("UserCreate")}
-          >
-            <Text style={styles.loginText}>Add User</Text>
-          </TouchableOpacity>
         </View>
-      </>
     );
   }
 }

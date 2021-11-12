@@ -337,7 +337,7 @@ return (
          numColumns={2}
          onEndReachedThreshold={5}
          onScroll={({nativeEvent}) => {
-           console.log(page.totalCount)
+           //console.log(page.totalCount)
           if (isCloseToBottom(nativeEvent) && data.length<page.totalCount) {
               //console.log("REACHED END ")
               let p = page.page + 1; 
