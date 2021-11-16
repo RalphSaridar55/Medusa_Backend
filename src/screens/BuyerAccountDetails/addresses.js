@@ -26,6 +26,7 @@ import * as apiServices from "../../core/apis/apiAddressServices";
 import Spinner from "react-native-loading-spinner-overlay";
 import { Picker } from "@react-native-picker/picker";
 import { addresses } from "./map";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 class Addresses extends Component {
   constructor(props) {
@@ -248,25 +249,10 @@ class Addresses extends Component {
               colors: { primary: "#31c2aa", underlineColor: "transparent" },
             }}
           />)}
-          <View
-            style={this.state.type=="view"?{display:'none'}:
-            {
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <TouchableOpacity
-              style={styles.Btn}
-              onPress={
-                this.state.type == "add" ? this._handleAdd : this._handleEdit
-              }
-            >
-              <Text style={styles.textButton}>
-                {this.state.type == "add" ? "Add" : "Edit"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacityButton
+              onPress={()=>
+                this.state.type == "add" ? this._handleAdd() : this._handleEdit()
+              } text ={this.state.type == "add" ? "Add" : "Edit"}/>
         </View>
         </ScrollView>
       </ImageBackground>

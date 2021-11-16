@@ -14,6 +14,7 @@ import { Headline, DataTable, IconButton } from 'react-native-paper';
 import styles from './roles_styles';
 import * as apiUserServices from '../../core/apis/apiUserServices'
 import Spinner from 'react-native-loading-spinner-overlay';
+import { TouchableOpacityButton } from '../../components/TouchableOpacity';
 
 const height = Dimensions.get('screen').height
 const width = Dimensions.get('screen').width
@@ -142,10 +143,9 @@ export default class Roles extends Component {
                             }
                         </ScrollView>
                     </View>
-                    <TouchableOpacity style={styles.loginBtn}
-                     onPress={() => this.props.navigation.navigate('Create')}>
-                        <Text style={styles.loginText}>Add Role</Text>
-                    </TouchableOpacity>
+                    <TouchableOpacityButton 
+                     onPress={() => this.props.navigation.navigate('Create')}
+                     text="Add Role"/>
             </View>
         );
     }

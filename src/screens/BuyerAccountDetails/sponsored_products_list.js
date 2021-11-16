@@ -35,15 +35,15 @@ const SponsoredProducts = () =>{
             <Appbar style={{backgroundColor:"#E9F3FF" , color:"#fff"}}>
                 <Appbar.Content title={filterData?.filter
                 (i=>i.product_name.toLowerCase().includes(search.toLowerCase())).length + " " + "Results"} /* onPress={this.setView} */ style={{ fontSize: 14 }} />
-                <Appbar.Action icon="magnify" onPress={()=> this.onclick()}
-                    style={!visible.search&&{backgroundColor:'#31C2AA'}}  color={!visible.search?"#E9F3FF":"black"}/>
+                <Appbar.Action icon="magnify" onPress={()=> setVisible({...visible,search:!visible.search})}
+                    style={visible.search&&{backgroundColor:'#31C2AA'}}  color={visible.search?"#E9F3FF":"black"}/>
             </Appbar>
         </View>
         <View style={{paddingHorizontal:15,paddingVertical:10,}}>
             <Searchbar
                 onChangeText={(e)=>setSearch(e)}
                 placeholder="Search"
-                style={{ display: visible.search ? 'none' : 'flex', }}
+                style={{ display: !visible.search ? 'none' : 'flex', }}
             />
         </View>
         <FlatList style={styles.list}

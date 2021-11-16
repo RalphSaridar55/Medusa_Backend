@@ -9,6 +9,10 @@ export const styles = StyleSheet.create({
         height: screenheight*0.3,
         resizeMode:'stretch'
     },
+    detailKey:{
+        fontWeight:'bold',
+        color:'gray'
+    },
     buttonContainer:{
         display:'flex',
         flexDirection:'row',
@@ -35,7 +39,7 @@ export const styles = StyleSheet.create({
         alignItems:'center'
     },
     mainContainer:{
-        padding:20,
+        paddingHorizontal:20,
         flexDirection:'column',
     },
     name: {

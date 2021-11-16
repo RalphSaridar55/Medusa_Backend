@@ -490,7 +490,7 @@ class ProductDetails extends Component {
                     {this.state.dataFromApi?.price}
                   </Title>
                 </View>
-                {(this.state.dataFromApi?.is_negotiable && this.state.userData.user_type == 1) && <TouchableOpacity
+                {(this.state.dataFromApi?.is_negotiable && this.state.userData.user_type == 1 && this.state?.userData?.id !== this.state?.seller?.id) && <TouchableOpacity
                   onPress={() =>  this.NegotiatePrice()}
                   style={[styles.loginBtn, { flex: 2, height:30, backgroundColor:'#fff',borderColor:'#31C2AA', borderWidth:1 }]}
                 >
@@ -510,7 +510,7 @@ class ProductDetails extends Component {
                   {this.state.dataFromApi?.current_stock} Pieces Available
                 </Text>
               </View>
-              {this.state.userData?.user_type==1?(<><View
+              {this.state.userData?.user_type==4 || this.state?.userData?.id === this.state?.seller?.id?null:(<><View
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -617,7 +617,7 @@ class ProductDetails extends Component {
                   >
                     <Text style={styles.loginBtnText}>Save for Later</Text>
                   </TouchableOpacity>
-              </View></>):null}
+              </View></>)}
             </Card.Content>
           </Card>
 

@@ -32,6 +32,7 @@ import { Picker } from "@react-native-picker/picker";
 import * as API from '../../core/apis/apiUserServices';
 import * as apiPortFolioServices from '../../core/apis/apiPortfolioServices';
 import Spinner from "react-native-loading-spinner-overlay";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 const SellingDetail = ({navigation}) =>{
 
@@ -249,7 +250,7 @@ const SellingDetail = ({navigation}) =>{
      return  (<>{categories_data.map((item,index)=>{
 
         return(
-          <View style={{ marginVertical: 20, marginHorizontal:20 }} key={index}>
+          <View style={{ marginVertical: 10, marginHorizontal:20 }} key={index}>
             <CollapsibleList
               style={{ marginVertical: 10 }}
               wrapperStyle={{
@@ -313,11 +314,14 @@ return (
           style={{ fontSize: 14 }}
         /></>:<><Appbar.Content title="My Categories " color="black" /></>}
         <Appbar.Action icon="plus" onPress={()=>{changeScreen();}} style={filterData.showCategory&&{backgroundColor:'#31C2AA'}} color={filterData.showCategory?"white":"black"}/>
-        <Appbar.Action icon="magnify" onPress={()=> {if(!filterData.showCategory)
-      setFilterData({...filterData, showFilter: !filterData.showFilter, showCategory:false })}}
+        <Appbar.Action icon="magnify" onPress={()=> {
+          if(!filterData.showCategory)
+            setFilterData({...filterData, showFilter: !filterData.showFilter, showCategory:false })
+          else 
+            setFilterData({...filterData,showFilter:false,showCategory:true,isVisible:false})}}
       style={filterData.showFilter&&{backgroundColor:'#31C2AA'}}  color={filterData.showFilter?"#E9F3FF":"black"}/>
       </Appbar>
-      <View style={{paddingHorizontal:10,paddingVertical:10,
+      <View style={{paddingHorizontal:20,paddingVertical:10,
         display: !filterData.showFilter ? "none" : "flex" }}>
         <Searchbar
           theme={{
@@ -365,19 +369,22 @@ return (
                          </View>
                      </View>
                      </View>
-                    <View style={{paddingTop:20,flex:1}}>
-                    <TouchableOpacity
+                     <TouchableOpacityButton 
+                      onPress={()=>navigation.navigate("Campaign")}
+                      text="Promote"
+                      additionalContainerStyle={{paddingTop:20,flex:1,width:'100%'}}
+                      additionalButtonStyle={styles.loginBtn}/>
+                    {/* <TouchableOpacity
                       onPress={()=>navigation.navigate("Campaign")}
                       style={styles.loginBtn}
                     >
                       <Text style={styles.loginBtnText}>Promote</Text>
-                    </TouchableOpacity>
-                 </View>
+                    </TouchableOpacity> */}
                  </TouchableOpacity>
              )
          }} />
-      </View>:<ScrollView>
-       <View style={{ marginVertical: 20, marginHorizontal:20 }}>
+      </View>:<><ScrollView>
+       <View style={{ marginVertical: 10, marginHorizontal:20 }}>
             <CollapsibleList
               style={{ marginVertical: 10 }}
               wrapperStyle={{
@@ -425,12 +432,15 @@ return (
             </CollapsibleList>
           </View>
        {renderCategories()}
-       <TouchableOpacity
+       {/* <TouchableOpacity
          onPress={()=>applyChanges()}
          style={styles.loginBtn}
        >
          <Text style={styles.loginBtnText}>Apply Changes</Text>
-       </TouchableOpacity></ScrollView>}
+       </TouchableOpacity> */}</ScrollView>
+       <TouchableOpacityButton
+       onPress={()=>applyChanges()}
+       text="Apply Changes" /></>}
     </>
  );
 }

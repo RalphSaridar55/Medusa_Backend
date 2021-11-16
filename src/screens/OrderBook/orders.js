@@ -64,8 +64,8 @@ const actionSheetCat = createRef();
         {value:3,label:"Reserved Order"},
         {value:4,label:"Pending Order"},
       ],
-      filterStatusLabel:"Current",
-      filterStatus:10,
+      filterStatusLabel:"",
+      filterStatus:1,
       filterStatuses:[],
       forTab: {
         index: 0,
@@ -269,7 +269,6 @@ const actionSheetCat = createRef();
   } */
 
 async componentDidMount(){
-    console.log(1234)
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
     console.log("USER DATA: ",userData)
     this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
@@ -283,6 +282,24 @@ async componentDidMount(){
       this.setState({spinner:false,data:res,filterData:res})
     })
     setTimeout(()=>this.fillDataForCheckout(),2000)
+  }
+
+componentDidMount(){
+  this.focusListener = this.props.navigation.addListener("focus", async() => {
+    let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
+    console.log("USER DATA: ",userData)
+    this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
+    userData.user_type==1?
+    APIOrder.getOrderBook(1).then((res)=>{
+      console.log("CURRENT ORDER BOOK: ",res)
+      this.setState({spinner:false,current:res})
+    }):
+    APIOrder.getSellersOrder(10).then((res)=>{
+      console.log("DATA: ",res)
+      this.setState({spinner:false,data:res,filterData:res})
+    })
+    setTimeout(()=>this.fillDataForCheckout(),2000)
+  })
   }
 
 
@@ -330,9 +347,8 @@ async componentDidMount(){
           <View style={styles.modalHeader}>
               <Text
               style={{
-                  fontSize: 21,
+                  fontSize: 18,
                   color: "#31C2AA",
-                  fontWeight: "bold",
                   marginBottom: 5,
               }}
               >
@@ -507,7 +523,7 @@ async componentDidMount(){
               "Results"
             } */
             onPress={this.setView}
-            style={{ fontSize: 14 }}
+            titleStyle={{ fontSize: 18,fontWeight:'100' }}
           />
           <Appbar.Action
             icon="filter-menu"

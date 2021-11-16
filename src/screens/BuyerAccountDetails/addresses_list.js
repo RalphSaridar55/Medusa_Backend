@@ -13,6 +13,7 @@ import * as apiServices from "../../core/apis/apiAddressServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Headline } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 const AdressList = (props) => {
   const [deleted, setDeleted] = useState(false);
@@ -141,15 +142,11 @@ const AdressList = (props) => {
             </View>
           </View>
         ))}
-        <TouchableOpacity
-          style={styles.Btn}
-          onPress={() =>
-            props.navigation.navigate("Addresses", { type: "add" })
-          }
-        >
-          <Text style={{ color: "#fff" }}>ADD NEW ADDRESS</Text>
-        </TouchableOpacity>
+       
       </ScrollView>
+        <TouchableOpacityButton 
+        onPress={()=> props.navigation.navigate("Addresses", { type: "add" })}
+        text="Add New Address"/>
     </ImageBackground>
   );
 };

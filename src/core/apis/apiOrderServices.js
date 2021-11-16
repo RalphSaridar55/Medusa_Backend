@@ -46,13 +46,13 @@ export const getOrderBook = async(type)=>{
 //get Order Details
 export const getOrderDetails = async(id)=>{
     return await getToken().then((x)=>{
-        return apiUserServices.delete(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/buyer/add-to-orderBook/${id}`,{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/buyer/order-details/${id}`,{
             headers:{
                 Authorization: x
             }
         }).then((res)=>{
             //console.log("ORDER BOOK API:",res.data)
-            return res.data.message
+            return res.data.data
         })
     })
 }

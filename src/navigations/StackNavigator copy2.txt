@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -44,7 +44,6 @@ import Negotiations from "../screens/Notifications/Notification";
 import Products from "../screens/Products/product_list";
 import Orders from "../screens/OrderBook/Reserved_Orders";
 import Users from "../screens/Users/list";
-import Spinner from "react-native-loading-spinner-overlay";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -55,43 +54,38 @@ const TStack = createStackNavigator();
 /* const Drawer = () =>{
     return()
 } */
-class CustomDrawer extends Component {
-  
-  constructor(props) {
+const CustomDrawer=(props)=> {
+  const firstRef = React.useRef();
+  const secondRef = React.useRef();
+  const thirdRef = React.useRef();
+  const [userType,setUserType] = useState();
+
+  useEffect(()=>{
+    setTimeout(()=>{
+      console.log("PROPS USER TYPE: ",props)
+      setUserType(props.userType)
+    },2000)
+  },[])
+  /* constructor(props) {
     super(props);
-    /* const didBlurSubscription = this.props.navigation.addListener(
-    'didFocus',
-    payload => {
-          console.log('didFocus');
-    }); */
     this.firstRef = React.createRef();
     this.secondRef = React.createRef();
     this.thirdRef = React.createRef();
     this.state={
-      userType:this.props.userData.user_type
+      userType:null
     }
-  }
-
-  componentDidUpdate(prevProps, prevState){
-    if(prevProps.userType !== this.state.userType){
-      console.log("RUNNING123",this.props.userType);
-      this.setState({userType:this.props.userType})}
-      //this.setState({userType: this.props.userType})
-  }
-
-  /* componentWillMount(){
-      this.focusListener = this.props.navigation.addListener("focus",()=>{
-        
-    console.log("CIOMP: ",this.props)
-      console.log("RUNNING123 FROM FOCUS",this.props.userType)
-      this.setState({userType: this.props.userType})
-    })
   } */
 
-  closeCollapsible(){
-    let first = this.firstRef.current
-    let second = this.secondRef.current
-    let third = this.thirdRef.current
+
+
+  /* componentDidMount(){
+    this.setState({userType: this.props.userType})
+  } */
+
+  const closeCollapsible = () => {
+    let first = firstRef.current
+    let second = secondRef.current
+    let third = thirdRef.current
     if(first?.state.collapsed)
       first.toggle()
     if(second?.state.collapsed)
@@ -100,91 +94,89 @@ class CustomDrawer extends Component {
       third.toggle()
   }
 
-  async changeUserType(currentType){
-    console.log("Current Type: ",currentType)
+  const changeUserType = async(currentType)=>{
     let user = JSON.parse( await AsyncStorage.getItem('user_details'));
-    let change = {...user,user_type:currentType==4?1:4}
+    console.log("Current Type: ",currentType)
+    let change = {...user,user_type:currentType.userType==4?1:4}
     AsyncStorage.setItem('user_details',JSON.stringify(change))
-    this.setState({userType:currentType==4?1:4})
+    setUserType({userType:currentType.userType==4?1:4})
     //this.props.userType=currentType==4?1:4;
     //console.log("BECOMES: ",this.props.userType)
   }
-
-  render(){
   return (
-    <DrawerContentScrollView {...this.props}>
+    <DrawerContentScrollView {...props}>
       {/* <DrawerItemList {...props} /> */}
       <View>
         <View
         style={{display:'flex',alignItems:'center',marginVertical:50}}>
           <Image source={require('../../assets/images/logo.png')}/>
         </View>
-        {this.props.loggedIn&&
+        {props.loggedIn&&
         (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
           <Text style={{color: "#6E91EC",fontSize:18}}>
-            {this.props.userData?.owner_email}
+            {props.userData?.owner_email}
           </Text>
           <Text style={{color: "#6E91EC",fontSize:14}}>
-            {this.state.userType==4?"Seller":"Buyer"}
+            {userType==4?"Seller":"Buyer"}
           </Text>
         </View>)}
         <DrawerItem
           label="Home"
-          labelStyle={this.props.screenC=="Home" ? { color: "#6E91EC" } : { color: "black" }}
+          labelStyle={props.screenC=="Home" ? { color: "#6E91EC" } : { color: "black" }}
           onPress={() => {
-            this.props.changeScreen("Home")
-            this.props.navigation.navigate("Home");
-            this.closeCollapsible();
+            props.changeScreen("Home")
+            props.navigation.navigate("Home");
+            closeCollapsible();
             }}
           icon={(focused = true) => (
             <MaterialCommunityIcons
               name="home"
               size={24}
-              color={this.props.screenC=="Home" ? "#6E91EC" : "black"}
+              color={props.screenC=="Home" ? "#6E91EC" : "black"}
             />
           )}
         />
       </View>
-      {this.props.loggedIn ? (
+      {props.loggedIn ? (
         <>
-        {this.state.userType==4?(<View>
+        {userType==4?(<View>
           <DrawerItem
             label="Dashboard"
-            labelStyle={this.props.screenC=="Dashboard" ? { color: "#6E91EC" } : { color: "black" }}
+            labelStyle={props.screenC=="Dashboard" ? { color: "#6E91EC" } : { color: "black" }}
             onPress={() => {
-              this.closeCollapsible();
-              this.props.changeScreen("Dashboard")
-              this.props.navigation.navigate("Dashboard");
+              closeCollapsible();
+              props.changeScreen("Dashboard")
+              props.navigation.navigate("Dashboard");
             }}
-            icon={() => <MaterialCommunityIcons name="view-dashboard-outline" size={24} color={this.props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
+            icon={() => <MaterialCommunityIcons name="view-dashboard-outline" size={24} color={props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
           />
         </View>):null}
           <View>
             <DrawerItem
               label="Product"
-              labelStyle={this.props.screenC=="Product" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={props.screenC=="Product" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() => {
-                this.closeCollapsible();
-                this.props.changeScreen("Product")
-                this.props.navigation.navigate("Product",{userType:this.props.userType, screen:"List"});
+                closeCollapsible();
+                props.changeScreen("Product")
+                props.navigation.navigate("Product",{userType:props.userType, screen:"List"});
               }}
-              icon={() => <Feather name="box" size={24} color={this.props.screenC=="Product" ? "#6E91EC" : "black"} />}
+              icon={() => <Feather name="box" size={24} color={props.screenC=="Product" ? "#6E91EC" : "black"} />}
             />
           </View>
           <View>
             <DrawerItem
               label="Notifications"
-              labelStyle={this.props.screenC=="Notifications" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={props.screenC=="Notifications" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{
-                this.closeCollapsible();
-                this.props.changeScreen("Notifications")
-                this.props.navigation.navigate("Notifications",{screen:'Notification'})
+                closeCollapsible();
+                props.changeScreen("Notifications")
+                props.navigation.navigate("Notifications",{screen:'Notification'})
               }}
               icon={() => (
                 <Ionicons
                   name="md-notifications-outline"
                   size={24}
-                  color={this.props.screenC=="Notifications" ? "#6E91EC" : "black"}
+                  color={props.screenC=="Notifications" ? "#6E91EC" : "black"}
                 />
               )}
             />
@@ -192,58 +184,58 @@ class CustomDrawer extends Component {
           <View>
             <DrawerItem
               label="Negotiations"
-              labelStyle={this.props.screenC=="Negotiations" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={props.screenC=="Negotiations" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{
-                this.closeCollapsible();
-                this.props.changeScreen("Negotiations")
-                this.props.navigation.navigate("Negotiations", {screen:'NegotiationList'})
+                closeCollapsible();
+                props.changeScreen("Negotiations")
+                props.navigation.navigate("Negotiations", {screen:'NegotiationList'})
               }}
               icon={() => (
                 <FontAwesome5
                   name="handshake"
                   size={20}
-                  color={this.props.screenC=="Negotiations" ? "#6E91EC" : "black"}
+                  color={props.screenC=="Negotiations" ? "#6E91EC" : "black"}
                 />
               )}
             />
           </View>
-          {this.state.userType==4?(<View>
+          {userType==4?(<View>
             <DrawerItem
               label="Campaign"
-              labelStyle={this.props.screenC=="Campaign" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={props.screenC=="Campaign" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{ 
-                this.closeCollapsible();
-                this.props.changeScreen("Campaign")
-                this.props.navigation.navigate("Campaign")}
+                closeCollapsible();
+                props.changeScreen("Campaign")
+                props.navigation.navigate("Campaign")}
               }
               icon={() => <Feather name="speaker" size={24} 
-              color={this.props.screenC=="Campaign" ? "#6E91EC" : "black"} />}
+              color={props.screenC=="Campaign" ? "#6E91EC" : "black"} />}
             />
           </View>):null}
-          {this.state.userType==4?(<View>
+          {userType==4?(<View>
             <DrawerItem
               label="Loyalty Points"
-              labelStyle={this.props.screenC=="LoyaltyPoints" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={props.screenC=="LoyaltyPoints" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{ 
-                this.closeCollapsible();
-                this.props.changeScreen("LoyaltyPoints")
-                this.props.navigation.navigate("LoyaltyPoints",{screen:"Loyalty"})}
+                closeCollapsible();
+                props.changeScreen("LoyaltyPoints")
+                props.navigation.navigate("LoyaltyPoints",{screen:"Loyalty"})}
               }
               icon={() => <MaterialCommunityIcons name="chart-donut" size={24} 
-              color={this.props.screenC=="LoyaltyPoints" ? "#6E91EC" : "black"} />}
+              color={props.screenC=="LoyaltyPoints" ? "#6E91EC" : "black"} />}
             />
           </View>):null}
           <View>
             <DrawerItem
               label="Orders"
-              labelStyle={this.props.screenC=="Orders" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={props.screenC=="Orders" ? { color: "#6E91EC" } : { color: "black" }}
               onPress={() =>{ 
-                this.closeCollapsible();
-                this.props.changeScreen("Orders")
-                this.props.navigation.navigate("Orders")}
+                closeCollapsible();
+                props.changeScreen("Orders")
+                props.navigation.navigate("Orders")}
               }
               icon={() => <Ionicons name="receipt-outline" size={24} 
-              color={this.props.screenC=="Orders" ? "#6E91EC" : "black"} />}
+              color={props.screenC=="Orders" ? "#6E91EC" : "black"} />}
             />
           </View>
           
@@ -255,7 +247,7 @@ class CustomDrawer extends Component {
             }}
           >
             <CollapsibleList
-              ref={this.thirdRef}
+              ref={thirdRef}
               numberOfVisibleItems={0}
               buttonPosition="top"
               buttonContent={
@@ -270,66 +262,66 @@ class CustomDrawer extends Component {
               <View style={{ marginLeft: 10 }}>
                   <TouchableOpacity
                     onPress={() => {
-                      this.props.navigation.navigate("User");
-                      this.props.changeScreen("User")
+                      props.navigation.navigate("User");
+                      props.changeScreen("User")
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
-                    <Feather name="users" size={24} color={this.props.screenC =="User"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="User"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Feather name="users" size={24} color={props.screenC =="User"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="User"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       User Management
                     </Text>
                   </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() =>{
-                      this.props.navigation.navigate("Adress", { screen: "Details" })
-                      this.props.changeScreen("AdressDetails")
+                      props.navigation.navigate("Adress", { screen: "Details" })
+                      props.changeScreen("AdressDetails")
                       }}
                       style={{ flexDirection: "row", marginVertical: 10 }}>
-                      <Feather name="user" size={24} color={this.props.screenC =="AdressDetails"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="AdressDetails"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                      <Feather name="user" size={24} color={props.screenC =="AdressDetails"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="AdressDetails"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       Account Details
                     </Text>
                   </TouchableOpacity>
                 <TouchableOpacity style={{ flexDirection: "row", display:'flex', marginVertical: 10 }}
                     onPress={() =>{
-                      this.props.navigation.navigate("Role", { screen: "Roles" })
-                      this.props.changeScreen("Role")
+                      props.navigation.navigate("Role", { screen: "Roles" })
+                      props.changeScreen("Role")
                     }}>
-                    <Feather name="lock" size={24}  color={this.props.screenC =="Role"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="Role"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Feather name="lock" size={24}  color={props.screenC =="Role"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="Role"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       Roles & Permissions
                     </Text>
                   </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() =>{
-                      this.props.navigation.navigate("Adress",{screen:'List'})
-                      this.props.changeScreen("Adress")
+                      props.navigation.navigate("Adress",{screen:'List'})
+                      props.changeScreen("Adress")
                       }}
                      style={{ flexDirection: "row", marginVertical: 10 }}>
                     <Ionicons name="location-outline" size={24} color="black" />
-                    <Text style={this.props.screenC =="Adress"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Text style={props.screenC =="Adress"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       User Address
                     </Text>
                   </TouchableOpacity>
-                  {this.state.userType==4?(<TouchableOpacity
+                  {userType==4?(<TouchableOpacity
                     onPress={() => {
-                      this.props.navigation.navigate("Adress",{screen:"Selling"});
-                      this.props.changeScreen("Selling")
+                      props.navigation.navigate("Adress",{screen:"Selling"});
+                      props.changeScreen("Selling")
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
-                    <Feather name="book" size={24} color={this.props.screenC =="Selling"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="Selling"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Feather name="book" size={24} color={props.screenC =="Selling"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="Selling"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       Selling Details
                     </Text>
                   </TouchableOpacity>):null}
-                  {this.state.userType==4?(<TouchableOpacity
+                  {userType==4?(<TouchableOpacity
                     onPress={() => {
-                      this.props.navigation.navigate("Adress",{screen:"Sponsored"});
-                      this.props.changeScreen("Sponsored")
+                      props.navigation.navigate("Adress",{screen:"Sponsored"});
+                      props.changeScreen("Sponsored")
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
-                    <Feather name="dollar-sign" size={24} color={this.props.screenC =="Sponsored"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="Sponsored"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Feather name="dollar-sign" size={24} color={props.screenC =="Sponsored"?"#6E91EC":"black"} />
+                    <Text style={props.screenC =="Sponsored"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
                       Promoted Products
                     </Text>
                   </TouchableOpacity>):null}
@@ -346,7 +338,7 @@ class CustomDrawer extends Component {
       }}
     >
       <CollapsibleList
-        ref={this.secondRef}
+        ref={secondRef}
         numberOfVisibleItems={0}
         buttonPosition="top"
         buttonContent={
@@ -361,57 +353,52 @@ class CustomDrawer extends Component {
       <View style={{ marginLeft: 10 }}>
           <TouchableOpacity
             onPress={() => {
-              this.props.navigation.navigate("About",{screen:"AboutUs"});
-              this.props.changeScreen("About")
+              props.navigation.navigate("About",{screen:"AboutUs"});
+              props.changeScreen("About")
             }}
             style={{ flexDirection: "row", marginVertical: 10 }}>
-            <Feather name="globe" size={24} color={this.props.screenC =="About"?"#6E91EC":"black"} />
-            <Text style={this.props.screenC =="About"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+            <Feather name="globe" size={24} color={props.screenC =="About"?"#6E91EC":"black"} />
+            <Text style={props.screenC =="About"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
               About us
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              this.props.navigation.navigate("About",{screen:"Contact"});
-              this.props.changeScreen("Contact")
+              props.navigation.navigate("About",{screen:"Contact"});
+              props.changeScreen("Contact")
             }}
             style={{ flexDirection: "row", marginVertical: 10 }}>
-            <MaterialCommunityIcons name="cellphone" size={24} color={this.props.screenC =="Contact"?"#6E91EC":"black"} />
-            <Text style={this.props.screenC =="Contact"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+            <MaterialCommunityIcons name="cellphone" size={24} color={props.screenC =="Contact"?"#6E91EC":"black"} />
+            <Text style={props.screenC =="Contact"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
               Contact us
             </Text>
           </TouchableOpacity>
     </View>
     </CollapsibleList>
     </View>
-      {/* this will crash the app */}
-      {this.props.userTypeStatic==4?<View>
+      {/* will crash the app */}
+      {props.userTypeStatic==4?<View>
           <TouchableOpacity
             onPress={() => {
-              this.closeCollapsible();
-              this.props.navigation.navigate('Home');
-              this.changeUserType(this.state.userType)
+              closeCollapsible();
+              props.navigation.navigate('Home');
+              changeUserType(userType)
             }}
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
           ><Fontisto name="arrow-swap" size={24} color="black" />
-            <Text style={{ color: "black", marginLeft: 30 }}>Switch To {this.state.userType==4?"Buyer":"Seller"}</Text>
+            <Text style={{ color: "black", marginLeft: 30 }}>Switch To {userType==4?"Buyer":"Seller"}</Text>
           </TouchableOpacity>
         </View>:null }
-      {this.props.loggedIn ? (
+      {props.loggedIn ? (
         <View>
           <TouchableOpacity
             onPress={() => {
-              this.closeCollapsible();
-              apiServices.logout().then(async(res) => {
-                this.setState({userType:null})
+              closeCollapsible();
+              apiServices.logout().then((res) => {
                 console.log("WHEN LOGGING OUT: ", res);
-                let changing = JSON.parse(await AsyncStorage.getItem('user_details'))
-                await AsyncStorage.setItem('user_details',JSON.stringify({...changing,user_type:1,user_type_static:1}))
-                await AsyncStorage.clear();
-                changing = JSON.parse(await AsyncStorage.getItem('user_details'))
-                console.log("ASYNC: ",changing);
-                this.props.changeScreen("Home")
-                this.props.navigation.navigate("Home")
+                AsyncStorage.clear();
+                props.changeScreen("Home")
+                props.navigation.navigate("Home")
               });
             }}
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
@@ -424,7 +411,7 @@ class CustomDrawer extends Component {
         <View>
           <TouchableOpacity
             onPress={() => {
-              this.props.navigation.navigate("Auth", { screen: "Login" });
+              props.navigation.navigate("Auth", { screen: "Login" });
             }}
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
           >
@@ -435,7 +422,7 @@ class CustomDrawer extends Component {
       )}
     </DrawerContentScrollView>
   );
-}}
+}
 
 const TestingNavigator = () => {
   return (
@@ -462,9 +449,7 @@ class Nav extends Component {
       userToken: null,
       chosenScreen: "Home",
       isUserLoggedIn: false,
-      userData:null,
-      loading:true,
-      visible:false,
+      userData:null
     };
   }
 
@@ -480,7 +465,7 @@ class Nav extends Component {
     await apiServices.isUserLoggedIn();
     //console.log("RESULT INSIDE COMPOENNT: ",result)
     apiServices.isUserLoggedIn().then((res) => {
-      this.setState({ isUserLoggedIn: res, loading:false, visible:true, });
+      this.setState({ isUserLoggedIn: res });
     });
   }
 
@@ -494,7 +479,8 @@ class Nav extends Component {
     });
   }
 
-  authStack = () => {return<><Spinner visible={this.state.loading}/>{this.state.visible&&<Stack.Navigator>
+  authStack = () => (
+    <Stack.Navigator>
       <>
         <Stack.Screen
           name="drawerTab"
@@ -502,15 +488,15 @@ class Nav extends Component {
           options={{ headerShown: false }}
         />
       </>
-    </Stack.Navigator>}</>
-  }
+    </Stack.Navigator>
+  );
 
   closeDrawer = ({navigation}) =>{
     navigation.closeDrawer()
   }
 
-  createDrawer = ({ navigation, route}) => {
-     return (<Drawer.Navigator
+  createDrawer = ({ navigation, route}) => (
+    <Drawer.Navigator
       drawerContent={(props) => (
         <CustomDrawer
           loggedIn={this.state.isUserLoggedIn}
@@ -522,7 +508,7 @@ class Nav extends Component {
           closeDrawer={({navigation})=>{
             this.closeDrawer({navigation})
           }}
-          userType={this.state.userData?.user_type}
+          userType={this.state.userData?.user_type_dyn}
           userTypeStatic = {this.state.userData?.user_type_static}
           userData={this.state.userData}
         />
@@ -612,8 +598,8 @@ class Nav extends Component {
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
-    </Drawer.Navigator>)
-  };
+    </Drawer.Navigator>
+  );
 
   render() {
     return <NavigationContainer>{this.authStack()}</NavigationContainer>;

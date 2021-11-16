@@ -487,7 +487,7 @@ class BuyreAccount extends Component {
           <TouchableOpacity
             style={styles.Dis_Btn}
             onPress={
-              this._ApplyChanges /* this.props.navigation.navigate('Home') */
+              this._ApplyChanges 
             }
           >
             <Text style={styles.loginText}>Apply Changes</Text>

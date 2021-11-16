@@ -8,6 +8,7 @@ import * as apiServices from '../../core/apis/apiUserServices'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from '@expo/vector-icons';
 import Spinner from "react-native-loading-spinner-overlay";
+import { TouchableOpacityButton } from '../../components/TouchableOpacity';
 
 const width = Dimensions.get('screen').width
 const height = Dimensions.get('screen').height
@@ -229,10 +230,11 @@ export default class AddRole extends Component {
                     </CollapsibleList>
 
                 </View>
-
-                <TouchableOpacity style={styles.loginBtn} onPress={()=>this.editRole(this.props.route.params.item.id)}>
+                <TouchableOpacityButton onPress={()=>this.editRole(this.props.route.params.item.id)}
+                text="Edit Role" />
+                {/* <TouchableOpacity style={styles.loginBtn} onPress={()=>this.editRole(this.props.route.params.item.id)}>
                     <Text style={styles.loginText}>Edit Role</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
             </ImageBackground>
         );

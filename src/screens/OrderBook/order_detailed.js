@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as API from "../../core/apis/apiProductServices";
+import * as APiOrder from '../../core/apis/apiOrderServices';
 import { styles } from "./valueadded_style";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
@@ -18,105 +19,23 @@ import * as DocumentPicker from "expo-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const test = [{ x: 1 }, { x: 2 }, { x: 3 }];
-const data = [
-  {
-    name: "Product 1",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 2",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 1",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 2",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 1",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 2",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 1",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 2",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 1",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 2",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 1",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-  {
-    name: "Product 2",
-    description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-    price: 20,
-    shipping: 5,
-    qty: 5,
-  },
-];
-
 const detailedOrder = ({ route, navigation }) => {
   const screenWidth = Dimensions.get("screen").width;
   const [userData, setUserData] = useState();
   const [fetchedServices, setFetchedServices] = useState([]);
   const [services, setServices] = useState([]);
   const [isVisible, setIsVisible] = useState(true);
+  const [apiData, setApiData] = useState();
 
   useEffect(() => {
     const runEff = async () => {
-      let res =data.reduce((a,b)=>({x:a+b.price}))
-      console.log("RES:",res)
+      let id = route.params.item.order_id
+      APiOrder.getOrderDetails(id).then((res)=>{
+        console.log("FROM API DATAL : ",res)
+        setApiData(res)
+      })
+      //let res =data.reduce((a,b)=>({x:a+b.price}))
+      //console.log("RES:",res)
       let user = JSON.parse(await AsyncStorage.getItem("user_details"));
       console.log("USER DETAILS: ", user);
       setUserData(user);
@@ -131,14 +50,16 @@ const detailedOrder = ({ route, navigation }) => {
       <Spinner visible={isVisible} />
       <View
         style={{
-          padding: 20,
+          paddingHorizontal: 20,
+          paddingTop:10,
           paddingBottom:5,
           display: "flex",
           flexDirection: "row",
+          alignItems:'center',
           justifyContent: "space-between",
         }}
       >
-        <Text style={styles.name}>Order Number 1</Text>
+        <Text style={styles.name}>Order Number {apiData?.order_id}</Text>
         <AntDesign
           name="printer"
           size={24}
@@ -155,18 +76,20 @@ const detailedOrder = ({ route, navigation }) => {
           }
         />
       </View>
-      <Text style={{paddingHorizontal:20,color:'gray',paddingBottom:20}}>Status: {route?.params.item.status}</Text>
-      <ScrollView style={{ flex: 1 }}>
-        {data.map((item, index) => {
+      <Text style={{paddingHorizontal:20,color:'gray',fontSize:16,paddingBottom:5}}>Tracking ID: {apiData?.trackingId}</Text>
+      <Text style={{paddingHorizontal:20,color:'gray',fontSize:14,paddingBottom:5,color: "#31C2AA",}}>{apiData?.created_at.substring(0,10)}</Text>
+      <ScrollView style={{ flex: 1,marginTop:10 }}>
+        {apiData?.order_data.map((item, index) => {
           return (
             <View key={index}>
               <CollapsibleList
                 wrapperStyle={{
                   borderBottomWidth: 0.2,
-                  paddingBottom: 5,
+                  paddingVertical:5,
+                  borderTopWidth: 0.2,
                   borderColor: "gray",
                   borderRadius: 5,
-                  marginVertical: 20,
+                  justifyContent:'center'
                 }}
                 buttonPosition="top"
                 numberOfVisibleItems={0}
@@ -176,14 +99,14 @@ const detailedOrder = ({ route, navigation }) => {
                       {
                         marginHorizontal: 20,
                         borderColor: "#A6A6A6",
-                        marginVertical: 0,
+                        marginVertical: 10,
                         justifyContent: "space-between",
                         flexDirection: "row",
                       },
                     ]}
                   >
                     <View style={{ flexDirection: "row" }}>
-                      <Text style={{ color: "#698EB7" }}>{item.name}</Text>
+                      <Text style={{ color: "#698EB7" }}>{item.product_name}</Text>
                       <Ionicons
                         name="chatbox"
                         size={24}
@@ -197,7 +120,7 @@ const detailedOrder = ({ route, navigation }) => {
                       />
                     </View>
                     <Text style={{ color: "#31C2AA" }}>
-                      ${item.price * item.qty + item.shipping}
+                      ${item.total_price + item.shipping}
                     </Text>
                   </View>
                 }
@@ -205,8 +128,8 @@ const detailedOrder = ({ route, navigation }) => {
                 <View>
                   <Image
                     resizeMode="contain"
-                    source={require("../../../assets/images/mouse.jpg")}
-                    style={styles.image}
+                    source={{uri:item.product_image[0].media}}
+                    style={[styles.image,{marginTop:10}]}
                   />
                 </View>
                 <View style={[styles.mainContainer /* {} */]}>
@@ -215,28 +138,42 @@ const detailedOrder = ({ route, navigation }) => {
          </View> */}
                   <Text>{item.description}</Text>
                   <View style={styles.priceContainer}>
-                    <Text style={{ fontWeight: "bold" }}>Variants:</Text>
-                    <Text style={{ color: "#6E91EC" }}>Variant 1</Text>
+                    <Text style={styles.detailKey}>Variants:</Text>
+                    <Text style={{ color: "#6E91EC" }}>{item.variants}</Text>
                   </View>
                   <View style={styles.priceContainer}>
-                    <Text style={{ fontWeight: "bold" }}>Quantity:</Text>
-                    <Text style={{ color: "#6E91EC" }}>{item.qty}</Text>
+                    <Text style={styles.detailKey}>Quantity:</Text>
+                    <Text style={{ color: "#6E91EC" }}>{item.units}</Text>
                   </View>
                   <View style={styles.priceContainer}>
-                    <Text style={{ fontWeight: "bold" }}>Price:</Text>
-                    <Text style={{ color: "#6E91EC" }}>$ {item.price}</Text>
+                    <Text style={styles.detailKey}>Price:</Text>
+                    <Text style={{ color: "#6E91EC" }}>$ {item.price_per_unit}</Text>
                   </View>
                   <View style={styles.priceContainer}>
-                    <Text style={{ fontWeight: "bold" }}>Shipping:</Text>
+                    <Text style={styles.detailKey}>Shipping:</Text>
                     <Text style={{ color: "#6E91EC" }}>$ {item.shipping}</Text>
                   </View>
                   <View style={styles.priceContainer}>
-                    <Text style={{ fontWeight: "bold" }}>Total:</Text>
+                    <Text style={styles.detailKey}>Services:</Text>
+                    <Text style={{ color: "#6E91EC" }}>$ {item.services}</Text>
+                  </View>
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.detailKey}>Value Added Services:</Text>
+                  </View>
+                  <View style={[styles.priceContainer,{marginTop:0}]}>
+                    <Text style={{  color:'gray'}}>Inspection Report:</Text>
+                    <Text style={{ color: "#6E91EC" }}>{item.value_added_services.inspection_report}</Text>
+                  </View>
+                  <View style={[styles.priceContainer,{marginTop:0}]}>
+                    <Text style={{  color:'gray'}}>Packaging:</Text>
+                    <Text style={{ color: "#6E91EC" }}>{item.value_added_services.inspection_report}</Text>
+                  </View>
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.detailKey}>Total:</Text>
                     <Text style={{ color: "#6E91EC" }}>
                       ${" "}
                       {
-                        item.price * item.qty + item.shipping /* +
-                item.services.reduce((pre, cur) => pre + cur.price, 0) */
+                        item.total_price + item.shipping + item.services
                       }
                     </Text>
                   </View>
@@ -246,70 +183,43 @@ const detailedOrder = ({ route, navigation }) => {
           );
         })}
 
-        {/* <View>
-            <CollapsibleList
-              wrapperStyle={{
-                borderWidth: 0.2,
-                borderColor: "gray",
-                borderRadius: 5,
-                marginVertical: 20,
-              }}
-              buttonPosition="top"
-              numberOfVisibleItems={0}
-              buttonContent={
-                <View
-                  style={[
-                    styles.docPicker,
-                    {
-                      borderColor: "#A6A6A6",
-                      backgroundColor: "#fff",
-                      marginVertical: 0,
-                    },
-                  ]}
-                >
-                  <Text style={{ color: "gray" }}>Services</Text>
-                </View>
-              }
-            >
-              <View style={{ backgroundColor: "#fff", padding: 10 }}>
-                {data[0].services.map((item, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        paddingVertical: 5,
-                        borderWidth: 0.2,
-                        borderColor: "#A6A6A6",
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                      <Text style={{ color: "#6E91EC" }}>$ {item.price}</Text>
-                    </View>
-                  );
-                })}
-              </View>
-            </CollapsibleList>
-          </View> */}
       </ScrollView>
+      
       <View style={{ marginHorizontal: 20, paddingVertical: 20 }}>
-        <View style={styles.priceContainer}>
-          <Text style={{ fontWeight: "bold" }}>Total Qty:</Text>
+        {userData.user_type==4&&<View style={[styles.priceContainer,{marginTop:5}]}>
+          <Text style={{ }}>Logistic:</Text>
           <Text style={{ color: "#6E91EC" }}>
-            {data.reduce(function(a,b){return a+b.qty},0)+""}
+          {apiData?.logistic.length<1?"Not Chosen":apiData?.logistic}
+          </Text>
+        </View>}
+        <View style={[styles.priceContainer,{marginTop:5}]}>
+          <Text style={{ }}>Logistic:</Text>
+          <Text style={{ color: "#6E91EC" }}>
+          {apiData?.logistic.length<1?"Not Chosen":apiData?.logistic}
           </Text>
         </View>
-        <View style={styles.priceContainer}>
-          <Text style={{ fontWeight: "bold" }}>Total Shipping:</Text>
+        <View style={[styles.priceContainer,{marginTop:5}]}>
+          <Text style={{ }}>Warehouse:</Text>
           <Text style={{ color: "#6E91EC" }}>
-            ${data.reduce(function(a,b){return a+b.shipping},0)+""}
+          {apiData?.wareHouse.length<1?"Not Chosen":apiData?.wareHouse}
           </Text>
         </View>
-        <View style={styles.priceContainer}>
-          <Text style={{ fontWeight: "bold" }}>Total Price:</Text>
+        <View style={[styles.priceContainer,{marginTop:5}]}>
+          <Text style={{ }}>Total Qty:</Text>
           <Text style={{ color: "#6E91EC" }}>
-            ${data.reduce(function(a,b){return a+(b.shipping+(b.qty*b.price))},0)+""}
+            {apiData?.order_data.reduce(function(a,b){return a+b.units},0)+""}
+          </Text>
+        </View>
+        <View style={[styles.priceContainer,{marginTop:5}]}>
+          <Text style={{ }}>Total Shipping:</Text>
+          <Text style={{ color: "#6E91EC" }}>
+            ${apiData?.order_data.reduce(function(a,b){return a+b.shipping},0)+""}
+          </Text>
+        </View>
+        <View style={[styles.priceContainer,{marginTop:5}]}>
+          <Text style={{ }}>Total Price:</Text>
+          <Text style={{ color: "#6E91EC" }}>
+            ${apiData?.order_data.reduce(function(a,b){return a+(b.shipping+(b.total_price)+b.services)},0)+""}
           </Text>
         </View>
       </View>

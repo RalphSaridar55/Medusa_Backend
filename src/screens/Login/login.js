@@ -69,7 +69,7 @@ export default function Login({ navigation }) {
       setLoading(false);
       storeData("company_name",res.userDetails.company_name)
       storeData("user_id",res.userDetails.id+"")
-      storeData("user_details",JSON.stringify(res.userDetails))
+      storeData("user_details",JSON.stringify({...res.userDetails,user_type_static:res.userDetails.user_type}))
       //setUserData(123);
 
       if(res.userDetails.user_type===4 && res.userDetails.default_landing_page=="DASHBOARD")

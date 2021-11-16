@@ -220,10 +220,14 @@ export default class ProductList extends Component {
       });
     } */
     
-    async componentDidMount(){
+    componentDidMount(){
         //console.log("ROUTE PARAMETERS ",this.props.route.params)
+        
+      this.focusListener = this.props.navigation.addListener("focus", async() => {
+        this.setState({isVisible:true})
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
-        this.setState({userType:user.user_type, showButton:true})
+        console.log("Affected",user)
+        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
         //console.log("USER DATA: ",user.user_type)
         apiPortFolioServices.getCategories().then((result)=>{
             //console.log("CATEGORIES: ",result);
@@ -238,7 +242,7 @@ export default class ProductList extends Component {
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
         })
-
+      })
     }
 
     isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
