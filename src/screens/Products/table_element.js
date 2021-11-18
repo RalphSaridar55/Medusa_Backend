@@ -50,6 +50,11 @@ export const table =[
         additional:" /pc"
     },
     {
+        label:"Max Reserve Qty",
+        value:"max_reserve_qty",
+        additional:""
+    },
+    {
         label:"Price",
         value:"price",
         additional:" $"

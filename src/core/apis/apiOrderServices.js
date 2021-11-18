@@ -86,3 +86,32 @@ export const getSellersOrder = async(id)=>{
     })
 }
 
+
+//Seller Reject Order
+export const sellerRejectOrder = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.put(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller/reject-order`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            //console.log("ORDER BOOK API:",res.data)
+            return res.data.message
+        })
+    })
+}
+
+
+//Seller Change status Order
+export const sellerChangeStatusOrder = async(payload)=>{
+    return await getToken().then((x)=>{
+        return apiUserServices.put(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller/status`,payload,{
+            headers:{
+                Authorization: x
+            }
+        }).then((res)=>{
+            //console.log("ORDER BOOK API:",res.data)
+            return res.data.message
+        })
+    })
+}

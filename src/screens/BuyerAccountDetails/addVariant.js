@@ -22,6 +22,7 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 import { TextInput, Switch } from "react-native-paper";
 import styles from "./add_style";
 import { RenderPicker } from "../../components/Picker";
@@ -412,13 +413,14 @@ export default class AddProduct extends Component {
             }
             if (item.type === "button") {
               return (
-                <TouchableOpacity
+                <TouchableOpacityButton key={index} onPress={()=> this.submit()} text="Submit"/>
+                /* <TouchableOpacity
                   key={index}
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
                 >
                   <Text style={styles.loginBtnText}>Submit</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */
               );
             }
           })}

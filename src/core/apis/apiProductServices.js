@@ -1,6 +1,22 @@
 import apiUserServices from './apiUserServices';
 import { getToken } from "./apiUserServices";
 
+//Home Top Featured
+export const getGroupProducts = async() =>{
+        return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/home-card-list').then((res)=>{
+            //console.log("RES FROM THE API:",res.data)
+            return res.data.data.data
+        })
+}
+
+//Home Top Selling
+export const getTopSellingAndFeatured = async() =>{
+    return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/home-group-list').then((res)=>{
+        //console.log("RES FROM THE API:",res.data)
+        return res.data.data.data
+    })
+}
+
 //get services
 export const getServices = async() =>{
     return await getToken().then((x)=>{
@@ -175,4 +191,11 @@ export const getServiceType = async(id)=>{
             return res.data.data;
         })
     })
+}
+
+//Get Home categories 
+export const getHomeCategories = async()=>{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/home-category`).then((res)=>{
+            return res.data.data;
+        })
 }

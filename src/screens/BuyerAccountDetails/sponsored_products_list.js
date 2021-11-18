@@ -4,6 +4,7 @@ import { List, Checkbox, Button, Appbar, Searchbar, IconButton, Title } from 're
 import ActionSheet from "react-native-actions-sheet";
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from '../Products/listing_style';
+import { TouchableOpacityOutlined } from '../../components/TouchableOpacityOutlined';
 //import Image from '../../../assets/images/mycampaign1.jpg'
 
 const SponsoredProducts = () =>{
@@ -43,7 +44,7 @@ const SponsoredProducts = () =>{
             <Searchbar
                 onChangeText={(e)=>setSearch(e)}
                 placeholder="Search"
-                style={{ display: !visible.search ? 'none' : 'flex', }}
+                style={{ display:  !visible.search ? 'none' : 'flex', }}
             />
         </View>
         <FlatList style={styles.list}
@@ -67,12 +68,10 @@ const SponsoredProducts = () =>{
                                 <Text style={{color:'gray',paddingTop:10,textAlign:'center'}}>{item.description.length>100?item.description.substring(0,100)+"...":item.description}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity
+                        <TouchableOpacityOutlined 
                             onPress={()=>console.log(123)}
                             style={[styles.loginBtn]}
-                        >
-                            <Text style={styles.loginBtnText}>Edit</Text>
-                        </TouchableOpacity>
+                            text="Edit" />
                     </View>
                 )
             }} />

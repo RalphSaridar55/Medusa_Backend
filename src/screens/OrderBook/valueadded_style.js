@@ -15,9 +15,36 @@ export const styles = StyleSheet.create({
     },
     buttonContainer:{
         display:'flex',
-        flexDirection:'row',
+        flexDirection:'column',
         justifyContent:'space-around',
         paddingHorizontal:20,
+    },
+    picker:{
+              borderWidth: 1,
+              borderColor: "#C4C4C4",
+              borderRadius: 4,
+              marginVertical: 10,
+              height:40,
+              marginHorizontal:50,
+              justifyContent:'center',
+              backgroundColor:'#fff'
+    },
+    modalHeader:{
+        display:'flex',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between',
+        width:screenwidth,
+        paddingHorizontal:20
+    },
+    modalBoxInputs:{
+        borderWidth:0.5,
+        borderColor:'#31c2aa',
+        borderRadius:10,
+        width:screenwidth*0.7,
+        paddingHorizontal:10,
+        paddingVertical:10,
+        marginVertical:5
     },
     headerContainer:{
         flexDirection:'row',
@@ -66,15 +93,15 @@ export const styles = StyleSheet.create({
         alignItems:'flex-end'
     },
     loginBtn: {
-        marginTop:20,
-        marginHorizontal:10,
+        marginTop:10,
+        marginHorizontal:50,
         backgroundColor: "#5BC5B9",
         borderRadius: 25,
         alignItems: "center",
         justifyContent: "center",
         padding:20,
         flex:1,
-        height: 50
+        height: 40
     },
     loginBtnText:{
         color:'white',

@@ -78,7 +78,7 @@ const actionSheetCat = createRef();
       search: "",
       
       filterData:[],
-      showSearch: true,
+      showSearch: false,
       showFilter: true,
 
       spinner:false,
@@ -272,19 +272,24 @@ async componentDidMount(){
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
     console.log("USER DATA: ",userData)
     this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
-    userData.user_type==1?
-    APIOrder.getOrderBook(1).then((res)=>{
-      console.log("CURRENT ORDER BOOK: ",res)
-      this.setState({spinner:false,current:res})
-    }):
+    if(userData.user_type==1){
+      APIOrder.getOrderBook(1).then((res)=>{
+        console.log("CURRENT ORDER BOOK: ",res)
+        this.setState({current:res})
+      })
+      APIOrder.getOrderBook(4).then((res)=>{
+        console.log("CURRENT ORDER BOOK: ",res)
+        this.setState({spinner:false,filterData:res,filterStatusLabel:"Pending"})
+      })
+    }else
     APIOrder.getSellersOrder(10).then((res)=>{
       console.log("DATA: ",res)
       this.setState({spinner:false,data:res,filterData:res})
     })
     setTimeout(()=>this.fillDataForCheckout(),2000)
-  }
+}
 
-componentDidMount(){
+/* componentDidMount(){
   this.focusListener = this.props.navigation.addListener("focus", async() => {
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
     console.log("USER DATA: ",userData)
@@ -301,7 +306,7 @@ componentDidMount(){
     setTimeout(()=>this.fillDataForCheckout(),2000)
   })
   }
-
+ */
 
  /*  componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', async() => {
@@ -385,10 +390,9 @@ componentDidMount(){
       <ScrollView style={{paddingHorizontal:10}}>
         {this.state.current?.map((item, index) => {
           return (
-            <TouchableOpacity
+            <View
               style={[styles.container, styles.content,{marginLeft:0}]}
               key={index}
-              onPress={()=>this.props.navigation.navigate('DetailedOrder',{item})}
             >
               <View style={styles.imageContainer}>
                 <Image source={{uri: item.images[0].media}} style={styles.image} />
@@ -444,7 +448,7 @@ componentDidMount(){
                   </TouchableOpacity>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
           );
         })}
       </ScrollView>
@@ -469,8 +473,8 @@ componentDidMount(){
       <View style={{ flex: 1, flexDirection:'row', justifyContent:'space-between',alignItems:'center' }}>
         <Text style={styles.orderText}>Order Number #{item.order_id}</Text>
         <View style={{ flexDirection:'row', justifyContent:'space-between',alignItems:'center'}}>
-          <Text style={styles.orderQty}>{item.box}</Text>
-          <Feather name="box" size={24} color="#6E91EC" />
+          {item?.box ?<><Text style={styles.orderQty}>{item?.box}</Text>
+          <Feather name="box" size={24} color="#6E91EC" /></>:<Text style={{ color:'#6E91EC'}}>{item.status}</Text>}
         </View>
       </View>
     </TouchableOpacity>
@@ -533,9 +537,10 @@ componentDidMount(){
               this.setState({showFilter:!this.state.showFilter})
             }}
           />
-          <Appbar.Action icon="magnify" onPress={this.onclick} />
+          <Appbar.Action icon="magnify" onPress={()=>this.onclick()}
+          style={this.state.showSearch&&{backgroundColor:'#31C2AA'}}  color={this.state.showSearch?"#E9F3FF":"black"} />
         </Appbar>
-        <View style={{paddingHorizontal:10,paddingVertical:10,display: "none" }}>
+        <View style={{paddingHorizontal:10,paddingVertical:10,display: this.state.showSearch?"flex":"none" }}>
           <Searchbar
             theme={{
               colors: { primary: "#6E91EC", underlineColor: "transparent" },
@@ -574,7 +579,7 @@ componentDidMount(){
         <View style={{flex:1}}>
           <ScrollView style={{paddingHorizontal:10}}>
             {this.state.filterData.map((item, index) => {
-                    return this.state.userData?.user_type==1?this.drawScreenTwoDataBuyer(item,index):this.drawScreenTwoData(item,index)
+                    return this.state.userData?.user_type==1?this.drawScreenTwoDataBuyer(item,index):this.drawScreenTwoDataBuyer(item,index)
             })}
                 </ScrollView>
         </View>

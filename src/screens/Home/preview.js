@@ -24,11 +24,11 @@ export default (Preview = ({
         <TouchableOpacity style={styles.card} onPress={() => onPress(item)}>
             <View style={styles.cardHeader}>
             </View>
-            <Image style={styles.userImage} source={{ uri: item[imageKey] }} />
+            <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode='cover' />
             <View style={styles.cardFooter}>
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.position}>{item.status}</Text>
+                    <Text style={styles.name}>{item.product_name}</Text>
+                    <Text style={styles.position}></Text>
                 </View>
             </View>
         </TouchableOpacity>

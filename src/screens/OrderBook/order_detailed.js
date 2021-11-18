@@ -6,9 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  TextInput,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as API from "../../core/apis/apiProductServices";
 import * as APiOrder from '../../core/apis/apiOrderServices';
@@ -18,14 +20,63 @@ import SelectMultiple from "react-native-select-multiple";
 import * as DocumentPicker from "expo-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Overlay from "react-native-modal-overlay";
+import { RenderPicker } from "../../components/Picker";
+import {Picker} from '@react-native-picker/picker';
 
 const detailedOrder = ({ route, navigation }) => {
   const screenWidth = Dimensions.get("screen").width;
   const [userData, setUserData] = useState();
+  const [modalVisible,setModalVisible] = useState(false);
   const [fetchedServices, setFetchedServices] = useState([]);
   const [services, setServices] = useState([]);
   const [isVisible, setIsVisible] = useState(true);
   const [apiData, setApiData] = useState();
+  const [reason, setReason] = useState("");
+  const [status,setStatus] = useState([
+    {label:"Pending",value:1},
+    {label:"Shipped",value:2},
+    {label:"Paid",value:3},
+    {label:"Awaiting Payment",value:4},
+  ])
+
+  const sellerRejectOrder = () =>{
+      if(reason.length<1){
+        Alert.alert("Error","Please make sure you give a reason")
+        return
+      }
+      let payload = {
+        order_id:route.params.item.order_id,
+        reject_reason:reason
+      }
+      APiOrder.sellerRejectOrder(payload).then((res)=>{
+        Alert.alert("Order Rejection",res,[
+          {text:"Ok",onPress:()=>navigation.goBack()}
+        ])
+      }).catch(err=>{
+        Alert.alert("Error",err.message)
+      })
+  }
+
+  const changeStatus = (selection) =>{
+    console.log('selection: ',selection)
+    Alert.alert("Order Status","Are you sure you want to change status of this product ?",[
+      {text:"No"},
+      {text:"Yes",onPress:()=>{
+        let payload = {
+          order_id:route.params.item.order_id,
+          order_status:selection
+        }
+        APiOrder.sellerChangeStatusOrder(payload).then((res)=>{
+          Alert.alert("Status",res,[
+            {text:"Ok",onPress:()=>navigation.goBack()}
+          ])
+        }).catch(err=>{
+          Alert.alert("Error",err.message)
+        })
+      }}
+    ])
+  }
 
   useEffect(() => {
     const runEff = async () => {
@@ -48,6 +99,54 @@ const detailedOrder = ({ route, navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <Spinner visible={isVisible} />
+      <Overlay visible={modalVisible} onClose={()=>setModalVisible(false)} 
+          containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
+          closeOnTouchOutside>  
+          <View style={styles.modalHeader}>
+              <Text
+              style={{
+                  fontSize: 18,
+                  color: "#31C2AA",
+                  marginBottom: 5,
+              }}
+              >
+              Reject Order
+              </Text>
+              <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({overlay:false})}/>
+          </View>
+          
+          <View style={{marginVertical:20}}>
+            <TextInput
+                  selectionColor="#31c2aa"
+                  label="Rejection Reason"
+                  style={styles.modalBoxInputs}
+                  placeholder="Reason"
+                  value={reason}
+                  //value={this.state[element.stateValue]}
+                  onChangeText={(text) =>
+                    setReason(text)
+                  }
+                  autoCapitalize="none"
+                  // keyboardType={element.keyBoardType}
+                  outlineColor="#C4C4C4"
+                  theme={{
+                    colors: { primary: "#31c2aa", underlineColor: "transparent" },
+                  }}
+                />
+              
+              <TouchableOpacity
+              onPress={() => sellerRejectOrder()}
+              style={{
+                backgroundColor: "#31C2AA",
+                borderRadius: 25,
+                alignItems: "center",
+                justifyContent: "center",marginVertical:10,
+                height: 30,}}
+            >
+              <Text style={styles.loginBtnText}>Reject Order</Text>
+            </TouchableOpacity>
+          </View>
+      </Overlay>
       <View
         style={{
           paddingHorizontal: 20,
@@ -107,7 +206,8 @@ const detailedOrder = ({ route, navigation }) => {
                   >
                     <View style={{ flexDirection: "row" }}>
                       <Text style={{ color: "#698EB7" }}>{item.product_name}</Text>
-                      <Ionicons
+                      {/*leaving this here commented intentionally
+                       <Ionicons
                         name="chatbox"
                         size={24}
                         color="#6E91EC"
@@ -117,7 +217,7 @@ const detailedOrder = ({ route, navigation }) => {
                             screen: "Negotiation",
                           })
                         }
-                      />
+                      /> */}
                     </View>
                     <Text style={{ color: "#31C2AA" }}>
                       ${item.total_price + item.shipping}
@@ -186,7 +286,7 @@ const detailedOrder = ({ route, navigation }) => {
       </ScrollView>
       
       <View style={{ marginHorizontal: 20, paddingVertical: 20 }}>
-        {userData.user_type==4&&<View style={[styles.priceContainer,{marginTop:5}]}>
+        {userData?.user_type==4&&<View style={[styles.priceContainer,{marginTop:5}]}>
           <Text style={{ }}>Logistic:</Text>
           <Text style={{ color: "#6E91EC" }}>
           {apiData?.logistic.length<1?"Not Chosen":apiData?.logistic}
@@ -223,25 +323,37 @@ const detailedOrder = ({ route, navigation }) => {
           </Text>
         </View>
       </View>
-      {route?.params?.item?.status == "Pending" && userData?.user_type == 4 && (
+      {userData?.user_type == 4 && (
         <View
           style={{
             width: screenWidth,
+            borderTopColor:'lightgray',
+            borderTopWidth:1,
           }}
         >
           <View style={[styles.buttonContainer]}>
-            <TouchableOpacity
-              onPress={() => console.log(123)}
+            {/* </View> */}
+            <RenderPicker 
+            map={status}
+            selectedValue={status}
+            onValueChange={(selection)=>changeStatus(selection)}
+            containerStyle={styles.picker}
+            />
+            {route.params.item.status=="Current"&&<TouchableOpacity
+              onPress={() => setModalVisible(true)}
               style={[styles.loginBtn, { backgroundColor: "red" }]}
             >
-              <Text style={styles.loginBtnText}>Refuse</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+              <Text style={styles.loginBtnText}>Reject</Text>
+            </TouchableOpacity>}
+            {/* <View
+              style={props.containerStyle}
+            > */}
+            {/* <TouchableOpacity
               onPress={() => console.log(123)}
               style={[styles.loginBtn]}
             >
               <Text style={styles.loginBtnText}>Accept</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       )}

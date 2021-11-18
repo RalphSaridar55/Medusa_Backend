@@ -77,14 +77,14 @@ const ValueAdded = ({ navigation,route }) => {
       Alert.alert("Error","Please select atleast one service")
       return
     }
-    if(document.value.uri==null){
+    if(document.value==null){
       setIsVisible(false)
       Alert.alert("Error","Please select a document")
       return
     }
     let arr = [];
     let doc =[];
-    doc.push(document.value.uri)
+    doc.push(document.value)
     services.map((item)=>{
       let res = fetchedServices.filter((item2) => {
         return item2.value === item.value;
@@ -145,7 +145,7 @@ const ValueAdded = ({ navigation,route }) => {
         <Text>{routeData?.description}</Text>
         <View style={styles.priceContainer}>
           <Text style={{ fontWeight: "bold" }}>Cost:</Text>
-          <Text style={{color:'#6E91EC'}}>USD {total}</Text>
+          <Text style={{color:'#6E91EC'}}>${total}</Text>
         </View>
         <View style={{ marginVertical: 20, flex: 1 }}>
           <CollapsibleList

@@ -197,28 +197,27 @@ export default class ProductList extends Component {
         }
     }
 
-    /* componentDidMount() {
-  
-      this.focusListener = this.props.navigation.addListener("focus", async() => {
+    async componentDidMount() {
         
-        console.log("ROUTE PARAMETERS ",this.props.route.params)
+        this.setState({isVisible:true})
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
-        this.setState({userType:user.user_type, showButton:true})
-        console.log("USER DATA: ",user.user_type)
+        console.log("Affected",user)
+        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
+        //console.log("USER DATA: ",user.user_type)
         apiPortFolioServices.getCategories().then((result)=>{
-            console.log("CATEGORIES: ",result);
+            //console.log("CATEGORIES: ",result);
             let array = result;
             let data = [];
             array.map((item) => data.push({label:item.category_name,value:item.id}));
             this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
         })
-        API.getProducts().then((res)=>{
-            console.log("PRODUCTS FETCHED: ",res)
-            let result = res.sort((a,b)=>a.product_name>b.product_name?1:-1)
-            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false })
+        API.getProducts(1).then((res)=>{
+            //console.log("FROM comp ",res)
+            //console.log("PRODUCTS FETCHED: ",res)
+            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
         })
-      });
-    } */
+    }
     
     componentDidMount(){
         //console.log("ROUTE PARAMETERS ",this.props.route.params)
@@ -508,7 +507,7 @@ export default class ProductList extends Component {
                                         thumbTintColor="#6E91EC"
                                     />
                                     <View>
-                                        <TouchableOpacity style={styles.resetButton}
+                                        <TouchableOpacity
                                         onPress={()=>this.resetPriceRange()}>
                                             <Text style={styles.resetText}>
                                                 Reset

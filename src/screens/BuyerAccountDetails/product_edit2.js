@@ -27,6 +27,7 @@ import styles from "./add_style";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
+import {TouchableOpacityButton} from '../../components/TouchableOpacity';
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -375,12 +376,15 @@ export default class AddProduct extends Component {
             }
             if (item.type === "button") {
               return (
-                <TouchableOpacity
+                <TouchableOpacityButton 
+                onPress={() => this.submit()}
+                text={this.props.route.params.type=="edit"?"Edit Product":item.label} />
+                /* <TouchableOpacity
                   onPress={() => this.submit()}
                   style={[styles.loginBtn]}
                 >
-                  <Text style={styles.loginBtnText}>{this.props.route.params.type=="edit"?"Edit Product":item.label}</Text>
-                </TouchableOpacity>
+                  <Text style={styles.loginBtnText}></Text>
+                </TouchableOpacity> */
               );
             }
           })}

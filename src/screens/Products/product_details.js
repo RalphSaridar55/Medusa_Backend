@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { Component, createRef, useEffect, useImperativeHandle, useState, forwardRef } from "react";
 import Carousel from "react-native-banner-carousel";
 import {table,users} from './table_element';
 import {
@@ -9,10 +9,14 @@ import {
   TouchableOpacity,
   Alert,
   Linking,
-  TextInput
+  TextInput,
+  StyleSheet,
+  SafeAreaView
 } from "react-native";
-import * as APIProduct from '../../core/apis/apiPortfolioServices'
-import * as APIOrder from '../../core/apis/apiOrderServices'
+import TI from '../../components/TextInput';
+import * as APIProduct from '../../core/apis/apiPortfolioServices';
+import * as APIOrder from '../../core/apis/apiOrderServices';
+import * as APIPayment from '../../core/apis/apiPaymentServices';
 import Overlay from 'react-native-modal-overlay';
 import styles from "./details_style";
 import Dialog from "react-native-dialog";
@@ -31,6 +35,68 @@ import {
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
+import { stripePk } from "../../config/env";
+import { CardField, /* confirmPayment, */ StripeProvider, useStripe  } from '@stripe/stripe-react-native';
+
+
+const screenwidth = Dimensions.get('screen').width;
+const screenheight = Dimensions.get('screen').height;
+
+
+
+const OverlayComp = forwardRef((props,ref) => {
+
+    const { confirmPayment } = useStripe();
+    const [data, setData] = useState({});
+    useEffect(()=>{
+        console.log("PROPS:",props)
+    },[])
+    /* const check = async () => {
+        const { error, paymentIntent } = await confirmPayment();
+        Alert.alert("Error", error.message)
+    } */
+
+    useImperativeHandle(ref,()=>{
+      confPay = async() =>{
+              //console.log(stripePk.)
+              const {error} = await confirmPayment(props.token,{
+                  type:'Card',
+                  billingDetails:{
+                      email:'joe@hotmail.com'
+                  }
+              });
+              if(error)
+                  console.log("Error: ",error.message)
+              else
+                  Alert.alert("Payment","Successful")
+              //apiPayment.complete
+      }
+    })
+
+    const sendBack = (t) => {
+        console.log("TEST: ",t)
+        if(t.complete==true){
+            props.onchange(t);
+            console.log(props.token)
+            confPay()
+        }
+    }
+
+    return (
+        <StripeProvider publishableKey="pk_test_51JOxxsGCJMztZgE0TKoLJYbdwY3hYLwYI5LREVQ9YJhdHCKxAZVd1tISdFIahVMNSIN3gHlkjvBmz5aJd7kgv1BY00aF7Ni4gh"/* {stripePk.STRIPE_PK} */ merchantIdentifier="merchant.identifier">
+            <SafeAreaView style={[styles2.docPicker, { display: !props.visible ? "none" : "flex" }]}>
+                <CardField 
+                    //ref={props.reference}
+                    style={{ height: 50, }}
+                    postalCodeEnabled={false}
+                    onCardChange={(t) => {
+                        sendBack(t)
+                    }} />
+            </SafeAreaView>
+        </StripeProvider>
+    )
+})
+
 const BannerWidth = Dimensions.get("window").width;
 const BannerHeight = 300;
 
@@ -47,6 +113,7 @@ const actionSheetRef_V = createRef();
 class ProductDetails extends Component {
   constructor(props) {
     super(props);
+    this.paymentRef = React.createRef()
     this.state = {
       order:null,
       visible: false,
@@ -54,11 +121,18 @@ class ProductDetails extends Component {
       typeOverlay:'buy',
       dataFromRoute: null,
       selectedVariant:null,
+
+      payment_token:null,
+      isComplete:false,
+      
       chosenPieces: 1,
       chosenBoxes: 1,
+    
       seller:null,
       userData:null,
-
+      reserveDays:0,
+      reserveQuantity:0,
+      reserveCost:0,
       //variant states
       variantId:0,
       variant_id:0,
@@ -93,6 +167,32 @@ class ProductDetails extends Component {
       else if (this.state[type] > 1)
         this.setState((prev) => ({ [type]: parseInt(prev[type]) - 1 }));
     //}
+  }
+
+  changeData(t){
+    this.setState({isComplete:t.complete})
+  }
+
+  Reserve(){
+    let sum = (this.state.chosenPieces * this.state.chosenBoxes)
+    let {max_reserve_qty} = this.state.dataFromApi
+    console.log('\nMAX: ',max_reserve_qty)
+    if(this.state.reserveDays<1){
+      Alert.alert("Error","Reserve days must be alteast 1 Day")
+      return;
+    }
+    else if(this.state.reserveQuantity>max_reserve_qty || this.state.reserveQuantity>sum){
+      Alert.alert("Error",`Reserve Quantity must be less than ${max_reserve_qty<sum?max_reserve_qty:sum}`)
+      return;
+    }
+    else if(!this.state.isComplete){
+      Alert.alert("Error",'Please enter your crredit card credentials')
+      return;
+    }
+    else{
+      console.log("PAMENT REF : ",this.paymentRef)
+      Alert.alert("Should be successful")
+    }
   }
 
   async componentDidMount() {
@@ -172,7 +272,7 @@ class ProductDetails extends Component {
         //api shouldnt be there
         //it should be called after the user chooses all the variants he wants
         //dont delete
-        /* APIOrder.addToOrderBook(payload).then((res)=>{
+        APIOrder.addToOrderBook(payload).then((res)=>{
           console.log("RESULT FROM ADD TO ORDER BOOK API: ",res)
           this.setState({
             spinner:false,
@@ -195,7 +295,7 @@ class ProductDetails extends Component {
         }).catch(err=>{
           Alert.alert("Error",err.response?.data.message)
           this.setState({spinner:false})
-        }) */
+        })
       }
       else if(type=="buy"){
         let {buyer_id,box,price,seller_id,product_id,quantity,productvariant,total} = payload;
@@ -212,17 +312,21 @@ class ProductDetails extends Component {
               price:price,
               product_id:product_id,
               quantity:quantity,
-              productvariant:  productvariant,
+              productvariant:productvariant,
             }
           ],
           total:total
         }
 
         console.log("TIS TATE : ",this.state.dataFromApi)
-        this.setState({modalVisible:true,order:sendToRoute,})
+        this.setState({modalVisible:true,order:sendToRoute,typeOverlay:'buy'})
       }
       else{
-        console.log("TEST 123")
+        APIPayment.getClientToken().then((res)=>{
+          this.setState({payment_token:res})
+        }).then((res2)=>{
+          this.setState({modalVisible:true,typeOverlay:'save'})
+        })
       }
     }
 
@@ -378,12 +482,12 @@ class ProductDetails extends Component {
                   marginBottom: 5,
               }}
               >
-                Order Placement
+                {this.state.typeOverlay=="buy"?"Order Placement":"Reserve Product"}
               </Text>
               <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
           </View>
-          <View style={{flexDirection:'column',marginTop:20}}>
-              <View style={{width:150,paddingHorizontal:10}}>
+          <View style={{flexDirection:'column',marginVertical:20}}>
+          {this.state.typeOverlay=="buy"?<><View style={{width:150,paddingHorizontal:10}}>
                   <TouchableOpacity
                       onPress={()=>{
                           this.setState({modalVisible:false});
@@ -406,6 +510,61 @@ class ProductDetails extends Component {
                       <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Pickup</Text>
                   </TouchableOpacity>
               </View>
+            </>
+          :
+          <View style={{width:BannerWidth*0.8,paddingHorizontal:10}}>            
+            <TI
+              style={{ backgroundColor: "#fff" }}
+              label="Days"
+              placeholder="10"
+              keyboardType="numeric"
+              value={""+this.state.reserveDays}
+              onChangeText={(text) =>
+                this.setState({ reserveDays: text })
+              }
+              outlineColor="#C4C4C4"
+              theme={{
+                colors: { primary: "#31c2aa", underlineColor: "transparent" },
+              }}
+            />            
+            <TI
+              style={{ backgroundColor: "#fff" }}
+              label="Price"
+              disabled={true}
+              keyboardType="numeric"
+              value={"$"+this.state.reserveCost}
+              outlineColor="#C4C4C4"
+              theme={{
+                colors: { primary: "#31c2aa", underlineColor: "transparent" },
+              }}
+            />           
+            <TI
+              style={{ backgroundColor: "#fff" }}
+              label="Quantity"
+              keyboardType="numeric"
+              value={""+this.state.reserveQuantity}
+              outlineColor="#C4C4C4"
+              onChangeText={(text)=>{
+                if(this.state.reserveDays>0)
+                  this.setState({reserveQuantity:text,reserveCost:this.state.reserveDays*10+(0.1*this.state.reserveQuantity)})
+              }}
+              theme={{
+                colors: { primary: "#31c2aa", underlineColor: "transparent" },
+              }}
+            />
+            <OverlayComp 
+                  ref={this.paymentRef}
+                  visible={true}
+                  token={this.state.payment_token}
+                  onClose={()=>this.setState({overlay:false})}
+                  onchange={(t)=>this.changeData(t)}  />
+              <TouchableOpacity
+                onPress={() => this.Reserve()}
+                style={[styles.loginBtn]}
+              >
+                <Text style={styles.loginBtnText}>Reserve</Text>
+              </TouchableOpacity>
+          </View>}
           </View>
       </Overlay>
         <ScrollView>
@@ -612,7 +771,7 @@ class ProductDetails extends Component {
               </View>
               <View style={{marginHorizontal:60,marginVertical:10}}>
                   <TouchableOpacity
-                    onPress={() => console.log("Test")}
+                    onPress={() => this.AddToCart("Save")}
                     style={[styles.loginBtn, { flex: 2 }]}
                   >
                     <Text style={styles.loginBtnText}>Save for Later</Text>
@@ -658,6 +817,28 @@ class ProductDetails extends Component {
     );
   }
 }
+
+
+const styles2 = StyleSheet.create({
+  modalBoxInputs: {
+      borderWidth: 0.5,
+      borderColor: '#31c2aa',
+      borderRadius: 10,
+      width: screenwidth * 0.7,
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      marginVertical: 5
+  },
+  docPicker: {
+      borderWidth: 1,
+      borderRadius: 5,
+      borderColor: 'lightgray',
+      marginBottom: 20,
+      marginTop: 10,
+      paddingHorizontal: 5,
+      justifyContent: 'center',
+  },
+})
 
 export default ProductDetails;
 

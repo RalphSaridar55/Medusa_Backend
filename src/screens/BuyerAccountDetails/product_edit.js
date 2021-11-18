@@ -29,6 +29,7 @@ import styles from "./add_style";
 import TagInput from "react-native-tags-input";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -426,12 +427,9 @@ export default class AddProduct extends Component {
             }
             if (item.type === "button") {
               return (
-                <TouchableOpacity
-                  onPress={() => this.submit()}
-                  style={[styles.loginBtn]}
-                >
-                  <Text style={styles.loginBtnText}>{item.label}</Text>
-                </TouchableOpacity>
+                <TouchableOpacityButton 
+                key={index}
+                onPress={() => this.submit()} text={item.label} />
               );
             }
           })}

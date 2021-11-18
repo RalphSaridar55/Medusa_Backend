@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     userImage: {
         height: 100,
         width: 100,
-        alignSelf: 'center',
+        //alignSelf: 'center',
     },
     name: {
         fontSize: 18,
