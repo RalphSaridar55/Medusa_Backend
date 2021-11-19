@@ -65,6 +65,75 @@ export default class ProductList extends Component {
         };
     }
 
+    
+    // don't delete this comment
+    /* async componentDidMount() {
+        console.log("Route Name: ",this.props.route.params);
+        this.setState({isVisible:true})
+        let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+        console.log("Affected",user)
+        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
+        //console.log("USER DATA: ",user.user_type)
+        apiPortFolioServices.getCategories().then((result)=>{
+            //console.log("CATEGORIES: ",result);
+            let array = result;
+            let data = [];
+            array.map((item) => data.push({label:item.category_name,value:item.id}));
+            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
+        })
+        API.getProducts(1).then((res)=>{
+            //console.log("FROM comp ",res)
+            //console.log("PRODUCTS FETCHED: ",res)
+            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
+        })
+    } */
+    
+    componentDidMount(){
+        //console.log("ROUTE PARAMETERS ",this.props.route.params)
+      console.log("Route Name: ",this.props.route.params);
+      this.focusListener = this.props.navigation.addListener("focus", async() => {
+        this.setState({isVisible:true})
+        let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+        //console.log("Affected",user)
+        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
+        //console.log("USER DATA: ",user.user_type)
+        APICountry.getCountries().then((res)=>{
+            //console.log("COUNTRE: ",res)
+            this.setState({countries:res})
+        })
+        apiPortFolioServices.getCategories().then((result)=>{
+            //console.log("CATEGORIES: ",result);
+            let array = result;
+            let data = [];
+            array.map((item) => data.push({label:item.category_name,value:item.id}));
+            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
+        })
+        if(this.props.route.params?.category_id){
+            let {category_id,category_name} = this.props.route.params
+            API.getProductsByCategory(1,category_id).then((res)=>{
+                //console.log("FROM comp ",res)
+                //console.log("PRODUCTS FETCHED: ",res)
+                let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+                this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
+                    this.setCategory([{value:category_id, label:category_name}])
+            })
+        }
+        else{
+            this.getProducts() 
+          }
+      })
+    }
+
+    getProducts(){
+        API.getProducts(1).then((res)=>{
+            //console.log("FROM comp ",res)
+            //console.log("PRODUCTS FETCHED: ",res)
+            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
+        }) 
+    }
+
     onclick = () => {
         this.setState({ showSearch: !this.state.showSearch })
     }
@@ -204,10 +273,21 @@ export default class ProductList extends Component {
             Alert.alert("Category Error","You can't pick more than one category")
         }
         else if(selection.length==0){
-            this.setState({filterProducts:this.state.fetchedProducts.data,category:[],fetchedSubCategories:[]})
+            console.log("12345")
+            this.setState({isVisible:true})
+            API.getProducts(this.state.page).then((res)=>{
+                this.setState({filterProducts:res.data,category:[],fetchedSubCategories:[],isVisible:false})
+            })
         }
         else{
-            let array = [];
+            this.setState({isVisible:true})
+            /* API.getProductsFiltered(this.state.page,selection,null,null).then((res)=>{
+                this.setState({filterProducts:res.data,category:selection})
+            }) */
+            API.getProductsByCategory(this.state.page,selection).then((res)=>{
+                this.setState({filterProducts:res.data,category:selection,isVisible:false})
+            })
+            /* let array = [];
             console.log("FILTERING CAtegories: ",this.state.fetchedProducts)
             let result = this.state.fetchedProducts.data.filter((i)=>i.category_id == selection[0].value)
             console.log("RESULT: ",result)
@@ -215,62 +295,8 @@ export default class ProductList extends Component {
             fetchedSub.map((item2)=>{
                 array.push({label:item2.sub_category_name, value:item2.id})
             })
-            this.setState({filterProducts:result,category:selection, fetchedSubCategories:array,fetchedSBProductsForFiltering:result})
+            this.setState({filterProducts:result,category:selection, fetchedSubCategories:array,fetchedSBProductsForFiltering:result}) */
         }
-    }
-    // don't delete this comment
-    /* async componentDidMount() {
-        console.log("Route Name: ",this.props.route.params);
-        this.setState({isVisible:true})
-        let user = JSON.parse( await AsyncStorage.getItem('user_details'));
-        console.log("Affected",user)
-        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
-        //console.log("USER DATA: ",user.user_type)
-        apiPortFolioServices.getCategories().then((result)=>{
-            //console.log("CATEGORIES: ",result);
-            let array = result;
-            let data = [];
-            array.map((item) => data.push({label:item.category_name,value:item.id}));
-            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
-        })
-        API.getProducts(1).then((res)=>{
-            //console.log("FROM comp ",res)
-            //console.log("PRODUCTS FETCHED: ",res)
-            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
-            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
-        })
-    } */
-    
-    componentDidMount(){
-        //console.log("ROUTE PARAMETERS ",this.props.route.params)
-      console.log("Route Name: ",this.props.route.params);
-      this.focusListener = this.props.navigation.addListener("focus", async() => {
-        this.setState({isVisible:true})
-        let user = JSON.parse( await AsyncStorage.getItem('user_details'));
-        //console.log("Affected",user)
-        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
-        //console.log("USER DATA: ",user.user_type)
-        APICountry.getCountries().then((res)=>{
-            //console.log("COUNTRE: ",res)
-            this.setState({countries:res})
-        })
-        apiPortFolioServices.getCategories().then((result)=>{
-            //console.log("CATEGORIES: ",result);
-            let array = result;
-            let data = [];
-            array.map((item) => data.push({label:item.category_name,value:item.id}));
-            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
-        })
-        API.getProducts(1).then((res)=>{
-            //console.log("FROM comp ",res)
-            console.log("PRODUCTS FETCHED: ",res)
-            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
-            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
-        })
-        if(this.props.route.params?.category_id){
-            this.setCategory(this.props.route.params.category_id)
-        }
-      })
     }
 
     isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {

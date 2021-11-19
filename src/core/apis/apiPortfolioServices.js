@@ -12,7 +12,7 @@ export async function getCountries () {
 
 export async function getCategories (){
   return await apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/category').then((res)=>{
-    console.log("FROM THE API FUNCTION: ",res.data.data.data)
+    //console.log("FROM THE API FUNCTION: ",res.data.data.data)
     return res.data.data.data
   })
 }

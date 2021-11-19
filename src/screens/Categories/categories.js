@@ -54,7 +54,7 @@ export default class Categories extends Component {
                     }}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity style={styles.card} onPress={() => { this.props.navigation.navigate('Product', {screen:"List", params:{category_id: item.id} }); }}>
+                            <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={() => { this.props.navigation.navigate('Product', {screen:"List", params:{category_id: item.id, category_name: item.category_name } }); }}>
                                 <View style={styles.cardHeader}>
 
                                 </View>

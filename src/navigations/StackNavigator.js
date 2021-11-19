@@ -37,6 +37,7 @@ import CampaignStack from "./CampaignStack";
 import AboutStack from "./AboutStack";
 import LoyaltyStack from "./LoyaltyStack";
 //
+import Activity from "../screens/Activity/Activity";
 import Categories from "../screens/Categories/categories";
 import Negotiations from "../screens/Notifications/Notification";
 import Products from "../screens/Products/product_list";
@@ -145,7 +146,7 @@ class CustomDrawer extends Component {
       </View>
       {this.props.loggedIn ? (
         <>
-        {this.state.userType==4?(<View>
+        {this.state.userType==4?(<><View>
           <DrawerItem
             label="Dashboard"
             labelStyle={this.props.screenC=="Dashboard" ? { color: "#6E91EC" } : { color: "black" }}
@@ -156,7 +157,18 @@ class CustomDrawer extends Component {
             }}
             icon={() => <MaterialCommunityIcons name="view-dashboard-outline" size={24} color={this.props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
           />
-        </View>):null}
+        </View><View>
+          <DrawerItem
+            label="Activity"
+            labelStyle={this.props.screenC=="Activity" ? { color: "#6E91EC" } : { color: "black" }}
+            onPress={() => {
+              this.closeCollapsible();
+              this.props.changeScreen("Activity")
+              this.props.navigation.navigate("Activity");
+            }}
+            icon={() => <MaterialCommunityIcons name="newspaper-dashboard-outline" size={24} color={this.props.screenC=="Activity" ? "#6E91EC" : "black"} />}
+          />
+        </View></>):null}
           <View>
             <DrawerItem
               label="Product"
@@ -625,6 +637,12 @@ class Nav extends Component {
       <Drawer.Screen
       name="Categories"
       component={Categories}
+      options={{ headerShown: true, title: ""}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Activity"
+      component={Activity}
       options={{ headerShown: true, title: ""}}
       navigation={navigation}
       />

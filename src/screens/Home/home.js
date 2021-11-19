@@ -98,7 +98,7 @@ const Home =(props)=> {
                 setCarousel(res)
             })
             apiProducts.getHomeCategories().then((res)=>{
-                //console.log("ERROR: ",res)
+                console.log("ERROR: ",res)
                 setCategories(res)
                 setIsVisible(false)
             })
@@ -142,7 +142,7 @@ const Home =(props)=> {
         style={styles.categoryContainer}
         horizontal>
             {categories.length<1?drawDummy():categories.map((item,index)=>{
-                return <TouchableOpacity key={index} onPress={()=>props.navigation.navigate("Product",{screen:"List"})}>
+                return <TouchableOpacity key={index} onPress={()=>props.navigation.navigate("Product",{screen:"List",params:{category_id:item.id,category_name:item.category_name}})}>
                     <Image source={{uri:item.category_image}} style={styles.categoryImage} resizeMode="stretch" resizeMethod="auto"/>
                 </TouchableOpacity>
             })}

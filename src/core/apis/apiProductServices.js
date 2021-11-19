@@ -89,6 +89,22 @@ export const getProductsByCountry = async(page,country_id)=>{
         })
 }
 
+//Get all products for user by category
+export const getProductsByCategory = async(page,cat)=>{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?categories=[${cat}]&limit=10&page=${page}`).then((res)=>{
+            //console.log("ccount; ",res.data.data.totalCount)
+            return res.data.data
+        }).catch(err=>console.log(err.message))
+}
+
+//Get all products for user by all categories
+export const getProductsFiltered = async(page,cat,subcat,brand)=>{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?categories=[${cat}]&limit=10&page=${page}`).then((res)=>{
+            //console.log("ccount; ",res.data.data.totalCount)
+            return res.data.data
+        }).catch(err=>console.log(err.message))
+}
+
 //Post a new product
 export const createProduct = async(payload)=>{
     return await getToken().then((x)=>{
