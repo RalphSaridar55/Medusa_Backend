@@ -8,6 +8,7 @@ import {
     Image,
     FlatList,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import * as ROUTE_LIST from "../../core/apis/apis-list";
 import * as apiUserServices from "../../core/apis/apiUserServices";
 import styles from './categories_style';
@@ -18,7 +19,8 @@ export default class Categories extends Component {
         super(props);
         this.state = {
             categories: [],
-            SubCategories: []
+            SubCategories: [],
+            visible:true
         }
     }
 
@@ -30,8 +32,8 @@ export default class Categories extends Component {
     getCategoires = () => {
         apiUserServices.APIKit.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.HOME_CATEGORIES}`).then((res) => {
             const result = res.data.data
-            console.log(result)
-            this.setState({ categories: result })
+            console.log("RESULT: ",result)
+            this.setState({ categories: result, visible:false })
         });
     };
 
@@ -41,6 +43,7 @@ export default class Categories extends Component {
         return (
 
             <View style={styles.container}>
+                <Spinner visible={this.state.visible} />
                 <FlatList style={styles.list}
                     contentContainerStyle={styles.listContainer}
                     data={this.state.categories}
@@ -51,7 +54,7 @@ export default class Categories extends Component {
                     }}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity style={styles.card} onPress={() => { this.props.navigation.navigate('CategoiresList', { id: item.category_name }); }}>
+                            <TouchableOpacity style={styles.card} onPress={() => { this.props.navigation.navigate('Product', {screen:"List", params:{category_id: item.id} }); }}>
                                 <View style={styles.cardHeader}>
 
                                 </View>

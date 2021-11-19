@@ -67,7 +67,7 @@ export const getVarientTypes= async(id) =>{
                 Authorization: x
             }
         }).then((res)=>{
-            console.log("RES FROM THE API:",res.data.data)
+            //console.log("RES FROM THE API:",res.data.data)
             return res.data.data
         })
     })
@@ -76,7 +76,15 @@ export const getVarientTypes= async(id) =>{
 //Get all products for guests
 export const getProducts = async(page)=>{
         return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?limit=10&page=${page}`).then((res)=>{
-            console.log("ccount; ",res.data.data.totalCount)
+            //console.log("ccount; ",res.data.data.totalCount)
+            return res.data.data
+        })
+}
+
+//Get all products for guest by country_id
+export const getProductsByCountry = async(page,country_id)=>{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?country_id=${country_id}&limit=10&page=${page}`).then((res)=>{
+            //console.log("count; ",res.data.data.data)
             return res.data.data
         })
 }

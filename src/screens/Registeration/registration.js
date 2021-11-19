@@ -105,7 +105,7 @@ export default class Registartion extends Component {
       subcategoriesError: "",
 
       brandsError: "",
-      country: { value: 0, label: "Country" },
+      country: 55,
       countryError: "",
       docs: "",
 
@@ -534,7 +534,7 @@ export default class Registartion extends Component {
           trading_license_doc: this.state.trade.uri,
           categories: this.state.userRole == "buyer" ? [] : catdata,
         };
-
+        console.log("PAYLOAD: ",payload)
         // Show spinner when call is made
         this.setState({ loading: true });
 

@@ -15,7 +15,7 @@ class CategoiresList extends Component {
             categories: [],
             SubCategories: [],
             Brands: [],
-            id: this.props.route.params.id,
+           // id: this.props.route.params.id,
 
         }
     }
@@ -24,12 +24,12 @@ class CategoiresList extends Component {
         this.getCategoryDetails()
     }
 
-    componentDidUpdate(prevState) {
+    /* componentDidUpdate(prevState) {
         if (prevState.id !== this.props.route.params.id) {
             this.getCategoryDetails()
             prevState.id = this.props.route.params.id
         }
-    }
+    } */
 
 
     getCategoryDetails = () => {

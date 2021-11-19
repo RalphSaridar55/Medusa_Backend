@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { Fontisto } from '@expo/vector-icons'; 
-import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5} from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
   createDrawerNavigator,
@@ -30,6 +26,7 @@ import UserStack from "./UserStack";
 import ProductStack from "./ProductStack";
 import AdressStack from "./AdressStack";
 import OrderStack from "./OrderStack";
+import CategoriesStack from "./CategoryStack";
 import CheckoutStack from "./CheckoutStack";
 import RoleStack from "./RoleStack";
 import NotificationStack from "./NotificationsStack";
@@ -40,6 +37,7 @@ import CampaignStack from "./CampaignStack";
 import AboutStack from "./AboutStack";
 import LoyaltyStack from "./LoyaltyStack";
 //
+import Categories from "../screens/Categories/categories";
 import Negotiations from "../screens/Notifications/Notification";
 import Products from "../screens/Products/product_list";
 import Orders from "../screens/OrderBook/Reserved_Orders";
@@ -68,7 +66,7 @@ class CustomDrawer extends Component {
     this.secondRef = React.createRef();
     this.thirdRef = React.createRef();
     this.state={
-      userType:this.props.userData.user_type
+      userType:null
     }
   }
 
@@ -169,6 +167,18 @@ class CustomDrawer extends Component {
                 this.props.navigation.navigate("Product",{userType:this.props.userType, screen:"List"});
               }}
               icon={() => <Feather name="box" size={24} color={this.props.screenC=="Product" ? "#6E91EC" : "black"} />}
+            />
+          </View>
+          <View>
+            <DrawerItem
+              label="Categories"
+              labelStyle={this.props.screenC=="Categories" ? { color: "#6E91EC" } : { color: "black" }}
+              onPress={() => {
+                this.closeCollapsible();
+                this.props.changeScreen("Categories")
+                this.props.navigation.navigate("Categories");
+              }}
+              icon={() => <MaterialIcons name="category" size={24} color={this.props.screenC=="Categories" ? "#6E91EC" : "black"} />}
             />
           </View>
           <View>
@@ -611,6 +621,12 @@ class Nav extends Component {
         component={CheckoutStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
+      />
+      <Drawer.Screen
+      name="Categories"
+      component={Categories}
+      options={{ headerShown: true, title: ""}}
+      navigation={navigation}
       />
     </Drawer.Navigator>)
   };

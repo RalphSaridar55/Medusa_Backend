@@ -10,7 +10,6 @@ import {
   TextInput,
   Alert
 } from "react-native";
-import RNPickerSelect from 'react-native-picker-select';
 import Spinner from "react-native-loading-spinner-overlay";
 import * as apiService from "../../core/apis/apiChatServices";
 import * as APIProduct from '../../core/apis/apiPortfolioServices';

@@ -79,17 +79,26 @@ const Home =(props)=> {
         );
     } */
 
+    const drawDummy = () =>{
+        let r= [1,2,3,4,5]
+      return  /* for(var i=0;i<5;i++) */r.map((item,i)=>{
+            return <View key={i}>
+            <Image source={{}} style={styles.categoryImage} resizeMode="stretch" resizeMethod="auto"/>
+        </View>
+        })
+    }
+
     useFocusEffect(
         useCallback(()=>{
             apiProducts.getTopSellingAndFeatured().then((res)=>{
-                console.log("CONSOLE: ",res)
+                //console.log("CONSOLE: ",res)
                 setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
             })
             apiProducts.getGroupProducts().then((res)=>{
                 setCarousel(res)
             })
             apiProducts.getHomeCategories().then((res)=>{
-                console.log("ERROR: ",res)
+                //console.log("ERROR: ",res)
                 setCategories(res)
                 setIsVisible(false)
             })
@@ -132,7 +141,7 @@ const Home =(props)=> {
         <ScrollView
         style={styles.categoryContainer}
         horizontal>
-            {categories.map((item,index)=>{
+            {categories.length<1?drawDummy():categories.map((item,index)=>{
                 return <TouchableOpacity key={index} onPress={()=>props.navigation.navigate("Product",{screen:"List"})}>
                     <Image source={{uri:item.category_image}} style={styles.categoryImage} resizeMode="stretch" resizeMethod="auto"/>
                 </TouchableOpacity>

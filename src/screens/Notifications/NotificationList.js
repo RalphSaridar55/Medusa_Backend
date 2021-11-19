@@ -17,7 +17,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 const List = ({ navigation }) => {
   const screenwidth = Dimensions.get("screen").width;
   const screenheight = Dimensions.get("screen").height;
-  const dummyData = [
+  /* const dummyData = [
     {
       username: `User`,
       key: 1,
@@ -98,9 +98,7 @@ const List = ({ navigation }) => {
       date: "02-07-2021",
       status: "NotRead",
     },
-  ];
-
-  //public key for stripe eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMiwidXNlcl90eXBlIjo0LCJpZCI6MjIsIm93bmVyX2VtYWlsIjoibmV3c2VsbGVyQHlvcG1haWwuY29tIiwiY29tcGFueV9uYW1lIjoibmV3c2VsbGVyQHlvcG1haWwuY29tIiwib3duZXJfbW9iaWxlX251bWJlciI6IjEyMzQ1Njc4OSIsIm93bmVyX2NvdW50cnlfY29kZSI6Ijk2MSIsInBsYXRmb3JtIjoxLCJkZXZpY2VfaWQiOiJzdHJpbmciLCJhY2NvdW50X2xldmVsIjoiU0VMTEVSIiwidGltZXpvbmUiOjMsImlzX3N1Yl91c2VyIjpmYWxzZSwiY3JlYXRlZF9hdCI6IjIwMjEtMDktMjhUMTM6NDM6NTMuMTE0WiIsImlhdCI6MTYzNjU0NzU5OSwiZXhwIjoxNjUyMDk5NTk5fQ.tRwv5JXXLvZHFUrpFF8ioS_gj4_4JkV8_CiMmqr-SdQ
+  ]; */
 
   /* useEffect(()=>{
     apiPortfolio.getNotifications().then((res)=>{
@@ -121,7 +119,7 @@ const List = ({ navigation }) => {
   return (
     <View>
       <Spinner visible={data.visible} />
-      <ScrollView style={styles.chatsContainer}>
+      {data.data.length>0?<ScrollView style={styles.chatsContainer}>
         {data.data
           .map((item, key) => {
             return (
@@ -162,7 +160,7 @@ const List = ({ navigation }) => {
               </View>
             );
           })}
-      </ScrollView>
+      </ScrollView>:<Text style={{textAlign:'center',marginTop:20}}>No New Notifications</Text>}
     </View>
   );
 };
