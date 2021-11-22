@@ -2,6 +2,7 @@ import React, { Component, useContext } from "react";
 import Spinner from 'react-native-loading-spinner-overlay';
 import Overlay from './overlay';
 //import {ProductContext} from '../../../App';
+import {TouchableOpacityButton} from '../../components/TouchableOpacity'
 import {
   StyleSheet,
   Text,
@@ -31,6 +32,7 @@ import * as DocumentPicker from "expo-document-picker";
 import TextInput from "../../components/TextInput";
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 import * as apiPayment from '../../core/apis/apiPaymentServices';
+import * as apiOrder from '../../core/apis/apiOrderServices';
 
 //// Buttons
 const containerStyle =
@@ -196,7 +198,7 @@ export default class Delivery extends Component {
 
       fetchedServicesType:[],
       fetchedServices:[],
-      serviceLevel:null,
+      serviceLevel:1,
       serviceLevelString:null,
       service:null,
       payment_token:null,
@@ -206,6 +208,85 @@ export default class Delivery extends Component {
   //static product = ProductContext;
 
   
+  /* componentDidMount() {
+    //console.log("FROM CONTEXT:",this.product)
+    this.calculateTotal();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
+    let { products, order } = this.props.route.params;
+    console.log("ROUTE PARAMS PRODUCTS: ", products);
+    console.log("ROUTE PARAMS ORDER: ", order);
+    this.setState({ products: products, dataFromRoute: order });
+    apiServices.getCountries().then((res) => {
+      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
+      this.setState({ countries: res });
+    });
+    apiServices.getAddresses().then((res) => {
+      console.log("RES FROM THE FUNCTION:", res);
+      let ad = [];
+      res.data.map((it) => {
+        ad.push({ label: it.registered_address, value: it.id });
+      });
+      this.setState({ locations: ad, filterLocations: res.data });
+    }) 
+    apiProducts.getServiceLevels().then((res)=>{
+       console.log("RES FOR SERVICES: ",res)
+      let ar = [];
+      res.map((item)=>{
+        ar.push({label:item.service_level,value:item.id})
+      })
+      this.setState({fetchedServicesType:ar,loading:false})
+    })
+
+    apiPayment.getPaymentMethods().then((res)=>{
+      console.log("Result Payment: ",res)
+      this.setState({payments:res})
+    })
+  } */
+
+  componentDidMount() {
+    this.focusListener = this.props.navigation.addListener("focus", () => {
+      //console.log("FROM CONTEXT:",this.product)
+    this.calculateTotal();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
+    apiOrder.getOrderBook(1).then((res)=>{
+      console.log("ORDERBOOK: ",res)
+      this.setState({products:res})
+    })
+    let { /* products, */ order } = this.props.route.params;
+    //console.log("ROUTE PARAMS PRODUCTS: ", products);
+    console.log("ROUTE PARAMS ORDER: ", order);
+    this.setState({ dataFromRoute: order });
+    apiServices.getCountries().then((res) => {
+      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
+      this.setState({ countries: res });
+    });
+    apiServices.getAddresses().then((res) => {
+      console.log("RES FROM THE FUNCTION:", res);
+      let ad = [];
+      res.data.map((it) => {
+        ad.push({ label: it.registered_address, value: it.id });
+        /* let country_name = this.state.countries.filter((filtered)=>{
+        return filtered.value === it.country_id;
+      })
+      return ({...it,country_name:country_name[0].label}) */
+    });
+    this.setState({ locations: ad, filterLocations: res.data });
+  }) 
+  apiProducts.getServiceLevels().then((res)=>{
+     console.log("RES FOR SERVICES: ",res)
+    let ar = [];
+    res.map((item)=>{
+      ar.push({label:item.service_level,value:item.id})
+    })
+    this.setState({fetchedServicesType:ar,loading:false})
+  })
+
+  apiPayment.getPaymentMethods().then((res)=>{
+    console.log("Result Payment: ",res)
+    this.setState({payments:res})
+  })
+      });
+  } 
 
   calculateTotal() {
     let array = this.state.data.map((i) =>
@@ -254,81 +335,6 @@ export default class Delivery extends Component {
     //console.log("COUNTRY CHOSEN: ",itemValue)
   }
 
-  /* componentDidMount() {
-    //console.log("FROM CONTEXT:",this.product)
-    this.calculateTotal();
-    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
-    let { products, order } = this.props.route.params;
-    console.log("ROUTE PARAMS PRODUCTS: ", products);
-    console.log("ROUTE PARAMS ORDER: ", order);
-    this.setState({ products: products, dataFromRoute: order });
-    apiServices.getCountries().then((res) => {
-      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
-      this.setState({ countries: res });
-    });
-    apiServices.getAddresses().then((res) => {
-      console.log("RES FROM THE FUNCTION:", res);
-      let ad = [];
-      res.data.map((it) => {
-        ad.push({ label: it.registered_address, value: it.id });
-      });
-      this.setState({ locations: ad, filterLocations: res.data });
-    }) 
-    apiProducts.getServiceLevels().then((res)=>{
-       console.log("RES FOR SERVICES: ",res)
-      let ar = [];
-      res.map((item)=>{
-        ar.push({label:item.service_level,value:item.id})
-      })
-      this.setState({fetchedServicesType:ar,loading:false})
-    })
-
-    apiPayment.getPaymentMethods().then((res)=>{
-      console.log("Result Payment: ",res)
-      this.setState({payments:res})
-    })
-  } */
-
-   componentDidMount() {
-    this.focusListener = this.props.navigation.addListener("focus", () => {
-      //console.log("FROM CONTEXT:",this.product)
-    this.calculateTotal();
-    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
-    let { products, order } = this.props.route.params;
-    console.log("ROUTE PARAMS PRODUCTS: ", products);
-    console.log("ROUTE PARAMS ORDER: ", order);
-    this.setState({ products: typeof(products)=="Array"?products:[products], dataFromRoute: order });
-    apiServices.getCountries().then((res) => {
-      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
-      this.setState({ countries: res });
-    });
-    apiServices.getAddresses().then((res) => {
-      console.log("RES FROM THE FUNCTION:", res);
-      let ad = [];
-      res.data.map((it) => {
-        ad.push({ label: it.registered_address, value: it.id });
-        /* let country_name = this.state.countries.filter((filtered)=>{
-        return filtered.value === it.country_id;
-      })
-      return ({...it,country_name:country_name[0].label}) */
-    });
-    this.setState({ locations: ad, filterLocations: res.data });
-  }) 
-  apiProducts.getServiceLevels().then((res)=>{
-     console.log("RES FOR SERVICES: ",res)
-    let ar = [];
-    res.map((item)=>{
-      ar.push({label:item.service_level,value:item.id})
-    })
-    this.setState({fetchedServicesType:ar,loading:false})
-  })
-
-  apiPayment.getPaymentMethods().then((res)=>{
-    console.log("Result Payment: ",res)
-    this.setState({payments:res})
-  })
-      });
-  } 
 
   changeServiceType (id){
     //console.log
@@ -501,7 +507,7 @@ export default class Delivery extends Component {
               Order Summary
             </Text>
 
-            <FlatList
+            {this.state.products.length>0 && <FlatList
               style={styles.contentList}
               columnWrapperStyle={styles.listContainer}
               data={this.state.products}
@@ -525,7 +531,7 @@ export default class Delivery extends Component {
                       >
                         <Image
                           style={styles.image}
-                          source={{ uri: item.images[0].media }}
+                          source={{ uri: item?.images[0].media }}
                         />
                         <View style={styles.cardContent}>
                           <Text style={styles.name}>{item.product_name}</Text>
@@ -555,7 +561,7 @@ export default class Delivery extends Component {
                   </ScrollView>
                 );
               }}
-            />
+            />}
             <Divider></Divider>
             <View
               style={{
@@ -704,6 +710,11 @@ export default class Delivery extends Component {
                         this.selectPayMethod(itemValue);
                       }}
                       map={this.state.payments}/>
+                      
+                      {this.state.payment_token?.length>0&&<Overlay visible={this.state.payment==4?true:false}
+                      token={this.state.payment_token}
+                      onClose={()=>this.setState({overlay:false})}
+                      onchange={this.changeData}  />}
                   <TouchableDocumentPicker
                     color="#6E91EC"
                     icon="file"
@@ -711,21 +722,19 @@ export default class Delivery extends Component {
                     onPress={() => this.pickDocument()}
                     style={styles.docPicker}
                     doc={this.state.doc}/>
-                      
-                  {this.state.payment_token?.length>0&&<Overlay visible={this.state.payment==4?true:false}
-                  token={this.state.payment_token}
-                  onClose={()=>this.setState({overlay:false})}
-                  onchange={this.changeData}  />}
                       </View>
               </View>
-            <View>
+              <TouchableOpacityButton
+                onPress={() => this.pay()}
+                text="Place Order" />
+           {/*  <View>
               <TouchableOpacity
                 style={[styles.loginBtn, { marginHorizontal: 40 }]}
                 onPress={() => this.pay()}
               >
                 <Text style={styles.loginText}>Place Order</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
         </ScrollView>
       </Provider>
     );

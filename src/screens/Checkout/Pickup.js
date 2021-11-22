@@ -7,12 +7,15 @@ import {
     Image,
     ScrollView,
     FlatList,
-    Alert
+    Alert,
+    LogBox
 } from 'react-native';
 import { RenderPicker } from "../../components/Picker";
 import {TouchableDocumentPicker} from "../../components/DocumentPicker";
 import * as apiServices from "../../core/apis/apiAddressServices";
 import * as apiProducts from '../../core/apis/apiProductServices';
+import * as apiPayment from '../../core/apis/apiPaymentServices';
+import * as apiOrder from '../../core/apis/apiOrderServices';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Card, IconButton, Searchbar, Menu, Divider, Provider, Button } from 'react-native-paper';
 import { Colors, Dialog, Avatar, Assets, PanningProvider, Typography, ActionBar } from 'react-native-ui-lib';
@@ -24,50 +27,14 @@ import * as DocumentPicker from "expo-document-picker";
 import Overlay from './overlay';
 import TextInput from "../../components/TextInput";
 import { AntDesign } from '@expo/vector-icons';
-
-const Location = [
-    { label: 'UAE, Dubai, Sheikh Zayed St.', value: 'uae' },
-    { label: 'Lebanon, Beirut, Hamra St.', value: 'leb' },
-    { label: 'UAE, Abu Dhabi, Al Sharqi St.', value: 'abu' },
-];
-
-const Payments = [
-    { label: 'Bank Transfer', value: 'Bank Transfer' },
-    { label: 'Cash on Delivery', value: 'Cash on Delivery' },
-    { label: 'Letter of Credit', value: 'Letter of Credit' },
-    { label: 'Credit Card', value: 'Credit Card' },
-    { label: 'Cash on Advance', value: 'Cash on Advance' },
-
-];
-
-
-renderDialog = modalProps => {
-    const { visible, children, toggleModal, onDone } = modalProps;
-
-    return (
-        <Dialog
-            migrate
-            visible={visible}
-            onDismiss={() => {
-                onDone();
-                toggleModal(false);
-            }}
-            bottom
-            useSafeArea
-            renderPannableHeader={this.dialogHeader}
-            panDirection={PanningProvider.Directions.DOWN}
-        >
-            <ScrollView >{children}</ScrollView>
-        </Dialog>
-    );
-};
+import { TouchableOpacityButton } from '../../components/TouchableOpacity';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 export default class Pickup extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataFromRoute:null,
             products:[],
             locations:[],
             visible: false,
@@ -113,9 +80,9 @@ export default class Pickup extends Component {
             docError:false,
             Location: "",
             countries: [],
-            cargo: "",
+            cargo: 1,
             typeofservice: "",
-            serviceLevel: "",
+            serviceLevel: 1,
       
             dataFromRoute: null,
             payment_method_id:0,
@@ -126,109 +93,14 @@ export default class Pickup extends Component {
             fetchedServices:[],
             serviceType:null,
             service:null,
+            payment_token:null,
+            cardInfo:null,
+            loading:true,
         }
     }
     
 
-    pickDocument = async () => {
-      let result = await DocumentPicker.getDocumentAsync({});
-      let ext = result.name.split(".");
-      console.log(ext[ext.length - 1]);
-      if (ext[ext.length - 1] != "docx" && ext[ext.length - 1] != "pdf")
-        Alert.alert(
-          "Wrong Extensions",
-          "Please only upload pdf or docx type of files"
-        );
-      else {
-        console.log(result);
-        try {
-          this.setState({ doc: result.uri });
-        } catch (error) {
-          this.setState({ docError: error });
-        }
-      }
-    };
-
-    
-
-  pay() {
-    console.log("PLACING ORDER DATA: ", this.state.dataFromRoute);
-    let { delivery_address, payment, cargo_method, doc } = this.state;
-    let payload = {
-      order_method_id: this.props.route.name == "Delivery" ? 1 : 2,
-      delivery_address: delivery_address,
-      payment_method_id: payment,
-      //payment_token_id: "",
-      cargo_delivery_method: cargo_method,
-      
-      document: doc,
-    };
-    console.log("PAYLOAD: ", payload);
-    let error=false;
-    Object.keys(payload).map((item, index) => {
-      switch (typeof item) {
-        case "number":
-          if (payload[item] == 0) {
-            Alert.alert(
-              "Error",
-              `Please fill the input ${item.replace(/_/g, " ")}`
-            );
-            error=true;
-            return;
-          }
-        case "string":
-          if (payload[item] == "") {
-            Alert.alert(
-              "Error",
-              `Please fill the input ${item.replace(/_/g, " ")}`
-            );
-            error=true;
-            return;
-          }
-        default:
-          if (payload[item].address_id == 0 || payload[item].address == "") {
-            Alert.alert(
-              "Error",
-              `Please fill the input ${item.replace(/_/g, " ")}`
-            );
-            error=true;
-            return;
-          }
-      }
-    });
-    let payload2 = {...payload, service_type: this.state.service, service_level: this.state.serviceLevel,}
-    console.log("PAYLOAD2: ",payload2)
-    if(!error)
-      this.setState({overlay:true})
-    }
-
-    placeOrder = () =>{
-        console.log(this.state.location, "   ",this.state.payments)
-        if(this.state.data.length<1){
-            Alert.alert("Order not placed","Please add products before placing an order")
-        }
-        else if (this.state.location.label.length<1 || this.state.payments.label.length<1){
-            Alert.alert("Order not placed","Please fill all the required fields")
-        }
-        else{
-            //database stuff
-            Alert.alert("Order has been placed","Thank you for your purchase")
-            this.props.navigation.navigate('Home')
-        }
-    }
-
-    calculateTotal(products){
-
-        console.log("PRODUCTS:",products)
-        let array = products?.reduce((a,b)=>({total:a.total+b.total}))['total']+""
-        //console.log(array)\
-        console.log("TOTAL: ",array)
-        //const total = array.reduce((pre,curr)=>pre+curr);
-        //console.log(total)
-        this.setState({total:array})
-    }
-
-    componentDidMount(){
+    /* componentDidMount(){
         let {products,orders} = this.props.route.params
         console.log("PARAMS:",products)
         this.setState({products:products,dataFromRoute:orders})
@@ -241,10 +113,6 @@ export default class Pickup extends Component {
             let ad = [];
             res.data.map((it) => {
               ad.push({ label: it.registered_address, value: it.id });
-              /* let country_name = this.state.countries.filter((filtered)=>{
-              return filtered.value === it.country_id;
-            })
-            return ({...it,country_name:country_name[0].label}) */
             });
     
             this.setState({ locations: ad, filterLocations: res.data });
@@ -276,10 +144,6 @@ export default class Pickup extends Component {
             let ad = [];
             res.data.map((it) => {
               ad.push({ label: it.registered_address, value: it.id });
-              /* let country_name = this.state.countries.filter((filtered)=>{
-              return filtered.value === it.country_id;
-            })
-            return ({...it,country_name:country_name[0].label}) */
             });
     
             this.setState({ locations: ad, filterLocations: res.data });
@@ -295,18 +159,193 @@ export default class Pickup extends Component {
           //console.log(this.state.data.reduce((pre,cur)=>pre+cur))
           //this.setState({total:arr})
       });
+    } */
+
+   componentDidMount() {
+    this.focusListener = this.props.navigation.addListener("focus", () => {
+      //console.log("FROM CONTEXT:",this.product)
+    this.calculateTotal();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead'])
+    apiOrder.getOrderBook(1).then((res)=>{
+      console.log("ORDERBOOK: ",res)
+      this.setState({products:res})
+    })
+    let { /* products, */ order } = this.props.route.params;
+    //console.log("ROUTE PARAMS PRODUCTS: ", products);
+    console.log("ROUTE PARAMS ORDER: ", order);
+    this.setState({ dataFromRoute: order });
+    apiServices.getCountries().then((res) => {
+      //console.log("RES COUNTRIES FROM THE FUNCTION:",res);
+      this.setState({ countries: res });
+    });
+    apiServices.getAddresses().then((res) => {
+      console.log("RES FROM THE FUNCTION:", res);
+      let ad = [];
+      res.data.map((it) => {
+        ad.push({ label: it.registered_address, value: it.id });
+        /* let country_name = this.state.countries.filter((filtered)=>{
+        return filtered.value === it.country_id;
+      })
+      return ({...it,country_name:country_name[0].label}) */
+    });
+    this.setState({ locations: ad, filterLocations: res.data });
+  }) 
+  apiProducts.getServiceLevels().then((res)=>{
+     console.log("RES FOR SERVICES: ",res)
+    let ar = [];
+    res.map((item)=>{
+      ar.push({label:item.service_level,value:item.id})
+    })
+    this.setState({fetchedServicesType:ar,loading:false})
+  })
+
+  apiPayment.getPaymentMethods().then((res)=>{
+    console.log("Result Payment: ",res)
+    this.setState({payments:res})
+  })
+      });
+  }
+    
+
+  changeServiceType (id){
+    //console.log
+    /* console.log("LEVEL: ",id)*/
+    console.log("STATE: ",this.state.fetchedServicesType) 
+    let result = this.state.fetchedServicesType.filter((item)=>{
+      return  item.value==id
+    })[0];
+    console.log("RESULT: ",result)
+    apiProducts.getServiceType(id).then((res)=>{
+      //console.log("SERVICE: ",res)
+      let ar = [];
+      res.map((item)=>{
+        ar.push({label:item.service_type,value:item.id})
+      })
+      this.setState({serviceLevel:id,serviceLevelString:result?.label,fetchedServices:ar,})
+    })
+  }
+
+    pickDocument = async () => {
+      let result = await DocumentPicker.getDocumentAsync({});
+      let ext = result.name.split(".");
+      console.log(ext[ext.length - 1]);
+      if (ext[ext.length - 1] != "docx" && ext[ext.length - 1] != "pdf")
+        Alert.alert(
+          "Wrong Extensions",
+          "Please only upload pdf or docx type of files"
+        );
+      else {
+        console.log(result);
+        try {
+          this.setState({ doc: result.uri });
+        } catch (error) {
+          this.setState({ docError: error });
+        }
+      }
+    };
+
+    
+
+  pay() {
+    console.log("PLACING ORDER DATA: ", this.state.dataFromRoute);
+    let { delivery_address, payment, doc, cargo } = this.state;
+    let payload = {
+      order_method_id: this.props.route.name == "Delivery" ? 1 : 2,
+      delivery_address: delivery_address,
+      payment_method_id: payment,
+      //payment_token_id: "",
+      cargo_delivery_method: cargo,
+      document: doc,
+    };
+    console.log("PAYLOAD: ", payload);
+    let error=false;
+    Object.keys(payload).map((item, index) => {
+      switch (typeof item) {
+        case "number":
+          if (payload[item] == 0) {
+            Alert.alert(
+              "Error",
+              `Please fill the input ${item.replace(/_/g, " ")}`
+            );
+            error=true;
+            return;
+          }
+          break;
+        case "string":
+          if (payload[item] == "") {
+            Alert.alert(
+              "Error",
+              `Please fill the input ${item.replace(/_/g, " ")}`
+            );
+            error=true;
+            return;
+          }
+          break;
+        default:
+          console.log("ITEM IN PAY ",item)
+          if (payload[item].address_id == 0 || payload[item].address == "") {
+            Alert.alert(
+              "Error",
+              `Please fill the input ${item.replace(/_/g, " ")}`
+            );
+            error=true;
+            return;
+          }
+          break;
+      }
+    });
+    let payload2 = {...payload,...this.state.dataFromRoute}
+    console.log("PAYLOAD2: ",payload2)
+    if(!error){
+      if(this.state.payment!=4){  
+        apiPayment.placeOrder(payload2).then((res)=>{
+          console.log("SHOUDL BE SUCCESSFUL");
+          this.setState({loading:false})
+          Alert.alert("Payment",res,[
+            {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
+          ])
+        }).catch(err=>{
+          this.setState({loading:false})
+          Alert.alert("Error",err.response.data.message)
+        })
+      }
+      else{
+        if(!this.state.cardComplete){
+          this.setState({loading:false})
+          Alert.alert("Error","Please check your credit card credentials");
+          return;
+        }
+        /* else{
+
+        } */
+      }
+    }
     }
 
-    changeServiceType (id){
-      //console.log
-      apiProducts.getServiceType(id).then((res)=>{
-        console.log("SERVICE: ",res)
-        let ar = [];
-        res.map((item)=>{
-          ar.push({label:item.service_type,value:item.id})
-        })
-        this.setState({serviceType:id,fetchedServices:ar})
-      })
+    placeOrder = () =>{
+        console.log(this.state.location, "   ",this.state.payments)
+        if(this.state.data.length<1){
+            Alert.alert("Order not placed","Please add products before placing an order")
+        }
+        else if (this.state.location.label.length<1 || this.state.payments.label.length<1){
+            Alert.alert("Order not placed","Please fill all the required fields")
+        }
+        else{
+            //database stuff
+            Alert.alert("Order has been placed","Thank you for your purchase")
+            this.props.navigation.navigate('Home')
+        }
+    }
+
+    calculateTotal(products){
+
+        console.log("PRODUCTS:",products)
+        let array = products?.reduce((a,b)=>({total:a.total+b.total}))['total']+""
+        //console.log(array)\
+        console.log("TOTAL: ",array)
+        //const total = array.reduce((pre,curr)=>pre+curr);
+        //console.log(total)
+        this.setState({total:array})
     }
 
     removeItem = (id) => {
@@ -322,10 +361,27 @@ export default class Pickup extends Component {
       ]);
     };
 
+    
+
+  selectPayMethod(id){
+    console.log("ID: ",id)
+    let pay = this.state.payments.filter((i)=>i.value === id)[0]
+    this.setState({payment_method_id:pay.value,payment_method:pay.label,payment:id})
+    if(id==4){
+      this.setState({loading:true})
+      apiPayment.getClientToken().then((res)=>{
+        this.setState({payment_token:res,loading:false})
+        console.log("Fetched Client Token:",res)
+      });
+      this.setState({overlay:true});
+    }
+  }
+
     selectLocation(id) {
       let state = this.state.locations.filter((i) => i.value === id)[0];
       let filtResult = this.state.filterLocations.filter((i) => i.id === id)[0];
       console.log("FILTER RESULT: ", filtResult);
+      console.log("STATE DELIVERY: ",{address_id:id, address:state.label})
       let country = this.state.countries.filter(
         (i) => i.value === filtResult.country_id
       )[0];
@@ -333,7 +389,7 @@ export default class Pickup extends Component {
       this.setState({
         delivery_address: {
           address_id: id,
-          adress: state.label,
+          address: state.label,
         },
         filteredLocation: {
           Country: country?.label,
@@ -354,6 +410,7 @@ export default class Pickup extends Component {
     render() {
         return (
             <Provider>
+                <Spinner visible={this.state.loading} />
                 <View style={{ marginHorizontal: 10,marginTop:10 }}>
                     <Text style={[styles.header]}>Pickup</Text>
                 </View>
@@ -427,31 +484,12 @@ export default class Pickup extends Component {
                   color: "#698EB7",
                 }}
               >
-                Shipment Details
+                Pickup Details
               </Text>
+              
               <RenderPicker 
-                  selectedValue={this.state.serviceType}
-                  prompt="Service Level"
-                  onValueChange={(itemValue, itemIndex) => {
-                    this.changeServiceType(itemValue)
-                  }}
-                  map={this.state.fetchedServicesType}/>
-              <RenderPicker 
-                  selectedValue={this.state.service}
-                  prompt="Service Type"
-                  onValueChange={(itemValue, itemIndex) => {
-                    this.setState({ service: itemValue });
-                    
-                  }}
-                  map={this.state.fetchedServices}/>
-              <RenderPicker 
-                  selectedValue={this.state.cargo_method}
-                  prompt="Cargo Delivery Method"
-                  onValueChange={(itemValue, itemIndex) => {
-                    this.setState({ location: itemValue });
-                  }}
-                  map={this.state.cargo_methods}/>
-              <RenderPicker 
+              
+                  containerStyle={styles.containerStyle} 
                   selectedValue={this.state.location}
                   prompt="Registered Address"
                   onValueChange={(itemValue, itemIndex) => {
@@ -477,7 +515,6 @@ export default class Pickup extends Component {
                   }}
                 />
               ))}
-
               <View
                 style={{
                   flex: 1,
@@ -499,13 +536,20 @@ export default class Pickup extends Component {
                   Payment Details
                 </Text>
                 <RenderPicker 
+                    containerStyle={styles.containerStyle} 
                     selectedValue={this.state.payment}
                     prompt="Payment Method"
                     onValueChange={(itemValue, itemIndex) => {
-                      this.setState({ payment: itemValue });
+                      this.selectPayMethod(itemValue);
                     }}
                     map={this.state.payments}/>
               </View>
+              
+              
+              {this.state.payment_token?.length>0&&<Overlay visible={this.state.payment==4?true:false}
+                  token={this.state.payment_token}
+                  onClose={()=>this.setState({overlay:false})}
+                  onchange={this.changeData}  />}
                 <TouchableDocumentPicker 
                   color="#6E91EC"
                   icon="file"
@@ -513,19 +557,18 @@ export default class Pickup extends Component {
                   onPress={() => this.pickDocument()}
                   style={styles.docPicker}
                   doc={this.state.doc}/>
-              
-              
-        <Overlay visible={this.state.overlay}
-         onClose={()=>this.setState({overlay:false})}  />
             </View>
-            <View>
+            <TouchableOpacityButton 
+                onPress={() => this.pay()}
+                text="Place Order"/>
+            {/* <View>
               <TouchableOpacity
                 style={[styles.loginBtn, { marginHorizontal: 40 }]}
                 onPress={() => this.pay()}
               >
                 <Text style={styles.loginText}>Place Order</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
                 </ScrollView >
             </Provider>

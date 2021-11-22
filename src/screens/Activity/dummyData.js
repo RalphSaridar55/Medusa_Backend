@@ -1,0 +1,16 @@
+export const dummyData = [
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User B", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User B", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User B", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+    {name:"User A", action:"Removed Product", date:"2021-10-09"},
+]

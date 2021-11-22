@@ -166,7 +166,7 @@ class CustomDrawer extends Component {
               this.props.changeScreen("Activity")
               this.props.navigation.navigate("Activity");
             }}
-            icon={() => <MaterialCommunityIcons name="newspaper-dashboard-outline" size={24} color={this.props.screenC=="Activity" ? "#6E91EC" : "black"} />}
+            icon={() => <Ionicons name="newspaper-outline" size={24} color={this.props.screenC=="Activity" ? "#6E91EC" : "black"} />}
           />
         </View></>):null}
           <View>

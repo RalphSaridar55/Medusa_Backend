@@ -269,6 +269,7 @@ const actionSheetCat = createRef();
   } */
 
 async componentDidMount(){
+  this.focusListener = this.props.navigation.addListener("focus", async() => {
     let userData = JSON.parse(await AsyncStorage.getItem('user_details'));
     console.log("USER DATA: ",userData)
     this.setState({spinner:true, userData:userData,filterStatuses:userData.user_type==4?this.state.filterStatusesSeller:this.state.filterStatusesBuyer})  
@@ -287,6 +288,7 @@ async componentDidMount(){
       this.setState({spinner:false,data:res,filterData:res})
     })
     setTimeout(()=>this.fillDataForCheckout(),2000)
+  })
 }
 
 /* componentDidMount(){

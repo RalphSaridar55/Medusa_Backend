@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
     },
     docPicker:{
-        borderWidth:1,
+        borderWidth:0.5,
         borderRadius:5,
         borderColor:'lightgray',
         marginVertical:10,

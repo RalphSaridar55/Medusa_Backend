@@ -82,3 +82,16 @@ export async function readNotification(id){
     }).catch(err=>console.log("API ERROR: ",err.response.data.message))
   })
 }
+
+
+export async function getSellerActivityLogs(){
+  return await getToken().then((x)=>{
+    return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/activity-logs',{
+    headers:{
+      Authorization:x
+      }
+    }).then((res)=>{
+      console.log("RES READ:",res.data)
+    }).catch(err=>console.log("API ERROR: ",err.response.data.message))
+  })
+}

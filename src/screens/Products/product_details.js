@@ -291,7 +291,9 @@ class ProductDetails extends Component {
             chosenPieces: 1,
             chosenBoxes: 1,
           })
-          Alert.alert("Order",res)
+          Alert.alert("Order",res,[
+            {text:"Ok", onPress:()=>this.props.navigation.navigate("Home")}
+          ])
         }).catch(err=>{
           Alert.alert("Error",err.response?.data.message)
           this.setState({spinner:false})
@@ -493,7 +495,7 @@ class ProductDetails extends Component {
                           this.setState({modalVisible:false});
                           this.props.navigation.navigate("Checkout",{screen:"Delivery",params:{products:this.state.dataFromApi, order:this.state.order,type:"buy"}})
                         }}
-                      style={styles.overlayButton}
+                        style={[styles.loginBtn,{height:40,marginTop:20,backgroundColor:'#fff'}]}
                   >
                       <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Delivery</Text>
                   </TouchableOpacity>
@@ -504,8 +506,7 @@ class ProductDetails extends Component {
                           this.setState({modalVisible:false});
                           this.props.navigation.navigate("Checkout",{screen:"Pickup",params:{products:this.state.dataFromApi, order:this.state.order,type:"buy"}})
                       }}
-                      
-                      style={styles.overlayButton}
+                      style={[styles.loginBtn,{height:40,marginTop:20,backgroundColor:'#fff'}]}
                   >
                       <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Pickup</Text>
                   </TouchableOpacity>

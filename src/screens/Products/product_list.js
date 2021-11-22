@@ -36,7 +36,7 @@ export default class ProductList extends Component {
     this.locationRef = React.createRef()
         this.state = {
             countryLabel:"",
-            country:[],
+            country:null,
             countries:[],
             total:0,
             search:'',
@@ -111,27 +111,27 @@ export default class ProductList extends Component {
         })
         if(this.props.route.params?.category_id){
             let {category_id,category_name} = this.props.route.params
-            API.getProductsByCategory(1,category_id).then((res)=>{
-                //console.log("FROM comp ",res)
-                //console.log("PRODUCTS FETCHED: ",res)
-                let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
-                this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
-                    this.setCategory([{value:category_id, label:category_name}])
-            })
+            this.getProducts(1,category_id,null,null,null)
+            this.setCategory([{value:category_id, label:category_name}])
         }
         else{
-            this.getProducts() 
+            this.getProducts(1,null,null,null,null) 
           }
       })
     }
 
-    getProducts(){
-        API.getProducts(1).then((res)=>{
+    getProducts(page,catid,subid,brandid,countryid){
+        API.getFilteredProducts(page,catid,subid,brandid,countryid).then((res)=>{
+            console.log("PRODUCTS FETCHED: ",res)
+            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
+        })
+       /*  API.getProducts(1).then((res)=>{
             //console.log("FROM comp ",res)
             //console.log("PRODUCTS FETCHED: ",res)
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
-        }) 
+        })  */
     }
 
     onclick = () => {
@@ -221,16 +221,23 @@ export default class ProductList extends Component {
     }
 
     setBrand(selection){
+        let {page,category,subcategory,country} = this.state
         console.log(selection)
         if(selection.length>1){
             Alert.alert("Category Error","You can't pick more than one brand")
         }
         else if(selection.length==0){
-            this.setState({filterProducts:this.state.fetchedBProductsForFiltering,brand:[]})
+            this.setState({isVisible:true})
+            API.getFilteredProducts(1,category[0].value,subcategory[0].value,null,country!=null?country:null).then((res)=>{
+                this.setState({filterProducts:res.data,brand:[],isVisible:false})
+            })
         }
         else{
-            let result = this.state.fetchedBProductsForFiltering.filter((i)=>i.brand.id == selection[0].value)
-            this.setState({filterProducts:result,brand:selection})
+            this.setState({isVisible:true})
+            API.getFilteredProducts(1,category[0].value,subcategory[0].value,selection[0].value,country!=null?country:null).then((res)=>{
+                this.setState({filterProducts:res.data,isVisible:false})
+            })
+            this.setState({brand:selection})
         }
     }    
 
@@ -239,63 +246,75 @@ export default class ProductList extends Component {
             category:[],
             subcategory:[],
             brand:[],
+            isVisible:true,
         })
         this.SortingByData('reset');
         this.resetPriceRange();
+        this.getProducts(1,null,null,null,null);
     }
 
     setSubCategory(selection){
+        let {page,category,country} = this.state
         console.log(selection)
         if(selection.length>1){
             Alert.alert("Category Error","You can't pick more than one category")
         }
         else if(selection.length==0){
-            this.setState({filterProducts:this.state.fetchedSBProductsForFiltering,subcategory:[],fetchedBrands:[]})
+            this.setState({isVisible:true})
+            API.getFilteredProducts(1,category[0].value,null,null,country!=null?country:null).then((res)=>{
+                this.setState({filterProducts:res.data,subcategory:[],isVisible:false})
+            })
+            //this.setState({filterProducts:this.state.fetchedSBProductsForFiltering,subcategory:[],fetchedBrands:[]})
         }
         else{
+            this.setState({isVisible:true})
+            API.getFilteredProducts(1,category[0].value,selection[0].value,null,country!=null?country:null).then((res)=>{
+                this.setState({filterProducts:res.data,isVisible:false})
+            })
             let array = [];
-            let result = this.state.fetchedSBProductsForFiltering.filter((i)=>i.subCategory.id == selection[0].value)
-            console.log("RESULT: ",result)
             let fetchedSubrands = this.state.apiCategoriesForFiltering.find((i1)=>i1.id === this.state.category[0].value)
             let fetchedBrands = fetchedSubrands.subcategory.find((i2)=>i2.id === selection[0].value)
             fetchedBrands.brands.map((i3)=>{
                 array.push({label:i3.brand_name,value:i3.id})
             })
 
-            this.setState({filterProducts:result,subcategory:selection,fetchedBrands:array,fetchedBProductsForFiltering:result})
+            this.setState({subcategory:selection,fetchedBrands:array})
         }
     }
    
 
     setCategory(selection){
+        let {page,country} = this.state
         console.log("SELECTION: ",selection)
         if(selection.length>1){
             Alert.alert("Category Error","You can't pick more than one category")
         }
         else if(selection.length==0){
-            console.log("12345")
             this.setState({isVisible:true})
-            API.getProducts(this.state.page).then((res)=>{
+            API.getFilteredProducts(1,null,null,null,country!=null?country:null).then((res)=>{
                 this.setState({filterProducts:res.data,category:[],fetchedSubCategories:[],isVisible:false})
             })
+            /* API.getProducts(this.state.page).then((res)=>{
+                this.setState({filterProducts:res.data,category:[],fetchedSubCategories:[],isVisible:false})
+            }) */
         }
         else{
             this.setState({isVisible:true})
             /* API.getProductsFiltered(this.state.page,selection,null,null).then((res)=>{
                 this.setState({filterProducts:res.data,category:selection})
             }) */
-            API.getProductsByCategory(this.state.page,selection).then((res)=>{
+            API.getFilteredProducts(1,selection[0].value,null,null,country!=null?country:null).then((res)=>{
                 this.setState({filterProducts:res.data,category:selection,isVisible:false})
             })
-            /* let array = [];
-            console.log("FILTERING CAtegories: ",this.state.fetchedProducts)
-            let result = this.state.fetchedProducts.data.filter((i)=>i.category_id == selection[0].value)
-            console.log("RESULT: ",result)
+            /* API.getProductsByCategory(this.state.page,selection).then((res)=>{
+                this.setState({filterProducts:res.data,category:selection,isVisible:false})
+            }) */
+            let array = [];
             let fetchedSub = this.state.apiCategoriesForFiltering.find((it)=>it.id===selection[0].value).subcategory.filter((item)=>item.category_id === selection[0].value)
             fetchedSub.map((item2)=>{
                 array.push({label:item2.sub_category_name, value:item2.id})
             })
-            this.setState({filterProducts:result,category:selection, fetchedSubCategories:array,fetchedSBProductsForFiltering:result}) */
+            this.setState({ fetchedSubCategories:array})
         }
     }
 
@@ -307,19 +326,15 @@ export default class ProductList extends Component {
     
     loadMore=(page)=>{
         this.setState({isVisible:true,page:page});
-        if(this.state.country>0){
-            API.getProductsByCountry(page,selection).then((res)=>{
-                console.log("COUNTRY PRODUCCTS: ",res)
-                let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
-                this.setState({ isVisible:false,country:selection,page:1,filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
-            })
-        }
-        else{
-            API.getProducts(page).then((res)=>{
-                let result = this.state.filterProducts.concat(res.data);
-                this.setState({filterProducts:result,isVisible:false})
-            })
-        }
+        let {category,subcategory,brand,country} = this.state
+        API.getFilteredProducts(page,category.length>0?category:null,subcategory.length>0?subcategory:null,brand.length>0?brand:null,country!=null?country:null).then((res)=>{
+            console.log("COUNTRY PRODUCCTS: ",res.data)
+            console.log("STATE: ",this.state.filterProducts)
+            let addedData = this.state.filterProducts.concat(res.data)
+            console.log("RESULT FROM CONCAT: ",addedData.length)
+            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
+            this.setState({ isVisible:false,page:1,filterProducts:addedData,fetchedProducts:addedData,isVisible:false,total:res.totalCount})
+        })
     }
 
 

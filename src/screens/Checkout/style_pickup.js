@@ -1,6 +1,16 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+    containerStyle :
+    {
+      borderWidth: 1,
+      borderColor: "#C4C4C4",
+      borderRadius: 4,
+      marginVertical: 10,
+      height: 55,
+      justifyContent: "center",
+      backgroundColor: "#fff",
+    },
     container: {
         flex: 1,
         backgroundColor: "#fff",
@@ -21,9 +31,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#CCCCCC"
     },
     docPicker:{
-        borderWidth:1,
+        borderWidth:0.5,
         borderRadius:5,
-        borderColor:'gray',
+        borderColor:'lightgray',
         marginVertical:10,
         height:55,
         display:'flex',
