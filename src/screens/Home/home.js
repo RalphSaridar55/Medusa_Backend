@@ -66,7 +66,7 @@ const top = [
     }
 ]
 const Home =(props)=> {
-    const [isVisible,setIsVisible] = useState(true);
+    const [isVisible,setIsVisible] = useState(false);
     const [data,setData] = useState({topSelling:[],featured:[]})
     const [carousel,setCarousel] = useState([])
     const [categories,setCategories] = useState([])
@@ -90,18 +90,19 @@ const Home =(props)=> {
 
     useFocusEffect(
         useCallback(()=>{
+            setIsVisible(true)
             apiProducts.getTopSellingAndFeatured().then((res)=>{
                 //console.log("CONSOLE: ",res)
                 setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
-            })
+            }).catch(err=>console.log(":::",err.response.data.message))
             apiProducts.getGroupProducts().then((res)=>{
                 setCarousel(res)
-            })
+            }).catch(err=>console.log(":::",err.response.data.message))
             apiProducts.getHomeCategories().then((res)=>{
-                console.log("ERROR: ",res)
+                console.log(":::: ",res)
                 setCategories(res)
                 setIsVisible(false)
-            })
+            }).catch(err=>console.log(":::",err.response.data.message))
         },[props.route.name])
     )
 

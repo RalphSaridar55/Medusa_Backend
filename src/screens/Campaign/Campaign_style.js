@@ -29,8 +29,12 @@ export const styles = StyleSheet.create({
         display:'flex',
         justifyContent:'flex-start',
     },
-    bannerTitle:{
+    bannerName:{
         fontSize:24
+    },
+    bannerTitle:{
+        fontSize:16,
+        color:'gray'
     },
     loginBtn: {
         marginTop:40,
@@ -56,8 +60,16 @@ export const styles = StyleSheet.create({
         fontSize:16,
         color:'#31C2AA'
     },
+    insideContainer:{
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:"space-between",
+    },
+    infoText:{
+        color:'gray',
+        fontSize:14
+    },
     myCampaignTitleContainer:{
-        alignItems:'flex-start',
         paddingHorizontal:20,
         paddingBottom:20,
         width:'100%'

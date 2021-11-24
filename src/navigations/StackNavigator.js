@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5} from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -44,6 +44,8 @@ import Products from "../screens/Products/product_list";
 import Orders from "../screens/OrderBook/Reserved_Orders";
 import Users from "../screens/Users/list";
 import Spinner from "react-native-loading-spinner-overlay";
+import SignContract from "../components/SignContract";
+import Dashboard from "../screens/Dashboard/Dashboard";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -67,14 +69,15 @@ class CustomDrawer extends Component {
     this.secondRef = React.createRef();
     this.thirdRef = React.createRef();
     this.state={
-      userType:null
+      userType:null,
+      userApproved:null
     }
   }
 
   componentDidUpdate(prevProps, prevState){
     if(prevProps.userType !== this.state.userType){
       console.log("RUNNING123",this.props.userType);
-      this.setState({userType:this.props.userType})}
+      this.setState({userType:this.props.userType,userApproved:this.props.approved})}
       //this.setState({userType: this.props.userType})
   }
 
@@ -98,6 +101,14 @@ class CustomDrawer extends Component {
     if(third?.state.collapsed)
       third.toggle()
   }
+  async SignContract(){
+    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+    let change = {...user,is_approved:1}
+    AsyncStorage.setItem('user_details',JSON.stringify(change))
+    this.setState({userApproved:1})
+    //this.props.userType=currentType==4?1:4;
+    //console.log("BECOMES: ",this.props.userType)
+  }
 
   async changeUserType(currentType){
     console.log("Current Type: ",currentType)
@@ -110,7 +121,30 @@ class CustomDrawer extends Component {
   }
 
   render(){
-  return (
+    /* if(this.props.userApproved==3 && this.state.userType==4){
+      console.log("TEST")
+      return(
+        <DrawerContentScrollView {...this.props}>
+          <View>
+            <View
+            style={{display:'flex',alignItems:'center',marginVertical:50}}>
+              <Image source={require('../../assets/images/logo.png')}/>
+            </View>
+            {this.props.loggedIn&&
+            (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
+              <Text style={{color: "#6E91EC",fontSize:18}}>
+                {this.props.userData?.owner_email}
+              </Text>
+              <Text style={{color: "#6E91EC",fontSize:14}}>
+                {this.state.userType==4?"Seller":"Buyer"}
+              </Text>
+            </View>)}
+          </View>
+          </DrawerContentScrollView>
+      )
+    } 
+  else */
+    return (
     <DrawerContentScrollView {...this.props}>
       {/* <DrawerItemList {...props} /> */}
       <View>
@@ -496,14 +530,21 @@ class Nav extends Component {
   }
 
   async componentDidMount() {
+    console.log("PROPS DR: ",this.props.navigation)
     let user = JSON.parse( await AsyncStorage.getItem('user_details'));
     console.log("USER DATA IS: ",user)
     this.setState({userData:user})
-    await apiServices.isUserLoggedIn();
+    //await apiServices.isUserLoggedIn();
     //console.log("RESULT INSIDE COMPOENNT: ",result)
-    apiServices.isUserLoggedIn().then((res) => {
-      this.setState({ isUserLoggedIn: res, loading:false, visible:true, });
+    await apiServices.isUserLoggedIn().then((res) => {
+      console.log("THIS STATE: ",this.state.userData)
+        setTimeout(()=>this.setState({ isUserLoggedIn: res, loading:false, visible:true, }),1000);
     });
+  }
+
+  componentDidUpdate(prevState){
+    if(prevState.userData == null)
+      console.log(123)
   }
 
   componentDidUpdate() {
@@ -512,11 +553,11 @@ class Nav extends Component {
       apiServices.isUserLoggedIn().then(async(res) => {
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
         this.setState({ isUserLoggedIn: res, userData:user });
-      }, 100000);
+      }, 1000);
     });
   }
 
-  authStack = () => {return<><Spinner visible={this.state.loading}/>{this.state.visible&&<Stack.Navigator>
+  authStack = () => {return<><Spinner visible={this.state.loading}/>{this.state.visible==false?null:<Stack.Navigator>
       <>
         <Stack.Screen
           name="drawerTab"
@@ -527,122 +568,149 @@ class Nav extends Component {
     </Stack.Navigator>}</>
   }
 
-  closeDrawer = ({navigation}) =>{
+  closeDrawer = (navigation) =>{
     navigation.closeDrawer()
   }
 
+  submitContract=async()=>{
+    console.log("Running")
+    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+    let change = {...user,is_approved:1}
+    AsyncStorage.setItem('user_details',JSON.stringify(change))
+    this.setState({userData:change})
+    this.forceUpdate()
+  }
+
+  RenderComponent=(usertype,approved)=>{
+    if(usertype==4 && approved==3)
+      return <SignContract submitContract={this.submitContract}/>
+    else 
+      return <Dashboard />
+    }
+
   createDrawer = ({ navigation, route}) => {
-     return (<Drawer.Navigator
+     return (this.state.visible==false?null:<Drawer.Navigator
       drawerContent={(props) => (
         <CustomDrawer
           loggedIn={this.state.isUserLoggedIn}
           {...props}
           route={route}
           navigation={navigation}
+          submitContract={this.submitContract}
           screenC={this.state.chosenScreen}
           changeScreen={this.changeScreen}
-          closeDrawer={({navigation})=>{
-            this.closeDrawer({navigation})
+          closeDrawer={(navigation)=>{
+            this.closeDrawer(navigation)
           }}
           userType={this.state.userData?.user_type}
           userTypeStatic = {this.state.userData?.user_type_static}
+          userApproved = {this.state.userData?.is_approved}
           userData={this.state.userData}
         />
       )}
     >
       <Drawer.Screen
         name="Home"
-        component={Home}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Home}
         navigation={navigation}
         options={{ title: "" }}
       />
       <Drawer.Screen
         name="About"
-        component={AboutStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AboutStack}
         navigation={navigation}
         options={{ title: "" }}
       />
       <Drawer.Screen
         name="Auth"
-        component={AuthStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AuthStack}
         navigation={navigation}
         options={{ headerShown: false }}
       />
       <Drawer.Screen
         name="Product"
-        component={ProductStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:ProductStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Notifications"
-        component={NotificationStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:NotificationStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Negotiations"
-        component={NegotiationStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:NegotiationStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Orders"
-        component={OrderStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:OrderStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="User"
-        component={UserStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:UserStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Role"
-        component={RoleStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:RoleStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Adress"
-        component={AdressStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AdressStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Dashboard"
-        component={DashboardStack}
+        //component={()=><SignContract submitContract={this.submitContract} navigation={navigation}/>}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:DashboardStack}
+        //component={}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Campaign"
-        component={CampaignStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:CampaignStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="LoyaltyPoints"
-        component={LoyaltyStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:LoyaltyStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
         name="Checkout"
-        component={CheckoutStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:CheckoutStack}
         navigation={navigation}
         options={{ headerShown: true, title: "" }}
       />
       <Drawer.Screen
       name="Categories"
-      component={Categories}
+      component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Categories}
       options={{ headerShown: true, title: ""}}
       navigation={navigation}
       />
       <Drawer.Screen
       name="Activity"
-      component={Activity}
+      component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Activity}
+      options={{ headerShown: true, title: ""}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Contract"
+      children={()=><SignContract submitContract={this.submitContract} navigation={navigation}/>}
+      //component={SignContract}
       options={{ headerShown: true, title: ""}}
       navigation={navigation}
       />

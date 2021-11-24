@@ -9,7 +9,6 @@ export let APIKit = axios.create({
   baseURL: "https://ecomstgapi.appskeeper.in/cashmystock/api/v1/",
   timeout: 10000,
   headers: {
-    /* "Content-Type": "application/json", */
     language: "en",
     platform: "3",
     timezone: "+3",
@@ -17,6 +16,19 @@ export let APIKit = axios.create({
     Authorization: "Basic " + base64.encode(username + ":" + password),
   },
 });
+
+/* export const signContractApi = async() => {
+  return await getToken().then((x) => {
+    console.log("AUTH: ",x)
+    return APIKit.put("/user/contract-sign",{
+      headers:{
+        Authorization:x
+      }
+    }).then((res) => {
+      console.log(123)
+    }).catch(err=>console.log("ERROR:",err.response.data.message))
+  });
+}; */
 
 // Set JSON Web Token in Client to be included in all calls
 export const setClientToken = (token) => {
@@ -35,6 +47,7 @@ export const getToken = async () => {
     return (tokenData = `Bearer ${tokenData}`);
   });
 };
+
 
 export const isUserLoggedIn = async() => {
   let user = await getToken();

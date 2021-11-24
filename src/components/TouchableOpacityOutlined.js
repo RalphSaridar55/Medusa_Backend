@@ -7,7 +7,7 @@ export const TouchableOpacityOutlined = (props) =>{
             style={[styles.button,{...props.additionalButtonStyle}]}
             onPress={props.onPress}
         >
-      <Text style={styles.text}>{props.text}</Text>
+      <Text style={[styles.text,{...props.additionalTextStyle}]}>{props.text}</Text>
     </TouchableOpacity>
   </View>
 }

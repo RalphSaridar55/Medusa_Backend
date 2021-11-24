@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/core";
+import * as API from '../../core/apis/apiCampaignServices'; 
 import {
   View,
   ScrollView,
@@ -14,29 +16,31 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { BarChart } from "react-native-chart-kit";
 import CollapsibleList from "react-native-collapsible-list";
 import { campaignType,dummyData } from "./map";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const Campaign = ({ navigation }) => {
   const screenWidth = Dimensions.get("screen").width;
+  const [data,setData] = useState([])
+  const [isVisible,setIsVisible] = useState(true)
 
-  const chart2config = {
-    backgroundGradientFrom: "#fff",
-    backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: "#fff",
-    backgroundGradientToOpacity: 1,
-    color: (opacity = 1) => `#5BC5C9`,
-    labelColor: (opacity = 1) => `#6893B9`,
-    strokeWidth: 0, // optional, default 3
-    barPercentage: 0.6,
-    useShadowColorFromDataset: false, // optional,
-    propsForBackgroundLines: {
-      opacity: 0,
-    },
-    propsForHorizontalLabels: {
-      opacity: 1,
-      width: 0,
-    },
-    showValuesOnTopOfBars: false,
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsVisible(true)
+      API.getCampaigns().then((res)=>{
+        console.log("RES: ",res)
+        setData(res)
+        setIsVisible(false)
+      })
+    }, [])
+  );
+
+  /* useEffect(()=>{
+    API.getCampaigns().then((res)=>{
+      console.log("RES: ",res)
+      setData(res)
+      setIsVisible(false)
+    })
+  },[]) */
 
   const firstScreen = () => {
     return screenRenderer1();
@@ -44,40 +48,7 @@ const Campaign = ({ navigation }) => {
   const secondScreen = () => {
     return screenRenderer2();
   };
-  const dummyData = [
-    {
-      title: "banner Ad",
-      image: `${require("../../../assets/images/mycampaign1.jpg")}`,
-      dataSecondChart: {
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        datasets: [
-          {
-            data: [20, 45, 28, 80, 99, 43, 70],
-          },
-        ],
-      },
-      name: "Campaign 1",
-      points: 50,
-      timeLeft: "1D 20H",
-      clicks: 500,
-    },
-    {
-      title: "Web Ad",
-      image: `${require("../../../assets/images/mycampaign2.jpg")}`,
-      dataSecondChart: {
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        datasets: [
-          {
-            data: [20, 45, 28, 80, 99, 43, 70],
-          },
-        ],
-      },
-      name: "Campaign 2",
-      points: 40,
-      timeLeft: "1D 10H",
-      clicks: 500,
-    },
-  ];
+  
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "first", title: "Create Campaign" },
@@ -106,85 +77,36 @@ const Campaign = ({ navigation }) => {
             marginVertical: 20,
           }}
         >
-          {dummyData.map((item, index) => {
+          {data.length>0 && data.map((item, index) => {
             return (
-              <View
+              <TouchableOpacity
                 style={styles.cardContainer}
                 key={index}
                 onPress={() =>
-                  navigation.navigate("Create", { name: "Banner Ad" })
+                  //console.log("Tre")
+                  navigation.navigate("CampaignDetailed", { id:item.id })
                 }
               >
                 <View style={styles.myCampaignTitleContainer}>
-                  <Text style={[styles.bannerTitle]}>Banner Ad</Text>
+                  <View>
+                    <Text style={[styles.bannerName]}>{item.name}</Text>
+                  </View>
+                  <View>
+                    <Text style={[styles.bannerTitle]}>{item.category}</Text>
+                  </View>
+                <View style={[styles.insideContainer,{marginTop:10,}]}>
+                  <Text style={styles.infoText}>Status: {item.status}</Text>
                 </View>
-                <View
-                  style={{
-                    width: "100%",
-                    alignItems: "center",
-                    paddingHorizontal: 20,
-                  }}
-                >
-                  <Image
-                    source={item.image}
-                    style={{ width: "100%", height: 300 }}
-                    resizeMode="contain"
-                  />
+                <View style={styles.insideContainer}>
+                  <Text style={styles.infoText}>Payment: ${item.payment}</Text>
+                  {(item.start_date==0 || to_duration ==0)?null:
+                  <View style={styles.insideContainer}>
+                  <Text style={styles.infoText}>From: {item.start_date}</Text>
+                  <Text style={styles.infoText}>To: {item.to_duration}</Text>
+                  </View>}
                 </View>
-                <View style={[styles.infoContainer, { flex: 1 }]}>
-                  <CollapsibleList
-                    buttonPosition="top"
-                    numberOfVisibleItems={0}
-                    buttonContent={
-                      <View style={{ marginBottom: 20 }}>
-                        <Text style={styles.collapsibleButton}>More Info</Text>
-                      </View>
-                    }
-                  >
-                    <BarChart
-                      //style={graphStyle}
-                      data={item.dataSecondChart}
-                      width={screenWidth * 0.8}
-                      height={220}
-                      chartConfig={chart2config}
-                      withInnerLines={false}
-                      //withHorizontalLabels = {false}
-                      propsForHorizontalLabels={{
-                        opacity: 0,
-                      }}
-                    />
-                    <View
-                      style={{
-                        flexDirection: "column",
-                        width: "100%",
-                        padding: 20,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Text>{item.name}</Text>
-                        <Text>{item.clicks} Clicks</Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Text>{item.timeLeft} Remaining</Text>
-                        <Text style={{ color: "gray" }}>
-                          {item.points} Points
-                        </Text>
-                      </View>
-                    </View>
-                  </CollapsibleList>
-                </View>
-             
-              </View>
+                </View> 
+              </TouchableOpacity>
             );
           })}
         </ScrollView>
@@ -283,6 +205,7 @@ const Campaign = ({ navigation }) => {
 
   return (
     <>
+      <Spinner visible={isVisible}/>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}

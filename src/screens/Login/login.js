@@ -71,8 +71,9 @@ export default function Login({ navigation }) {
       storeData("user_id",res.userDetails.id+"")
       storeData("user_details",JSON.stringify({...res.userDetails,user_type_static:res.userDetails.user_type}))
       //setUserData(123);
-
-      if(res.userDetails.user_type===4 && res.userDetails.default_landing_page=="DASHBOARD")
+      if(res.userDetails.user_type===4 && res.userDetails.is_approved==3)
+        navigation.navigate("Contract");
+      else if(res.userDetails.user_type===4 && res.userDetails.default_landing_page=="DASHBOARD")
         navigation.navigate("Dashboard");
       else
         navigation.navigate("Home")

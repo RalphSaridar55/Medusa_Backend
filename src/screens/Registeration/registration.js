@@ -542,7 +542,7 @@ export default class Registartion extends Component {
         apiUserServices
           .post(`/${ROUTE_LIST.REGISTER}`, payload)
           .then((res) => {
-            alert(res.data.message);
+            Alert.alert("Sign Up",res.data.message);
             this.setState({ loading: false });
             this.props.navigation.navigate("Login");
           })

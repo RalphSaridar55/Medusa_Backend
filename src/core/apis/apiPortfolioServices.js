@@ -2,6 +2,34 @@ import * as ROUTE_LIST from './apis-list';
 import apiUserServices from './apiUserServices';
 import { getToken } from "./apiUserServices";
 
+
+export const userSignContract= async() =>{
+  return await getToken().then((x)=>{
+    console.log("test;",x)
+    return apiUserServices.put('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/contract-sign',null,{
+      headers:{
+        Authorization: x
+      }
+    }).then((res)=>{
+          console.log('RES: ',res)
+          //return res.data.message
+      }).catch(err=>console.log("ERROR: ",err.response.data.message))
+  })
+}
+
+//Get seller's own categories
+export const getSellerCategories= async() =>{
+  return await getToken().then((x)=>{
+      return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller-category-filter',{
+        headers:{
+          Authorization: x
+        }
+      }).then((res)=>{
+          return res.data.data
+      })
+  })
+}
+
 export async function getCountries () {
   return await apiUserServices.get(`${ROUTE_LIST.API_URL}/${ROUTE_LIST.COUNTRIES}`).then((res) => {
         let ar =[]
@@ -14,19 +42,6 @@ export async function getCategories (){
   return await apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/category').then((res)=>{
     //console.log("FROM THE API FUNCTION: ",res.data.data.data)
     return res.data.data.data
-  })
-}
-
-//Get seller's own categories
-export const getSellerCategories= async() =>{
-  return await getToken().then((x)=>{
-      return apiUserServices.get('https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller-category-filter',{
-          headers:{
-              Authorization: x
-          }
-      }).then((res)=>{
-          return res.data.data
-      })
   })
 }
 
