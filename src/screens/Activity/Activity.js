@@ -15,6 +15,12 @@ const Activity = (props) =>{
         setIsVisible(false)
         setUtil({...util,total:dummyData.length})
     },[])
+    
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+  }; 
 
     const loadMore = (page) =>{
         setIsVisible(true);
@@ -30,7 +36,7 @@ const Activity = (props) =>{
                         showsVerticalScrollIndicator={false}
                         onScroll={({nativeEvent}) => {
                             //console.log("length",this.state.total)
-                            if (this.isCloseToBottom(nativeEvent) && dummyData.length<util.total) {
+                            if (isCloseToBottom(nativeEvent) && dummyData.length<util.total) {
                                 let page = page + 1; 
                                 loadMore(page);
                             }

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Text, ImageBackground, ScrollView, Image, Dimensions, Alert} from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, SafeAreaView, Text, ImageBackground, ScrollView, Image, Dimensions, Alert} from 'react-native';
 import { styles } from './Campaign_style';
 import { BarChart } from "react-native-chart-kit";
 import * as API from '../../core/apis/apiCampaignServices'
 import { TouchableOpacityOutlined } from '../../components/TouchableOpacityOutlined';
 import { useFocusEffect } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { CardField, /* confirmPayment, */ StripeProvider, useStripe  } from '@stripe/stripe-react-native';
+import { stripePk } from "../../config/env";
 
 const Detailed = (props) => {
   const screenWidth = Dimensions.get("screen").width;
   const [data,setData] = useState();
+  const [cardData,setCardData] = useState();
   const [isVisible, setIsVisible] = useState(true);
   const [dataSecondChart] = useState({
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -44,7 +47,7 @@ const Detailed = (props) => {
     React.useCallback(() => {
         console.log("tests")
         let id = props.route.params.id
-        API.getCampaigndDetails(id).then((res)=>{
+        API.getCampaignDetails(id).then((res)=>{
             console.log("REs: ",res)
             setData(res)
             setIsVisible(false)
@@ -59,6 +62,9 @@ const Detailed = (props) => {
           setData(res)
       })
   },[]) */
+  const pay = () =>{
+    console.log("PAY")
+  }
 
   const EndCampaign = (id) =>{
       Alert.alert("End Campaign","Are you sure you want to end this campaign ?",[
@@ -141,7 +147,30 @@ const Detailed = (props) => {
                         </View>
                     </View>
                 </View>
-                    <View style={{position:'relative'}}>
+                    <View style={{position:'relative',marginTop:20}}>
+                        
+                      {(data?.status=="Approved" || data?.status=="Expired" 
+                      )?<><View style={{display:"flex",flexDirection:"row",justifyContent:'center'}}>
+                        <StripeProvider publishableKey={stripePk.STRIPE_PK} merchantIdentifier="merchant.identifier">
+                            <SafeAreaView style={[styles.docPicker]}>
+                                <CardField style={{ height: 50}}
+                                    placeholder={{
+                                      number: '4242 .... .... .... ',
+                                    }}
+                                    postalCodeEnabled={false}
+                                    onCardChange={(t) => {
+                                        console.log("PAY: ",t)/* sendBack(t) */
+                                    }} />
+                            </SafeAreaView>
+                        </StripeProvider>
+                      </View>
+                        <TouchableOpacityOutlined
+                        text={data?.status=="Approved"?"Pay":data?.status=="Expired"?"Renew":null}
+                        additionalContainerStyle={{marginHorizontal:60}}
+                        onPress={()=>{
+                          pay()
+                        }}/></>:null}
+
                         <TouchableOpacityOutlined
                         text="End Campaign"
                         additionalContainerStyle={{marginHorizontal:60}}
@@ -157,7 +186,7 @@ const Detailed = (props) => {
                 </View>
             </ScrollView>
         </ImageBackground>
-    )
+    ) 
 
 }
 

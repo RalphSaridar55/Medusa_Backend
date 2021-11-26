@@ -10,6 +10,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import * as ApiImage from "../../core/apis/apiDocumentService";
+import * as FileSystem from 'expo-file-system';
 import {
   View,
   Alert,
@@ -84,11 +86,11 @@ export default class AddProduct extends Component {
     };
   }
 
-  submit = () => {
+  submit = async() => {
     this.setState({ loading: true });
-    let arrayOfImages = [];
-    let arrayOfTags = [];
-    let arrayOfServices = [];
+    var arrayOfImages = [];
+    var arrayOfTags = [];
+    var arrayOfServices = [];
 
     //changing data form for the api post call
     if (
@@ -112,10 +114,11 @@ export default class AddProduct extends Component {
         });
       });
 
-      this.state.images.map((item, index) => {
+      this.state.images.map(async(item, index) => {
+        let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
         arrayOfImages.push({
-          is_existing: true,
-          media: item,
+          extension: item.substring(item.length-4,item.length-1),
+          media: media
         });
       });
 
@@ -178,7 +181,18 @@ export default class AddProduct extends Component {
             break;
         }
       }
-
+      console.log("ARR1 ",arrayOfImages)
+      //console.log("ARR2 ",payload.images)
+      // let arrayImg = []
+      // arrayOfImages.map((item)=>{
+      //   console.log("INSIDE MAP")
+      //   ApiImage.uploadDoc({document:item.media,extension:item.extension}).then((res)=>{
+      //     console.log("UPLOAD")
+      //     arrayImg.push({is_existing:true,media:res})
+      //   })
+      // }) 
+      // payload.images=arrayImg
+      console.log("PAYLOAD: ",payload)
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
       this.props.navigation.navigate("edit2", {screen:payload,editdata:{...this.props.route.params}});

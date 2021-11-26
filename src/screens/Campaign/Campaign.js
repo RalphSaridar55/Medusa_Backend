@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/core";
 import * as API from '../../core/apis/apiCampaignServices'; 
 import {
@@ -10,6 +10,7 @@ import {
   Dimensions,
   Alert,
   ImageBackground,
+  FlatList,
 } from "react-native";
 import { styles } from "./Campaign_style";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
@@ -20,16 +21,20 @@ import Spinner from "react-native-loading-spinner-overlay";
 
 const Campaign = ({ navigation }) => {
   const screenWidth = Dimensions.get("screen").width;
-  const [data,setData] = useState([])
-  const [isVisible,setIsVisible] = useState(true)
+  const [state,setState] = useState({data:[],isVisible:true,page:1,total:0})
+  // const [data,setData] = useState([])r
+  // const [isVisible,setIsVisible] = useState(true)
+  // const [page,setPage] = useState(1);
+  //const [total,setTotal]  = useState(0)
 
   useFocusEffect(
     React.useCallback(() => {
-      setIsVisible(true)
-      API.getCampaigns().then((res)=>{
+      setState({...state,isVisible:true})
+      API.getCampaigns(1).then((res)=>{
         console.log("RES: ",res)
-        setData(res)
-        setIsVisible(false)
+        setState({...state,data:res,isVisible:false,total:50})
+        // setData(res)
+        // setIsVisible(false)
       })
     }, [])
   );
@@ -60,6 +65,24 @@ const Campaign = ({ navigation }) => {
     second: secondScreen,
   });
 
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+      const paddingToBottom = 20;
+      return layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom;
+    }; 
+
+  const loadMore = (p) =>{
+    console.log("SOULD RENDER MORE");
+    API.getCampaigns(p).then((res)=>{
+      let result = state.data.concat(res);
+      setState({...state,page:p,data:result,isVisible:false,total:result.length})
+      // setPage(p)
+      // setData(result)
+      //setIsVisible(false)
+    })
+    //setIsVisible(false)
+  }
+
   const screenRenderer2 = () => {
     return (
       <ImageBackground
@@ -67,24 +90,34 @@ const Campaign = ({ navigation }) => {
         resizeMode="cover"
         style={{
           flex: 1,
-          justifyContent: "center",
         }}
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
+          
+          onScroll={({nativeEvent}) => {
+            //console.log("length",this.state.total)
+            if (isCloseToBottom(nativeEvent)&& state.data.length<state.total) {
+               //nativeEvent.preventDefault();
+                let p = state.page + 1; 
+                setState({...state,isVisible:true})
+                //setIsVisible(true);
+                loadMore(p);
+            }
+          }}
           style={{
             marginHorizontal: 20,
             marginVertical: 20,
           }}
         >
-          {data.length>0 && data.map((item, index) => {
+          {state.data.length>0 && state.data.map((item, index) => {
             return (
               <TouchableOpacity
                 style={styles.cardContainer}
                 key={index}
                 onPress={() =>
                   //console.log("Tre")
-                  navigation.navigate("CampaignDetailed", { id:item.id })
+                  navigation.navigate("CampaignDetailed", { id:item.id, type: item.category})
                 }
               >
                 <View style={styles.myCampaignTitleContainer}>
@@ -99,12 +132,12 @@ const Campaign = ({ navigation }) => {
                 </View>
                 <View style={styles.insideContainer}>
                   <Text style={styles.infoText}>Payment: ${item.payment}</Text>
-                  {(item.start_date==0 || to_duration ==0)?null:
-                  <View style={styles.insideContainer}>
-                  <Text style={styles.infoText}>From: {item.start_date}</Text>
-                  <Text style={styles.infoText}>To: {item.to_duration}</Text>
-                  </View>}
                 </View>
+                {(item.start_date==0 || item.to_duration ==0)?null:
+                  <View style={styles.insideContainer}>
+                  <Text style={styles.infoText}>From: {(new Date(item.start_date)+"").substring(0,15)}</Text>
+                  <Text style={styles.infoText}>To: {(new Date(item.to_duration)+"").substring(0,15)}</Text>
+                  </View>}
                 </View> 
               </TouchableOpacity>
             );
@@ -205,7 +238,7 @@ const Campaign = ({ navigation }) => {
 
   return (
     <>
-      <Spinner visible={isVisible}/>
+      <Spinner visible={state.isVisible}/>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}

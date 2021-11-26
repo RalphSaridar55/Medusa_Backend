@@ -10,6 +10,7 @@ import SelectMultiple from "react-native-select-multiple";
 import moment from "moment";
 import DateRangePicker from "rn-select-date-range";
 import Spinner from "react-native-loading-spinner-overlay";
+import * as FileSystem from 'expo-file-system';
 import {
   View,
   Alert,
@@ -143,7 +144,16 @@ export default class AddProduct extends Component {
         return;
       }
       console.log("HERE YOU SOHOULD BE RUNNING THE SUCCESS:");
+
       let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
+      let arrayImg = []
+      sendingData.images.map((item)=>{
+           ApiImage.uploadDoc({document:item.media,extension:item.extension}).then((res)=>{
+             console.log("UPLOAD")
+             arrayImg.push({is_existing:true,media:res})
+           })
+      })
+      console.log("ARRAIMG: ",arrayImg)
       /* let sendingData ={brand_id: 4,
       cancel_allowed: false,
       cancel_day: 0,
@@ -219,21 +229,21 @@ export default class AddProduct extends Component {
       } */
 
       console.log("DATA TO SEND: ",sendingData);
-      APIProduct.createProduct(sendingData).then((res)=>{
-        console.log("RES: ",res);
-        this.setState({loading:false})
-        Alert.alert("Success","Product has been created successfully",
-        [
-          {
-            text: "Ok",
-            onPress: () => this.props.navigation.navigate("Add1"),
-          },
-        ]);
-      }).catch(err=>{
-        this.setState({loading:false})
-        Alert.alert("Error",err.response.data.message)
-        return;
-      })
+      // APIProduct.createProduct(sendingData).then((res)=>{
+      //   console.log("RES: ",res);
+      //   this.setState({loading:false})
+      //   Alert.alert("Success","Product has been created successfully",
+      //   [
+      //     {
+      //       text: "Ok",
+      //       onPress: () => this.props.navigation.navigate("Add1"),
+      //     },
+      //   ]);
+      // }).catch(err=>{
+      //   this.setState({loading:false})
+      //   Alert.alert("Error",err.response.data.message)
+      //   return;
+      // })
     }
   };
   async componentDidMount() {

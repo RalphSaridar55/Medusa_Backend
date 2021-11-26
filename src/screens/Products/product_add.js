@@ -108,10 +108,11 @@ export default class AddProduct extends Component {
         });
       });
 
-      this.state.images.map((item, index) => {
+      this.state.images.map(async(item, index) => {
+        let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' });
         arrayOfImages.push({
-          is_existing: true,
-          media: item,
+          extension: item.substring(item.length-4,item.length-1),
+          document: media,
         });
       });
 

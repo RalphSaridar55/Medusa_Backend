@@ -358,7 +358,7 @@ return (
                      <View style={styles.cardHeader}>
                      </View>
                      <View style={{flex:1}}>
-                     <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode="contain"/>
+                     <Image style={styles.userImage} source={{ uri: item?.images[0].media }} resizeMode="contain"/>
                      <View style={styles.cardFooter}>
                          <View style={{ alignItems: "center", justifyContent: "center" }}>
                              <Text style={styles.name}>{item.product_name}</Text>

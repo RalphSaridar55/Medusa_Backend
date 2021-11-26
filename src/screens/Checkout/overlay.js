@@ -74,6 +74,7 @@ const styles2 = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         borderColor: 'lightgray',
+        width: screenwidth * 0.7,
         marginBottom: 20,
         marginTop: 10,
         paddingHorizontal: 5,

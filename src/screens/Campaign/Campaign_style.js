@@ -1,5 +1,7 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
+const height = Dimensions.get("screen").height
+const screenWidth = Dimensions.get("screen").width
 export const styles = StyleSheet.create({
     cardContainer:{
         backgroundColor:'#fff',
@@ -85,5 +87,17 @@ export const styles = StyleSheet.create({
         marginHorizontal:20,
         textDecorationColor:'#31C2AA',
         textDecorationLine:'underline'
-    }
+    },
+    docPicker: {
+        borderWidth: 0.5,
+        borderRadius: 10,
+        //marginLeft:30,
+        width: screenWidth * .7,
+        //color: '#31c2aa',
+        marginBottom: 20,
+        marginTop: 10,
+        paddingHorizontal: 6,
+        //display:"flex",
+        //justifyContent: 'center',
+    },
 }) 

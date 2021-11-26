@@ -126,12 +126,6 @@ export default class ProductList extends Component {
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
         })
-       /*  API.getProducts(1).then((res)=>{
-            //console.log("FROM comp ",res)
-            //console.log("PRODUCTS FETCHED: ",res)
-            let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
-            this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
-        })  */
     }
 
     onclick = () => {
@@ -389,7 +383,7 @@ export default class ProductList extends Component {
                         >
                         Product Creation
                         </Text>
-                        <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>setVisible({ ...visible, modal: false })}/>
+                        <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({modalVisible:false})}/>
                     </View>
                     <View style={{flexDirection:'column',marginTop:20}}>
                         <View style={{width:150,paddingHorizontal:10}}>
@@ -466,7 +460,7 @@ export default class ProductList extends Component {
                                 <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
                                     <View style={styles.cardHeader}>
                                     </View>
-                                    <Image style={styles.userImage} source={{ uri: item.images[0].media }}  resizeMode="contain"/>
+                                    {/* <Image style={styles.userImage} source={{ uri: item.images[0].media }}  resizeMode="contain"/> */}
                                     <View style={styles.cardFooter}>
                                         <View style={{ alignItems: "center", justifyContent: "center" }}>
                                             <Text style={styles.name}>{item.product_name}</Text>

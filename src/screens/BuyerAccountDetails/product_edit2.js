@@ -185,6 +185,7 @@ export default class AddProduct extends Component {
       let send_to_api = {...payload,...this.props.route.params.screen/* ,product_id:this.props.route.params.screen.product_id */}
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
       console.log("DATA THAT SHOULD BE SENT 2 API: ", send_to_api);
+
         APIProduct.editProduct(send_to_api).then((res)=>{  
           this.setState({ loading: false });
           Alert.alert("Successful","Product was edited successfully",[
