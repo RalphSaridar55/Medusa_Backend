@@ -358,11 +358,11 @@ return (
                      <View style={styles.cardHeader}>
                      </View>
                      <View style={{flex:1}}>
-                     <Image style={styles.userImage} source={{ uri: item?.images[0].media }} resizeMode="contain"/>
+                     <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode="contain"/>
                      <View style={styles.cardFooter}>
                          <View style={{ alignItems: "center", justifyContent: "center" }}>
                              <Text style={styles.name}>{item.product_name}</Text>
-                             <Text style={[styles.position,{paddingVertical:10,textAlign:'center'}]}>{item.description}</Text>
+                             <Text style={[styles.position,{paddingVertical:10,textAlign:'center'}]}>{item?.description.length>50?item?.description.substring(0,50):item?.description}</Text>
                              <Text style={styles.position}>${item.price} / Pc</Text>
                              <Text style={styles.position}>Avai. qty {item.current_stock}</Text>
                              <Text style={styles.position}> Min. qty {item.min_purchase_qty}</Text>

@@ -72,7 +72,7 @@ export let addElements2 = [
     },
     {
         type: 'textInput',
-        label: 'Package Type *',
+        label: 'Package Type',
         stateValue: 'product_package_type',
         returnKeyType: 'next',
         stateError: 'product_package_type_error',

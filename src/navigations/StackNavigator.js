@@ -590,6 +590,7 @@ class Nav extends Component {
 
   createDrawer = ({ navigation, route}) => {
      return (this.state.visible==false?null:<Drawer.Navigator
+      activeTintColor="red"
       drawerContent={(props) => (
         <CustomDrawer
           loggedIn={this.state.isUserLoggedIn}

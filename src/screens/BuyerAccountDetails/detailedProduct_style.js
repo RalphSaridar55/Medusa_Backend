@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
     image: {
         width: screenwidth,
         height: screenheight*0.3,
-        resizeMode:'stretch'
     },
     BtnContainer:{
         display:'flex',

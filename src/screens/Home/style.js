@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
         margin: 10,
         marginBottom:40
     },
-    card:{
-        flex:1
-    },
+    // card:{
+    //     flex:1
+    // },
     card2:{
         flex: 1,
         marginLeft: 5,
@@ -168,6 +168,9 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     card: {
+        display:'flex',
+        paddingVertical:10,
+        width:150,
         shadowColor: '#00000021',
         shadowOffset: {
             width: 0,
@@ -180,6 +183,8 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         backgroundColor: "white",
         flexBasis: '46%',
+        justifyContent:'center',
+        alignItems:'center',
         marginHorizontal: 5,
     },
     cardFooter: {
@@ -202,14 +207,14 @@ const styles = StyleSheet.create({
     userImage: {
         height: 100,
         width: 100,
-        //alignSelf: 'center',
     },
     name: {
         fontSize: 18,
         flex: 1,
         alignSelf: "flex-start",
         color: "#000",
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign:'center'
     },
     position: {
         fontSize: 14,

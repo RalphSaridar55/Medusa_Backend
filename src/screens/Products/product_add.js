@@ -109,11 +109,7 @@ export default class AddProduct extends Component {
       });
 
       this.state.images.map(async(item, index) => {
-        let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' });
-        arrayOfImages.push({
-          extension: item.substring(item.length-4,item.length-1),
-          document: media,
-        });
+        arrayOfImages.push(item);
       });
 
       this.state.tags.tagsArray.map((item, index) => {
@@ -175,8 +171,10 @@ export default class AddProduct extends Component {
         }
       }
 
-      if(this.state.product_price<this.state.product_offer_price){
-        Alert.alert("Error", `Offer price must not be lower than actual price`);
+      if(parseInt(this.state.product_offer_price) > parseInt(this.state.product_price)){
+        console.log(this.state.product_price+"\n"+this.state.product_offer_price)
+        console.log(typeof(this.state.product_price)+"\n"+typeof(this.state.product_offer_price))
+        Alert.alert("Error", `Offer price must be lower than actual price`);
         this.setState({ loading: false });
         return;
       }

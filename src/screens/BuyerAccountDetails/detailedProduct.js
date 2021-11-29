@@ -95,8 +95,8 @@ const detailedOrder = ({ navigation, route }) => {
       <Spinner visible={isVisible} />
       <View>
         <Image
-          resizeMode="contain"
-          source={{ uri: dataRoute?.images[0].media }}
+          resizeMode="cover"
+          source={{ uri: dataRoute?.images[0]?.media }}
           style={styles.image}
         />
       </View>
@@ -274,8 +274,8 @@ const detailedOrder = ({ navigation, route }) => {
               </View>
               <View>
                 <Image
-                  source={{ uri: item.variant_image }}
-                  resizeMode="contain"
+                  source={{ uri: item?.variant_image }}
+                  resizeMode="cover"
                   style={[
                     styles.image,
                     { width: screenwidth * 0.5, height: screenheight * 0.2 },

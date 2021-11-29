@@ -75,7 +75,7 @@ export const getVarientTypes= async(id) =>{
 
 //Get filtered products
 export const getFilteredProducts  = async(page,catid,subid,brandid,countryid)=>{
-    return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?limit=5
+    return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/guest_product_list?limit=100
     &page=${page}${catid!=null?`
     &categories=[${catid+""}]`:""}${subid!=null?`
     &subCategories=[${subid+""}]`:""}${brandid!=null?`

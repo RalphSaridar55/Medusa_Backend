@@ -460,7 +460,7 @@ export default class ProductList extends Component {
                                 <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
                                     <View style={styles.cardHeader}>
                                     </View>
-                                    {/* <Image style={styles.userImage} source={{ uri: item.images[0].media }}  resizeMode="contain"/> */}
+                                    <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }}  resizeMode="cover"/>
                                     <View style={styles.cardFooter}>
                                         <View style={{ alignItems: "center", justifyContent: "center" }}>
                                             <Text style={styles.name}>{item.product_name}</Text>

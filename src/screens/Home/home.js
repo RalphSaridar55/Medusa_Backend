@@ -172,7 +172,7 @@ const Home =(props)=> {
                             return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
                                 <View style={styles.cardHeader}>
                                 </View>
-                                <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode='cover' />
+                                <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
                                 <View style={styles.cardFooter}>
                                     <View style={{ alignItems: "center", justifyContent: "center" }}>
                                         <Text style={styles.name}>{item.product_name}</Text>
@@ -212,7 +212,7 @@ const Home =(props)=> {
                             return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
                                 <View style={styles.cardHeader}>
                                 </View>
-                                <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode='cover' />
+                                <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
                                 <View style={styles.cardFooter}>
                                     <View style={{ alignItems: "center", justifyContent: "center" }}>
                                         <Text style={styles.name}>{item.product_name}</Text>
@@ -260,7 +260,7 @@ const Home =(props)=> {
                                 return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
                                     <View style={styles.cardHeader}>
                                     </View>
-                                    <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode='cover' />
+                                    <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
                                     <View style={styles.cardFooter}>
                                         <View style={{ alignItems: "center", justifyContent: "center" }}>
                                             <Text style={styles.name}>{item.product_name}</Text>
@@ -319,7 +319,7 @@ const Home =(props)=> {
                                 return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
                                     <View style={styles.cardHeader}>
                                     </View>
-                                    <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode='cover' />
+                                    <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
                                     <View style={styles.cardFooter}>
                                         <View style={{ alignItems: "center", justifyContent: "center" }}>
                                             <Text style={styles.name}>{item.product_name}</Text>
@@ -407,11 +407,9 @@ const Home =(props)=> {
                         showsHorizontalScrollIndicator={false}
                         renderItem={({item,index})=>{
                             return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
-                                <View style={styles.cardHeader}>
-                                </View>
-                                <Image style={styles.userImage} source={{ uri: item.images[0].media }} resizeMode='cover' />
+                                <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
                                 <View style={styles.cardFooter}>
-                                    <View style={{ alignItems: "center", justifyContent: "center" }}>
+                                    <View style={{ alignItems: "center", justifyContent: "center", flexWrap:'wrap' }}>
                                         <Text style={styles.name}>{item.product_name}</Text>
                                         <Text style={styles.position}></Text>
                                     </View>

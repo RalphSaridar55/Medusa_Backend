@@ -102,10 +102,13 @@ export default class AddProduct extends Component {
       this.setState({ loading: false });
       return;
     } else {
-      this.state.product_services.map((item, index) => {
+      if(this.state.product_services.length>0)
+        this.state.product_services.map((item, index) => {
+        console.log("RESULT: ",item,"\n",this.state.product_services_fetched_api)
         let result = this.state.product_services_fetched_api.find(
           (element) => element.id === item.value
         );
+        console.log("RESULT: ",result)
         arrayOfServices.push({
           service_id: result.id,
           service_name: result.service_name,
@@ -114,13 +117,19 @@ export default class AddProduct extends Component {
         });
       });
 
-      this.state.images.map(async(item, index) => {
-        let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
-        arrayOfImages.push({
-          extension: item.substring(item.length-4,item.length-1),
-          media: media
-        });
+      this.state.images.map((item, index) => {
+        console.log("IMAGES ITEM: ",item)
+        arrayOfImages.push(item)
       });
+
+
+      // this.state.images.map(async(item, index) => {
+      //   let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
+      //   await arrayOfImages.push({
+      //     extension: item.substring(item.length-4,item.length-1),
+      //     media: media
+      //   });
+      // });
 
       this.state.tags.tagsArray.map((item, index) => {
         arrayOfTags.push({
@@ -195,7 +204,7 @@ export default class AddProduct extends Component {
       console.log("PAYLOAD: ",payload)
       this.setState({ loading: false });
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-      this.props.navigation.navigate("edit2", {screen:payload,editdata:{...this.props.route.params}});
+      this.props.navigation.navigate("edit2", {screen:payload,editdata:{...this.props.route.params},payload:{...payload}});
     }
   };
 
@@ -237,7 +246,7 @@ export default class AddProduct extends Component {
           tag:"",tagsArray:tags
         },
         images:images,
-        product_services:services,
+        //product_services:services,
 
       })
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
@@ -344,6 +353,7 @@ export default class AddProduct extends Component {
                 : { uri: this.state.images[0] }
             }
             style={{ width: screenwidth, height: screenheight * 0.3 }}
+            resizeMode="cover"
           />
           {this.state.images.length > 0 && (
             <TouchableOpacity
@@ -491,7 +501,7 @@ export default class AddProduct extends Component {
 
   renderPicker(test, index) {
     /* if(this.state[item.items].length>0) */
-    console.log("ERROR ITEM:",test)
+    
     return (
       <View
         key={index}
@@ -649,8 +659,10 @@ export default class AddProduct extends Component {
             selectedItems={this.state[item.stateValue]}
             labelStyle={{ color: "black" }}
             selectedLabelStyle={{ color: "#698EB7" }}
-            onSelectionsChange={(selected) =>
+            onSelectionsChange={(selected) =>{
+              console.log("ITEM: ",selected)
               this.setState({ [item.stateValue]: selected })
+            }
             }
           />
         </CollapsibleList>

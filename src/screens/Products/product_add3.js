@@ -10,6 +10,7 @@ import SelectMultiple from "react-native-select-multiple";
 import moment from "moment";
 import DateRangePicker from "rn-select-date-range";
 import Spinner from "react-native-loading-spinner-overlay";
+import * as ApiDocument from '../../core/apis/apiDocumentService';
 import * as FileSystem from 'expo-file-system';
 import {
   View,
@@ -144,108 +145,72 @@ export default class AddProduct extends Component {
         return;
       }
       console.log("HERE YOU SOHOULD BE RUNNING THE SUCCESS:");
-
-      let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
       let arrayImg = []
-      sendingData.images.map((item)=>{
-           ApiImage.uploadDoc({document:item.media,extension:item.extension}).then((res)=>{
-             console.log("UPLOAD")
-             arrayImg.push({is_existing:true,media:res})
-           })
-      })
-      console.log("ARRAIMG: ",arrayImg)
-      /* let sendingData ={brand_id: 4,
-      cancel_allowed: false,
-      cancel_day: 0,
-      cargo_document: "lorem-ipsum.pdf",
-      cargo_type_id: 1,
-      cargo_type_name: "General",
-      category_id: 4,
-      depth: 20,
-      description: "desc",
-      document: "lorem-ipsum.pdf",
-      down_payment: 60,
-      height: 20,
-      images:  [
-         {
-          is_existing: true,
-          media: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540nourhan1992%252Fcmsmobileapp/ImagePicker/46b9c8bf-eeac-4a5b-b0cc-721d2efd155d.jpg",
-        },
-      ],
-      is_discount: false,
-      is_visible: false,
-      max_purchase_qty: 40,
-      max_reserve_qty: 60,
-      min_purchase_qty: 30,
-      no_of_package: 30,
-      offered_price: 20,
-      package_type: "type",
-      price: 30,
-      product_condition:  {},
-      product_name: "boot",
-      product_negotiable: false,
-      product_sku: "sku",
-      product_warranty: "details",
-      return_allowed: false,
-      return_day: 0,
-      shipping_included: false,
-      stacking: 45,
-      sub_category_id: 4,
-      tags:  [
-         {
-          is_existing: true,
-          tag_id: 1,
-          tag_name: "Tags",
-        },
-         {
-          is_existing: true,
-          tag_id: 2,
-          tag_name: "Boots",
-        },
-      ],
-      variant:  {
-        discount: 10,
-        discount_end_date: undefined,
-        discount_start_date: undefined,
-        is_discount: true,
-        is_variant_by_package: true,
-        is_variant_by_piece: true,
-        is_variant_min_qty: true,
-        is_variant_stock: true,
-        variant_by_package: 10,
-        variant_by_piece: 10,
-        variant_image: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540nourhan1992%252Fcmsmobileapp/ImagePicker/dbae486b-625b-491a-969b-482bf571b81f.jpg",
-        variant_min_qty: 10,
-        variant_stock: 101,
-        variant_types:  [
-           {
-            variant_type_id: 3,
-            variant_value_id: 49,
-          },
-        ],
-      },
-      weight: 1,
-      width: 20,
-      } */
 
-      console.log("DATA TO SEND: ",sendingData);
-      // APIProduct.createProduct(sendingData).then((res)=>{
-      //   console.log("RES: ",res);
-      //   this.setState({loading:false})
-      //   Alert.alert("Success","Product has been created successfully",
-      //   [
-      //     {
-      //       text: "Ok",
-      //       onPress: () => this.props.navigation.navigate("Add1"),
-      //     },
-      //   ]);
-      // }).catch(err=>{
-      //   this.setState({loading:false})
-      //   Alert.alert("Error",err.response.data.message)
-      //   return;
-      // })
-    }
-  };
+      new Promise(async(resolve,reject)=>{
+        console.log("this state : ",this.state.dataFromRoute.images)
+        let changedFormatImages =  this.state.dataFromRoute.images.map(async(item, index) => {
+            let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
+              return ({
+                extension: item.substring(item.length-4,item.length),
+                media: media
+              });
+          });
+          let variantImage = await FileSystem.readAsStringAsync(payload.variant_image, { encoding: 'base64' }); 
+          let format = Promise.all(changedFormatImages)
+          let send = {
+            changedFormatImages:await format,
+            variantImage:{
+              extension: payload.variant_image.substring(payload.variant_image.length-4,payload.variant_image.length-1),
+              media: variantImage
+          }}
+          resolve (send)
+      }).then(async(res2)=>{
+        let result = await res2
+        console.log("result: ",result)
+        let images = result.changedFormatImages.map(async(item)=>{
+          let resultImg = await ApiDocument.uploadDoc({document:item.media,extension:item.extension});
+          //console.log("Resu image: ",resultImg)
+          return await ({media:resultImg,is_existing:true})
+        })
+        let format = Promise.all(images)
+        let variantImg = await ApiDocument.uploadDoc({document:result.variantImage.media,extension:result.variantImage.extension});
+
+         return await ({variant_img:variantImg,images:await format})
+        //   let resultImg = await ApiDocument.uploadDoc({document:item.media,extension:item.extension});
+        //   //console.log("Resu image: ",resultImg)
+        //   return await ({media:resultImg,is_existing:true})
+        // }))
+      }).then((res)=>{
+        console.log("final res: ",res)
+        this.setState({dataFromRoute:{...this.state.dataFromRoute,images:res.images}})
+        payload.variant_image=res.variant_image
+        let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
+        // sendingData.images.map((item)=>{
+        //      ApiImage.uploadDoc({document:item.media,extension:item.extension}).then((res)=>{
+        //        console.log("UPLOAD")
+        //        arrayImg.push({is_existing:true,media:res})
+        //      })
+        // })
+        //console.log("ARRAIMG: ",arrayImg)
+        console.log("DATA TO SEND: ",sendingData);
+      APIProduct.createProduct(sendingData).then((res)=>{
+        console.log("RES: ",res);
+        this.setState({loading:false})
+        Alert.alert("Success","Product has been created successfully",
+        [
+          {
+            text: "Ok",
+            onPress: () => this.props.navigation.navigate("Add1"),
+          },
+        ]);
+      }).catch(err=>{
+        this.setState({loading:false})
+        Alert.alert("Error",err.response.data.message)
+        return;
+      })
+    })
+    }};
   async componentDidMount() {
     console.log("ROUTE PARAMS: ", this.props.route.params);
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);

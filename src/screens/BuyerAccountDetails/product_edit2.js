@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as Progress from "react-native-progress";
 import * as APIProduct from "../../core/apis/apiProductServices";
+import * as ApiDocument from "../../core/apis/apiDocumentService";
 import { addElements2 } from "./add_elements_2";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
@@ -8,6 +9,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import * as FileSystem from 'expo-file-system';
 import {
   View,
   Alert,
@@ -77,9 +79,16 @@ export default class AddProduct extends Component {
 
       loading: true,
       dataSentFromScreen: {},
+      imagesFormated : [],
     };
   }
 
+  uploadDocument = async(image,ex)=>{
+    let result = await ApiDocument.uploadDoc({document:image,extension:ex})
+    return result
+  }
+
+  
   submit = () => {
     this.setState({loading:true})
     if (
@@ -181,12 +190,37 @@ export default class AddProduct extends Component {
             break;
         }
       }
-      let data = {...this.props.route.params.editdata,...payload}
-      let send_to_api = {...payload,...this.props.route.params.screen/* ,product_id:this.props.route.params.screen.product_id */}
-      console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
+      console.log("IMAGES ROU: ",this.props.route.params.payload.images)
+
+      new Promise((resolve,reject)=>{
+      let changedFormatImages =  this.props.route.params.payload.images.map(async(item, index) => {
+        console.log("Image Item: ",item)
+          let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
+            return ({
+              extension: item.substring(item.length-4,item.length-1),
+              media: media
+            });
+        });
+        //console.log("SENDING: ",changedFormatImages)
+        resolve (Promise.all(changedFormatImages))
+      }).then(async(result)=>{
+        let images = []
+        return await Promise.all(result.map(async(item)=>{
+          let resultImg = await ApiDocument.uploadDoc({document:item.media,extension:item.extension});
+          //console.log("Resu image: ",resultImg)
+          return await ({media:resultImg,is_existing:true})
+        }))
+      }).then(async(result2)=>{
+        let images = await result2 
+        //console.log("IMAGES BECOMES: ",images)
+        
+      let data = {...this.props.route.params.payload,...payload}
+      data.images = images
+      let send_to_api = {...payload,...this.props.route.params.screen}
+      console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", data);
       console.log("DATA THAT SHOULD BE SENT 2 API: ", send_to_api);
 
-        APIProduct.editProduct(send_to_api).then((res)=>{  
+        APIProduct.editProduct({...data}).then((res)=>{  
           this.setState({ loading: false });
           Alert.alert("Successful","Product was edited successfully",[
             {text:"Ok",onPress:()=>this.props.navigation.navigate("SellingDetails")}
@@ -196,10 +230,45 @@ export default class AddProduct extends Component {
           this.setState({ loading: false });
           Alert.alert("Error",err.response.data.message)
         })
+      })
+      // setTimeout(()=>{  
+        
+      // }, 1000)
+
+      // console.log("Images becomes: ",images)
+
+      // await console.log("CHANGED FROMAT: ",changedFormatImages)
+      // let apiPromise = new Promise(async (resolve,reject)=>{
+      //   let changedFormatImages = [];
+      //   let images = [];
+        
+      //   this.props.route.params.payload.images.map(async(item, index) => {
+      //     console.log("Image Item: ",item)
+      //       let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
+      //         await changedFormatImages.push({
+      //           extension: item.substring(item.length-4,item.length-1),
+      //           media: media
+      //         });
+      //     });
+      //   await console.log("CHANGED FROMAT: ",changedFormatImages)
+      //   await changedFormatImages.map(async (item)=>{
+      //     // ApiDocument.uploadDoc({document:item.media,extension:item.extension})
+      //     await console.log("Item: ",item)
+      //     let result = await this.uploadDocument(item.media, item.extension)
+      //     // await console.log("URL: ",result)
+      //     // await images.push({media:result.url,is_existing:true})
+      //   })
+      //   await console.log("IMAGES: ",images)
+      //   await resolve(images)
+      // })
+      // apiPromise.then((res)=>{
+      //   console.log("Results:",res)
+      // })
     }
   };
 
   async componentDidMount() {
+    console.log("PAYLOAD ROUTE: ",this.props.route.params.payload)
     console.log("ROUTE PARAMS: ", this.props.route.params.editdata,"\n\n\n");
     console.log("USER: ",this.props.route.params.editdata.user.company_reg_doc)
       let route = this.props.route.params.editdata
