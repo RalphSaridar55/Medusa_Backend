@@ -62,16 +62,20 @@ const SponsoredProducts = () =>{
                         <View style={styles.cardHeader}>
                         </View>
                         <Image style={styles.userImage} source={item.image}  resizeMode="contain"/>
-                        <View style={styles.cardFooter}>
-                            <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <View style={[styles.cardFooter]}>
+                            <View style={{ alignItems: "center", justifyContent: "center" ,flexWrap:'wrap'}}>
                                 <Text style={styles.name}>{item.product_name}</Text>
-                                <Text style={{color:'gray',paddingTop:10,textAlign:'center'}}>{item.description.length>100?item.description.substring(0,100)+"...":item.description}</Text>
+                                <Text style={{color:'gray',paddingTop:10,textAlign:'center',width:120}}>{item.description.length>100?item.description.substring(0,100)+"...":item.description}</Text>
                             </View>
                         </View>
-                        <TouchableOpacityOutlined 
+                        <View style={styles.cardHeader}>
+                        </View>
+                        <View style={{position:'absolute',width:'100%',bottom:10}}>
+                            <TouchableOpacityOutlined 
                             onPress={()=>console.log(123)}
                             style={[styles.loginBtn]}
                             text="Edit" />
+                        </View>
                     </View>
                 )
             }} />

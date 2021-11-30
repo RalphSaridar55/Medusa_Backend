@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity, ImageBackground, Image } from 'react-nati
 import { Headline, Paragraph, TextInput } from 'react-native-paper';
 import contactStyle from './contactStyle';
 import Footer from '../../components/footer/footer';
+import { TouchableOpacityButton } from '../../components/TouchableOpacity';
 
 export default class Contact extends Component {
     state = {
@@ -39,15 +40,11 @@ export default class Contact extends Component {
                         theme={{ colors: { primary: '#31c2aa' } }}
                         style={contactStyle.inputView}
                     />
-                    <TouchableOpacity style={contactStyle.loginBtn}
-                        /* onPress={()=>{
-                            
-                        }} */>
-                        <Text style={contactStyle.loginText}>Submit</Text>
-                    </TouchableOpacity>
-
+                    <TouchableOpacityButton 
+                    style={contactStyle.loginBtn}
+                    text="Submit"
+                    />
                 </View>
-                {/* <Footer/> */}
             </ImageBackground>
         );
     }

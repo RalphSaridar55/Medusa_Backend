@@ -197,7 +197,7 @@ export default class AddProduct extends Component {
         console.log("Image Item: ",item)
           let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
             return ({
-              extension: item.substring(item.length-4,item.length-1),
+              extension: item.substring(item.length-4,item.length),
               media: media
             });
         });

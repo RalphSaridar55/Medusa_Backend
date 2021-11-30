@@ -48,7 +48,7 @@ export default class About extends Component {
         <Headline style={aboutStyle.headLine}>About us </Headline>
         <ScrollView showsVerticalScrollIndicator={false} style={aboutStyle.scrollview}>
           {data.map((item,index)=>
-          <>
+          <View key={index}>
             <View style={aboutStyle.textContainer}>
               <Text style={aboutStyle.title}>
                 {item.title}
@@ -61,9 +61,9 @@ export default class About extends Component {
             <Image
               style={aboutStyle.img}
               source={item.image}
-              resizeMode='center'
+              resizeMode='cover'
             />
-          </>
+          </View>
           )}
           
         </ScrollView>

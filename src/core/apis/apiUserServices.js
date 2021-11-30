@@ -88,11 +88,6 @@ export const sendOtp = async (usernfo) => {
     .then((res) => {
       return res.data;
     })
-    .catch((error) => {
-      console.error(error.response);
-      setAuthorized(false);
-      setLoading(false);
-    });
 };
 
 export const sendEmailLink = async (owner_email) => {

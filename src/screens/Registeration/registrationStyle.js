@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     docPicker:{
         borderWidth:1,
         borderRadius:5,
-        borderColor:'gray',
+        borderColor:'lightgray',
         marginVertical:10,
         height:55,
         display:'flex',

@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import SelectMultiple from "react-native-select-multiple";
 import * as apiPortfolio from '../../core/apis/apiPortfolioServices';
+import * as ApiDocument from "../../core/apis/apiDocumentService"
 import Spinner from "react-native-loading-spinner-overlay";
 import CollapsibleList from "react-native-collapsible-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { emailValidator } from "../../helpers/emailValidator";
 import { RenderPicker } from "../../components/Picker";
 import { subUser } from "./map";
+import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 import {
   Text,
   View,
@@ -22,6 +24,7 @@ import styles from "./create_style";
 import { docValidator } from "../../helpers/docValidator";
 import * as apiServices from "../../core/apis/apiUserServices";
 import { AntDesign } from "@expo/vector-icons";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 export default class AddUsers extends Component {
   constructor(props){
@@ -126,12 +129,27 @@ export default class AddUsers extends Component {
         street:this.state.street,
         postal_code:this.state.postal,
         company_name: this.state.username,
-        company_reg_doc: this.state.docs.uri,
+        company_reg_doc: this.state.docs,
         role_name: this.state.role.role_name,
         role_id: this.state.role.role_id,
         permissions: this.state.userPermissions,
       };
       console.log("PAYLOAD ",payload)
+      new Promise (async(resolve,reject)=>{
+        let payloadToSend = [
+          {uri:this.state.docs.uri,name:this.state.docs.name},
+        ]
+        resolve (Promise.all(await documentBlobConverter(payloadToSend)))
+      }).then((res)=>{
+        let company = this.state.docs.name
+        return ([
+          {document:res[0], extension:company.substring(company.length-4,company.length)},
+        ])
+      }).then(async(res)=>{
+        let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
+        return await company_reg_doc
+      }).then((res)=>{
+        payload.company_reg_doc=res
       apiServices.addSubUser(payload).then((res) => {
         console.log("RES:\n",res)
         this.setState({isLoading:false});
@@ -142,8 +160,9 @@ export default class AddUsers extends Component {
         console.log("Error:\n",err)
         this.setState({isLoading:false});
         Alert.alert("Error",err.response.data.message);
-      } );
-    }
+        });
+      })
+      }
   };
 
   getRoles = () => {
@@ -205,7 +224,7 @@ export default class AddUsers extends Component {
   }; */
 
   pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true){
       Alert.alert(
@@ -415,12 +434,11 @@ export default class AddUsers extends Component {
                 />
               )}
             </View>
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => this.createUser()}
-            >
-              <Text style={styles.loginText}>Create</Text>
-            </TouchableOpacity>
+            <TouchableOpacityButton
+            style={styles.loginBtn}
+            text="Create"
+            onPress={() => this.createUser()}
+            />
           </View>
         </ScrollView>
       </ImageBackground>

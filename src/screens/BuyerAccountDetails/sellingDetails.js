@@ -361,7 +361,7 @@ return (
                      <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode="contain"/>
                      <View style={styles.cardFooter}>
                          <View style={{ alignItems: "center", justifyContent: "center" }}>
-                             <Text style={styles.name}>{item.product_name}</Text>
+                             <Text style={[styles.name,{textAlign:'center'}]}>{item.product_name}</Text>
                              <Text style={[styles.position,{paddingVertical:10,textAlign:'center'}]}>{item?.description.length>50?item?.description.substring(0,50):item?.description}</Text>
                              <Text style={styles.position}>${item.price} / Pc</Text>
                              <Text style={styles.position}>Avai. qty {item.current_stock}</Text>
@@ -369,11 +369,15 @@ return (
                          </View>
                      </View>
                      </View>
-                     <TouchableOpacityButton 
-                      onPress={()=>navigation.navigate("Campaign")}
-                      text="Promote"
-                      additionalContainerStyle={{paddingTop:20,flex:1,width:'100%'}}
-                      additionalButtonStyle={styles.loginBtn}/>
+                     <View style={{marginTop:100}}>
+                      </View>
+                     <View style={{position:'absolute',width:'100%',bottom:10}}>
+                      <TouchableOpacityButton 
+                        onPress={()=>navigation.navigate("Campaign")}
+                        text="Promote"
+                        additionalContainerStyle={{paddingTop:20,flex:1,width:'100%'}}
+                        additionalButtonStyle={styles.loginBtn}/>
+                    </View>
                     {/* <TouchableOpacity
                       onPress={()=>navigation.navigate("Campaign")}
                       style={styles.loginBtn}

@@ -139,7 +139,7 @@ const Home =(props)=> {
                       )}
             </Swiper>}
         </View>
-        <ScrollView
+        {/* <ScrollView
         style={styles.categoryContainer}
         horizontal>
             {categories.length<1?drawDummy():categories.map((item,index)=>{
@@ -147,7 +147,7 @@ const Home =(props)=> {
                     <Image source={{uri:item.category_image}} style={styles.categoryImage} resizeMode="stretch" resizeMethod="auto"/>
                 </TouchableOpacity>
             })}
-        </ScrollView>
+        </ScrollView> */}
         <View style={styles.topProductContainer}>
                     <Headline>Top Products</Headline>
                     <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
@@ -409,7 +409,7 @@ const Home =(props)=> {
                             return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
                                 <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
                                 <View style={styles.cardFooter}>
-                                    <View style={{ alignItems: "center", justifyContent: "center", flexWrap:'wrap' }}>
+                                    <View style={{ alignItems: "center", justifyContent: "center", flexWrap:'wrap', }}>
                                         <Text style={styles.name}>{item.product_name}</Text>
                                         <Text style={styles.position}></Text>
                                     </View>

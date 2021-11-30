@@ -16,9 +16,7 @@ import { TextInput } from "react-native-paper";
 import styles from "./style_buyer";
 import * as apiServices from "../../core/apis/apiAddressServices";
 import * as apiPortFolioServices from "../../core/apis/apiPortfolioServices";
-import { FlatListSlider } from "react-native-flatlist-slider";
-import { AntDesign } from '@expo/vector-icons'; 
-import { validatePathConfig } from "@react-navigation/core";
+import * as ApiDocument from '../../core/apis/apiDocumentService';
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 import Spinner from "react-native-loading-spinner-overlay";
 //import {HeadContext} from '../../../App';
@@ -170,7 +168,7 @@ class BuyreAccount extends Component {
   };
 
   pickDocument = async (e) => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true) {
       Alert.alert(
@@ -184,8 +182,8 @@ class BuyreAccount extends Component {
       //console.log(result);
       try {
         e == "Trade"
-          ? this.setState({ trading: result.uri, tradingError: false })
-          : this.setState({ company: result.uri, companyError: false });
+          ? this.setState({ trading: result, tradingError: false })
+          : this.setState({ company: result, companyError: false });
       } catch (error) {
         console.log(error);
       }
@@ -239,41 +237,66 @@ class BuyreAccount extends Component {
         }
         console.log("PAYLOAD: ",payload)
         this.setState({spinnerVisible:true})
-        apiPortFolioServices.updateUserProfile(payload)
-        .then((res)=>{
-            console.log("FROM THE COMPONENT: ",res)
-            Alert.alert("Edit", "Your profile has been updated");
-            let {
-              owner_email,owner_mobile_number,website,country_id,
-              city,state,street,company_reg_doc,trading_license_doc,
-              postal_code,registered_address,default_landing_page,
-              owner_country_code} = res.data
-            this.setState({
-              email:owner_email,
-              phone:owner_mobile_number,
-              code: owner_country_code,
-              website: website,
-              country:country_id,
-              city:city,
-              street:street,
-              state:state,
-              company:company_reg_doc,
-              trading:trading_license_doc,
-              postal:postal_code,
-              address:registered_address,
-              defaultLanding:default_landing_page,
-            })
-            this.setUserData(res.data);
-            this.setState({spinnerVisible:false})
-        }).catch(err=>{
-          console.log("ERROR:",err.message)
-          Alert.alert("Error:\n",err.message)
-          this.setState({spinnerVisible:false});
-          //Alert.alert("Error",err.response.data.message);
-        })
+        
+        new Promise (async(resolve,reject)=>{
+          let payloadToSend = [
+            {uri:this.state.company.uri,name:this.state.company.name},
+            {uri:this.state.trading.uri,name:this.state.trading.name},
+          ]
+          resolve (Promise.all(await documentBlobConverter(payloadToSend)))
+        }).then((res)=>{
+          let company = this.state.company.name
+          let trading = this.state.trading.name
+          return ([
+            {document:res[0], extension:company.substring(company.length-4, company.length)},
+            {document:res[1], extension:trading.substring(trading.length-4, trading.length)},
+          ])
+        }).then(async(res)=>{
+          let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
+          let trading_reg_doc = await ApiDocument.uploadDoc({document:res[1].document,extension:res[1].extension}).catch(err=>console.log("Error:",err.response.data.message))
+          return await ({company_reg_doc,trading_reg_doc})
+        }).then((res)=>{
+          payload.company_reg_doc = res.company_reg_doc;
+          payload.trading_license_doc = res.trading_reg_doc;
+          this.updateUserDetails(payload)
+      })
     }
-    
   };
+
+  updateUserDetails = (payload) =>{
+    apiPortFolioServices.updateUserProfile(payload)
+    .then((res)=>{
+        console.log("FROM THE COMPONENT: ",res)
+        Alert.alert("Edit", "Your profile has been updated");
+        let {
+          owner_email,owner_mobile_number,website,country_id,
+          city,state,street,company_reg_doc,trading_license_doc,
+          postal_code,registered_address,default_landing_page,
+          owner_country_code} = res.data
+        this.setState({
+          email:owner_email,
+          phone:owner_mobile_number,
+          code: owner_country_code,
+          website: website,
+          country:country_id,
+          city:city,
+          street:street,
+          state:state,
+          company:company_reg_doc,
+          trading:trading_license_doc,
+          postal:postal_code,
+          address:registered_address,
+          defaultLanding:default_landing_page,
+        })
+        this.setUserData(res.data);
+        this.setState({spinnerVisible:false})
+    }).catch(err=>{
+      console.log("ERROR:",err.message)
+      Alert.alert("Error:\n",err.message)
+      this.setState({spinnerVisible:false});
+      //Alert.alert("Error",err.response.data.message);
+    })
+  }
 
   drawInput=()=>{
     return accountDetails1.map((item,index)=>{

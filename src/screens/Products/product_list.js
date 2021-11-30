@@ -463,7 +463,7 @@ export default class ProductList extends Component {
                                     <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }}  resizeMode="cover"/>
                                     <View style={styles.cardFooter}>
                                         <View style={{ alignItems: "center", justifyContent: "center" }}>
-                                            <Text style={styles.name}>{item.product_name}</Text>
+                                            <Text style={[styles.name,{textAlign:'center'}]}>{item.product_name}</Text>
                                             <Text style={styles.position}>${item.price} / Piece</Text>
                                             <Text style={styles.position}>Available Qu. {item.current_stock}</Text>
                                             <Text style={styles.position}> Min. Order {item.min_purchase_qty}</Text>

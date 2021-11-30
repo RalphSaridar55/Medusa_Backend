@@ -87,7 +87,7 @@ export let addElements2 = [
     },
     {
         type: 'switch',
-        label: 'Stacking *',
+        label: 'Stacking',
         stateValue: 'product_stacking',
         returnKeyType: 'next',
         stateError: 'product_stacking_error',

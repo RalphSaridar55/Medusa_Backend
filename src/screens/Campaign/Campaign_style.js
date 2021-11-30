@@ -96,7 +96,7 @@ export const styles = StyleSheet.create({
         //color: '#31c2aa',
         marginBottom: 20,
         marginTop: 10,
-        paddingHorizontal: 6,
+        paddingHorizontal: 10,
         //display:"flex",
         //justifyContent: 'center',
     },

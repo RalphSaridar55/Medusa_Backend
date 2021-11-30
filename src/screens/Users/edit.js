@@ -2,44 +2,31 @@ import React, { Component } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { emailValidator } from "../../helpers/emailValidator";
 import { RenderPicker } from "../../components/Picker";
+import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 import {
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
   ImageBackground,
-  Image,
   ScrollView,
   Alert,
 } from "react-native";
 import {
   Headline,
-  Paragraph,
   TextInput,
-  Dialog,
-  Button,
-  Provider,
   IconButton,
-  Portal,
-  List,
-  Avatar,
-  Card,
-  Searchbar,
-  Checkbox,
 } from "react-native-paper";
 import { docValidator } from "../../helpers/docValidator";
 import CollapsibleList from "react-native-collapsible-list";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import MultiSelect from "react-native-multiple-select";
-import DropDownPicker from "react-native-dropdown-picker";
-import { Picker } from "@react-native-picker/picker";
 import * as apiPortfolio from '../../core/apis/apiPortfolioServices';
 import * as apiServices from "../../core/apis/apiUserServices";
+import * as ApiDocument from "../../core/apis/apiDocumentService"
 import * as DocumentPicker from "expo-document-picker";
 import styles from "./edit_style";
-import { Ionicons } from "@expo/vector-icons";
 import { subUser } from "./map";
+import {TouchableOpacityButton} from '../../components/TouchableOpacity'
 
 export default class EditUsers extends Component {
   state = {
@@ -150,21 +137,46 @@ export default class EditUsers extends Component {
         permissions: this.state.userPermissions,
       };
       console.log("PAYLOAD ",payload)
-      apiServices.updateSubUser(payload).then((res) => {
-        this.setState({isLoading:false});
-        Alert.alert("User Modification","User Was Modified",[
-          {text:"OK",onPress:()=>this.props.navigation.goBack()}
-        ]);
-      }).catch(err=>{
-        console.log("Error:\n",err)
-        this.setState({isLoading:false});
-        Alert.alert("Error",err.response.data.message);
-      });
+      if(typeof(this.state.company_reg_doc=="string")){
+        editUserData(payload)
+      }
+      else{
+        new Promise (async(resolve,reject)=>{
+          let payloadToSend = [
+            {uri:this.state.docs.uri,name:this.state.docs.name},
+          ]
+          resolve (Promise.all(await documentBlobConverter(payloadToSend)))
+        }).then((res)=>{
+          let company = this.state.docs.name
+          return ([
+            {document:res[0], extension:company.substring(company.length-4,company.length)},
+          ])
+        }).then(async(res)=>{
+          let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
+          return await company_reg_doc
+        }).then((res)=>{
+          payload.company_reg_doc = res
+          this.editUser(payload)
+        })
+      }
     }
   };
 
+  editUserData = (payload) =>{
+    apiServices.updateSubUser(payload).then((res) => {
+      this.setState({isLoading:false});
+      Alert.alert("User Modification","User Was Modified",[
+        {text:"OK",onPress:()=>this.props.navigation.goBack()}
+      ]);
+    }).catch(err=>{
+      console.log("Error:\n",err)
+      this.setState({isLoading:false});
+      Alert.alert("Error",err.response.data.message);
+    });
+  } 
+
   pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true){
       Alert.alert(
@@ -176,7 +188,7 @@ export default class EditUsers extends Component {
     else {
       console.log(result);
       try {
-        this.setState({ docs: result.uri, docError: false });
+        this.setState({ docs: result, docError: false });
       } catch (error) {
         this.setState({ docError: true });
       }
@@ -442,9 +454,13 @@ export default class EditUsers extends Component {
                 />
               )}
             </View>
-            <TouchableOpacity style={styles.loginBtn} onPress={()=> this.editUser()}>
+            <TouchableOpacityButton 
+            text="Apply Changes" 
+            onPress={()=>this.editUser()}
+            additionalButtonStyle={styles.loginBtn}/>
+            {/* <TouchableOpacity style={styles.loginBtn} onPress={()=> this.editUser()}>
               <Text style={styles.loginText}>Apply Changes</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </ScrollView>
       </ImageBackground>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as Progress from "react-native-progress";
 import * as APIProduct from "../../core/apis/apiProductServices";
+import * as ApiDocument from '../../core/apis/apiDocumentService';
 import { addElements2 } from "./add_elements_2";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
@@ -23,6 +24,7 @@ import { TextInput, Switch } from "react-native-paper";
 import {styles} from "./add_style";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
+import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 import * as DocumentPicker from "expo-document-picker";
 
 const screenwidth = Dimensions.get("screen").width;
@@ -178,10 +180,31 @@ export default class AddProduct extends Component {
             break;
         }
       }
-      let data = {...this.props.route.params,...payload}
-      console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
-        this.setState({ loading: false });
-        this.props.navigation.navigate("Add3",data)
+      new Promise(async(resolve,reject)=>{
+        let payloadToSend = [
+          {uri:this.state.company_document.uri,name:this.state.company_document.name},
+          {uri:this.state.cargo_document.uri,name:this.state.cargo_document.name},
+        ]
+        resolve (Promise.all(await documentBlobConverter(payloadToSend)))
+      }).then((res)=>{
+        let company = this.state.company_document.name
+        let cargo = this.state.cargo_document.name
+        return ([
+          {document:res[0], extension:company.substring(company.length-4,company.length)},
+          {document:res[1], extension:cargo.substring(cargo.length-4,cargo.length)},
+        ])
+      }).then(async(res)=>{
+        let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
+        let cargo_doc = await ApiDocument.uploadDoc({document:res[1].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
+        return await {company_reg_doc,cargo_doc}
+      }).then((res)=>{
+        payload.document = res.company_reg_doc
+        payload.cargo_document = res.cargo_doc
+        let data = {...this.props.route.params,...payload}
+        console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", payload);
+          this.setState({ loading: false });
+          this.props.navigation.navigate("Add3",data)
+      })
     }
   };
 
@@ -203,7 +226,7 @@ export default class AddProduct extends Component {
   }
 
   pickDocument = async (e, i) => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true) {
       Alert.alert(
@@ -214,7 +237,7 @@ export default class AddProduct extends Component {
     } else {
       console.log("DOC: ", result);
       try {
-        this.setState({ [i]: result.uri, [e]: false });
+        this.setState({ [i]: result, [e]: false });
       } catch (error) {
         console.log(error);
       }
@@ -340,13 +363,19 @@ export default class AddProduct extends Component {
             }
             if (item.type === "button") {
               return (
-                <TouchableOpacity
-                  onPress={() => this.submit()}
-                  style={[styles.loginBtn]}
-                  key={index}
-                >
-                  <Text style={styles.loginBtnText}>{item.label}</Text>
-                </TouchableOpacity>
+                <TouchableOpacityButton 
+                text={item.label}
+                key={index}
+                style={styles.loginBtn}
+                onPress={() => this.submit()}
+                />
+                // <TouchableOpacity
+                //   onPress={() => this.submit()}
+                //   style={[styles.loginBtn]}
+                //   key={index}
+                // >
+                //   <Text style={styles.loginBtnText}>{item.label}</Text>
+                // </TouchableOpacity>
               );
             }
           })}

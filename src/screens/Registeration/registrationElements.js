@@ -44,7 +44,7 @@ export let registrationElements = [
         returnKeyType: 'next',
         stateError: 'countryCodeError',
         stateErrorText: 'countryCodeError',
-        keyBoardType: ''
+        keyBoardType: 'numeric'
     },
     {
         type: 'textInput',
@@ -62,7 +62,7 @@ export let registrationElements = [
         returnKeyType: 'next',
         stateError: 'financialNumberError',
         stateErrorText: 'financialNumberError',
-        keyBoardType: ''
+        keyBoardType: 'numeric'
     },
     {
         type: 'textInput',
@@ -174,7 +174,8 @@ export let registrationElements = [
         returnKeyType: 'next',
         stateError: 'passwordError',
         stateErrorText: 'passwordError',
-        keyBoardType: ''
+        keyBoardType: '',
+        secure:true
     },
     {
         type: 'textInput',
@@ -183,6 +184,7 @@ export let registrationElements = [
         returnKeyType: 'next',
         stateError: 'confirmPasswordError',
         stateErrorText: 'confirmPasswordError',
-        keyBoardType: ''
+        keyBoardType: '',
+        secure:true
     },
 ]

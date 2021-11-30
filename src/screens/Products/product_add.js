@@ -26,6 +26,7 @@ import {styles} from "./add_style";
 import TagInput from "react-native-tags-input";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -240,6 +241,7 @@ export default class AddProduct extends Component {
       return;
     }
     if (type == "product") {
+      console.log("product: ",pickerResult.uri)
       let ar = this.state.images;
       ar.push(pickerResult.uri);
       this.setState({ images: ar });
@@ -388,13 +390,18 @@ export default class AddProduct extends Component {
             }
             if (item.type === "button") {
               return (
-                <TouchableOpacity
-                  onPress={() => this.submit()}
-                  style={[styles.loginBtn]}
-                  key={index}
-                >
-                  <Text style={styles.loginBtnText}>{item.label}</Text>
-                </TouchableOpacity>
+                <TouchableOpacityButton 
+                text={item.label}
+                key={index}
+                style={styles.loginBtn}
+                onPress={() => this.submit()}
+                />
+                // <TouchableOpacity
+                //   style={[]}
+                //   key={index}
+                // >
+                //   <Text style={styles.loginBtnText}>{item.label}</Text>
+                // </TouchableOpacity>
               );
             }
           })}
@@ -608,10 +615,6 @@ export default class AddProduct extends Component {
       </View>
     );
   }
-
-  nextButton = () => {
-    console.log("USER DATA IS: ", this.state);
-  };
 
   render() {
     return (

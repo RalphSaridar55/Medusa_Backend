@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   loginBtn: {
-      marginVertical:20,
+      marginVertical:10,
       marginHorizontal:20,
       position:'relative',
       bottom:0,

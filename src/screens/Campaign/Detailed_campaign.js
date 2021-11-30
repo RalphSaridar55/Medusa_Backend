@@ -155,7 +155,7 @@ const Detailed = (props) => {
                             <SafeAreaView style={[styles.docPicker]}>
                                 <CardField style={{ height: 50}}
                                     placeholder={{
-                                      number: '4242 .... .... .... ',
+                                      number: '4242 ',
                                     }}
                                     postalCodeEnabled={false}
                                     onCardChange={(t) => {

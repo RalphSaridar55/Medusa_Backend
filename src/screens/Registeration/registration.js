@@ -1,7 +1,10 @@
 import React, { Component } from "react";
+import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 import SelectMultiple from "react-native-select-multiple";
 import CollapsibleList from "react-native-collapsible-list";
 import * as UserApi from "../../core/apis/apiUserServices";
+import * as FileSystem from 'expo-file-system';
+import * as ApiDocument from "../../core/apis/apiDocumentService";
 import {
   SafeAreaView,
   View,
@@ -236,7 +239,7 @@ export default class Registartion extends Component {
   };
 
   pickDocument = async (e) => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true) {
       Alert.alert(
@@ -262,7 +265,6 @@ export default class Registartion extends Component {
   };
 
   verifyNumber = () =>{
-    this.setState({overlay:"otp",showTerms:true})
     if(!this.state.verifiedNumber){
       if(this.state.phoneNumber<8 || this.state.countryCode<3){
         Alert.alert("Error","Please insert a valid country code and phone number before verifying.");
@@ -272,6 +274,7 @@ export default class Registartion extends Component {
           owner_country_code: this.state.countryCode,
           owner_mobile_number: this.state.phoneNumber,
         };
+        console.log("Payload:",payload)
         UserApi.sendOtp(payload)
           .then((res) => {
             console.log("RES:", res);
@@ -303,7 +306,10 @@ export default class Registartion extends Component {
     }
   };
 
-  onRegister = () => {
+  onRegister = async() => {
+    
+    console.log("Doc: ",this.state.passport.uri.substring(this.state.passport.uri.length-4,this.state.passport.uri.length))
+
     const emailError = emailValidator(this.state.email);
     const passwordError = passwordValidator(this.state.password);
     const confirmPasswordError = confirmPasswordValidator(
@@ -534,23 +540,64 @@ export default class Registartion extends Component {
           trading_license_doc: this.state.trade.uri,
           categories: this.state.userRole == "buyer" ? [] : catdata,
         };
-        console.log("PAYLOAD: ",payload)
         // Show spinner when call is made
         this.setState({ loading: true });
 
         // api call
-        apiUserServices
-          .post(`/${ROUTE_LIST.REGISTER}`, payload)
-          .then((res) => {
-            Alert.alert("Sign Up",res.data.message);
-            this.setState({ loading: false });
-            this.props.navigation.navigate("Login");
+
+        new Promise (async(resolve,reject)=>{
+          let payloadToSend = [
+            {uri:this.state.passport.uri,name:this.state.passport.name},
+            {uri:this.state.trade.uri,name:this.state.trade.name},
+          ]
+          
+          resolve (Promise.all(await documentBlobConverter(payloadToSend)))
+          /* const passportUri = FileSystem.documentDirectory+this.state.passport.name;
+          const tradingUri = FileSystem.documentDirectory+this.state.trade.name;
+  
+          await FileSystem.copyAsync({
+            from: this.state.passport.uri,
+            to: passportUri
           })
-          .catch((error) => {
-            console.log("ERROR REGISTERING: ", error);
-            alert(error.response.data.message);
-            this.setState({ loading: false });
-          });
+
+          await FileSystem.copyAsync({
+            from: this.state.trade.uri,
+            to: tradingUri
+          }) */
+        }).then((res)=>{
+          //console.log("Company: ",payload.company_reg_doc)
+          //console.log("Trading: ",payload.trading_license_doc)
+          let company = payload.company_reg_doc
+          let trading = payload.trading_license_doc
+          //let compBlob = await FileSystem.readAsStringAsync(results[0], { encoding: 'base64' }); 
+          //let tradeBlob = await FileSystem.readAsStringAsync(results[1], { encoding: 'base64' }); 
+        //console.log("SENDING: ",changedForrrmatImages)
+          return ([
+            {document:res[0], extension:company.substring(company.length-4,company.length)},
+            {document:res[1], extension:trading.substring(trading.length-4,trading.length)}
+          ])
+        }).then(async(res)=>{
+            let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
+            let trading_license_doc = await ApiDocument.uploadDoc({document:res[1].document,extension:res[1].extension}).catch(err=>console.log("Error:",err.response.data.message))
+            return await ({company_reg_doc:company_reg_doc,trading_license_doc:trading_license_doc})
+          })
+        .then((res)=>{
+          console.log("RES:::",res )
+          payload.company_reg_doc=res.company_reg_doc
+          payload.trading_license_doc=res.trading_license_doc
+          apiUserServices
+            .post(`/${ROUTE_LIST.REGISTER}`, payload)
+            .then((res) => {
+              Alert.alert("Sign Up",res.data.message);
+              this.setState({ loading: false });
+              this.props.navigation.navigate("Login");
+            })
+            .catch((error) => {
+              console.log("ERROR REGISTERING: ", error);
+              alert(error.response.data.message);
+              this.setState({ loading: false });
+            });
+        })
       }
     }
   };
@@ -971,13 +1018,15 @@ export default class Registartion extends Component {
             style={{ backgroundColor: "#fff" }}
             label={element.label}
             returnKeyType={element.returnKeyType}
-            value={this.state[element.stateValue]}
+            value={this.state[element.stateValue]+""}
             onChangeText={(text) =>
-              this.setState({ [element.stateValue]: text, emailError: "" })
+              this.setState({ [element.stateValue]: text, [element.stateError]: "" })
             }
+            secureTextEntry={element.secure==undefined?false:true}
             error={this.state[element.stateError]}
             errorText={this.state[element.stateError]}
             autoCapitalize="none"
+            keyboardType={element.keyBoardType}
             // keyboardType={element.keyBoardType}
             outlineColor="#C4C4C4"
             theme={{
@@ -1077,8 +1126,12 @@ export default class Registartion extends Component {
                   style={styles.modalBoxInputs}
                   label="1234"
                   value={this.state.otp}
+                  keyboardType="numeric"
                   //value={this.state[element.stateValue]}
-                  onChangeText={(text) => this.setState({ otp: text })}
+                  onChangeText={(text) => {
+                    if(this.state.otp.length<4)
+                      this.setState({ otp: text })
+                  }}
                   autoCapitalize="none"
                   // keyboardType={element.keyBoardType}
                   outlineColor="#C4C4C4"

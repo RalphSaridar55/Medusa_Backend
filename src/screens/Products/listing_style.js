@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 12.5,
+        paddingTop: 30,
         paddingBottom: 25,
         paddingHorizontal: 16,
         borderBottomLeftRadius: 1,

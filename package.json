@@ -25,6 +25,7 @@
     "expo-device": "~3.3.0",
     "expo-document-picker": "^9.2.4",
     "expo-file-system": "^13.0.3",
+    "expo-font": "^10.0.3",
     "expo-image-picker": "~10.2.2",
     "expo-image-picker-multiple": "^1.4.1",
     "expo-images-picker": "^2.0.1",

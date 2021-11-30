@@ -304,7 +304,7 @@ const Create = ({ navigation, route }) => {
           }}
         >
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" , alignItems:'center' }}
+            style={{ flexDirection: "row", justifyContent: "space-between" , alignItems:'center'}}
           >
             <Text style={styles.header}>{routeData?.name}</Text>
 

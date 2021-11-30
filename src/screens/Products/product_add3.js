@@ -347,13 +347,19 @@ export default class AddProduct extends Component {
             }
             if (item.type === "button") {
               return (
-                <TouchableOpacity
-                  onPress={() => this.submit()}
-                  style={[styles.loginBtn]}
-                  key={index}
-                >
-                  <Text style={styles.loginBtnText}>Submit</Text>
-                </TouchableOpacity>
+                <TouchableOpacityButton 
+                text="Submit"
+                key={index}
+                style={styles.loginBtn}
+                onPress={() => this.submit()}
+                />
+                // <TouchableOpacity
+                //   onPress={() => this.submit()}
+                //   style={[styles.loginBtn]}
+                //   key={index}
+                // >
+                //   <Text style={styles.loginBtnText}>Submit</Text>
+                // </TouchableOpacity>
               );
             }
           })}
