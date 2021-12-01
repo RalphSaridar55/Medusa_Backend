@@ -23,10 +23,6 @@ import {
   Provider,
 } from "react-native-paper";
 import { RenderPicker } from "../../components/Picker";
-import {
-  Dialog,
-  PanningProvider,
-} from "react-native-ui-lib";
 import _ from "lodash";
 import * as DocumentPicker from "expo-document-picker";
 import TextInput from "../../components/TextInput";
@@ -81,27 +77,6 @@ const Air = [
   { label: "Airport to Door", value: "Airport to Door" },
   { label: "Airport to Airport", value: "Airport to Airport" },
 ];
-
-renderDialog = (modalProps) => {
-  const { visible, children, toggleModal, onDone } = modalProps;
-
-  return (
-    <Dialog
-      migrate
-      visible={visible}
-      onDismiss={() => {
-        onDone();
-        toggleModal(false);
-      }}
-      bottom
-      useSafeArea
-      renderPannableHeader={this.dialogHeader}
-      panDirection={PanningProvider.Directions.DOWN}
-    >
-      <ScrollView>{children}</ScrollView>
-    </Dialog>
-  );
-};
 
 export default class Delivery extends Component {
   constructor(props) {

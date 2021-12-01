@@ -18,7 +18,6 @@ import * as apiPayment from '../../core/apis/apiPaymentServices';
 import * as apiOrder from '../../core/apis/apiOrderServices';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Card, IconButton, Searchbar, Menu, Divider, Provider, Button } from 'react-native-paper';
-import { Colors, Dialog, Avatar, Assets, PanningProvider, Typography, ActionBar } from 'react-native-ui-lib';
 import dropdown from '../../../assets/down.png';
 import {Picker} from '@react-native-picker/picker'
 import styles from './style_pickup';
