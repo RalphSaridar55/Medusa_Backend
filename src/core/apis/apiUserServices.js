@@ -93,11 +93,21 @@ export const sendOtp = async (usernfo) => {
 export const sendEmailLink = async (owner_email) => {
   return await APIKit.post("/user/forgot-password", { owner_email }).then(
     (res) => {
-      console.log("inside send email, ", res.data.message);
       return res.data.message;
     }
   );
 };
+
+export const forgotPassword = async (payload) =>{
+  return await APIKit.post('/user/forgot-password',payload)
+    .then((res) => {
+      console.log("RES FROGOT: ",res)
+      return res.data.statusCode;
+    })
+    .catch((error) => {
+      console.log(error.response);
+    });
+}
 
 export const verifyOtp = async (userOtpAndMobile) => {
   return await APIKit.get(

@@ -33,12 +33,12 @@ export default class ForgotPassword extends Component {
         apiUserServices.verifyEmail(this.state.userEmailInput/** should use this --> this.state.userInfoFromApi.owner_email */).then((res) => {
             console.log("RESULT FROM API: ",res)
             if (res.owner_email == this.state.userEmailInput.toLowerCase()) {
-                this.setState({ userInfoFromApi: res, screenState: 'picker', isLoading: false, country:res.owner_country_code, mobile:res.owner_mobile_number })
+                this.setState({ userInfoFromApi: res, country:res.owner_country_code, mobile:res.owner_mobile_number, isLoading:false, screenState:'otp'})
             } else {
-                this.setState({ isLoading: false });
                 alert('Invalid e-mail address');
             }
-        }).catch(err =>{
+        })
+        .catch(err =>{
             Alert.alert("Error",err.response.data.message)
         })
     }
@@ -55,25 +55,37 @@ export default class ForgotPassword extends Component {
                 return
             }
             else{
-                apiUserServices.sendOtp({
-                    //owner_email: this.state.userEmailInput,/**should use this --> this.state.userInfoFromApi.owner_email*/
-                    owner_country_code: this.state.country,/**should use this --> this.state.userInfoFromApi.owner_country_code*/
-                    owner_mobile_number: this.state.mobile,/**should use this --> this.state.userInfoFromApi.owner_mobile_number*/
-                }).then((otpRes) => {
-                    console.log("OTP RES:",otpRes)
-                    if (otpRes.statusCode === 201) {
-                        this.setState({ sendOtp:false, screenState: radioBtnValue, otp_code:otpRes.data.varification_code });
-                    } else {
-                        alert('failed Sending OTP');
+                
+                    console.log("STATE::",this.state.userInfoFromApi)
+                    let {owner_email,owner_country_code,owner_mobile_number} = this.state.userInfoFromApi
+                    let payload = {
+                        owner_email: owner_email,
+                        owner_country_code: owner_country_code,
+                        owner_mobile_number: owner_mobile_number
                     }
-                setTimeout(()=>{
-                    this.setState({sendOtp:true})
-                },120000)
-                }).catch(err=>{
-                    console.log("ERROR:")
-                    Alert.alert("Error",err.response.data.message)
-                })
-            }
+                    apiUserServices.forgotPassword(payload).then((result)=>{
+                        this.setState({screenState: 'radioBtnValue', isLoading: false})
+                    })
+                console.log("Successful")
+            //     apiUserServices.sendOtp({
+            //         //owner_email: this.state.userEmailInput,/**should use this --> this.state.userInfoFromApi.owner_email*/
+            //         owner_country_code: this.state.country,/**should use this --> this.state.userInfoFromApi.owner_country_code*/
+            //         owner_mobile_number: this.state.mobile,/**should use this --> this.state.userInfoFromApi.owner_mobile_number*/
+            //     }).then((otpRes) => {
+            //         console.log("OTP RES:",otpRes)
+            //         if (otpRes.statusCode === 201) {
+            //             this.setState({ sendOtp:false, screenState: radioBtnValue, otp_code:otpRes.data.varification_code });
+            //         } else {
+            //             alert('failed Sending OTP');
+            //         }
+            //     setTimeout(()=>{
+            //         this.setState({sendOtp:true})
+            //     },120000)
+            //     }).catch(err=>{
+            //         console.log("ERROR:")
+            //         Alert.alert("Error",err.response.data.message)
+            //     })
+             }
         } if (radioBtnValue === 'email') {
             apiUserServices.sendEmailLink(this.state.userInfoFromApi.owner_email).then((resMsg) => {
                 if (resMsg) {
@@ -91,16 +103,20 @@ export default class ForgotPassword extends Component {
             typeof(this.state.mobile)
         )
         this.setState({isLoading:true})
-        if(this.state.otp.length!=4 || this.state.otp!=this.state.otp_code){
+        if(this.state.otp.length!=4){
             this.setState({isLoading:false})
             Alert.alert("Error","Incorrect OTP")
             return
         }
+        console.log("VERIFY OTP: ",{
+            otp: this.state.otp,
+            owner_mobile_number: this.state.userInfoFromApi.owner_mobile_number
+        })
         apiUserServices.verifyOtp({
             otp: this.state.otp,
             owner_mobile_number: this.state.userInfoFromApi.owner_mobile_number
         }).then((res) => {
-            console.log("VERIFYING OTP:",res.data.statusCode)
+            console.log("VERIFYING OTP:",res.data)
             if (res.data.statusCode === 200 || res.data.statusCode === 201) {
                 this.setState({ screenState: 'reset', isLoading:false });
             } else {

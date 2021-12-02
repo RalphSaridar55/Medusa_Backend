@@ -457,7 +457,7 @@ export default class EditUsers extends Component {
             <TouchableOpacityButton 
             text="Apply Changes" 
             onPress={()=>this.editUser()}
-            additionalButtonStyle={styles.loginBtn}/>
+            />
             {/* <TouchableOpacity style={styles.loginBtn} onPress={()=> this.editUser()}>
               <Text style={styles.loginText}>Apply Changes</Text>
             </TouchableOpacity> */}
