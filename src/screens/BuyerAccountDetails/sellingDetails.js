@@ -255,7 +255,7 @@ const SellingDetail = ({navigation}) =>{
               style={{ marginVertical: 10 }}
               wrapperStyle={{
                 borderWidth: 0.2,
-                borderColor: "gray",
+                borderColor: "lightgray",
                 borderRadius: 5,
               }}
               buttonPosition="top"
@@ -265,7 +265,6 @@ const SellingDetail = ({navigation}) =>{
                   style={[
                     styles.docPicker,
                     {
-                      borderColor: "#A6A6A6",
                       backgroundColor:'#fff',
                       marginVertical: 0,
                     },
@@ -403,7 +402,6 @@ return (
                   style={[
                     styles.docPicker,
                     {
-                      borderColor: "#A6A6A6",
                       backgroundColor:'#fff',
                       marginVertical: 0,
                     },

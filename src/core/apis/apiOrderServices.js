@@ -75,7 +75,7 @@ export const deleteOrder = async(id)=>{
 //get Orders for sellers' side
 export const getSellersOrder = async(id)=>{
     return await getToken().then((x)=>{
-        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller/order-list?status=${id}&page=1&limit=200`,{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/user/seller/order-list?status=${id}&page=1&limit=1000`,{
             headers:{
                 Authorization: x
             }

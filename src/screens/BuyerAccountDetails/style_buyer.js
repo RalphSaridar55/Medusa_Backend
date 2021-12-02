@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     loginText: {
-        color: "white"
+        fontSize: 18,
+        color: "white",
     },
     signupText: {
         color: "#31C2AA",

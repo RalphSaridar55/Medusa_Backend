@@ -225,6 +225,7 @@ const actionSheetCat = createRef();
     let label = this.state.filterStatuses.filter((i)=>i.value===val)[0].label ;
     this.setState({spinner:true,filterStatus:val,filterStatusLabel:label})
     if(this.state.userData.user_type==4){
+      console.log("Buyer")
       APIOrder.getSellersOrder(val).then((res)=>{
         console.log('API RES: ',res)
         this.setState({data:res,filterData:res,spinner:false})
@@ -234,6 +235,7 @@ const actionSheetCat = createRef();
       })
     }
     else{
+      console.log("Seller")
       APIOrder.getOrderBook(val).then((res)=>{
         console.log('API RES: ',res)
         this.setState({data:res,filterData:res,spinner:false})
@@ -280,12 +282,12 @@ async componentDidMount(){
       })
       APIOrder.getOrderBook(4).then((res)=>{
         console.log("CURRENT ORDER BOOK: ",res)
-        this.setState({spinner:false,filterData:res,filterStatusLabel:"Pending"})
+        this.setState({spinner:false,filterData:res})
       })
     }else
-    APIOrder.getSellersOrder(10).then((res)=>{
+    APIOrder.getSellersOrder(1).then((res)=>{
       console.log("DATA: ",res)
-      this.setState({spinner:false,data:res,filterData:res})
+      this.setState({spinner:false,data:res,filterData:res,filterStatusLabel:"Pending"})
     })
     setTimeout(()=>this.fillDataForCheckout(),2000)
   })

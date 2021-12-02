@@ -77,6 +77,16 @@ class BuyreAccount extends Component {
   /*     onChangeText = () => {
         this.setState({ email: this.state.email })
     } */
+  componentDidMount(){
+    this.focusListener = this.props.navigation.addListener("onFocus", () => {
+      apiServices.getCountries().then((res) => {
+        this.setState({ countries: res });
+      });
+      this.getUserData();
+      // The screen is focused
+      // Call any action
+    });
+  }
 
   componentDidMount() {
     //console.log("CONTEXT: ",this.context)
@@ -313,12 +323,15 @@ class BuyreAccount extends Component {
           postal:postal_code,
           address:registered_address,
           defaultLanding:default_landing_page,
+          oldPassword:"",
+          password:"",
+          confirmPassword:"",
         })
         this.setUserData(res.data);
         this.setState({spinnerVisible:false})
     }).catch(err=>{
-      console.log("ERROR:",err.message)
-      Alert.alert("Error:\n",err.message)
+      console.log("ERROR:",err.response.data.message)
+      Alert.alert("Error:\n",err.response.data.message)
       this.setState({spinnerVisible:false});
       //Alert.alert("Error",err.response.data.message);
     })
