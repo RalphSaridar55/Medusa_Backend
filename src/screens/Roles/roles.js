@@ -133,10 +133,10 @@ export default class Roles extends Component {
                                 this.props.navigation.navigate("Edit",{item:i})
                             }}>
                                 <View style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
-                                    <View style={{ paddingTop: 20, paddingBottom: 20, display:'flex', flexDirection:'column',justifyContent:'space-between' }}>
+                                    {/* <View style={{ paddingTop: 20, paddingBottom: 20, display:'flex', flexDirection:'column',justifyContent:'space-between' }}> */}
                                         <Text>{i.role_name}</Text>
                                         <Text numeric style={{ marginRight: 15,color:'#C4C4C4' }}>{i.num_of_permission} Permissions</Text>
-                                    </View>
+                                    {/* </View> */}
                                 </View>
                             </TouchableOpacity>
                             ))

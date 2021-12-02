@@ -5,6 +5,7 @@ import forgotPasswordStyle from './ForgotPasswordStyle';
 import Spinner from 'react-native-loading-spinner-overlay';
 import * as apiUserServices from '../../core/apis/apiUserServices'
 import { maskEmail, maskNumber } from '../../shared/sharedFunctions/sharedFunctions'
+import { TouchableOpacityButton } from '../../components/TouchableOpacity';
 
 export default class ForgotPassword extends Component {
     constructor(props) {
@@ -21,7 +22,8 @@ export default class ForgotPassword extends Component {
         confirmPass: '',
         country:'',
         mobile:'',
-        otp_code:''
+        otp_code:'',
+        sendOtp:true
     }
 
     //verify user email and get user info data then save them in state
@@ -36,6 +38,8 @@ export default class ForgotPassword extends Component {
                 this.setState({ isLoading: false });
                 alert('Invalid e-mail address');
             }
+        }).catch(err =>{
+            Alert.alert("Error",err.response.data.message)
         })
     }
 
@@ -46,19 +50,30 @@ export default class ForgotPassword extends Component {
      */
     onValueChange = (radioBtnValue) => {
         if (radioBtnValue === 'otp') {
-            console.log(this.state)
-            apiUserServices.sendOtp({
-                //owner_email: this.state.userEmailInput,/**should use this --> this.state.userInfoFromApi.owner_email*/
-                owner_country_code: this.state.country,/**should use this --> this.state.userInfoFromApi.owner_country_code*/
-                owner_mobile_number: this.state.mobile,/**should use this --> this.state.userInfoFromApi.owner_mobile_number*/
-            }).then((otpRes) => {
-                console.log("OTP RES:",otpRes)
-                if (otpRes.statusCode === 201) {
-                    this.setState({ screenState: radioBtnValue, /* otp_code:otpRes.data.varification_code */ });
-                } else {
-                    alert('failed Sending OTP');
-                }
-            })
+            if(!this.state.sendOtp){
+                Alert.alert("Password Reset","Already sent a OTP, please wait 2 minutes before sending another OTP")
+                return
+            }
+            else{
+                apiUserServices.sendOtp({
+                    //owner_email: this.state.userEmailInput,/**should use this --> this.state.userInfoFromApi.owner_email*/
+                    owner_country_code: this.state.country,/**should use this --> this.state.userInfoFromApi.owner_country_code*/
+                    owner_mobile_number: this.state.mobile,/**should use this --> this.state.userInfoFromApi.owner_mobile_number*/
+                }).then((otpRes) => {
+                    console.log("OTP RES:",otpRes)
+                    if (otpRes.statusCode === 201) {
+                        this.setState({ sendOtp:false, screenState: radioBtnValue, otp_code:otpRes.data.varification_code });
+                    } else {
+                        alert('failed Sending OTP');
+                    }
+                setTimeout(()=>{
+                    this.setState({sendOtp:true})
+                },120000)
+                }).catch(err=>{
+                    console.log("ERROR:")
+                    Alert.alert("Error",err.response.data.message)
+                })
+            }
         } if (radioBtnValue === 'email') {
             apiUserServices.sendEmailLink(this.state.userInfoFromApi.owner_email).then((resMsg) => {
                 if (resMsg) {
@@ -71,17 +86,31 @@ export default class ForgotPassword extends Component {
 
     /**press next to verify otp*/
     _onPressNext = () => {
+        console.log(
+            typeof(this.state.otp),
+            typeof(this.state.mobile)
+        )
+        this.setState({isLoading:true})
+        if(this.state.otp.length!=4 || this.state.otp!=this.state.otp_code){
+            this.setState({isLoading:false})
+            Alert.alert("Error","Incorrect OTP")
+            return
+        }
         apiUserServices.verifyOtp({
             otp: this.state.otp,
-            owner_mobile_number: this.state.mobile/** should use this --> this.state.userInfoFromApi.owner_mobile_number */
+            owner_mobile_number: this.state.userInfoFromApi.owner_mobile_number
         }).then((res) => {
             console.log("VERIFYING OTP:",res.data.statusCode)
             if (res.data.statusCode === 200 || res.data.statusCode === 201) {
-                this.setState({ screenState: 'reset' });
+                this.setState({ screenState: 'reset', isLoading:false });
             } else {
                 Alert.alert("Error",res.data.message);
+                this.setState({ isLoading:false });
             }
-        }).ca
+        }).catch((err)=>{
+            Alert.alert("Error",err.response.data.message)
+            this.setState({  isLoading:false });
+        })
     }
 
     /** Check if password entered by user matches */
@@ -121,9 +150,14 @@ export default class ForgotPassword extends Component {
                     theme={{ colors: { primary: '#31c2aa' } }}
                     style={forgotPasswordStyle.inputView}
                 />
-                <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={()=>this._verifyEmail()}>
+                <TouchableOpacityButton 
+                text="Submit"
+                onPress={()=>this._verifyEmail()}
+                additionalButtonStyle={forgotPasswordStyle.loginBtn}
+                />
+                {/* <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={()=>this._verifyEmail()}>
                     <Text style={forgotPasswordStyle.loginText}>Submit</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </>
             );
             case 'picker': return (<>
@@ -137,32 +171,46 @@ export default class ForgotPassword extends Component {
             </>
             );
                 break;
-            case 'email': return (<>
-                <Headline style={forgotPasswordStyle.headlineStyle}>{"Reset Password"}</Headline>
-                <Card style={forgotPasswordStyle.cardEmailSent}>
-                    <Text style={forgotPasswordStyle.emailLinkMsg}>{this.state.emailLinkMsg}</Text>
-                </ Card>
-                <Button style={forgotPasswordStyle.btnLoginScreen} mode="contained"
-                    color='#31c2aa'
-                    onPress={() => { this.props.navigation.navigate('Login') }}>
-                    <Text style={forgotPasswordStyle.textBtn}>Back to login</Text>
-                </Button>
-            </>);
+            case 'email':
+                Alert.alert("Reset Password","Please check your e-mail for password reset link",[
+                    {text:"Ok",onPress:()=>this.props.navigation.goBack()}
+                ])
                 break;
+            // return (<>
+            //     <Headline style={forgotPasswordStyle.headlineStyle}>{"Reset Password"}</Headline>
+            //     <Card style={forgotPasswordStyle.cardEmailSent}>
+            //         <Text style={forgotPasswordStyle.emailLinkMsg}>{this.state.emailLinkMsg}</Text>
+            //     </ Card>
+            //     <Button style={forgotPasswordStyle.btnLoginScreen} mode="contained"
+            //         color='#31c2aa'
+            //         onPress={() => { this.props.navigation.navigate('Login') }}>
+            //         <Text style={forgotPasswordStyle.textBtn}>Back to login</Text>
+            //     </Button>
+            // </>);
+            //     break;
             case 'otp': return (<>
                 <Headline style={forgotPasswordStyle.headlineStyle}>{"Reset Password"}</Headline>
                 <TextInput
                     label="Mobile OTP Code*"
                     placeholder="*****"
                     mode="outlined"
+                    keyboardType="numeric"
                     outlineColor="#C4C4C4"
-                    onChangeText={(text) => { this.setState({ otp: text }) }}
+                    value={this.state.otp}
+                    onChangeText={(text) => { 
+                        console.log("TEXT: ",text, " ", typeof(text))
+                        if(text.length<=4)
+                            this.setState({ otp: text }) }}
                     theme={{ colors: { primary: '#31c2aa' } }}
                     style={forgotPasswordStyle.inputView}
                 />
-                <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={() => { this._onPressNext() }} >
+                <TouchableOpacityButton 
+                text="Next"
+                additionalButtonStyle={forgotPasswordStyle.loginBtn}
+                onPress={()=>{ this._onPressNext() }}/>
+                {/* <TouchableOpacity style={forgotPasswordStyle.loginBtn} onPress={() => { this._onPressNext() }} >
                     <Text style={forgotPasswordStyle.loginText}>Next</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </>);
             
                 break;

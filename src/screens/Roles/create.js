@@ -83,7 +83,9 @@ export default class AddRole extends Component {
             }
             console.log("PAYLOAD SHOULD BE: ",payload)
             apiServices.addRole(payload).then((res)=>{
-                Alert.alert("Role",res)
+                Alert.alert("Role",res,[
+                    {text:"OK",onPress:()=>this.props.navigation.goBack()}
+                  ])
                 this.setState({visible:false})
             }).catch(err=>{
                 console.log("Error:\n",err)

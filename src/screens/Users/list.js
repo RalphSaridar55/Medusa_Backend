@@ -71,6 +71,10 @@ export default class Users extends Component {
     apiServices.deleteSubUsers(id).then((res) => {
       console.log("Deleted", res);
       this.props.navigation.navigate("UserList");
+
+      this.setState({users:this.state.users.filter((item)=>{
+        return item.id != id
+      })})
     }).catch(err=>{
       Alert.alert("Error",err.response.data.message);
     });
@@ -121,7 +125,7 @@ export default class Users extends Component {
                       "Are you sure you want to delete this sub-user?",
                       [
                         { text: "No", onPress: () => console.log("refused") },
-                        { text: "Yes", onPress: () => this.deleteSubUser(i.id) },
+                        { text: "Yes", onPress: () => this.deleteSubUser(item.id) },
                       ]
                     )
                   }

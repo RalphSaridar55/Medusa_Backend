@@ -138,7 +138,7 @@ export default class EditUsers extends Component {
       };
       console.log("PAYLOAD ",payload)
       if(typeof(this.state.company_reg_doc=="string")){
-        editUserData(payload)
+        this.editUserData(payload)
       }
       else{
         new Promise (async(resolve,reject)=>{

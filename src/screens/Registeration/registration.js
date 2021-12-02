@@ -3,7 +3,7 @@ import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 import SelectMultiple from "react-native-select-multiple";
 import CollapsibleList from "react-native-collapsible-list";
 import * as UserApi from "../../core/apis/apiUserServices";
-import * as FileSystem from 'expo-file-system';
+import { TouchableOpacityButton } from "../../components/TouchableOpacity";
 import * as ApiDocument from "../../core/apis/apiDocumentService";
 import {
   SafeAreaView,
@@ -12,19 +12,15 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Touchable,
   Dimensions,
   TextInput as TI,
 } from "react-native";
 import {
   Text,
-  Button,
-  IconButton,
   Card,
   RadioButton,
   Checkbox,
 } from "react-native-paper";
-import Autocomplete from "react-native-autocomplete-input";
 import Header from "../../components/Header";
 import TextInput from "../../components/TextInput";
 import { emailValidator } from "../../helpers/emailValidator";
@@ -33,37 +29,22 @@ import { confirmPasswordValidator } from "../../helpers/confirmPasswordValidator
 import { docValidator } from "../../helpers/docValidator";
 import { nameValidator } from "../../helpers/nameValidator";
 import Spinner from "react-native-loading-spinner-overlay";
-import MultiSelect from "react-native-multiple-select";
 import apiUserServices from "../../core/apis/apiUserServices";
 import _ from "lodash";
 import * as ROUTE_LIST from "../../core/apis/apis-list";
 import * as DocumentPicker from "expo-document-picker";
 import { Picker } from "@react-native-picker/picker";
 import signupStyle from "./registrationStyle";
-import DropDownPicker from "react-native-dropdown-picker";
 import { registrationElements } from "./registrationElements";
 import registrationStyle from "./registrationStyle";
 import * as apiPortFolioServices from "../../core/apis/apiPortfolioServices";
-import * as registrationServices from "./registrationServices";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./registrationStyle";
-import { brand } from "expo-device";
 import Overlay from "react-native-modal-overlay";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { terms } from "./Terms";
 
-const typeList = [
-  {
-    label: "Seller & Buyer",
-    value: "1",
-  },
-  {
-    label: "Buyer",
-    value: "2",
-  },
-];
 const screenwidth = Dimensions.get("screen").width;
-const dummyData = ["John", "Sara", "Jess"];
 
 export default class Registartion extends Component {
   constructor(props) {
@@ -154,12 +135,59 @@ export default class Registartion extends Component {
       showTerms: false,
 
       otp: "",
+      otpApi:"",
+      sendOtp:true,
     };
   }
 
   onValueChange = (radioBtnValue) => {
     this.setState({ userRole: radioBtnValue });
   };
+
+
+  checkOtp = () =>{
+    //verifying OTP
+    console.log(this.state.otp +" \n " + this.state.otpApi)
+      if(this.state.otp != this.state.otpApi){
+        Alert.alert("Error","Wrong OTP")
+        this.setState({otp:""})
+      }
+      else{
+        console.log("Successful")
+        this.setState({
+          verifiedNumber: true,
+          overlay: "terms",
+          showTerms: false,
+        });
+      }
+  }
+
+  sendOtp = () =>{
+
+    //sending OTP
+    if(this.state.sendOtp){
+       this.setState({loading:true})
+        let payload = {
+          owner_country_code: this.state.countryCode,
+          owner_mobile_number: this.state.phoneNumber
+        }
+         UserApi.sendOtp(payload)
+           .then((res) => {
+             console.log("RES:", res);
+             if (res.statusCode) {
+               this.setState({overlay: "otp", showTerms: true,otpApi:res.data.varification_code, loading:false, sendOtp:false})
+               setTimeout(()=>{
+                 this.setState({sendOtp:true})
+               },120000)
+             }
+           })
+           .catch((err) => {
+             Alert.alert("Error", err.response.data.message);
+             this.setState({overlay: "otp", showTerms: true, loading:false, sendOtp:false})
+           });
+    }
+     
+  }
 
   returnText = (arr) =>{
     let str = '';
@@ -181,28 +209,15 @@ export default class Registartion extends Component {
         Categoryarry.push({ label: category, value: id });
         this.setState({ fetchedcategories: Categoryarry });
 
-        //this.state.fetchedCategories=[
-        //    {label:"Electronics",value:1},
-        //    {label:"Food",value:2},
-        //];
       }
     });
   };
 
   getsub = () => {
-    //this.state.fetchedCategories=[
-    //    {label:"Electronics",value:1},
-    //    {label:"Food",value:2},
-    //];
     this.setState({ subcategories: [] });
     const filter = this.state.categoryData.filter(
       (option) => option.id === this.state.value
     );
-    //this.state.fetchedCategories is a modified version
-    //of categoryData
-    //this.state.value is the category User's chosen
-    //we filter only where the category id === this.state.value
-    //e.g: filter = [{id:.... ,}]
     for (let i = 0; i < filter.length; i++) {
       const subDetails = filter[i].subcategory.map((option) => ({
         value: option.id,
@@ -213,29 +228,6 @@ export default class Registartion extends Component {
       this.setState({ fetchedSubcategories: subDetails });
     }
     console.log("Data: ", this.state.fetchedSubcategories);
-  };
-
-  //working here
-  getBrands = () => {
-    console.log("\n\n\n\n", this.state.fetchedSubcategories);
-    this.setState({ fetchedBrands: [] });
-    let brands = [];
-    let brandResult = [];
-    for (let index = 0; index < this.state.subcategories.length; index++) {
-      //   const id = this.state.subcategories[index];
-      //   const filter = this.state.fetchedSubcategories.filter(option => option.value === id);
-      //   brands.push({...filter});
-    }
-
-    for (let i = 0; i < brands.length; i++) {
-      console.log(brands[i][0].Brands[0].brand_name);
-    }
-    //   brands[i].Brands.map(option => {
-    //     console.log('res: ',option )
-    //     ({ value: option.id, label: option.brand_name })
-    //  })
-    //console.log('--->-----> ', brandResult);
-    //this.setState({ fetchedBrands:{ ...brands} })
   };
 
   pickDocument = async (e) => {
@@ -259,9 +251,6 @@ export default class Registartion extends Component {
         console.log(error);
       }
     }
-    /* e.typeDoc==="Trade"?console.log("test"):console.log(123);
-        this.setState({ docs: result.uri })
-        alert(result.uri); */
   };
 
   verifyNumber = () =>{
@@ -269,40 +258,13 @@ export default class Registartion extends Component {
       if(this.state.phoneNumber<8 || this.state.countryCode<3){
         Alert.alert("Error","Please insert a valid country code and phone number before verifying.");
         return;
+      
       } else {
-        let payload = {
-          owner_country_code: this.state.countryCode,
-          owner_mobile_number: this.state.phoneNumber,
-        };
-        console.log("Payload:",payload)
-        UserApi.sendOtp(payload)
-          .then((res) => {
-            console.log("RES:", res);
-            if (res.statusCode) {
-              this.setState({ overlay: "otp", showTerms: true });
-            }
-          })
-          .catch((err) => {
-            Alert.alert("Error", err.response.data.message);
-          });
+        this.setState({ overlay: "otp", showTerms: true });
       }
-    //   else{
-    //     let payload={
-    //       owner_country_code:this.state.countryCode,
-    //       owner_mobile_number:this.state.phoneNumber
-    //     }
-    //     //this.setState({overlay:"otp",showTerms:true})
-    //     UserApi.sendOtp(payload).then((res)=>{
-    //       console.log("RES:",res);
-    //       if(res.statusCode){
-    //         this.setState({overlay:"otp",showTerms:true})
-    //       }
-    //     }).catch(err=>{
-    //       Alert.alert("Error",err.response.data.message)
-    //     })
-    //   }
-    // }else{
-    //   Alert.alert("Verification","Phone number already verified")
+    }
+    else {
+      Alert.alert("Phone Verification","Phone number already verified")
     }
   };
 
@@ -454,13 +416,11 @@ export default class Registartion extends Component {
                   return h.id === k[0].id;
                 });
                 console.log("RES: ", res);
-                //if (k[0].sub_category_id === j[0].id){
                 if (res.length > 0) {
                   console.log("PUSHING TO ARRAY BRAND");
                   brandsdata.push({ brand_id: res[0].id });
                 }
                 //}
-                //console.log("BRANDSDATA BECOMES:",brandsdata)
               });
               if (j[0].category_id === i[0].id) {
                 subcatdata.push({
@@ -552,26 +512,9 @@ export default class Registartion extends Component {
           ]
           
           resolve (Promise.all(await documentBlobConverter(payloadToSend)))
-          /* const passportUri = FileSystem.documentDirectory+this.state.passport.name;
-          const tradingUri = FileSystem.documentDirectory+this.state.trade.name;
-  
-          await FileSystem.copyAsync({
-            from: this.state.passport.uri,
-            to: passportUri
-          })
-
-          await FileSystem.copyAsync({
-            from: this.state.trade.uri,
-            to: tradingUri
-          }) */
         }).then((res)=>{
-          //console.log("Company: ",payload.company_reg_doc)
-          //console.log("Trading: ",payload.trading_license_doc)
           let company = payload.company_reg_doc
           let trading = payload.trading_license_doc
-          //let compBlob = await FileSystem.readAsStringAsync(results[0], { encoding: 'base64' }); 
-          //let tradeBlob = await FileSystem.readAsStringAsync(results[1], { encoding: 'base64' }); 
-        //console.log("SENDING: ",changedForrrmatImages)
           return ([
             {document:res[0], extension:company.substring(company.length-4,company.length)},
             {document:res[1], extension:trading.substring(trading.length-4,trading.length)}
@@ -602,92 +545,6 @@ export default class Registartion extends Component {
     }
   };
 
-  setOpen = (open) => {
-    this.setState({
-      open,
-    });
-  };
-  //1
-  setCategoryValue = async (callback) => {
-    await this.setState((state) =>
-      //console.log('state : ', state),
-      ({
-        value: callback(state.value),
-      })
-    );
-    //console.log('--->',this.state.value)
-    this.getsub();
-  };
-
-  //2
-  setCategories = (callback) => {
-    this.setState((state) => ({
-      fetchedcategories: callback(state.fetchedcategories),
-    }));
-  };
-
-  setCountryValue = async (callback) => {
-    await this.setState((state) =>
-      //console.log('state : ', state),
-      ({
-        country: callback(state.country),
-      })
-    );
-    console.log("--->", this.state.country);
-  };
-
-  setCountries = (callback) => {
-    this.setState((state) => ({
-      fetchedCountries: callback(state.fetchedCountries),
-    }));
-  };
-
-  setOpenSub = (opensub) => {
-    this.setState({
-      opensub,
-    });
-  };
-
-  setSubCategory = async (callback) => {
-    await this.setState((state) => ({
-      subcategories: callback(state.subcategories),
-    }));
-    if (this.state.subcategories.length > 0) {
-      this.getBrands();
-    }
-  };
-
-  setSubCategories = (callback) => {
-    this.setState((state) => ({
-      fetchedSubcategories: callback(state.fetchedSubcategories),
-    }));
-  };
-
-  setOpenBrands = (openBrand) => {
-    this.setState({
-      openBrand,
-    });
-  };
-
-  setBrand = async (callback) => {
-    alert("bnjr");
-    await this.setState((state) => ({
-      brands: callback(state.brands),
-    }));
-    alert(this.state.brands);
-  };
-
-  setBrands = (callback) => {
-    this.setState((state) => ({
-      fetchedBrands: callback(state.fetchedBrands),
-    }));
-  };
-
-  onchange = async (itemValue) => {
-    await this.setState({ accountType: itemValue });
-    this.setState({ display: !display });
-  };
-
   componentDidMount() {
     apiPortFolioServices.getCategories().then((result) => {
       console.log(result);
@@ -703,26 +560,11 @@ export default class Registartion extends Component {
     });
   }
 
-  /**
-   *
-   * @param {*} dropDownElement
-   * @returns drop down data for registration element file to display them
-   */
-  onSelectionsChange = (selected) => {
-    // selectedFruits is array of { label, value }
-    this.setState({ subcategories: selected });
-    console.log("---->", this.state.subcategories);
-  };
 
   fetchCategories = (item, type) => {
-    //console.log(item);
     console.log("TYPE: ", type);
     switch (type[0]) {
       case "query":
-        /* if(this.state.isSetCategory){
-              this.setState({isSetCategory:false,isSetSubCategory:false, fetchCategories:[], fetchedBrands:[], subcategories:[],brands:[]})
-            }
-            else{ */
         this.setState({ category: item });
         let r = [];
         let db = [];
@@ -762,11 +604,6 @@ export default class Registartion extends Component {
         //}
         break;
       case "query2":
-        /* if(this.state.isSetSubCategory){
-          this.setState({isSetSubCategory:false,fetchedBrands:[], subcategories:[],brands:[]})
-        }
-        else{ */
-        //console.log("FETCHED SUBCATEGORIES: ",this.state.fetchedSubcategories)
         console.log("ITEM: ", item);
         let r2 = [];
         let db2 = [];
@@ -778,7 +615,6 @@ export default class Registartion extends Component {
             subCatApi.push(i2.subcategory);
           });
         });
-        //console.log("SUBCATAPI:",subCatApi)
         item.map((i) => {
           let subCategories = [];
           subCatApi.map((i2, index) => {
@@ -825,7 +661,6 @@ export default class Registartion extends Component {
             brandsApi.push(i2.brands);
           });
         });
-        //console.log("FETCHEDSUBCATS:", this.state.fetchedSubcategories);
         console.log("BRANDS API:", brandsApi);
         item.map((it) => {
           let brands = [];
@@ -836,7 +671,6 @@ export default class Registartion extends Component {
           });
           api3.push(brands);
           console.log("CHOSEN BRANDS:", api3);
-          //console.log("ITEM:",it)
           api3[0].map((i3) => {
             if (it.value === i3.id)
               r3.push({
@@ -845,45 +679,9 @@ export default class Registartion extends Component {
                 subcat_id: i3.sub_category_id,
               });
           });
-          /* let res = this.state.fetchedApiCategory.filter((i2, index) => {
-            if (this.state.categoryDb[index])
-              return i2.id === this.state.categoryDb[index].category_id;
-          }); */
-          /*  console.log("FETCHING:",res);
-          res.map((i2)=>{
-            i2.subcategory.map((i)=>{
-              console.log("III:",i)
-              let results = i.brands.filter((i5)=>{
-                return i5.id === it.value
-              })
-              console.log("RESULTS:",results)
-              if(results.length>0)
-                r3.push({label:it.label,value:it.value,sub_category_id:results.sub_category_id})
-              console.log("SUBCATEGORY:",i)
-            })
-          }) */
 
           console.log("DATA FOR REGISTRATION:", r3);
           console.log("SUB API:", api3);
-          /* let res = this.state.fetchedApiCategory.filter((i2, index) => {
-            if (this.state.categoryDb[index])
-              return i2.id === this.state.categoryDb[index].category_id;
-          });
-          res.map((i2)=>{
-            let resp= i2.subcategory.filter((i3,index)=>{
-              if(this.state.subCategoryDB[index])
-                return i3.id === this.state.subCategoryDB[index].id
-            })
-            console.log("RESP",resp)
-          })
-
-          console.log("BRAND RES",res);
-          this.state.fetchedSubcategories.map((i) => {
-            i.brands.map((k) => {
-              if (k.id === it.value)
-                br.push({ ...it, subcategory_id: k.sub_category_id });
-            });
-          }); */
         });
 
         this.setState({ brands: item, brandsDB: r3, apiBrands: api3 });
@@ -929,9 +727,6 @@ export default class Registartion extends Component {
               onSelectionsChange={(item) =>
                 this.fetchCategories(item, [element.query])
               }
-              /* renderLabel={(label)=>{
-                [element.value]=="category"?tlabel:<Text>Label</Text>
-              }} */
             />
           </CollapsibleList>
         </View>
@@ -1047,9 +842,9 @@ export default class Registartion extends Component {
     });
   };
 
-  DrawTouchableOpacity = (e, i) => {
+  DrawTouchableOpacity = (e, index) => {
     return (
-      <View key={i}>
+      <View key={index}>
         <TouchableOpacity
           color="#6E91EC"
           icon="file"
@@ -1127,10 +922,10 @@ export default class Registartion extends Component {
                   label="1234"
                   value={this.state.otp}
                   keyboardType="numeric"
+                  maxLength={4}
                   //value={this.state[element.stateValue]}
                   onChangeText={(text) => {
-                    if(this.state.otp.length<4)
-                      this.setState({ otp: text })
+                    this.setState({otp:text})
                   }}
                   autoCapitalize="none"
                   // keyboardType={element.keyBoardType}
@@ -1144,14 +939,10 @@ export default class Registartion extends Component {
                 />
                 <TouchableOpacity
                   onPress={() => {
-                    if (this.state.otp > 3) {
                       //call an api
-                      this.setState({
-                        verifiedNumber: true,
-                        overlay: "terms",
-                        showTerms: false,
-                      });
-                    }
+                      this.state.sendOtp?
+                        this.sendOtp():
+                        this.checkOtp()
                   }}
                   style={{
                     backgroundColor: "#31C2AA",
@@ -1163,7 +954,7 @@ export default class Registartion extends Component {
                     height: 30,
                   }}
                 >
-                  <Text style={styles.loginBtnText}>Verify</Text>
+                  <Text style={styles.loginBtnText}>{this.state.sendOtp?"Send OTP":"Verify OTP"}</Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity
                 onPress={this.onRegister}
@@ -1235,9 +1026,6 @@ export default class Registartion extends Component {
               </View>
               <View style={styles.verifyNumber}>
                 <Checkbox
-                  /* theme={{
-                      colors: { primary: "#31c2aa", underlineColor: "transparent" },
-                    }} */
                   status={this.state.checkRead ? "checked" : "unchecked"}
                   onPress={() => {
                     this.setState({ checkRead: !this.state.checkRead });
@@ -1256,12 +1044,14 @@ export default class Registartion extends Component {
                   </Text>
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={this.onRegister}
-                style={[signupStyle.loginBtn]}
-              >
-                <Text style={styles.loginBtnText}>Register</Text>
-              </TouchableOpacity>
+              
+            <View style={{marginTop:10}}>
+              <TouchableOpacityButton
+              style={[signupStyle.loginBtn]}
+              text="Register"
+              onPress={this.onRegister}
+              />
+            </View>
             </Card>
           </ScrollView>
         </SafeAreaView>

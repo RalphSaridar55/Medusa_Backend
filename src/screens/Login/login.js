@@ -11,6 +11,7 @@ import * as Device from "expo-device";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as apiServices from "../../core/apis/apiUserServices";
 /* import {HeadContext} from '../../../App'; */
+import { TouchableOpacityButton } from '../../components/TouchableOpacity';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -137,13 +138,18 @@ export default function Login({ navigation }) {
                 <Text style={loginStyle.forgot}>Forgot your password ?</Text>
               </TouchableOpacity>
             </View>
-            <Button
+            <TouchableOpacityButton
+            additionalButtonStyle={loginStyle.loginBtn}
+            text="Login"
+            onPress={() => onLoginPressed()}
+            />
+            {/* <Button
               mode="contained"
               onPress={() => onLoginPressed()}
               style={loginStyle.loginBtn}
             >
               Login
-            </Button>
+            </Button> */}
             <View>
               <TouchableOpacity
                 onPress={() => navigation.navigate("Registration")}

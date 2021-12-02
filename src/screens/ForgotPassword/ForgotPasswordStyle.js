@@ -52,11 +52,10 @@ export default StyleSheet.create({
     loginBtn: {
         backgroundColor: "#31C2AA",
         borderRadius: 25,
-        height: 50,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
-        marginBottom: 10
+        paddingHorizontal:0,
     },
     loginText: {
         color: "white"
