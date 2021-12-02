@@ -414,7 +414,7 @@ export default class ProductList extends Component {
                     <Appbar style={{backgroundColor:"#E9F3FF" , color:"#fff"}}>
                         <Appbar.Content title={this.state.filterProducts.length>0?this.state.filterProducts.filter
                         ((i)=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase())).length + " " + "Results":""} onPress={this.setView} style={{ fontSize: 14 }} />
-                        <Appbar.Action icon={()=><Entypo name="location-pin" size={24} color="black" />} onPress={() => {
+                        <Appbar.Action icon="pin"/* {<Entypo name="location-pin" size={24} color="black" />} */ onPress={() => {
                         console.log(this.locationRef.current.focus())
                         }} />
                         <Appbar.Action icon="sort-descending" onPress={() => {

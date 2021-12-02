@@ -257,25 +257,6 @@ export default class AddProduct extends Component {
     this.setState({ images: res });
   }
 
-  pickDocument = async (e, i) => {
-    let result = await DocumentPicker.getDocumentAsync({});
-    let test = docValidator(result.name);
-    if (test == true) {
-      Alert.alert(
-        "Wrong Extensions",
-        "Please only upload pdf or docx type of files"
-      );
-      this.setState({ [e]: true });
-    } else {
-      //console.log(result);
-      try {
-        this.setState({ [i]: result, [e]: false });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
   drawImages = () => {
     return (
       <>
@@ -292,6 +273,7 @@ export default class AddProduct extends Component {
                 ? require("../../../assets/images/default-image.png")
                 : { uri: this.state.images[0] }
             }
+            resizeMode="cover"
             style={{ width: screenwidth, height: screenheight * 0.3 }}
           />
           {this.state.images.length > 0 && (

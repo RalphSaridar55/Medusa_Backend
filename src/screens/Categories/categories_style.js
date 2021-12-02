@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         flex: 1,
         alignSelf: 'center',
-        color: "#31c2aa",
+        color: "#6E91EC",
         fontWeight: 'bold'
     }
 });

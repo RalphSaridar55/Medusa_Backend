@@ -312,7 +312,7 @@ export default class AddProduct extends Component {
   }
 
   pickDocument = async (e, i) => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true) {
       Alert.alert(
@@ -323,7 +323,7 @@ export default class AddProduct extends Component {
     } else {
       console.log("DOC: ", result);
       try {
-        this.setState({ [i]: result.uri, [e]: false });
+        this.setState({ [i]: result, [e]: false });
       } catch (error) {
         console.log(error);
       }

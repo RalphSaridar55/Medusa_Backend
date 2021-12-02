@@ -3,6 +3,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from "react-na
 import Spinner from "react-native-loading-spinner-overlay";
 import * as API from "../../core/apis/apiProductServices";
 import * as APIORder from '../../core/apis/apiOrderServices'
+import * as ApiDocument from '../../core/apis/apiDocumentService'
 import { styles } from "./valueadded_style";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
@@ -10,6 +11,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
+import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 
 const data = {
   name: "Product 1",
@@ -22,7 +24,7 @@ const ValueAdded = ({ navigation,route }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [total, setTotal] = useState(0);
   const [routeData,setRouteData] = useState();
-  const [document,setDocument] = useState({value:"",error:true});
+  const [document,setDocument] = useState({value:null,error:true});
 
   const calculateTotal = (value) => {
     console.log("VALUE IS: ", value);
@@ -45,7 +47,7 @@ const ValueAdded = ({ navigation,route }) => {
   };
 
   const pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:false});
     let test = docValidator(result.name);
     if (test == true) {
       Alert.alert(
@@ -56,7 +58,7 @@ const ValueAdded = ({ navigation,route }) => {
     } else {
       //console.log(result);
       try {
-        setDocument({value:result.uri,error:false})
+        setDocument({value:result,error:false})
       } catch (error) {
         console.log(error);
       }
@@ -77,14 +79,34 @@ const ValueAdded = ({ navigation,route }) => {
       Alert.alert("Error","Please select atleast one service")
       return
     }
-    if(document.value==null){
+    if(document.value.uri==undefined || document.value==null){
       setIsVisible(false)
       Alert.alert("Error","Please select a document")
       return
     }
     let arr = [];
     let doc =[];
-    doc.push(document.value)
+    
+    if(typeof(this.state.trading)!="string")
+      new Promise (async(resolve,reject)=>{
+        let payloadToSend = []
+          payloadToSend.push({
+            uri:document.value.uri,name:document.value.name
+          })
+
+        let blob =await Promise.all(await documentBlobConverter(payloadToSend))
+        resolve ({blob:blob, payloadToSend:payloadToSend})
+      }).then((res)=>{
+        let docName = res.payloadToSend[0].name
+        let formatted = {document:res.blob[0], extension:docName.substring(docName.length-4, docName.length)}
+        ApiDocument.uploadDoc({document:formatted.document, extension:formatted.extension})
+        .then((res)=>{
+          doc.push(res)
+        })
+        .catch(err=>console.log("Error:",err.response.data.message))
+      })
+      else
+        doc.push(document.value)
     services.map((item)=>{
       let res = fetchedServices.filter((item2) => {
         return item2.value === item.value;
@@ -96,6 +118,7 @@ const ValueAdded = ({ navigation,route }) => {
       value_added_services:arr,
     }
     console.log("PAYLOAD BECOMES: ",payload)
+
     APIORder.addValueAddedServices(payload).then((res)=>{
       setIsVisible(false)
       Alert.alert("Added Services",res,[

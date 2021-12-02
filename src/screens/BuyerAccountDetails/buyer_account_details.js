@@ -10,6 +10,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
+import {documentBlobConverter} from '../../helpers/documentBlobConverter';
 import { accountDetails1, addresses, telephone } from "./map";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInput } from "react-native-paper";
@@ -89,7 +90,7 @@ class BuyreAccount extends Component {
 
   setUserData = async (data) =>{
     try {
-      await AsyncStorage.setItem('user_details',JSON.stringify(data));
+      let value = await AsyncStorage.setItem('user_details',JSON.stringify(data));
       if (value !== null) {
         // We have data!!
         console.log("DATA RECEIVED FROM ASYNC STORAGE: ",value)
@@ -237,29 +238,54 @@ class BuyreAccount extends Component {
         }
         console.log("PAYLOAD: ",payload)
         this.setState({spinnerVisible:true})
-        
-        new Promise (async(resolve,reject)=>{
-          let payloadToSend = [
-            {uri:this.state.company.uri,name:this.state.company.name},
-            {uri:this.state.trading.uri,name:this.state.trading.name},
-          ]
-          resolve (Promise.all(await documentBlobConverter(payloadToSend)))
-        }).then((res)=>{
-          let company = this.state.company.name
-          let trading = this.state.trading.name
-          return ([
-            {document:res[0], extension:company.substring(company.length-4, company.length)},
-            {document:res[1], extension:trading.substring(trading.length-4, trading.length)},
-          ])
-        }).then(async(res)=>{
-          let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
-          let trading_reg_doc = await ApiDocument.uploadDoc({document:res[1].document,extension:res[1].extension}).catch(err=>console.log("Error:",err.response.data.message))
-          return await ({company_reg_doc,trading_reg_doc})
-        }).then((res)=>{
-          payload.company_reg_doc = res.company_reg_doc;
-          payload.trading_license_doc = res.trading_reg_doc;
+        if(typeof(this.state.company)=="string" && typeof(this.state.trading)=="string"){
           this.updateUserDetails(payload)
-      })
+        }
+        else{
+          new Promise (async(resolve,reject)=>{
+            let payloadToSend = []
+            if(typeof(this.state.company)!="string")
+              payloadToSend.push({
+                uri:this.state.company.uri,name:this.state.company.name
+              })
+            if(typeof(this.state.trading)!="string")
+              payloadToSend.push({
+                uri:this.state.trading.uri,name:this.state.trading.name
+              })
+
+            let blob =await Promise.all(await documentBlobConverter(payloadToSend))
+            resolve ({blob:blob, payloadToSend:payloadToSend})
+          }).then((res)=>{
+            // console.log("RES: ",res)
+            let result = res.payloadToSend.map((item,index)=>{
+              let docName = item.name
+              // console.log("DOCUENT:",res.blob[index])
+              return {document:res.blob[index], extension:docName.substring(docName.length-4, docName.length)}
+
+            })
+            return (result)
+          }).then(async(res)=>{
+            //console.log("RES: ",res)
+            let names = ["company_reg_doc", "trading_license_doc"]
+            let result = await Promise.all(await res.map(async(item,index)=>{
+             let result_data = await ApiDocument.uploadDoc({document:item.document,extension:item.extension})
+             .catch(err=>console.log("Error:",err.response.data.message))
+
+             return {[names[index]]:result_data}
+             }))
+             console.log("RESULT: ",result)
+           return result
+          }).then(async(res)=>{
+            console.log("RES: ",await res)
+            console.log("RES: ",res)
+            res.map((item)=>{
+              console.log("VALUES")
+              console.log("KEYS",Object.keys(item))
+              payload[Object.keys(item)[0]]=Object.values(item)[0]
+            })
+            this.updateUserDetails(payload)
+        })
+        }
     }
   };
 

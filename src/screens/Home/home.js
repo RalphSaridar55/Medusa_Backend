@@ -172,10 +172,12 @@ const Home =(props)=> {
                             return  <TouchableOpacity style={styles.card} onPress={() => console.log("TST")} key={index}>
                                 <View style={styles.cardHeader}>
                                 </View>
-                                <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
-                                <View style={styles.cardFooter}>
+                                <View style={{marginBottom:100}}>
+                                    <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode='cover' />
+                                </View>
+                                <View style={[styles.cardFooter,{position:'absolute',width:'100%',bottom:10}]}>
                                     <View style={{ alignItems: "center", justifyContent: "center" }}>
-                                        <Text style={styles.name}>{item.product_name}</Text>
+                                        <Text style={[styles.name,{textAlignVertical:'bottom'}]}>{item.product_name}</Text>
                                         <Text style={styles.position}></Text>
                                     </View>
                                 </View>
