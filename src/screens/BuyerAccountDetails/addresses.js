@@ -153,7 +153,9 @@ class Addresses extends Component {
     apiServices.addAddress(data).then((result) => {
       //console.log(result.data.data)
       this.setState({visible:false})
-      Alert.alert("Address", "Address Added Successfully");
+      Alert.alert("Address", "Address Added Successfully",[
+        {text:"Ok",onPress:()=>this.props.navigation.goBack()}
+      ]);
       //console.log('compo func',result);
     }).catch(err=>{
       console.log("Error:\n",err)

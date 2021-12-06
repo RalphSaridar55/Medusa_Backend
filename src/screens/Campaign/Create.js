@@ -514,31 +514,11 @@ const Create = ({ navigation, route }) => {
               </View>
             </View>
             
-
-            <View
-                style={{
-                  flexDirection: "row",
-                  width: screenWidth * 0.7,
-                  marginTop: 20,
-                }}
-              >
-                {/* <TouchableOpacity
-                  onPress={() => setVisible({ ...visible, modal: true })}
-                  style={[
-                    styles.loginBtn,
-                    { backgroundColor: "red"  },
-                  ]}
-                >
-                  <Text style={[styles.loginBtnText]}>Discard</Text>
-                </TouchableOpacity> */}
-                <TouchableOpacity
-                  onPress={() => setVisible({ ...visible, modal: true, overlayType:"Ad" })}
-                  style={styles.loginBtn}
-                >
-                  <Text style={styles.loginBtnText}>Submit</Text>
-                </TouchableOpacity>
-              </View>
           </View>
+          <TouchableOpacityButton
+            text="Submit"
+            onPress={() => setVisible({ ...visible, modal: true, overlayType:"Ad" })}
+          />
         </View>
       </ScrollView>
     </ImageBackground>

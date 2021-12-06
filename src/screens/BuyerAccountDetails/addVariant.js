@@ -163,29 +163,29 @@ export default class AddProduct extends Component {
       //let sendingData = {...this.state.dataFromRoute,variant:{...payload}}
 
       new Promise(async(resolve,rejection)=>{
+        if(payload.variant_image.substring(0,4)=="http")
+          return
         let media = await FileSystem.readAsStringAsync(payload.variant_image, { encoding: 'base64' }); 
 
-      // let resImage = async()=>{
-      //   console.log("vairant image: ",payload.variant_image)
-      //   return 1
-      //   return; 
-      // }
-        //console.log("SENDING: ",changedFormatImages)
-        //console.log("Fun:",resImage)
         resolve (
           ({
-            extension: payload.variant_image.substring(payload.variant_image.length-4,payload.variant_image.length-1),
+            extension: payload.variant_image.substring(payload.variant_image.length-4,payload.variant_image.length),
             media: media
           })
         )
       }).then(async(res2)=>{
+        
+        if(payload.variant_image.substring(0,4)=="http")
+          return
           let result = await res2
           await console.log('RESULT: ',result)
           let resultImg = await ApiDocument.uploadDoc({document:result.media,extension:result.extension});
           return await resultImg
       }).then(async(res)=>{
         //this.setState({loading:false})
-        payload.variant_image = await res
+        
+        if(payload.variant_image.substring(0,4)!="http")
+           payload.variant_image = await res
         console.log("PAYLOAD ")
         if(this.props.route.params.type=="edit"){
           payload={...payload,variant_id:this.props.route.params.id}

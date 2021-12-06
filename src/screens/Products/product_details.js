@@ -488,9 +488,9 @@ class ProductDetails extends Component {
               </Text>
               <MaterialCommunityIcons name="close" size={24} color="red"  onPress={()=>this.setState({modalVisible:false,typeOverlay:'buy'})}/>
           </View>
-          <View style={{flexDirection:'column',marginVertical:20}}>
+          <View style={{flexDirection:'column',marginTop:20}}>
           {this.state.typeOverlay=="buy"?<><View style={{width:150,paddingHorizontal:10}}>
-                  <TouchableOpacity
+                  <TouchableOpacity 
                       onPress={()=>{
                           this.setState({modalVisible:false});
                           this.props.navigation.navigate("Checkout",{screen:"Delivery",params:{products:this.state.dataFromApi, order:this.state.order,type:"buy"}})

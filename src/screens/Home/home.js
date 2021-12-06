@@ -88,23 +88,39 @@ const Home =(props)=> {
         })
     }
 
-    useFocusEffect(
-        useCallback(()=>{
-            setIsVisible(true)
-            apiProducts.getTopSellingAndFeatured().then((res)=>{
-                //console.log("CONSOLE: ",res)
-                setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
-            }).catch(err=>console.log(":::",err.response.data.message))
-            apiProducts.getGroupProducts().then((res)=>{
-                setCarousel(res)
-            }).catch(err=>console.log(":::",err.response.data.message))
-            apiProducts.getHomeCategories().then((res)=>{
-                console.log(":::: ",res)
-                setCategories(res)
-                setIsVisible(false)
-            }).catch(err=>console.log(":::",err.response.data.message))
-        },[props.route.name])
-    )
+    useEffect(()=>{
+        setIsVisible(true)
+        apiProducts.getTopSellingAndFeatured().then((res)=>{
+            //console.log("CONSOLE: ",res)
+            setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
+        }).catch(err=>console.log(":::",err.response.data.message))
+        apiProducts.getGroupProducts().then((res)=>{
+            setCarousel(res)
+        }).catch(err=>console.log(":::",err.response.data.message))
+        apiProducts.getHomeCategories().then((res)=>{
+            console.log(":::: ",res)
+            setCategories(res)
+            setIsVisible(false)
+        }).catch(err=>console.log(":::",err.response.data.message))
+    },[])
+
+    // useFocusEffect(
+    //     useCallback(()=>{
+    //         setIsVisible(true)
+    //         apiProducts.getTopSellingAndFeatured().then((res)=>{
+    //             //console.log("CONSOLE: ",res)
+    //             setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
+    //         }).catch(err=>console.log(":::",err.response.data.message))
+    //         apiProducts.getGroupProducts().then((res)=>{
+    //             setCarousel(res)
+    //         }).catch(err=>console.log(":::",err.response.data.message))
+    //         apiProducts.getHomeCategories().then((res)=>{
+    //             console.log(":::: ",res)
+    //             setCategories(res)
+    //             setIsVisible(false)
+    //         }).catch(err=>console.log(":::",err.response.data.message))
+    //     },[props.route.name])
+    // )
 
         return(
         <View style={styles.container}>

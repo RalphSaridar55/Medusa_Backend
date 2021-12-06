@@ -9,20 +9,15 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
-import * as API from "../../core/apis/apiProductServices";
 import * as APiOrder from '../../core/apis/apiOrderServices';
 import { styles } from "./valueadded_style";
 import CollapsibleList from "react-native-collapsible-list";
-import SelectMultiple from "react-native-select-multiple";
-import * as DocumentPicker from "expo-document-picker";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Overlay from "react-native-modal-overlay";
 import { RenderPicker } from "../../components/Picker";
-import {Picker} from '@react-native-picker/picker';
 
 const detailedOrder = ({ route, navigation }) => {
   const screenWidth = Dimensions.get("screen").width;

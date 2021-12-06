@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     cardFooter: {
-        paddingVertical: 17,
+        // paddingVertical: 17,
         paddingHorizontal: 16,
         borderTopLeftRadius: 1,
         borderTopRightRadius: 1,

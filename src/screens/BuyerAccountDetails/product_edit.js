@@ -246,7 +246,7 @@ export default class AddProduct extends Component {
           tag:"",tagsArray:tags
         },
         images:images,
-        //product_services:services,
+        product_services:services,
 
       })
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
@@ -356,6 +356,7 @@ export default class AddProduct extends Component {
         <SafeAreaView>
           <ScrollView
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
             style={{ marginVertical: 30, marginHorizontal: 10 }}
           >
             <View
@@ -575,7 +576,7 @@ export default class AddProduct extends Component {
           style={[
             styles.docPicker,
             {
-              borderColor: "#A6A6A6",
+              // borderColor: "#A6A6A6",
               backgroundColor: "#fff",
               marginVertical: 0,
               marginHorizontal: 10,
@@ -621,7 +622,7 @@ export default class AddProduct extends Component {
               style={[
                 styles.docPicker,
                 {
-                  borderColor: "#A6A6A6",
+                  // borderColor: "#A6A6A6",
                   backgroundColor: "#fff",
                   marginVertical: 0,
                 },

@@ -1,4 +1,4 @@
-import * as apiServices from "../../core/apis/apiUserServices";
+  import * as apiServices from "../../core/apis/apiUserServices";
 import React, { Component } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
@@ -100,7 +100,7 @@ export default class Users extends Component {
                 </Text>
                 <Text style={styles.msgTxt}>{item.role_name}</Text>
                 <Text style={styles.mblTxt}>
-                  Last Active {item.last_login.substr(0, 10)}
+                  Created / Updated on {item.last_login.substr(0, 10)}
                 </Text>
               </View>
             </View>

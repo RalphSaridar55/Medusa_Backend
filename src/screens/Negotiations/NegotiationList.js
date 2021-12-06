@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {ScrollView, View, Text, Dimensions, TouchableOpacity} from 'react-native';
+import {ScrollView, View, Text, Dimensions, TouchableOpacity, Alert} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import {styles} from './style_negotiationList';
@@ -91,7 +91,16 @@ const List =({navigation}) =>{
     >{status?.map((item,key)=>{
       return(
         <TouchableOpacity key={key} style={styles.containerChat}
-        onPress={()=>navigation.navigate("Negotiation",{fromOrder:{...item,type:item.status}})}>
+        onPress={()=>{
+          if(item.status==4){
+            Alert.alert("Negotiation","Negotiation is already approved")
+          }
+          else if(item.status==5){
+            Alert.alert("Negotiation","Negotiation is already rejected");
+          }
+          else
+            navigation.navigate("Negotiation",{fromOrder:{...item,type:item.status}})
+          }}>
         <View style={styles.pictureAndUsernameContainer}>
           <View
             style={[

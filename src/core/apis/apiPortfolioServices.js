@@ -69,7 +69,7 @@ export async function updateUserProfile(data){
     }).then((res)=>{
       console.log("RES FROM THE API:",res.data)
       return res.data
-    }).catch(err=>console.log("API ERROR: ",err))
+    })
   })
 }
 

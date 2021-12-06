@@ -30,6 +30,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { docValidator } from "../../helpers/docValidator";
 import * as DocumentPicker from "expo-document-picker";
 import {TouchableOpacityButton} from '../../components/TouchableOpacity';
+import { cos } from "react-native-reanimated";
+import {documentBlobConverter} from '../../helpers/documentBlobConverter';
 
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
@@ -82,12 +84,6 @@ export default class AddProduct extends Component {
       imagesFormated : [],
     };
   }
-
-  uploadDocument = async(image,ex)=>{
-    let result = await ApiDocument.uploadDoc({document:image,extension:ex})
-    return result
-  }
-
   
   submit = () => {
     this.setState({loading:true})
@@ -191,36 +187,56 @@ export default class AddProduct extends Component {
         }
       }
       console.log("IMAGES ROU: ",this.props.route.params.payload.images)
-
-      new Promise((resolve,reject)=>{
-      let changedFormatImages =  this.props.route.params.payload.images.map(async(item, index) => {
-        console.log("Image Item: ",item)
-          let media = await FileSystem.readAsStringAsync(item, { encoding: 'base64' }); 
-            return ({
-              extension: item.substring(item.length-4,item.length),
-              media: media
-            });
-        });
-        //console.log("SENDING: ",changedFormatImages)
-        resolve (Promise.all(changedFormatImages))
+      let httpsImages = []
+      let formatImages = [] 
+      this.props.route.params.payload.images.map((item)=>{
+        item.substring(0,4)=="http"?httpsImages.push({media:item, is_existing:true}):formatImages.push({uri:item, name:item})
+      })
+      new Promise(async(resolve,reject)=>{
+        let docs = []
+        if(typeof(payload.cargo_document)=="object"){
+          console.log("URI: ",payload.cargo_document.uri)
+          docs.push({uri:payload.cargo_document.uri, name: payload.cargo_document.name, type:'cargo_document'})
+        }
+        if(typeof(payload.document)=="object"){
+          docs.push({uri:payload.document.uri, name: payload.document.name, type:'document'})
+        }
+        let documents = Promise.all(await documentBlobConverter(docs))
+        let changedFormatImages = Promise.all(await documentBlobConverter(formatImages))
+        resolve ({changedFormatImages: await changedFormatImages,documentsFormat: await documents, images:formatImages, documents:docs})
       }).then(async(result)=>{
-        let images = []
-        return await Promise.all(result.map(async(item)=>{
-          let resultImg = await ApiDocument.uploadDoc({document:item.media,extension:item.extension});
+        // console.log("RESULT: ",result)
+        let docsHttp = await Promise.all(result.documentsFormat.map(async(item,index)=>{
+          let docExtension = result.documents[index].name.substring(result.documents[index].name.length-4,result.documents[index].name.length);
+          let resultImg = await ApiDocument.uploadDoc({document:item,extension:docExtension});
+          //console.log("Resu image: ",resultImg)
+          return await ({media:resultImg,is_existing:true,type:result.documents[index].type})
+        }))
+        let imagesHttp= await Promise.all(result.changedFormatImages.map(async(item,index)=>{
+          console.log("IMAGES HTTP: ",item)
+          let imgExtension = result.images[index].name.substring(result.images[index].name.length-4,result.images[index].name.length);
+          let resultImg = await ApiDocument.uploadDoc({document:item,extension:imgExtension});
           //console.log("Resu image: ",resultImg)
           return await ({media:resultImg,is_existing:true})
         }))
+
+        return await({docsHttp:await docsHttp,imagesHttp:await imagesHttp,})
       }).then(async(result2)=>{
-        let images = await result2 
-        //console.log("IMAGES BECOMES: ",images)
-        
+      console.log("FORMATTED: ",result2);
+      console.log("ALREADY FORMATTED: ",httpsImages);
+      
       let data = {...this.props.route.params.payload,...payload}
-      data.images = images
+      result2.docsHttp.map((item)=>{
+        data[item.type]=item.media;
+      })
+      data.images = httpsImages.concat(result2.imagesHttp)
+      console.log("IMAGES API: ",data.images)
+      console.log("DOC API: ",data.document, data.cargo_document)
       let send_to_api = {...payload,...this.props.route.params.screen}
       console.log("DATA THAT SHOULD BE SENT TO THE OTHER SCREEN: ", data);
       console.log("DATA THAT SHOULD BE SENT 2 API: ", send_to_api);
 
-        APIProduct.editProduct({...data}).then((res)=>{  
+        APIProduct.editProduct(data).then((res)=>{  
           this.setState({ loading: false });
           Alert.alert("Successful","Product was edited successfully",[
             {text:"Ok",onPress:()=>this.props.navigation.navigate("SellingDetails")}

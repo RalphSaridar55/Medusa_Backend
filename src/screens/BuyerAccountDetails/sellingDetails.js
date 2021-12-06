@@ -1,34 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { categories_data } from "./categories_map";
 import {
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
   Image,
   ScrollView,
   FlatList,
-  ImageBackground,
-  Dimensions,
   Alert,
-  BackHandler
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import {
   Searchbar,
-  Headline,
   Appbar,
-  ActionSheet,
-  Title,
-  List,
 } from "react-native-paper";
 import CollapsibleList from "react-native-collapsible-list";
 import SelectMultiple from "react-native-select-multiple";
-import { AntDesign } from "@expo/vector-icons";
 import {styles} from "./sellingDetails_style";
-import { Picker } from "@react-native-picker/picker";
 import * as API from '../../core/apis/apiUserServices';
 import * as apiPortFolioServices from '../../core/apis/apiPortfolioServices';
 import Spinner from "react-native-loading-spinner-overlay";
@@ -334,7 +321,7 @@ return (
         <FlatList
          style={styles.list}
          contentContainerStyle={styles.listContainer}
-         data={data.filter
+         data={data?.filter
              (i=>i.product_name.toLowerCase().includes(filterData.search.toLowerCase()))}
          horizontal={false}
          numColumns={2}
@@ -370,7 +357,7 @@ return (
                      </View>
                      <View style={{marginTop:100}}>
                       </View>
-                     <View style={{position:'absolute',width:'100%',bottom:10}}>
+                     <View style={{position:'absolute',width:'100%',bottom:10,marginTop:100 }}>
                       <TouchableOpacityButton 
                         onPress={()=>navigation.navigate("Campaign")}
                         text="Promote"

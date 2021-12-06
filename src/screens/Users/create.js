@@ -117,6 +117,7 @@ export default class AddUsers extends Component {
     else {
       this.setState({isLoading:true})
       //Alert.alert("Success", "Signup should run");
+      
        let payload = {
         //id:this.state.id,
         sub_user_email: this.state.email,
@@ -150,6 +151,7 @@ export default class AddUsers extends Component {
         return await company_reg_doc
       }).then((res)=>{
         payload.company_reg_doc=res
+        console.log("RES: ",payload)
       apiServices.addSubUser(payload).then((res) => {
         console.log("RES:\n",res)
         this.setState({isLoading:false});

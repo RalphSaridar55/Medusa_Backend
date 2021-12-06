@@ -137,11 +137,15 @@ export default class EditUsers extends Component {
         permissions: this.state.userPermissions,
       };
       console.log("PAYLOAD ",payload)
-      if(typeof(this.state.company_reg_doc=="string")){
+      console.log(typeof payload.company_reg_doc)
+      if(typeof(payload.company_reg_doc)!="object"){
+        console.log("ISNIDE IF")
         this.editUserData(payload)
       }
       else{
+        console.log('Inside Promise')
         new Promise (async(resolve,reject)=>{
+          console.log('Inside Promise')
           let payloadToSend = [
             {uri:this.state.docs.uri,name:this.state.docs.name},
           ]
@@ -155,8 +159,9 @@ export default class EditUsers extends Component {
           let company_reg_doc = await ApiDocument.uploadDoc({document:res[0].document,extension:res[0].extension}).catch(err=>console.log("Error:",err.response.data.message))
           return await company_reg_doc
         }).then((res)=>{
+          console.log("RES: ",res)
           payload.company_reg_doc = res
-          this.editUser(payload)
+          this.editUserData(payload)
         })
       }
     }

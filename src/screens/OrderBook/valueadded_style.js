@@ -25,9 +25,9 @@ export const styles = StyleSheet.create({
               borderRadius: 4,
               marginVertical: 10,
               height:40,
-              marginHorizontal:50,
+             // marginHorizontal:50,
               justifyContent:'center',
-              backgroundColor:'#fff'
+             //backgroundColor:'#fff'
     },
     modalHeader:{
         display:'flex',

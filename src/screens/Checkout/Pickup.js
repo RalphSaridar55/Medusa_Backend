@@ -410,7 +410,7 @@ export default class Pickup extends Component {
         return (
             <Provider>
                 <Spinner visible={this.state.loading} />
-                <View style={{ marginHorizontal: 10,marginTop:10 }}>
+                <View style={{ margin:10 }}>
                     <Text style={[styles.header]}>Pickup</Text>
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>

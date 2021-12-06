@@ -12,7 +12,7 @@ const AboutStack = ({ navigation, route }) => {
       <AStack.Screen
         name="AboutUs"
         component={About}
-        options={{ headerShown: false }}
+        options={{ headerShown: false}}
         navigation={navigation}
       />
       <AStack.Screen

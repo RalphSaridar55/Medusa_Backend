@@ -107,13 +107,14 @@ export default class ProductList extends Component {
             array.map((item) => data.push({label:item.category_name,value:item.id}));
             this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
         })
+        let {multiplier} = this.state
         if(this.props.route.params?.category_id){
             let {category_id,category_name} = this.props.route.params
-            this.getProducts(1,category_id,null,null,null)
+            this.getProducts(1,category_id,null,null,null,[0*multiplier,1*multiplier])
             this.setCategory([{value:category_id, label:category_name}])
         }
         else{
-            this.getProducts(1,null,null,null,null) 
+            this.getProducts(1,null,null,null,null,[0*multiplier,1*multiplier]) 
           }
       })
     }
@@ -138,11 +139,12 @@ export default class ProductList extends Component {
     }
 
     filterPriceRange = (v) =>{
+        console.log("VALUE: ",v)
         this.setState({value:v})
-        let filteredData = this.state.filterProducts.filter(item=>{
-            return (item.price>=(parseInt(v[0]*this.state.multiplier)) && item.price<=(parseInt(v[1]*this.state.multiplier)))
-         })
-        this.setState({filterProducts:filteredData})
+        // let filteredData = this.state.filterProducts.filter(item=>{
+        //     return (item.price>=(parseInt(v[0]*this.state.multiplier)) && item.price<=(parseInt(v[1]*this.state.multiplier)))
+        //  })
+        // this.setState({filterProducts:filteredData})
     }
 
     resetPriceRange = () =>{
@@ -421,10 +423,10 @@ export default class ProductList extends Component {
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <TouchableOpacity style={[styles.card,{borderRadius:15}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
+                                <TouchableOpacity style={[styles.card,{borderRadius:15,paddingVertical:20}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
                                     <View style={styles.cardHeader}>
                                     </View>
-                                    <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }}  resizeMode="cover"/>
+                                    <Image style={[styles.userImage,{marginBottom:20}]} source={{ uri: item?.images[0]?.media }}  resizeMode="cover"/>
                                     <View style={styles.cardFooter}>
                                         <View style={{ alignItems: "center", justifyContent: "center" }}>
                                             <Text style={[styles.name,{textAlign:'center'}]}>{item.product_name}</Text>
@@ -528,7 +530,7 @@ export default class ProductList extends Component {
                                         theme={{
                                         colors: { primary: "#6E91EC", underlineColor: "transparent" },
                                         }}>
-                                <ScrollView style={{ maxHeight: 200 }}>
+                                    <ScrollView style={{ maxHeight: 200 }}>
                                         {this.state.category.length==0
                                         ?(<Text style={{color:'red',textAlign:'center',paddingVertical:10}}>Please choose a sub-category first</Text>)
                                         :(<SelectMultiple
@@ -566,7 +568,10 @@ export default class ProductList extends Component {
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                         style={{marginHorizontal:20,marginBottom:20}}
-                                        onPress={()=>this.resetPriceRange()}>
+                                        onPress={()=>{
+                                            let { category,subcategory,brand,country,value,multiplier } = this.state 
+                                            this.getProducts(1, category.length<1?null:category[0].value, subcategory.length<1?null:subcategory[0].value, brand.length<1?null:brand[0].value, country==null?null:country, (value[0]==0&&value[1]==1?null:[value[0]*multiplier,value[1]*multiplier]))
+                                            }}>
                                             <Text style={styles.resetText}>
                                                 Apply
                                             </Text>

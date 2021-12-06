@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import { Divider, Headline } from "react-native-paper";
 import { View, ScrollView, Text } from "react-native";
 import aboutStyle from "./aboutStyle";
 import { Image, Dimensions } from "react-native";
 import { Paragraph, List } from "react-native-paper";
+
 
 const BannerWidth = Dimensions.get("window").width;
 const BannerHeight = 200;
@@ -21,28 +22,20 @@ const data = [
   {title:'Our Process',text:`Cupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.\n\nCupidatat ea aliquip id Lorem dolore Lorem eu. Consectetur nisi culpa ea esse incididunt ad excepteur deserunt eu. Sunt non labore magna incididunt ut exercitation enim nulla Lorem minim cillum. Consequat et reprehenderit fugiat enim est cillum nulla duis veniam esse aute nisi quis.`,
   image:images[2]},
 ]
-const countries = ['Lebanon', 'India', 'Bahrain', 'Dubai', 'USA', 'UK'];
-const faq = [
-  { question: "Qestion 1", answer: "Answer Answer Answer Answer Answer Answer Answer " },
-  { question: "Qestion 2", answer: "Answer Answer Answer Answer Answer Answer Answer " },
-  { question: "Qestion 3", answer: "Answer Answer Answer Answer Answer Answer Answer " },
-  { question: "Qestion 4", answer: "Answer Answer Answer Answer Answer Answer Answer " },
-  { question: "Qestion 5", answer: "Answer Answer Answer Answer Answer Answer Answer " },
-  { question: "Qestion 6", answer: "Answer Answer Answer Answer Answer Answer Answer " },
-]
-export default class About extends Component {
-  renderPage(image, index) {
-    return (
-      <View key={index}>
-        <Image
-          style={{ width: BannerWidth, height: BannerHeight }}
-          source={image}
-        />
-      </View>
-    );
-  }
 
-  render() {
+const About = () => {
+
+  // const renderPage=(image, index)=> {
+  //   return (
+  //     <View key={index}>
+  //       <Image
+  //         style={{ width: BannerWidth, height: BannerHeight }}
+  //         source={image}
+  //       />
+  //     </View>
+  //   );
+  // }
+
     return (
       <View style={aboutStyle.container}>
         <Headline style={aboutStyle.headLine}>About us </Headline>
@@ -70,7 +63,8 @@ export default class About extends Component {
       </View>
     );
   }
-}
+
+  export default About
 
 
 {/* <List.Section>

@@ -68,7 +68,6 @@ const Bulk = () => {
   }
 
   const pickDocument = async (e) => {
-    let result = await DocumentPicker.getDocumentAsync({});
     let test = docValidator(result.name);
     if (test == true) {
       Alert.alert(
@@ -77,6 +76,7 @@ const Bulk = () => {
       );
       setDocument({ value: "", error: true });
     } else {
+      let result = await DocumentPicker.getDocumentAsync({});
       //console.log(result);
       try {
         setDocument({ value: result, error: false });

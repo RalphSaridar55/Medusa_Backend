@@ -116,34 +116,10 @@ class CustomDrawer extends Component {
     let change = {...user,user_type:currentType==4?1:4}
     AsyncStorage.setItem('user_details',JSON.stringify(change))
     this.setState({userType:currentType==4?1:4})
-    //this.props.userType=currentType==4?1:4;
-    //console.log("BECOMES: ",this.props.userType)
   }
 
   render(){
-    /* if(this.props.userApproved==3 && this.state.userType==4){
-      console.log("TEST")
-      return(
-        <DrawerContentScrollView {...this.props}>
-          <View>
-            <View
-            style={{display:'flex',alignItems:'center',marginVertical:50}}>
-              <Image source={require('../../assets/images/logo.png')}/>
-            </View>
-            {this.props.loggedIn&&
-            (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
-              <Text style={{color: "#6E91EC",fontSize:18}}>
-                {this.props.userData?.owner_email}
-              </Text>
-              <Text style={{color: "#6E91EC",fontSize:14}}>
-                {this.state.userType==4?"Seller":"Buyer"}
-              </Text>
-            </View>)}
-          </View>
-          </DrawerContentScrollView>
-      )
-    } 
-  else */
+    
     return (
     <DrawerContentScrollView {...this.props}>
       {/* <DrawerItemList {...props} /> */}
@@ -614,13 +590,13 @@ class Nav extends Component {
         name="Home"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Home}
         navigation={navigation}
-        options={{ title: "" }}
+        options={{ title: "Home" }}
       />
       <Drawer.Screen
         name="About"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AboutStack}
         navigation={navigation}
-        options={{ title: "" }}
+        options={{ title: "About" }}
       />
       <Drawer.Screen
         name="Auth"
@@ -632,43 +608,43 @@ class Nav extends Component {
         name="Product"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:ProductStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Products" }}
       />
       <Drawer.Screen
         name="Notifications"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:NotificationStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Notifications" }}
       />
       <Drawer.Screen
         name="Negotiations"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:NegotiationStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Negotiations" }}
       />
       <Drawer.Screen
         name="Orders"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:OrderStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Orders" }}
       />
       <Drawer.Screen
         name="User"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:UserStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Sub Users" }}
       />
       <Drawer.Screen
         name="Role"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:RoleStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Roles" }}
       />
       <Drawer.Screen
         name="Adress"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AdressStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Addresses" }}
       />
       <Drawer.Screen
         name="Dashboard"
@@ -676,36 +652,36 @@ class Nav extends Component {
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:DashboardStack}
         //component={}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Dashboard" }}
       />
       <Drawer.Screen
         name="Campaign"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:CampaignStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Campaign" }}
       />
       <Drawer.Screen
         name="LoyaltyPoints"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:LoyaltyStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Loyalty Points" }}
       />
       <Drawer.Screen
         name="Checkout"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:CheckoutStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "" }}
+        options={{ headerShown: true, title: "Checkout" }}
       />
       <Drawer.Screen
       name="Categories"
       component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Categories}
-      options={{ headerShown: true, title: ""}}
+      options={{ headerShown: true, title: "Categories"}}
       navigation={navigation}
       />
       <Drawer.Screen
       name="Activity"
       component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Activity}
-      options={{ headerShown: true, title: ""}}
+      options={{ headerShown: true, title: "Activity"}}
       navigation={navigation}
       />
       <Drawer.Screen

@@ -254,36 +254,44 @@ class BuyreAccount extends Component {
         else{
           new Promise (async(resolve,reject)=>{
             let payloadToSend = []
-            if(typeof(this.state.company)!="string")
-              payloadToSend.push({
-                uri:this.state.company.uri,name:this.state.company.name
-              })
-            if(typeof(this.state.trading)!="string")
-              payloadToSend.push({
-                uri:this.state.trading.uri,name:this.state.trading.name
-              })
-
+            if(typeof(this.state.company)!="string"){
+              console.log("COMPANY")
+              payloadToSend.push(
+                {uri:this.state.company.uri,name:this.state.company.name,type:'company_reg_doc'}
+              )
+            }
+            if(typeof(this.state.trading)!="string"){
+              console.log("TRADING")
+              payloadToSend.push(
+                {uri:this.state.trading.uri,name:this.state.trading.name,type:'trading_license_doc'}
+              )
+            }
             let blob =await Promise.all(await documentBlobConverter(payloadToSend))
             resolve ({blob:blob, payloadToSend:payloadToSend})
           }).then((res)=>{
             // console.log("RES: ",res)
             let result = res.payloadToSend.map((item,index)=>{
+              console.log(Object.keys(item))
               let docName = item.name
               // console.log("DOCUENT:",res.blob[index])
-              return {document:res.blob[index], extension:docName.substring(docName.length-4, docName.length)}
+              return {document:res.blob[index], extension:docName.substring(docName.length-4, docName.length),type:item.type}
 
             })
             return (result)
           }).then(async(res)=>{
-            //console.log("RES: ",res)
-            let names = ["company_reg_doc", "trading_license_doc"]
+            console.log("RES: ",res)
+            // let names = res.map((item)=> item.type)
+            // console.log("NAMES: ",names)
             let result = await Promise.all(await res.map(async(item,index)=>{
              let result_data = await ApiDocument.uploadDoc({document:item.document,extension:item.extension})
-             .catch(err=>console.log("Error:",err.response.data.message))
+             .catch(err=>{
+               this.setState({spinnerVisible:false})
+               console.log("Error:",err.response.data.message)
+              })
 
-             return {[names[index]]:result_data}
+             return {[item.type]:result_data}
              }))
-             console.log("RESULT: ",result)
+             //console.log("RESULT: ",result)
            return result
           }).then(async(res)=>{
             console.log("RES: ",await res)
@@ -293,6 +301,7 @@ class BuyreAccount extends Component {
               console.log("KEYS",Object.keys(item))
               payload[Object.keys(item)[0]]=Object.values(item)[0]
             })
+            console.log("PAYLOAD: ",payload)
             this.updateUserDetails(payload)
         })
         }
@@ -303,7 +312,6 @@ class BuyreAccount extends Component {
     apiPortFolioServices.updateUserProfile(payload)
     .then((res)=>{
         console.log("FROM THE COMPONENT: ",res)
-        Alert.alert("Edit", "Your profile has been updated");
         let {
           owner_email,owner_mobile_number,website,country_id,
           city,state,street,company_reg_doc,trading_license_doc,
@@ -329,6 +337,9 @@ class BuyreAccount extends Component {
         })
         this.setUserData(res.data);
         this.setState({spinnerVisible:false})
+        Alert.alert("Edit", "Your profile has been updated",[
+          {text:"Ok",onPress:()=>this.props.navigation.navigate("Home")}
+        ]);
     }).catch(err=>{
       console.log("ERROR:",err.response.data.message)
       Alert.alert("Error:\n",err.response.data.message)
