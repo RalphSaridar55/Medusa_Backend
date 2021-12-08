@@ -73,7 +73,7 @@ const Loyalty = ({ navigation }) => {
     <View style={{ flex: 1, backgroundColor:'#e9f3ff'}}>
       <Spinner visible={visible.spinner} />
       <View style={styles.headerContainer}>
-        <Text style={[styles.header, { flex: 2 }]}>Loyalty Points</Text>
+        <Text style={[styles.header, { flex: 2 }]}></Text>
         <TouchableOpacity
           onPress={() => setVisible({ ...visible, modal: true })}
           style={styles.loginBtn}
@@ -100,10 +100,10 @@ const Loyalty = ({ navigation }) => {
         <View style={styles.modalHeader}>
             <Text
               style={{
-                fontSize: 21,
+                fontSize: 24,
                 color: "#31C2AA",
-                fontWeight: "bold",
                 marginBottom: 5,
+                fontFamily:'Adam-Bold'
               }}
             >
               Buy Points
@@ -183,7 +183,7 @@ const Loyalty = ({ navigation }) => {
               flex: 1,
               display: "flex",
               alignItems: "center",
-              marginVertical: 40,
+              marginVertical: 10,
             },
           ]}
         >
@@ -237,9 +237,9 @@ const Loyalty = ({ navigation }) => {
                       },
                     ]}
                   >
-                    <Text style={{ flex: 1, color: "#6E91EC" }}>{res}:</Text>
+                    <Text style={{ flex: 1, color: "#6E91EC", fontFamily:'Inter-Black-Light' }}>{res}:</Text>
                     <Text
-                      style={{ flex: 1, textAlign: "right", color: "#6E91EC" }}
+                      style={{ flex: 1, textAlign: "right", color: "#6E91EC", fontFamily:'Inter-Black-Light' }}
                     >
                       {item[res]}
                     </Text>

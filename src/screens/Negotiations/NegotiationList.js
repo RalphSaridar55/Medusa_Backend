@@ -7,13 +7,9 @@ import * as API from '../../core/apis/apiChatServices';
 
 const List =({navigation}) =>{
   
-  //const [active,setActive] = useState({data:[],total:0})
-  //const [approved,setApproved] = useState({data:[],total:0})
-  //const [rejected,setRejected] = useState({data:[],total:0})
   const [all,setAll] = useState({dataAll:[],totalAll:0,dataRejected:[],totalRejected:0,dataApproved:[],totalApproved:0,dataActive:[],totalActive:0,})
   const [visible,setVisible] = useState(true)
   const [page,setPage] = useState(1)
-  //const [total,setTotal] = useState(0)
 
   const screenwidth = Dimensions.get("screen").width;
   const screenheight = Dimensions.get("screen").height;
@@ -67,9 +63,6 @@ const List =({navigation}) =>{
         const approved = res.data.filter((i)=>i.status===4)
         const rejected = res.data.filter((i)=>i.status===5)
         setAll({dataAll:res.data,totalAll:res.data.length,dataRejected:rejected,totalRejected:rejected.length,dataApproved:approved,totalApproved:approved.length,dataActive:active,totalActive:active.length,})
-        //setActive({data:active,total:active.length});
-        //setApproved({data:approved,total:approved.length});
-        //setRejected({data:rejected,total:rejected.length});
         setVisible(false)
         console.log("ACTIVE: ",active)
       })
@@ -150,11 +143,10 @@ const List =({navigation}) =>{
       navigationState={{ index, routes }}
       renderScene={renderScene}
       onIndexChange={setIndex}
-      labelStyle={{color:'black'}}
       renderTabBar={props => <TabBar {...props} style={{backgroundColor: '#fff'}}
       indicatorStyle={{ backgroundColor: '#7F67A9', height: 2 }}
       renderLabel={({route, color}) => (
-        <Text style={{ color: 'black', margin: 8 }}>
+        <Text style={{ color: 'black', margin: 8, fontFamily:'Adam-Bold' }}>
           {route.title}
         </Text>
       )}/>}

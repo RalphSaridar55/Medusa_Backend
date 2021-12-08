@@ -18,118 +18,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderPicker } from "../../components/Picker";
 
-const data = [
-  {
-    typePerson: "buyer",
-    message:
-      "Can you fix the price?Can you fix the price?Can you fix the price?Can you fix the price?Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "buyer",
-    message: "Can you fix the price?",
-    suggestedPrice: 0.3,
-    date: "12-01-2021",
-  },
-  {
-    typePerson: "seller",
-    message: "Price fixed",
-    suggestedPrice: 0.15,
-    date: "12-01-2021",
-  },
-];
-
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
 
@@ -142,9 +30,6 @@ const Negotiations = ({route,navigation}) => {
   const [userData,setUserData] = useState();
   const [chat,setChat] = useState();
   const [productDetails,setProductDetails] = useState();
-  const sendAction = () =>{
-      console.log("Should send a text")
-  }
   
 
   useEffect(() => {
@@ -239,7 +124,7 @@ const Negotiations = ({route,navigation}) => {
           <Text style={[styles.productTitle,{flex:3}]}>{productDetails?.product_name}</Text>
           {userData?.user_type==4?<TouchableOpacity onPress={()=>Approve(routeData?.type==5?"Approve":"Disapprove")}
           style={[styles.buttonApprove,{flex:2,backgroundColor:routeData?.type==5?"#5BC5B9":'#7F67A9'}]}>
-            <Text style={{color:'white'}}>{routeData?.type==4?"Mark as disapproved":"Mark as approved"}</Text>
+            <Text style={{color:'white',fontFamily:'Adam-Bold'}}>{routeData?.type==4?"Mark as disapproved":"Mark as approved"}</Text>
           </TouchableOpacity>:null}
         </View>
         <View style={[styles.chatContainer,{height:screenheight*0.75}]}>
@@ -271,20 +156,13 @@ const Negotiations = ({route,navigation}) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Text style={{ width: screenwidth * 0.5 }}>{i.negotiate_reply}</Text>
+                  <Text style={{ width: screenwidth * 0.5, fontFamily:'Inter-Black-Light' }}>{i.negotiate_reply}</Text>
                   <Text style={styles.date}>{i.created_at.substring(0,10)}</Text>
                 </View>
                 <View>
-                {i.negotiate_price>1?<><TouchableOpacity style={[
-                    i.senderDetails.owner_email == userData?.owner_email
-                      ? { backgroundColor: "#5BC5B9",width:screenwidth*0.4,alignItems:'center',borderRadius:20,marginVertical:10,padding:5}
-                      : { backgroundColor: "#7F67A9",width:screenwidth*0.4,alignItems:'center',borderRadius:20,marginVertical:10,padding:5}
-                  ]}><Text
-                  style={
-                    i.senderDetails.owner_email == userData?.owner_email
-                      ? { color: "#fff" }
-                      : { color: "#fff" }
-                  }
+                {i.negotiate_price>1?<><TouchableOpacity style= {{ backgroundColor:i.senderDetails.owner_email == userData?.owner_email? "#5BC5B9":"#7F67A9",
+                width:screenwidth*0.4,alignItems:'center',borderRadius:20, marginVertical:10, padding:5}}><Text
+                  style={{ color:'#fff', fontFamily:'Adam-Bold' }}
                 >
                   Suggested Price:  ${i.negotiate_price}
                 </Text></TouchableOpacity></>:null}

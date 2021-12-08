@@ -5,7 +5,7 @@ const height = Dimensions.get('screen').height;
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:0,
+        marginTop:10,
         marginHorizontal:20,
     },
     container2:{
@@ -43,8 +43,7 @@ const styles = StyleSheet.create({
     productTitle:{
         fontSize:24,
         color:'#6E91EC',
-        fontWeight:'bold',
-        textDecorationLine: 'underline',
+        fontFamily:'Adam-Bold'
     },
     chatContainer:{
         zIndex:20,
@@ -86,14 +85,16 @@ const styles = StyleSheet.create({
 
     },
     username:{
-        fontSize:20,
-        textAlignVertical:'center'
+        fontSize:18,
+        textAlignVertical:'center',
+        fontFamily:'Inter-Black-Light'
     },
     textContainer:{
         marginVertical:20
     },
     date:{
         color:'gray',
+        fontFamily:'Inter-Black-Light'
     },
     inputContainer:{
         marginHorizontal:20

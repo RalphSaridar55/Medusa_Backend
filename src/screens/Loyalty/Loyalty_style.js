@@ -4,9 +4,11 @@ const screenWidth = Dimensions.get('screen').width
 
 export const styles = StyleSheet.create({
   header: {
-    fontSize: 21,
+    fontSize: 24,
     color: "#6E91EC",
-    fontWeight: "bold",
+    fontFamily:'Adam-Bold',
+    marginVertical:10,
+    marginTop:20,
   },
   headerContainer: {
     display: "flex",
@@ -62,8 +64,8 @@ export const styles = StyleSheet.create({
   },
   loginBtnText: {
     color: "white",
-    fontSize: 14,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontFamily:'Adam-Bold'
   },
   cardHistory: {
     display: "flex",

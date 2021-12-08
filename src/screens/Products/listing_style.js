@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     filterText:{
         fontSize:18,
         color:'gray',
-        textAlignVertical:'center'
+        textAlignVertical:'center',
+        fontFamily:'Adam-Bold'
     },
     modalHeader:{
         display:'flex',
@@ -58,6 +59,7 @@ const styles = StyleSheet.create({
     loginBtnText:{
         color:'#31C2AA',
         fontSize:16,
+        fontFamily:'Adam-Bold'
         /* fontWeight:'bold' */
     },
     Btn: {
@@ -105,7 +107,8 @@ const styles = StyleSheet.create({
     },
     priceText:{
         fontSize:16,
-        color:'#6E91EC'
+        color:'#6E91EC',
+        fontFamily:'Inter-Black-Light'
     },
     resetButton:{
         display:'flex',
@@ -118,7 +121,8 @@ const styles = StyleSheet.create({
         borderColor:'#6E91EC',
     },
     resetText:{
-        color:'#6E91EC'
+        color:'#6E91EC',
+        fontFamily:'Inter-Black-Light'
     },
 
     /******** card **************/
@@ -170,13 +174,20 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'center',
         color: "#008080",
-        fontWeight: 'bold'
+        fontFamily:'Adam-Bold'
     },
     position: {
         fontSize: 14,
         flex: 1,
         //alignSelf: 'center',
-        color: "#696969"
+        color: "#696969",
+        fontFamily:'Inter-Black-Light'
+    },
+    errorCat:{
+        color:'red',
+        textAlign:'center',
+        paddingVertical:10,
+        fontFamily:'Inter-Black-Light'
     },
     followButton: {
         marginTop: 10,
@@ -195,7 +206,12 @@ const styles = StyleSheet.create({
     icon: {
         height: 20,
         width: 20,
-    }
+    },
+    sortIconText:{ 
+        fontSize: 14,
+        color:"#6E91EC",
+        fontFamily:'Adam-Light'
+     }
 });
 
 export default styles;

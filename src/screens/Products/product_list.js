@@ -333,10 +333,10 @@ export default class ProductList extends Component {
                     <View style={styles.modalHeader}>
                         <Text
                         style={{
-                            fontSize: 21,
+                            fontSize: 24,
                             color: "#31C2AA",
-                            fontWeight: "bold",
                             marginBottom: 5,
+                            fontFamily:'Adam-Bold'
                         }}
                         >
                         Product Creation
@@ -371,7 +371,8 @@ export default class ProductList extends Component {
                 <View>
                     <Appbar style={{backgroundColor:"#E9F3FF" , color:"#fff"}}>
                         <Appbar.Content title={this.state.filterProducts.length>0?this.state.filterProducts.filter
-                        ((i)=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase())).length + " " + "Results":""} onPress={this.setView} style={{ fontSize: 14 }} />
+                        ((i)=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase())).length + " " + "Results":""} onPress={this.setView} style={{ fontSize: 14 }}
+                        titleStyle={{fontFamily:'Adam-Bold'}} />
                         <Appbar.Action icon="pin"/* {<Entypo name="location-pin" size={24} color="black" />} */ onPress={() => {
                         console.log(this.locationRef.current.focus())
                         }} />
@@ -444,7 +445,7 @@ export default class ProductList extends Component {
                                             onPress={()=>this.SortingByData("date")}
                                         />
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>Newset</Text>
+                                    <Text style={styles.sortIconText}>Newset</Text>
                                 </View>
                                 <View style={{ flexDirection: "column", alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize}>
@@ -455,19 +456,19 @@ export default class ProductList extends Component {
                                             onPress={()=>this.SortingByData("best")}
                                         />
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>Available</Text>
+                                    <Text style={styles.sortIconText}>Available</Text>
                                 </View>
                                 <View style={{ flexDirection: "column", alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize} onPress={()=>this.SortingByData("low")}>
                                         <Text style={{ fontSize: 18 ,color:"#6E91EC" }}>$</Text>
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>Low</Text>
+                                    <Text style={styles.sortIconText}>Low</Text>
                                 </View>
                                 <View style={{ flexDirection: "column", alignItems: 'center' }}>
                                     <TouchableOpacity style={styles.btnSize} onPress={()=>this.SortingByData("high")}>
                                         <Text style={{ fontSize: 18,color:"#6E91EC" }}>$$</Text>
                                     </TouchableOpacity>
-                                    <Text style={{ fontSize: 14,color:"#6E91EC" }}>High</Text>
+                                    <Text style={styles.sortIconText}>High</Text>
                                 </View>
                             </View>
                             <View style={{ marginTop: 15, marginBottom: 10, marginHorizontal: 10, }} >
@@ -486,8 +487,8 @@ export default class ProductList extends Component {
                     <ScrollView >
                         <View>
                             <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
-                                <Title style={{ padding: 10,flex:1 }}>Filter By </Title>
-                                <Title style={{ padding: 10,flex:1, alignItems:'flex-end',paddingHorizontal:20,color:'#6E91EC'}/* ,styles.resetButton  */}
+                                <Title style={{ padding: 10,flex:1, fontFamily:'Adam-Bold' }}>Filter By </Title>
+                                <Title style={{ padding: 10,flex:1, fontFamily:'Adam-Bold', alignItems:'flex-end',paddingHorizontal:20,color:'#6E91EC'}/* ,styles.resetButton  */}
                                 onPress={()=>{
                                     this.resetEverything()
                                 }}>Reset </Title>
@@ -498,6 +499,7 @@ export default class ProductList extends Component {
                                         colors: { primary: "#6E91EC", underlineColor: "transparent" },
                                         }}>
                                         <SelectMultiple
+                                        labelStyle={{fontFamily:'Inter-Black-Light'}}
                                         items={this.state.fetchedCategories}
                                         selectedItems={this.state.category}
                                         onSelectionsChange={(e) => this.setCategory(e)}/>
@@ -509,8 +511,9 @@ export default class ProductList extends Component {
                                         }}> 
                                 <ScrollView style={{ maxHeight: 200 }}>
                                         {this.state.category.length==0
-                                        ?(<Text style={{color:'red',textAlign:'center',paddingVertical:10}}>Please choose a category first</Text>)
+                                        ?(<Text style={styles.errorCat}>Please choose a category first</Text>)
                                         :(<SelectMultiple
+                                        labelStyle={{fontFamily:'Inter-Black-Light'}}
                                         items={this.state.fetchedSubCategories}
                                         selectedItems={this.state.subcategory}
                                         onSelectionsChange={(e) => this.setSubCategory(e)}/>)}
@@ -523,8 +526,9 @@ export default class ProductList extends Component {
                                         }}>
                                     <ScrollView style={{ maxHeight: 200 }}>
                                         {this.state.category.length==0
-                                        ?(<Text style={{color:'red',textAlign:'center',paddingVertical:10}}>Please choose a sub-category first</Text>)
+                                        ?(<Text style={styles.errorCat}>Please choose a sub-category first</Text>)
                                         :(<SelectMultiple
+                                        labelStyle={{fontFamily:'Inter-Black-Light'}}
                                         items={this.state.fetchedBrands}
                                         selectedItems={this.state.brand}
                                         onSelectionsChange={(e) => this.setBrand(e)}/>)}

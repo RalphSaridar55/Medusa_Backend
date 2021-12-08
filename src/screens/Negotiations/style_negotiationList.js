@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
         top:10,
         zIndex:99,
         color:'#fff',
+        fontFamily:'Adam-Bold'
     },
     dateContainer:{
         display:'flex',
@@ -31,7 +32,8 @@ export const styles = StyleSheet.create({
     },
     date:{
         color:'gray',
-        textAlignVertical:'center'
+        textAlignVertical:'center',
+        fontFamily:'Inter-Black-Light'
     },
     pictureContainer:{
         borderRadius:25,
@@ -43,11 +45,13 @@ export const styles = StyleSheet.create({
     },
     username:{
         fontSize:20,
-        textAlignVertical:'center'
+        textAlignVertical:'center',
+        fontFamily:'Inter-Black-Light'
     },
     chatSubject:{
         fontSize:16,
         marginTop:5,
+        fontFamily:'Inter-Black-Light'
     },
     chatText:{
         color:'gray',
