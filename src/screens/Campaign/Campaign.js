@@ -243,14 +243,13 @@ const Campaign = ({ navigation }) => {
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        labelStyle={{ color: "black" }}
         renderTabBar={(props) => (
           <TabBar
             {...props}
             style={{ backgroundColor: "#fff" }}
             indicatorStyle={{ backgroundColor: "#7F67A9", height: 2 }}
             renderLabel={({ route, color }) => (
-              <Text style={{ color: "black", margin: 8 }}>{route.title}</Text>
+              <Text style={{ color: "black", margin: 8, fontFamily:'Adam-Bold' }}>{route.title}</Text>
             )}
           />
         )}

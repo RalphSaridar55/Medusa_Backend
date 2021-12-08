@@ -21,10 +21,12 @@
     "axios": "^0.21.1",
     "c": "1.1.1",
     "expo": "^42.0.5",
+    "expo-app-loading": "^1.2.1",
     "expo-asset": "~8.3.3",
     "expo-device": "~3.3.0",
     "expo-document-picker": "^9.2.4",
     "expo-file-system": "^13.0.3",
+    "expo-font": "~9.2.1",
     "expo-image-picker": "~10.2.2",
     "expo-image-picker-multiple": "^1.4.1",
     "expo-images-picker": "^2.0.1",
@@ -81,8 +83,7 @@
     "react-native-web-swiper": "^2.2.1",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
-    "rn-select-date-range": "^3.0.1",
-    "expo-font": "~9.2.1"
+    "rn-select-date-range": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

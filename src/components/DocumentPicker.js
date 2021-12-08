@@ -9,7 +9,7 @@ export const TouchableDocumentPicker = (props) =>{
                   {...props}
                 >
                   <AntDesign name="file1" size={24} color="#6E91EC" />
-                  <Text style={{ color: "gray" }}>{props.name} .pdf .docx</Text>
+                  <Text style={{ color: "gray",fontFamily:'Adam-Bold' }}>{props.name} .pdf .docx</Text>
                   {name==undefined?.length < 1 ? (
                     <AntDesign name="closecircle" size={24} color="red" />
                   ) : (

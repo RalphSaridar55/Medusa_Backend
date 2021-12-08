@@ -82,6 +82,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     flex: 1,
     //alignSelf: 'center',
+    fontFamily:'Inter-Black-Bold',
     color: "#696969",
   },
   imageContainer: {

@@ -1,17 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView,TouchableOpacity, FlatList } from "react-native";
 import { Button, Headline } from 'react-native-paper';
 import styles from "./style";
 import Spinner from 'react-native-loading-spinner-overlay';
 import * as apiProducts from'../../core/apis/apiProductServices';
 import Swiper from "react-native-web-swiper";
+import { useFocusEffect } from '@react-navigation/core';
 
 const BannerWidth = Dimensions.get('window').width;
 const height = Dimensions.get('screen').height;
 
 const Home =(props)=> {
-    const [isVisible,setIsVisible] = useState(false);
+    const [isVisible,setIsVisible] = useState(true);
     const [data,setData] = useState({topSelling:[],featured:[]})
     const [carousel,setCarousel] = useState([])
     const [categories,setCategories] = useState([])
@@ -27,7 +28,6 @@ const Home =(props)=> {
     // }
 
     useEffect(()=>{
-        setIsVisible(true)
         apiProducts.getTopSellingAndFeatured().then((res)=>{
             //console.log("CONSOLE: ",res)
             setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
@@ -44,9 +44,7 @@ const Home =(props)=> {
 
     // useFocusEffect(
     //     useCallback(()=>{
-    //         setIsVisible(true)
     //         apiProducts.getTopSellingAndFeatured().then((res)=>{
-    //             //console.log("CONSOLE: ",res)
     //             setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
     //         }).catch(err=>console.log(":::",err.response.data.message))
     //         apiProducts.getGroupProducts().then((res)=>{
@@ -94,8 +92,8 @@ const Home =(props)=> {
             </Swiper>}
         </View>
         <View style={styles.topProductContainer}>
-                    <Headline>Top Products</Headline>
-                    <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
+                    <Headline style={styles.headerTitle}>Top Products</Headline>
+                    <Button icon="chevron-right" color='#31C2AA' contentStyle={styles.ButtonShowAll} labelStyle={[styles.ButtonShowAll,{textAlignVertical:'center'}]}
                     onPress={()=>props.navigation.navigate("Product",{screen:"List"})}>
                         Show All
                     </Button>
@@ -123,8 +121,8 @@ const Home =(props)=> {
                     />}
                 </View>
                 <View style={styles.topSellingContainer}>
-                    <Headline>Top Selling</Headline>
-                    <Button icon="chevron-right" color='#31C2AA' contentStyle={{ flexDirection: 'row-reverse' }}
+                    <Headline style={styles.headerTitle}>Top Selling</Headline>
+                    <Button icon="chevron-right" color='#31C2AA' contentStyle={styles.ButtonShowAll} labelStyle={[styles.ButtonShowAll,{textAlignVertical:'center'}]}
                     onPress={()=>props.navigation.navigate("Product",{screen:"List"})}>
                         Show All
                     </Button>
@@ -143,7 +141,7 @@ const Home =(props)=> {
                                     <View style={{ alignItems: "center", justifyContent: "center" }}>
                                         <Text style={styles.name}>{item.product_name}</Text>
                                         <Text style={styles.position}></Text>
-                                    </View>
+                                    </View> 
                                 </View>
                             </TouchableOpacity>
                         }}
@@ -157,7 +155,7 @@ const Home =(props)=> {
                 </View>
 
                 <View style={styles.headlineTitle}>
-                    <Headline>Summer Fashion</Headline>
+                    <Headline style={styles.headerTitle}>Summer Fashion</Headline>
                 </View>
                     <View style={[styles.flatListSliderContainer2,{marginBottom:30}]}>
                         {data.featured.length>0 && <FlatList
@@ -187,7 +185,7 @@ const Home =(props)=> {
                 </View>
 
                 <View style={styles.topBrandTitle}>
-                    <Headline>Top Brands</Headline>
+                    <Headline style={styles.headerTitle}>Top Brands</Headline>
                 </View>
 
                 <View style={[styles.flatListSliderContainer2,{marginBottom:20}]}>
@@ -243,7 +241,7 @@ const Home =(props)=> {
                 </View>
 
                 <View style={styles.topTitle}>
-                    <Headline>Top</Headline>
+                    <Headline style={styles.headerTitle}>Top</Headline>
                 </View>
                 <View style={[styles.flatListSliderContainer2,{marginBottom:20}]}>
                 {data.featured.length>0 && <FlatList

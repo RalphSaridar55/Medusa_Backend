@@ -81,11 +81,6 @@ const AdressList = (props) => {
       }}
     >
       <Spinner visible={isVisible} />
-      <Headline
-        style={{ margin: 20, color: "#698EB7" }}
-        >
-        Addresses
-      </Headline>
       <ScrollView
         style={{ flex: 1, paddingHorizontal: 15, marginTop: 20 }}
         showsVerticalScrollIndicator={false}
@@ -103,7 +98,7 @@ const AdressList = (props) => {
                 <Text style={styles.listCountry}>
                   {countries?.filter((s) => s.value === i.country_id)[0]?.label}
                 </Text>
-                <Text style={styles.listCity}>
+                <Text style={{fontFamily:'Inter-Black-Medium'}}>
                   {i.city + ", " + i.state + ", " + i.street}
                 </Text>
               </View>

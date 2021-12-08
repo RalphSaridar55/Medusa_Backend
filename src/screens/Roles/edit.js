@@ -151,7 +151,7 @@ export default class AddRole extends Component {
                         alignItems: "center",
                     }}
                     >
-                    <Headline style={{ marginBottom: 10, color: "#698EB7", fontWeight: "bold" }}>Edit Role #{this.state.route_data?.id}</Headline>
+                    <Headline style={{ color: "#698EB7", fontFamily:'Adam-Bold', }}>Edit Role #{this.state.route_data?.id}</Headline>
                     <Ionicons
                         name="trash-outline"
                         size={30}
@@ -209,7 +209,7 @@ export default class AddRole extends Component {
                           },
                         ]}
                       >
-                        <Text>Permissions</Text>
+                        <Text style={{fontFamily:'Inter-Black-Medium'}}>Permissions</Text>
                       </View>
                     }
                   >
@@ -218,7 +218,7 @@ export default class AddRole extends Component {
                         <SelectMultiple
                             items={this.state.permissions}
                             selectedItems={this.state.permission}
-                            labelStyle={{color:'black'}}
+                            labelStyle={{color:'black',fontFamily:'Inter-Black-Medium'}}
                             selectedLabelStyle	={{color:'#698EB7'}}
                             onSelectionsChange={(item) =>{
                                 this.setState({permission:item})

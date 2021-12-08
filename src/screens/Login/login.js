@@ -100,7 +100,7 @@ export default function Login({ navigation }) {
       <View style={loginStyle.container}>
         <Spinner visible={isLoading} />
           <View>
-            <Header>Welcome back </Header>
+            <Header>Welcome Back</Header>
             <TextInput
               label="Email"
               returnKeyType="next"
@@ -135,7 +135,7 @@ export default function Login({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate("ForgotPassword")}
               >
-                <Text style={loginStyle.forgot}>Forgot your password ?</Text>
+                <Text style={loginStyle.forgot}>Forgot your password</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacityButton

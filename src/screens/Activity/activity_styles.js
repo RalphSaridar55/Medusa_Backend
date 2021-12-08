@@ -30,12 +30,15 @@ export const styles = StyleSheet.create({
         marginRight:20
     },
     username:{
-        fontSize:18
+        fontSize:18,
+        fontFamily:'Inter-Black-Light'
     },
     action:{
-        fontSize:12
+        fontSize:12,
+        fontFamily:'Inter-Black-Light'
     },
     date:{
-        color:'gray'
+        color:'gray',
+        fontFamily:'Inter-Black-Light'
     }
 })

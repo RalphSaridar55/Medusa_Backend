@@ -17,21 +17,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const screenwidth = Dimensions.get("screen").width;
 const screenheight = Dimensions.get("screen").height;
 
-const data = {
-  name: "Product 1",
-  description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-  price: 20,
-  qty: 5,
-  services: [
-    { name: "Service 1", price: 100 },
-    { name: "Service 2", price: 100 },
-    { name: "Service 3", price: 100 },
-    { name: "Service 4", price: 100 },
-    { name: "Service 5", price: 100 },
-    { name: "Service 6", price: 100 },
-  ],
-};
-
 const detailedOrder = ({ navigation, route }) => {
   const [dataRoute, setDataRoute] = useState();
   const [services, setServices] = useState([]);
@@ -100,13 +85,13 @@ const detailedOrder = ({ navigation, route }) => {
           style={styles.image}
         />
       </View>
-      <View style={[styles.mainContainer, {}]}>
+      <View style={[styles.mainContainer]}>
         <View style={{ paddingBottom: 20, }}>
           <View style={{
                         marginVertical: 20,
                         borderBottomWidth: 1.5,
                         borderBottomColor: "lightgray",}}>
-              <View style={{display:'flex',justifyContent:'space-between',flexDirection:'row'}}>
+              <View style={{display:'flex',justifyContent:'space-between',flexDirection:'row',marginBottom:10}}>
                   <Text
                     style={[
                       styles.name,
@@ -134,7 +119,7 @@ const detailedOrder = ({ navigation, route }) => {
                         {text:"Yes",onPress:()=>{deleteOrBlockProduct(3)}},
                       ])
                     }}>
-                        <Icon name="trash-can" size={24} color="white" style={{}}/>
+                        <Icon name="trash-can" size={24} color="white" style={{}} />
                     </TouchableOpacity>
                 </View>
                 <View style={{display:'flex',alignItems:'flex-end',justifyContent:'center',marginHorizontal:10}}>
@@ -146,7 +131,7 @@ const detailedOrder = ({ navigation, route }) => {
                 </View>
               </View>
           </View>
-          <Text style={{ fontSize: 18 }}>{dataRoute?.description}</Text>
+          <Text style={{ fontSize: 18, fontFamily:'Inter-Black-Light' }}>{dataRoute?.description}</Text>
         </View>
         <Text
           style={[
@@ -162,26 +147,26 @@ const detailedOrder = ({ navigation, route }) => {
         </Text>
         <View style={styles.twoInfoBox}>
           <View>
-            <Text>Width: {dataRoute?.width} cm</Text>
-            <Text>Height: {dataRoute?.height} cm</Text>
-            <Text>Depth: {dataRoute?.depth} cm</Text>
-            <Text>Weight: {dataRoute?.weight} kg</Text>
+            <Text style={styles.textInfo}>Width: {dataRoute?.width} cm</Text>
+            <Text style={styles.textInfo}>Height: {dataRoute?.height} cm</Text>
+            <Text style={styles.textInfo}>Depth: {dataRoute?.depth} cm</Text>
+            <Text style={styles.textInfo}>Weight: {dataRoute?.weight} kg</Text>
           </View>
           <View>
-            <Text>Price: ${dataRoute?.width}</Text>
-            <Text>Offered Price: ${dataRoute?.height}</Text>
-            <Text>Min Purchase Qty: {dataRoute?.min_purchase_qty}</Text>
-            <Text>Max Purchase Qty: {dataRoute?.max_purchase_qty}</Text>
-            <Text>Max Reserve Qty: {dataRoute?.max_reserve_qty}</Text>
+            <Text style={styles.textInfo}>Price: ${dataRoute?.width}</Text>
+            <Text style={styles.textInfo}>Offered Price: ${dataRoute?.height}</Text>
+            <Text style={styles.textInfo}>Min Purchase Qty: {dataRoute?.min_purchase_qty}</Text>
+            <Text style={styles.textInfo}>Max Purchase Qty: {dataRoute?.max_purchase_qty}</Text>
+            <Text style={styles.textInfo}>Max Reserve Qty: {dataRoute?.max_reserve_qty}</Text>
           </View>
         </View>
         <View style={styles.twoInfoBox}>
           <View>
-            <Text>Warranty: {dataRoute?.warranty_details}</Text>
-            <Text>Return days: {dataRoute?.return_day}</Text>
-            <Text>Down Payment: {dataRoute?.down_payment}%</Text>
-            <Text>Promoted: {dataRoute?.is_promoted ? "Yes" : "No"}</Text>
-            <Text>Brand: {dataRoute?.brand.brand_name}</Text>
+            <Text style={styles.textInfo}>Warranty: {dataRoute?.warranty_details}</Text>
+            <Text style={styles.textInfo}>Return days: {dataRoute?.return_day}</Text>
+            <Text style={styles.textInfo}>Down Payment: {dataRoute?.down_payment}%</Text>
+            <Text style={styles.textInfo}>Promoted: {dataRoute?.is_promoted ? "Yes" : "No"}</Text>
+            <Text style={styles.textInfo}>Brand: {dataRoute?.brand.brand_name}</Text>
           </View>
           <View
             style={{
@@ -200,6 +185,7 @@ const detailedOrder = ({ navigation, route }) => {
                       color: "white",
                       backgroundColor: "#698EB7",
                       paddingHorizontal: 10,
+                      fontFamily:'Inter-Black-Light',
                       paddingVertical: 2,
                       borderRadius: 20,
                     }}
@@ -234,8 +220,8 @@ const detailedOrder = ({ navigation, route }) => {
                   flex: 1,
                 }}
               >
-                <Text>{item.service_name}</Text>
-                <Text>${item.service_cost}</Text>
+                <Text style={styles.textInfo}>{item.service_name}</Text>
+                <Text style={styles.textInfo}>${item.service_cost}</Text>
               </View>
             );
           })}
@@ -257,20 +243,20 @@ const detailedOrder = ({ navigation, route }) => {
             <View style={{borderBottomColor:'lightgray',borderBottomWidth:1,paddingBottom:10}}>
             <View style={styles.twoInfoBox} key={index}>
               <View>
-                {item.productvariantopt.length>0 &&<><Text>
+                {item.productvariantopt.length>0 &&<><Text style={styles.textInfo}>
                   Type: {item.productvariantopt[0].varientType?.varient_type}
                 </Text>
-                <Text>
+                <Text style={styles.textInfo}>
                   Value: {item.productvariantopt?.map((it,index)=>{return <Text>{it?.varientValue?.varient_value}{index!=item.productvariantopt.length-1?",":null} </Text>})}
                 </Text></>}
-                <Text>By Piece: {item.is_variant_by_piece ? "Yes" : "No"}</Text>
-                {item.is_variant_by_piece && <Text>Variant Piece: {item.variant_by_piece}</Text>}
-                <Text>By Stock: {item.is_variant_stock ? "Yes" : "No"}</Text>
-                {item.is_variant_stock && <Text>Variant Stock: {item.variant_stock}</Text>}
-                <Text>Min Qty: {item.is_variant_min_qty ? "Yes" : "No"}</Text>
-                {item.is_variant_min_qty && <Text>Variant Min. Qty: {item.variant_min_qty}</Text>}
-                <Text>Discount: {item.is_discount ? "Yes" : "No"}</Text>
-                {item.is_discount &&<><Text>Discount Start:{'\n'} {(new Date(parseInt(item.discount_start_date))+"").substr(0,15)}</Text><Text>Discount End:{'\n'} {(new Date(parseInt(item.discount_end_date))+"").substr(0,15)}</Text></>}
+                <Text style={styles.textInfo}>By Piece: {item.is_variant_by_piece ? "Yes" : "No"}</Text>
+                {item.is_variant_by_piece && <Text style={styles.textInfo}>Variant Piece: {item.variant_by_piece}</Text>}
+                <Text style={styles.textInfo}>By Stock: {item.is_variant_stock ? "Yes" : "No"}</Text>
+                {item.is_variant_stock && <Text style={styles.textInfo}>Variant Stock: {item.variant_stock}</Text>}
+                <Text style={styles.textInfo}>Min Qty: {item.is_variant_min_qty ? "Yes" : "No"}</Text>
+                {item.is_variant_min_qty && <Text style={styles.textInfo}>Variant Min. Qty: {item.variant_min_qty}</Text>}
+                <Text style={styles.textInfo}>Discount: {item.is_discount ? "Yes" : "No"}</Text>
+                {item.is_discount &&<><Text style={styles.textInfo}>Discount Start:{'\n'} {(new Date(parseInt(item.discount_start_date))+"").substr(0,15)}</Text><Text style={styles.textInfo}>Discount End:{'\n'} {(new Date(parseInt(item.discount_end_date))+"").substr(0,15)}</Text></>}
               </View>
               <View>
                 <Image

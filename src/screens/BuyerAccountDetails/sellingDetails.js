@@ -257,14 +257,14 @@ const SellingDetail = ({navigation}) =>{
                     },
                   ]}
                 >
-                  <Text style={{color:'gray'}}>{item.label}</Text>
+                  <Text style={{color:'gray', fontFamily:'Inter-Black-Bold'}}>{item.label}</Text>
                 </View>
               }
             >{apiData[item.items]?.length>0?
               <SelectMultiple
                 items={apiData[item.items]?.length>0 &&apiData[item.items]}
                 selectedItems={chosen[item.value]}
-                labelStyle={{color:'black'}}
+                labelStyle={{color:'black', fontFamily:'Inter-Black-Bold'}}
                 selectedLabelStyle	={{color:'#698EB7'}}
                 onSelectionsChange={(it) =>{
                    if(item.value=="categories")
@@ -278,7 +278,7 @@ const SellingDetail = ({navigation}) =>{
                 /* renderLabel={(label)=>{
                   [element.value]=="category"?tlabel:<Text>Label</Text>
                 }} */	
-              />:<Text style={{padding:10,color:'red'}}>Please Select a {item.value=="subcategories"?"Category":"Subcategory"} first</Text>}
+              />:<Text style={{padding:10,color:'red', fontFamily:'Inter-Black-Bold'}}>Please Select a {item.value=="subcategories"?"Category":"Subcategory"} first</Text>}
             </CollapsibleList>
           </View>
       )})}</>)
@@ -288,7 +288,7 @@ return (
     <>
       <Spinner visible={filterData.isVisible} />
       <Appbar style={{ backgroundColor: "#E9F3FF"}}>
-      { !filterData.showCategory ?<><Appbar.Content title="Products: " color="black"  />
+      { !filterData.showCategory ?<><Appbar.Content title="Products: " color="black" titleStyle={{fontFamily:'Adam-Bold'}}  />
         <Appbar.Content
           title={
             data?.filter((i) =>
@@ -296,9 +296,10 @@ return (
             ).length +
             " Results"
           } color="black" 
+          titleStyle={{fontFamily:'Adam-Bold'}}
           //onPress={this.setView}
           style={{ fontSize: 14 }}
-        /></>:<><Appbar.Content title="My Categories " color="black" /></>}
+        /></>:<><Appbar.Content title="My Categories " color="black" titleStyle={{fontFamily:'Adam-Bold'}}/></>}
         <Appbar.Action icon="plus" onPress={()=>{changeScreen();}} style={filterData.showCategory&&{backgroundColor:'#31C2AA'}} color={filterData.showCategory?"white":"black"}/>
         <Appbar.Action icon="magnify" onPress={()=> {
           if(!filterData.showCategory)
@@ -347,8 +348,8 @@ return (
                      <Image style={styles.userImage} source={{ uri: item?.images[0]?.media }} resizeMode="contain"/>
                      <View style={styles.cardFooter}>
                          <View style={{ alignItems: "center", justifyContent: "center" }}>
-                             <Text style={[styles.name,{textAlign:'center'}]}>{item.product_name}</Text>
-                             <Text style={[styles.position,{paddingVertical:10,textAlign:'center'}]}>{item?.description.length>50?item?.description.substring(0,50):item?.description}</Text>
+                             <Text style={[styles.name,{textAlign:'center', fontFamily:'Inter-Black-Bold'}]}>{item.product_name}</Text>
+                             <Text style={[styles.position,{paddingVertical:10,textAlign:'center', fontFamily:'Inter-Black-Bold'}]}>{item?.description.length>50?item?.description.substring(0,50):item?.description}</Text>
                              <Text style={styles.position}>${item.price} / Pc</Text>
                              <Text style={styles.position}>Avai. qty {item.current_stock}</Text>
                              <Text style={styles.position}> Min. qty {item.min_purchase_qty}</Text>
@@ -394,27 +395,27 @@ return (
                     },
                   ]}
                 >
-                  <Text style={{color:'black'}}>Selected</Text>
+                  <Text style={{color:'black', fontFamily:'Inter-Black-Bold'}}>Selected</Text>
                 </View>
               }
             >
               <View style={{padding:20, backgroundColor:'#fff'}}>
                 <View style={{paddingBottom:20}}>
-                  <Text style={{fontWeight:'bold'}}>Selected Categories:</Text>
+                  <Text style={{fontFamily:'Inter-Black-Bold'}}>Selected Categories:</Text>
                   {usersAllData?.categories.map((item)=>{
-                    return <Text>{item.label}</Text>
+                    return <Text style={{fontFamily:'Inter-Black-Light'}}>{item.label}</Text>
                   })}
                 </View>
-                <Text style={{fontWeight:'bold'}}>Selected Subcategories:</Text>
+                <Text style={{fontFamily:'Inter-Black-Bold'}}>Selected Subcategories:</Text>
                 <View style={{paddingBottom:20}}>
                   {usersAllData?.subcategories.map((item)=>{
-                    return <Text>{item.label}</Text>
+                    return <Text style={{fontFamily:'Inter-Black-Light'}}>{item.label}</Text>
                   })}
                 </View>
                 <View style={{paddingBottom:20}}>
-                  <Text style={{fontWeight:'bold'}}>Selected Brands:</Text>
+                  <Text style={{fontFamily:'Inter-Black-Bold'}}>Selected Brands:</Text>
                   {usersAllData?.brands.map((item)=>{
-                    return <Text>{item.label}</Text>
+                    return <Text style={{fontFamily:'Inter-Black-Light'}}>{item.label}</Text>
                   })}
                 </View>
               </View>

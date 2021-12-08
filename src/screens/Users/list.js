@@ -149,7 +149,7 @@ export default class Users extends Component {
             marginBottom:10,}}>
             
               <Headline
-                style={{ margin: 20, marginVertical: 10, color: "#698EB7" }}
+                style={{ margin: 20, marginVertical: 10, color: "#698EB7", fontFamily:'Adam-Bold' }}
               >
                 Manage Users
               </Headline>

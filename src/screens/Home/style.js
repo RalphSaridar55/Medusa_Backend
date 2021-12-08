@@ -119,6 +119,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: { height: 50, backgroundColor: "#698eb7" },
+    headerTitle:{fontFamily:'Adam-Bold',textTransform:'uppercase'},
+    ButtonShowAll:{fontFamily:'Adam-Bold',flexDirection: 'row-reverse'},
     Title: {
         fontSize: 18,
     },
@@ -213,8 +215,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: "flex-start",
         color: "#000",
-        fontWeight: 'bold',
-        textAlign:'center'
+        textAlign:'center',
+        fontFamily:'Inter-Black-Light'
     },
     position: {
         fontSize: 14,

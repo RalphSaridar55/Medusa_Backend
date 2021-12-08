@@ -32,10 +32,12 @@ export const styles = StyleSheet.create({
         justifyContent:'flex-start',
     },
     bannerName:{
-        fontSize:24
+        fontSize:24,
+        fontFamily:'Inter-Black-Light',
     },
     bannerTitle:{
         fontSize:16,
+        fontFamily:'Inter-Black-Light',
         color:'gray'
     },
     loginBtn: {
@@ -60,7 +62,8 @@ export const styles = StyleSheet.create({
     bannerPrice:{
         marginTop:20,
         fontSize:16,
-        color:'#31C2AA'
+        color:'#31C2AA',
+        fontFamily:'Inter-Black-Light'
     },
     insideContainer:{
         flexDirection:'row',
@@ -69,7 +72,8 @@ export const styles = StyleSheet.create({
     },
     infoText:{
         color:'gray',
-        fontSize:14
+        fontSize:14,
+        fontFamily:'Inter-Black-Light'
     },
     myCampaignTitleContainer:{
         paddingHorizontal:20,

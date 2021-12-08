@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     Btn: {
         backgroundColor: "#E3242B",
         borderRadius: 25,
-        height: 50,
+        height: 40,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     Dis_Btn: {
         backgroundColor: "#31C2AA",
         borderRadius: 25,
-        height: 50,
+        height: 40,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
@@ -65,8 +65,9 @@ const styles = StyleSheet.create({
         flex: 1
     },
     loginText: {
-        fontSize: 18,
+        fontSize: 16,
         color: "white",
+        fontFamily:'Adam-Bold'
     },
     signupText: {
         color: "#31C2AA",
@@ -89,7 +90,8 @@ const styles = StyleSheet.create({
         fontSize:24,
         marginBottom:20,
         color:'#6E91EC',
-        marginLeft:1
+        marginLeft:1,
+        fontFamily:'Adam-Bold'
     },
     buttonsContainer:{ 
         flexDirection: 'row',

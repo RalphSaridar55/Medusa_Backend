@@ -156,7 +156,7 @@ export default class ForgotPassword extends Component {
     displayBody = () => {
         switch (this.state.screenState) {
             case 'verify': return (<>
-                <Headline style={forgotPasswordStyle.headlineStyle}>{"Verify Your Email"}</Headline>
+                <Headline style={forgotPasswordStyle.headlineStyle}>Verify Your Email</Headline>
                 <TextInput
                     label="Email"
                     placeholder="email@gmail.com"
@@ -180,8 +180,8 @@ export default class ForgotPassword extends Component {
                 <Headline style={forgotPasswordStyle.headlineStyle}>{"Reset Password"}</Headline>
                 <Card style={forgotPasswordStyle.cardPickerStyle}>
                     <RadioButton.Group onValueChange={this.onValueChange} value={this.state.screenState}>
-                        <RadioButton.Item label={"Send Reset to " + maskEmail(this.state.userInfoFromApi.owner_email)} value="email" id="email" />
-                        <RadioButton.Item label={"Send Reset to " + "+" + this.state.userInfoFromApi.owner_country_code + " " + maskNumber(this.state.userInfoFromApi.owner_mobile_number)} value="otp" id="otp" />
+                        <RadioButton.Item labelStyle={{fontFamily:'Adam-Bold'}} label={"Send Reset to " + maskEmail(this.state.userInfoFromApi.owner_email)} value="email" id="email" />
+                        <RadioButton.Item labelStyle={{fontFamily:'Adam-Bold'}} label={"Send Reset to " + "+" + this.state.userInfoFromApi.owner_country_code + " " + maskNumber(this.state.userInfoFromApi.owner_mobile_number)} value="otp" id="otp" />
                     </RadioButton.Group>
                 </Card>
             </>

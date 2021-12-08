@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     text:{
         color:'#31C2AA',
         fontSize:16,
+        fontFamily:'Adam-Bold'
         /* fontWeight:'bold' */
     },
 })

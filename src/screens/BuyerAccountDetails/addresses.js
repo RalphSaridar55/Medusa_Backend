@@ -251,12 +251,12 @@ class Addresses extends Component {
               colors: { primary: "#31c2aa", underlineColor: "transparent" },
             }}
           />)}
+        </View>
+        </ScrollView>
           <TouchableOpacityButton
               onPress={()=>
                 this.state.type == "add" ? this._handleAdd() : this._handleEdit()
               } text ={this.state.type == "add" ? "Add" : "Edit"}/>
-        </View>
-        </ScrollView>
       </ImageBackground>
     );
   }

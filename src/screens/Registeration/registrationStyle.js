@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         fontWeight:'bold'
     },
     radioBtn: {
-        flexDirection: 'row', justifyContent: 'center'
+        flexDirection: 'row', justifyContent: 'space-around',paddingHorizontal:5
     },
     spacerStyle: {
         marginBottom: 15,

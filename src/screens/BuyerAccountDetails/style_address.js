@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
         fontSize:24,
         marginBottom:20,
         color:'#6E91EC',
+        fontFamily:'Adam-Bold',
         marginLeft:1
     }
 });

@@ -28,7 +28,8 @@ export default StyleSheet.create({
     headlineStyle: {
         marginBottom: 10,
         color: "#698EB7",
-        fontWeight: "bold"
+        // fontWeight: "bold",
+        fontFamily:'Adam-Bold'
     },
     inputView: {
         backgroundColor: "#fff",

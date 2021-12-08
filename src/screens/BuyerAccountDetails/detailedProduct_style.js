@@ -30,7 +30,8 @@ export const styles = StyleSheet.create({
         display:'flex',
         flexDirection:'row',
         justifyContent:'space-between',
-        paddingTop:20},
+        paddingTop:20,
+    },
     docPicker:{
         borderWidth:1,
         borderRadius:5,
@@ -50,9 +51,8 @@ export const styles = StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontWeight: "bold",
-        marginBottom:20,
-        color:'#698EB7'
+        color:'#698EB7',
+        fontFamily:'Adam-Bold'
     },
     priceContainer:{
         display:'flex',
@@ -88,4 +88,8 @@ export const styles = StyleSheet.create({
         fontSize:16,
         fontWeight:'bold'
     },
+    textInfo:{
+        fontFamily:'Inter-Black-Light',
+        flexWrap:'wrap'
+    }
 })

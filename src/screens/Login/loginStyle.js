@@ -17,13 +17,16 @@ export default StyleSheet.create({
     },
     forgot: {
         color: "#31C2AA",
-        fontSize: 12,
-        textAlign: "right"
+        fontSize: 14,
+        textAlign: "right",
+        fontFamily:'Inter-Black-Bold'
     },
     link: {
         color: "#31C2AA",
         textAlign: "center",
-        marginTop: 5
+        fontSize: 14,
+        marginTop: 5,
+        fontFamily:'Inter-Black-Bold'
     },
     loginBtn: {
         backgroundColor: "#31C2AA",

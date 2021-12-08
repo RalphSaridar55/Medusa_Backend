@@ -112,7 +112,7 @@ const Detailed = (props) => {
                     <Text style={[styles.bannerTitle]}>{data?.campaign_type}</Text>
                   </View>
                   <View>
-                    <Text style={{color:'gray'}}>Status: {data?.status}</Text>
+                    <Text style={{color:'gray', fontFamily:'Inter-Black-Light'}}>Status: {data?.status}</Text>
                  </View>
                     <View
                         style={{
@@ -142,8 +142,8 @@ const Detailed = (props) => {
                     /> */}
                     <View style={{marginTop:20}}>
                         <View>
-                            <Text style={{fontSize:16}}>Cost: ${data?.usd}</Text>
-                            <Text style={{fontSize:16}}>{data?.points>0?"Points Left: "+data?.points:data?.time_remains}</Text>
+                            <Text style={{fontSize:16, fontFamily:'Inter-Black-Light'}}>Cost: ${data?.usd}</Text>
+                            <Text style={{fontSize:16, fontFamily:'Inter-Black-Light'}}>{data?.points>0?"Points Left: "+data?.points:data?.time_remains}</Text>
                         </View>
                     </View>
                 </View>

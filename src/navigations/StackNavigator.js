@@ -53,11 +53,13 @@ const Stack = createStackNavigator();
 // code below is just to test the api
 const TStack = createStackNavigator();
 
+const style = {
+  ff:{fontFamily:'Adam-Bold',textAlignVertical:'center'}
+}
 /* const Drawer = () =>{
     return()
 } */
 class CustomDrawer extends Component {
-  
   constructor(props) {
     super(props);
     /* const didBlurSubscription = this.props.navigation.addListener(
@@ -73,6 +75,8 @@ class CustomDrawer extends Component {
       userApproved:null
     }
   }
+
+  
 
   componentDidUpdate(prevProps, prevState){
     if(prevProps.userType !== this.state.userType){
@@ -121,25 +125,24 @@ class CustomDrawer extends Component {
   render(){
     
     return (
-    <DrawerContentScrollView {...this.props}>
-      {/* <DrawerItemList {...props} /> */}
+    <DrawerContentScrollView {...this.props} showsVerticalScrollIndicator={false}>
       <View>
         <View
-        style={{display:'flex',alignItems:'center',marginVertical:50}}>
-          <Image source={require('../../assets/images/logo.png')}/>
+        style={{display:'flex',alignItems:'center',marginVertical:0}}>
+          <Image source={require('../../assets/images/drawerlogo.png')} style={{width:300,height:200}}/>
         </View>
         {this.props.loggedIn&&
         (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
-          <Text style={{color: "#6E91EC",fontSize:18}}>
+          <Text style={[style.ff,{color: "#6E91EC",fontSize:20}]}>
             {this.props.userData?.owner_email}
           </Text>
-          <Text style={{color: "#6E91EC",fontSize:14}}>
+          <Text style={[style.ff,{color: "#6E91EC",fontSize:16,marginTop:10}]}>
             {this.state.userType==4?"Seller":"Buyer"}
           </Text>
         </View>)}
         <DrawerItem
           label="Home"
-          labelStyle={this.props.screenC=="Home" ? { color: "#6E91EC" } : { color: "black" }}
+          labelStyle={[style.ff,{ color:this.props.screenC=="Home"?"#6E91EC":"black"}]}
           onPress={() => {
             this.props.changeScreen("Home")
             this.props.navigation.navigate("Home");
@@ -166,13 +169,13 @@ class CustomDrawer extends Component {
             }}
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
           ><Fontisto name="arrow-swap" size={24} color="black" />
-            <Text style={{ color: "black", marginLeft: 30 }}>Switch To {this.state.userType==4?"Buyer":"Seller"}</Text>
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Switch To {this.state.userType==4?"Buyer":"Seller"}</Text>
           </TouchableOpacity>
         </View>:null }
         {this.state.userType==4?(<><View>
           <DrawerItem
             label="Dashboard"
-            labelStyle={this.props.screenC=="Dashboard" ? { color: "#6E91EC" } : { color: "black" }}
+            labelStyle={[style.ff,{color:this.props.screenC=="Dashboard"?"#6E91EC":"black"}]}
             onPress={() => {
               this.closeCollapsible();
               this.props.changeScreen("Dashboard")
@@ -186,7 +189,7 @@ class CustomDrawer extends Component {
         <View>
             <DrawerItem
               label="Orders"
-              labelStyle={this.props.screenC=="Orders" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="Orders" ?"#6E91EC":"black"}]}
               onPress={() =>{ 
                 this.closeCollapsible();
                 this.props.changeScreen("Orders")
@@ -199,7 +202,7 @@ class CustomDrawer extends Component {
           <View>
             <DrawerItem
               label="Notifications"
-              labelStyle={this.props.screenC=="Notifications" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="Notifications" ?"#6E91EC":"black"}]}
               onPress={() =>{
                 this.closeCollapsible();
                 this.props.changeScreen("Notifications")
@@ -217,7 +220,7 @@ class CustomDrawer extends Component {
           <View>
             <DrawerItem
               label="Product"
-              labelStyle={this.props.screenC=="Product" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="Product" ?"#6E91EC":"black"}]}
               onPress={() => {
                 this.closeCollapsible();
                 this.props.changeScreen("Product")
@@ -230,7 +233,7 @@ class CustomDrawer extends Component {
             <View>
             <DrawerItem
               label="Negotiations"
-              labelStyle={this.props.screenC=="Negotiations" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="Negotiations" ?"#6E91EC":"black"}]}
               onPress={() =>{
                 this.closeCollapsible();
                 this.props.changeScreen("Negotiations")
@@ -248,7 +251,7 @@ class CustomDrawer extends Component {
           {this.state.userType==4?(<><View>
             <DrawerItem
               label="Loyalty Points"
-              labelStyle={this.props.screenC=="LoyaltyPoints" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="LoyaltyPoints" ?"#6E91EC":"black"}]}
               onPress={() =>{ 
                 this.closeCollapsible();
                 this.props.changeScreen("LoyaltyPoints")
@@ -260,7 +263,7 @@ class CustomDrawer extends Component {
           </View><View>
             <DrawerItem
               label="Campaign"
-              labelStyle={this.props.screenC=="Campaign" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="Campaign" ?"#6E91EC":"black"}]}
               onPress={() =>{ 
                 this.closeCollapsible();
                 this.props.changeScreen("Campaign")
@@ -272,7 +275,7 @@ class CustomDrawer extends Component {
           </View><View>
           <DrawerItem
             label="Activity"
-            labelStyle={this.props.screenC=="Activity" ? { color: "#6E91EC" } : { color: "black" }}
+            labelStyle={[style.ff,{color:this.props.screenC=="Activity" ?"#6E91EC":"black"}]}
             onPress={() => {
               this.closeCollapsible();
               this.props.changeScreen("Activity")
@@ -284,7 +287,7 @@ class CustomDrawer extends Component {
           <View>
             <DrawerItem
               label="Categories"
-              labelStyle={this.props.screenC=="Categories" ? { color: "#6E91EC" } : { color: "black" }}
+              labelStyle={[style.ff,{color:this.props.screenC=="Categories" ?"#6E91EC":"black"}]}
               onPress={() => {
                 this.closeCollapsible();
                 this.props.changeScreen("Categories")
@@ -308,7 +311,7 @@ class CustomDrawer extends Component {
               buttonContent={
                 <View style={{ flexDirection: "row", marginVertical: 15 }}>
                   <Ionicons name="settings-outline" size={24} color="black" />
-                  <Text style={{ color: "black", marginLeft: 30 }}>
+                  <Text style={[style.ff,{ color: "black", marginLeft: 30}]}>
                     Settings
                   </Text>
                 </View>
@@ -322,7 +325,7 @@ class CustomDrawer extends Component {
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
                     <Feather name="users" size={24} color={this.props.screenC =="User"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="User"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Text style={[style.ff,{color:this.props.screenC =="User"?"#6E91EC":"black",marginLeft: 30 }]}>
                       User Management
                     </Text>
                   </TouchableOpacity>
@@ -333,7 +336,7 @@ class CustomDrawer extends Component {
                       }}
                       style={{ flexDirection: "row", marginVertical: 10 }}>
                       <Feather name="user" size={24} color={this.props.screenC =="AdressDetails"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="AdressDetails"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                      <Text style={[style.ff,{color:this.props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
                       Account Details
                     </Text>
                   </TouchableOpacity>
@@ -343,7 +346,7 @@ class CustomDrawer extends Component {
                       this.props.changeScreen("Role")
                     }}>
                     <Feather name="lock" size={24}  color={this.props.screenC =="Role"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="Role"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Text style={[style.ff,{color:this.props.screenC =="Role"?"#6E91EC":"black",marginLeft: 30 }]}>
                       Roles & Permissions
                     </Text>
                   </TouchableOpacity>
@@ -354,7 +357,7 @@ class CustomDrawer extends Component {
                       }}
                      style={{ flexDirection: "row", marginVertical: 10 }}>
                     <Ionicons name="location-outline" size={24} color="black" />
-                    <Text style={this.props.screenC =="Adress"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Text style={[style.ff,{color:this.props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
                       User Address
                     </Text>
                   </TouchableOpacity>
@@ -365,7 +368,7 @@ class CustomDrawer extends Component {
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
                     <Feather name="book" size={24} color={this.props.screenC =="Selling"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="Selling"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Text style={[style.ff,{color:this.props.screenC =="Selling"?"#6E91EC":"black",marginLeft: 30 }]}>
                       Selling Details
                     </Text>
                   </TouchableOpacity>):null}
@@ -376,7 +379,7 @@ class CustomDrawer extends Component {
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
                     <Feather name="dollar-sign" size={24} color={this.props.screenC =="Sponsored"?"#6E91EC":"black"} />
-                    <Text style={this.props.screenC =="Sponsored"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+                    <Text style={[style.ff,{color:this.props.screenC =="Sponsored"?"#6E91EC":"black",marginLeft: 30 }]}>
                       Promoted Products
                     </Text>
                   </TouchableOpacity>):null}
@@ -399,7 +402,7 @@ class CustomDrawer extends Component {
         buttonContent={
           <View style={{ flexDirection: "row", marginVertical: 15 }}>
             <MaterialCommunityIcons name="information-outline" size={24} color="black" />
-            <Text style={{ color: "black", marginLeft: 30 }}>
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>
               About
             </Text>
           </View>
@@ -413,7 +416,7 @@ class CustomDrawer extends Component {
             }}
             style={{ flexDirection: "row", marginVertical: 10 }}>
             <Feather name="globe" size={24} color={this.props.screenC =="About"?"#6E91EC":"black"} />
-            <Text style={this.props.screenC =="About"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+            <Text style={[style.ff,{color:this.props.screenC =="About"?"#6E91EC":"black", marginLeft: 30 }]}>
               About us
             </Text>
           </TouchableOpacity>
@@ -424,7 +427,7 @@ class CustomDrawer extends Component {
             }}
             style={{ flexDirection: "row", marginVertical: 10 }}>
             <MaterialCommunityIcons name="cellphone" size={24} color={this.props.screenC =="Contact"?"#6E91EC":"black"} />
-            <Text style={this.props.screenC =="Contact"?{ color: "#6E91EC", marginLeft: 30 }:{ color: "black", marginLeft: 30 }}>
+            <Text style={[style.ff,{color:this.props.screenC =="Contact"?"#6E91EC":"black", marginLeft: 30 }]}>
               Contact us
             </Text>
           </TouchableOpacity>
@@ -452,7 +455,7 @@ class CustomDrawer extends Component {
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
           >
             <MaterialCommunityIcons name="logout" size={24} color="black" />
-            <Text style={{ color: "black", marginLeft: 30 }}>Logout</Text>
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Logout</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -464,7 +467,7 @@ class CustomDrawer extends Component {
             style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
           >
             <MaterialCommunityIcons name="login" size={24} color="black" />
-            <Text style={{ color: "black", marginLeft: 30 }}>Login / Register</Text>
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Login / Register</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -506,6 +509,12 @@ class Nav extends Component {
   changeScreen=(item)=>{
     this.setState({chosenScreen:item})
     console.log("SCREEN:",item)
+  }
+
+  headerTitle = (title) =>{
+    return <View style={{display:'flex',alignItems:'center'}}>
+      <Text style={{fontFamily:'Adam-Bold',fontWeight:'800',fontSize:24}}>{title}</Text>
+    </View>
   }
 
   async componentDidMount() {
@@ -593,13 +602,13 @@ class Nav extends Component {
         name="Home"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Home}
         navigation={navigation}
-        options={{ title: "Home" }}
+        options={{ headerTitle:()=>this.headerTitle("Home") }}
       />
       <Drawer.Screen
         name="About"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AboutStack}
         navigation={navigation}
-        options={{ title: "About" }}
+        options={{ headerTitle:()=>this.headerTitle("About") }}
       />
       <Drawer.Screen
         name="Auth"
@@ -611,43 +620,43 @@ class Nav extends Component {
         name="Product"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:ProductStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Products" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Products") }}
       />
       <Drawer.Screen
         name="Notifications"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:NotificationStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Notifications" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Notifications") }}
       />
       <Drawer.Screen
         name="Negotiations"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:NegotiationStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Negotiations" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Negotiations") }}
       />
       <Drawer.Screen
         name="Orders"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:OrderStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Orders" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Orders") }}
       />
       <Drawer.Screen
         name="User"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:UserStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Sub Users" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Sub Users") }}
       />
       <Drawer.Screen
         name="Role"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:RoleStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Roles" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Roles") }}
       />
       <Drawer.Screen
         name="Adress"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AdressStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Addresses" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Addresses") }}
       />
       <Drawer.Screen
         name="Dashboard"
@@ -655,43 +664,43 @@ class Nav extends Component {
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:DashboardStack}
         //component={}
         navigation={navigation}
-        options={{ headerShown: true, title: "Dashboard" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Dashboard") }}
       />
       <Drawer.Screen
         name="Campaign"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:CampaignStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Campaign" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Campaign") }}
       />
       <Drawer.Screen
         name="LoyaltyPoints"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:LoyaltyStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Loyalty Points" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Loyalty Points") }}
       />
       <Drawer.Screen
         name="Checkout"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:CheckoutStack}
         navigation={navigation}
-        options={{ headerShown: true, title: "Checkout" }}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Checkout" )}}
       />
       <Drawer.Screen
       name="Categories"
       component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Categories}
-      options={{ headerShown: true, title: "Categories"}}
+      options={{ headerShown: true, headerTitle:()=>this.headerTitle("Categories")}}
       navigation={navigation}
       />
       <Drawer.Screen
       name="Activity"
       component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Activity}
-      options={{ headerShown: true, title: "Activity"}}
+      options={{ headerShown: true, headerTitle:()=>this.headerTitle("Activity")}}
       navigation={navigation}
       />
       <Drawer.Screen
       name="Contract"
       children={()=><SignContract submitContract={this.submitContract} navigation={navigation}/>}
       //component={SignContract}
-      options={{ headerShown: true, title: ""}}
+      options={{ headerShown: true, title:""}}
       navigation={navigation}
       />
     </Drawer.Navigator>)

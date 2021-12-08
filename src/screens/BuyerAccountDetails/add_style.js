@@ -35,10 +35,9 @@ const styles = StyleSheet.create({
       color: "white",
     },
     headerText:{
-        fontSize: 21,
+        fontSize: 24,
         color: "#6E91EC",
-        fontWeight: 'bold',
-        marginBottom: 5
+        fontFamily:'Adam-Bold',
     },
     imgContainer: {
         flex: 1,

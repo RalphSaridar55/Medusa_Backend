@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   listCountry: {
+    fontFamily:'Inter-Black-Bold',
     fontSize: 18,
     flex: 1,
    

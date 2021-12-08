@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
         borderWidth: 3,
     },
     name: {
-        fontSize: 18,
+        fontSize: 22,
         flex: 1,
         alignSelf: 'center',
         color: "#6E91EC",
-        fontWeight: 'bold'
+        fontFamily:'Adam-Bold'
     }
 });
 

@@ -886,7 +886,7 @@ export default class Registartion extends Component {
               style={{
                 fontSize: 26,
                 color: "#31C2AA",
-                fontWeight: "bold",
+                fontFamily:'Adam-Bold',
                 marginBottom: 5,
               }}
             >
@@ -905,7 +905,7 @@ export default class Registartion extends Component {
           </View>
           <ScrollView style={{ flexDirection: "column", marginTop: 20 }}>
             {this.state.overlay == "terms" ? (
-              <Text>{terms}</Text>
+              <Text style={{fontFamily:'Adam-Bold'}}>{terms}</Text>
             ) : (
               <View
                 style={{
@@ -954,7 +954,7 @@ export default class Registartion extends Component {
                     height: 30,
                   }}
                 >
-                  <Text style={styles.loginBtnText}>{this.state.sendOtp?"Send OTP":"Verify OTP"}</Text>
+                  <Text style={[styles.loginBtnText,{fontFamily:"Adam-Bold"}]}>{this.state.sendOtp?"Send OTP":"Verify OTP"}</Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity
                 onPress={this.onRegister}
@@ -977,12 +977,14 @@ export default class Registartion extends Component {
               >
                 <View style={registrationStyle.radioBtn}>
                   <RadioButton.Item
-                    label={"Just a buyer "}
+                    label="buyer"
+                    labelStyle={{fontFamily:'Adam-Bold',textTransform:'uppercase'}}
                     value="buyer"
                     id="buyer"
                   />
                   <RadioButton.Item
-                    label={"Seller & Buyer"}
+                    label="Seller & Buyer"
+                    labelStyle={{fontFamily:'Adam-Bold',textTransform:'uppercase'}}
                     value="sellerBuyer"
                     id="sellerBuyer"
                   />
@@ -1017,6 +1019,7 @@ export default class Registartion extends Component {
                       style={{
                         color: "#31C2AA",
                         textDecorationLine: "underline",
+                        fontFamily:'Adam-Bold'
                       }}
                     >
                       Verify your number
@@ -1031,16 +1034,16 @@ export default class Registartion extends Component {
                     this.setState({ checkRead: !this.state.checkRead });
                   }}
                 />
-                <Text>
-                  I Agree to the{" "}
+                <Text style={{fontFamily:'Adam-Bold'}}>
+                  I Agree to the&nbsp;
                   <Text
                     style={{
                       color: "#31C2AA",
                       textDecorationLine: "underline",
+                      fontFamily:'Adam-Bold',
                     }}
                     onPress={() => this.setState({ showTerms: true })}
-                  >
-                    Terms and conditions
+                  >Terms and conditions
                   </Text>
                 </Text>
               </View>

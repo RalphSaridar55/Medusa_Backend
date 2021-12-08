@@ -328,12 +328,12 @@ export default class AddUsers extends Component {
           <View
             style={{
               flex: 1,
-              padding: 15,
+              paddingHorizontal: 15,
               justifyContent: "center",
-              marginTop: 20,
+              marginTop: 10,
             }}
           >
-            <Headline style={{ marginBottom: 10, color: "#698EB7" }} onPress={()=>{
+            <Headline style={{ marginBottom: 10, color: "#698EB7", fontFamily:'Adam-Bold' }} onPress={()=>{
               console.log("PRESSED");
               if(this.myRef.current.state.collapsed)
                 this.myRef.current.toggle();
@@ -416,7 +416,7 @@ export default class AddUsers extends Component {
                 color="#fff"
               />
               <Text
-                style={{ marginLeft: 10, color: "#698EB7", fontWeight: "bold" }}
+                style={{ marginLeft: 10, fontSize:16, color: "#698EB7", fontFamily:'Adam-Bold' }}
               >
                 Company registraction doc (.pdf .png)
               </Text>

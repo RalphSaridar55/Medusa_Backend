@@ -229,9 +229,7 @@ export default class AddProduct extends Component {
       res.map((item1) => {
         variants.push({ value: item1.id, label: item1.varient_type });
       });
-      routeVar.map((item2)=>{
-        values.push({label:item2.varientValue.varient_value,value:item2.varientValue.id})
-      })
+     
       console.log("VALUES: ",values)
       this.setState({
         filter_variant_list: res,
@@ -240,6 +238,9 @@ export default class AddProduct extends Component {
         variant_type_list: variants,
       },()=>{
         if(this.props.route.params.type == "edit"){
+          routeVar.map((item2)=>{
+            values.push({label:item2.varientValue.varient_value,value:item2.varientValue.id})
+          })
           this.handleCategories("variant_type",this.props.route.params.productvariantopt[0].varientType.id)
           this.setState({
             variant_value: values,})
@@ -321,30 +322,11 @@ export default class AddProduct extends Component {
     return (
       <>
         <TouchableOpacity onPress={() => this.chooseImages("variant")}>
-          {/* {this.state.variantImage.length > 0 && (
-            <Ionicons
-              style={{
-                position: "absolute",
-                flex: 1,
-                zIndex: 10,
-                right: 10,
-                top: 10,
-              }}
-              name="close-sharp"
-              size={30}
-              color="red"
-              //onPress={() => this.setState({ variantImage: "" })}
-            />
-          )} */}
           <Image
             source={
               this.state.variantImage.length<1?
               require("../../../assets/images/default-image.png")
-              : { uri: this.state.variantImage }/* 
-              this.props.route.params.type=="edit"?{uri:this.state.variantImage}:
-              this.state.variantImage.length < 1
-                ? require("../../../assets/images/default-image.png")
-                : { uri: this.state.variantImage } */
+              : { uri: this.state.variantImage }
             }
             style={{ width: screenwidth, height: screenheight * 0.3 }}
           />
@@ -358,7 +340,7 @@ export default class AddProduct extends Component {
         style={{ marginVertical: 10, }}
         wrapperStyle={{
           borderWidth: 0.2,
-          borderColor: "gray",
+          borderColor: "lightgray",
           borderRadius: 5,
         }}
         buttonPosition="top"
@@ -368,21 +350,20 @@ export default class AddProduct extends Component {
             style={[
               styles.docPicker,
               {
-                borderColor: "#A6A6A6",
                 backgroundColor:'#fff',
                 marginVertical: 0,
                 paddingHorizontal:20
               },
             ]}
           >
-            <Text style={{color:'gray',fontSize:16,textAlignVertical:'center'}}>{item.placeholder}</Text>
+            <Text style={{color:'gray',fontSize:16,textAlignVertical:'center', fontFamily:'Inter-Black-Light'}}>{item.placeholder}</Text>
           </View>
         }
       >
         <SelectMultiple
           items={this.state[item.items]}
           selectedItems={this.state[item.stateValue].length>0 &&this.state[item.stateValue]}
-          labelStyle={{color:'black'}}
+          labelStyle={{color:'black', fontFamily:'Inter-Black-Light'}}
           selectedLabelStyle	={{color:'#698EB7'}}
           onSelectionsChange={(item) =>{console.log("ITEM SELECTED: ",item)
             this.setState({variant_value:item})

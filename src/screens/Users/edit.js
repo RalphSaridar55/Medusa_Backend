@@ -348,9 +348,9 @@ export default class EditUsers extends Component {
           <View
             style={{
               flex: 1,
-              padding: 15,
+              paddingHorizontal: 15,
               justifyContent: "center",
-              marginTop: 20,
+              marginTop: 10,
             }}
           >
             <View
@@ -362,7 +362,7 @@ export default class EditUsers extends Component {
                 alignItems: "center",
               }}
             >
-              <Headline style={{ color: "#698EB7" }}>Edit Sub User</Headline>
+              <Headline style={{ color: "#698EB7", fontFamily:'Adam-Bold' }}>Edit Sub User</Headline>
               
             </View>
             {this.drawInputs()}
@@ -411,6 +411,7 @@ export default class EditUsers extends Component {
                           paddingBottom: 5,
                           borderBottomColor: "#DCDCDC",
                           borderBottomWidth: 1,
+                          fontFamily:'Inter-Black-Medium'
                         }}
                       >
                         {index+1}    {i.permission_name}
@@ -440,7 +441,7 @@ export default class EditUsers extends Component {
                 color="#fff"
               />
               <Text
-                style={{ marginLeft: 10, color: "#698EB7", fontWeight: "bold" }}
+                style={{ marginLeft: 10, fontSize:16, color: "#698EB7", fontFamily:'Adam-Bold' }}
               >
                 Company registration doc (.pdf .png)
               </Text>{this.state.docError == true ? (

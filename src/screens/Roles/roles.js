@@ -109,13 +109,8 @@ export default class Roles extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: '#E9F3FF' }} >
+            <View style={{ flex: 1, backgroundColor: '#E9F3FF',paddingVertical:10 }} >
                 <Spinner visible={this.state.isLoading}/>
-                <Headline
-                style={{ margin: 20, marginBottom: 20, color: "#698EB7" }}
-                >
-                Roles
-                </Headline>
                 <View style={{ maxHeight: height*0.9,flex:1}}>
                         <ScrollView style={{ maxHeight: height*0.75,marginHorizontal:20}} showsVerticalScrollIndicator={false}
                         onScroll={({nativeEvent}) => {
@@ -134,8 +129,8 @@ export default class Roles extends Component {
                             }}>
                                 <View style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
                                     {/* <View style={{ paddingTop: 20, paddingBottom: 20, display:'flex', flexDirection:'column',justifyContent:'space-between' }}> */}
-                                        <Text>{i.role_name}</Text>
-                                        <Text numeric style={{ marginRight: 15,color:'#C4C4C4' }}>{i.num_of_permission} Permissions</Text>
+                                        <Text style={{fontFamily:'Inter-Black-Medium'}}>{i.role_name}</Text>
+                                        <Text numeric style={{ marginRight: 15,color:'#C4C4C4',fontFamily:'Inter-Black-Medium' }}>{i.num_of_permission} Permissions</Text>
                                     {/* </View> */}
                                 </View>
                             </TouchableOpacity>

@@ -102,7 +102,7 @@ export default class AddRole extends Component {
                 }}>
                 <View style={{ flex: 1, padding: 15,marginTop:20}}>
                     <Spinner visible={this.state.visible} />
-                    <Headline style={{ marginBottom: 10, color: "#698EB7", fontWeight: "bold" }}>Create a Role</Headline>
+                    <Headline style={{ color: "#698EB7", fontFamily:'Adam-Bold' }}>Create a Role</Headline>
                     <TextInput
                         label="Role name*"
                         placeholder="Role"
@@ -141,14 +141,14 @@ export default class AddRole extends Component {
                           },
                         ]}
                       >
-                        <Text>Permissions</Text>
+                        <Text style={{fontFamily:'Inter-Black-Medium'}}>Permissions</Text>
                       </View>
                     }
                   >
                     <SelectMultiple
                         items={this.state.permissions}
                         selectedItems={this.state.permission}
-                        labelStyle={{color:'black'}}
+                        labelStyle={{color:'black',fontFamily:'Inter-Black-Medium'}}
                         selectedLabelStyle	={{color:'#698EB7'}}
                         onSelectionsChange={(item) =>{
                             this.setState({permission:item})
