@@ -767,7 +767,7 @@ class ProductDetails extends Component {
                     onPress={() => this.AddToCart("order")}
                     style={[styles.loginBtn, { flex: 2 }]}
                   >
-                    <Text style={styles.loginBtnText}>Add to Cart</Text>
+                    <Text style={styles.loginBtnText}>Add to Orderbook</Text>
                   </TouchableOpacity>
               </View>
               <View style={{marginHorizontal:60,marginVertical:10}}>
@@ -775,7 +775,7 @@ class ProductDetails extends Component {
                     onPress={() => this.AddToCart("Save")}
                     style={[styles.loginBtn, { flex: 2 }]}
                   >
-                    <Text style={styles.loginBtnText}>Save for Later</Text>
+                    <Text style={styles.loginBtnText}>Reserve for later</Text>
                   </TouchableOpacity>
               </View></>)}
             </Card.Content>

@@ -55,11 +55,11 @@ export default StyleSheet.create({
         elevation: 4,
     },
     textContainer:{
-        /* backgroundColor: "red" */
+        // backgroundColor: "red"
         backgroundColor:'#fff',
         paddingHorizontal:10,
         paddingVertical:20,
-        borderRadius:10
+        // borderRadius:10
     },
     title:{
         color: "#698eb7",
@@ -68,3 +68,4 @@ export default StyleSheet.create({
         fontWeight:'bold'
     }
 });
+ 

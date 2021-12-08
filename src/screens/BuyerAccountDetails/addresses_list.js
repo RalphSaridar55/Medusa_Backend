@@ -77,7 +77,6 @@ const AdressList = (props) => {
       resizeMode="cover"
       style={{
         flex: 1,
-        marginTop:10,
         justifyContent: "center",
       }}
     >

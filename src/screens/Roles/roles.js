@@ -109,7 +109,7 @@ export default class Roles extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: '#E9F3FF',marginTop:20}} >
+            <View style={{ flex: 1, backgroundColor: '#E9F3FF' }} >
                 <Spinner visible={this.state.isLoading}/>
                 <Headline
                 style={{ margin: 20, marginBottom: 20, color: "#698EB7" }}

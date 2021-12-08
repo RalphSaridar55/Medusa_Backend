@@ -25,7 +25,7 @@ const CampaignStack = ({ navigation, route }) => {
         <CStack.Screen
         name="Create"
         component={Create}
-        options={{ headerShown: false }}
+        options={{ headerShown: false /*, title:"Create Campaign"  */}}
         navigation={navigation}
         />
     </CStack.Navigator>

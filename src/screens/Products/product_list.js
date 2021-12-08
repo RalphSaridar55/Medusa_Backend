@@ -5,7 +5,6 @@ import * as API from "../../core/apis/apiProductServices";
 import * as APICountry from '../../core/apis/apiAddressServices'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Overlay from 'react-native-modal-overlay';
-import {NavigationEvents} from 'react-navigation';
 import {
     StyleSheet,
     Text,
@@ -15,7 +14,6 @@ import {
     Alert,
     ScrollView,
     FlatList,
-    Touchable,
 } from 'react-native';
 import { MaterialCommunityIcons,Entypo } from '@expo/vector-icons';
 import ActionSheet from "react-native-actions-sheet";
@@ -24,7 +22,6 @@ import Slider from "react-native-sliders";
 import styles from './listing_style';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Spinner from 'react-native-loading-spinner-overlay';
-import { RenderPicker } from '../../components/Picker';
 import {Picker} from '@react-native-picker/picker';
 
 const actionSheetRef = createRef();
@@ -32,7 +29,7 @@ const actionSheetCat = createRef();
 export default class ProductList extends Component {
 
     constructor(props) {
-        super(props);
+    super(props);
     this.locationRef = React.createRef()
         this.state = {
             countryLabel:"",
@@ -46,9 +43,7 @@ export default class ProductList extends Component {
             isVisible:true,
             category:[],
             subcategory:[],
-            //color:[],
             brand:[],
-            //sortByData:'',
             userType:0,
             showButton:false,
             fetchedProducts:[],
@@ -88,8 +83,8 @@ export default class ProductList extends Component {
             this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
         })
     } */
-    componentWillUnmount(){
 
+    componentWillUnmount(){
     }
     
     componentDidMount(){
@@ -105,23 +100,24 @@ export default class ProductList extends Component {
             let array = result;
             let data = [];
             array.map((item) => data.push({label:item.category_name,value:item.id}));
-            this.setState({ fetchedCategories: data,apiCategoriesForFiltering:result });
+            this.setState({ fetchedCategories: data, apiCategoriesForFiltering:result });
+        }).then((res)=>{
+            let {multiplier} = this.state
+            if(this.props.route.params?.category_id){
+                let {category_id,category_name} = this.props.route.params
+                this.getProducts(1,category_id,null,null,null,[0*multiplier,1*multiplier])
+                this.setCategory([{value:category_id, label:category_name}])
+            }
+            else{
+                this.getProducts(1,null,null,null,null,[0*multiplier,1*multiplier]) 
+            }  
         })
-        let {multiplier} = this.state
-        if(this.props.route.params?.category_id){
-            let {category_id,category_name} = this.props.route.params
-            this.getProducts(1,category_id,null,null,null,[0*multiplier,1*multiplier])
-            this.setCategory([{value:category_id, label:category_name}])
-        }
-        else{
-            this.getProducts(1,null,null,null,null,[0*multiplier,1*multiplier]) 
-          }
       })
     }
 
     getProducts(page,catid,subid,brandid,countryid,price){
         API.getFilteredProducts(page,catid,subid,brandid,countryid,price).then((res)=>{
-            console.log("PRODUCTS FETCHED: ",res)
+            // console.log("PRODUCTS FETCHED: ",res)
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
         })
@@ -141,10 +137,6 @@ export default class ProductList extends Component {
     filterPriceRange = (v) =>{
         console.log("VALUE: ",v)
         this.setState({value:v})
-        // let filteredData = this.state.filterProducts.filter(item=>{
-        //     return (item.price>=(parseInt(v[0]*this.state.multiplier)) && item.price<=(parseInt(v[1]*this.state.multiplier)))
-        //  })
-        // this.setState({filterProducts:filteredData})
     }
 
     resetPriceRange = () =>{
@@ -182,7 +174,7 @@ export default class ProductList extends Component {
                 break; 
             case 'reset':
                 let products = this.state.fetchedProducts.data.sort((a,b)=> a.product_name[0] > b.product_name[0]?1:-1)
-                console.log("AFTER RESETTING: ",products)
+                // console.log("AFTER RESETTING: ",products)
                 this.setState({filterProducts:products,category:[],subcategory:[],brand:[]})
                 break;
         }  
@@ -195,7 +187,7 @@ export default class ProductList extends Component {
         let countryLabel = this.state.countries.filter((item)=>item.value === selection)[0]
         let price = this.state.value[0]==0&&this.state.value[1]==1?null:[parseInt(this.state.value[0]*this.state.multiplier),parseInt(this.state.value[1]*this.state.multiplier)]
         API.getFilteredProducts(1,category.length<1?null:category[0].value,subcategory.length<1?null:subcategory[0].value,brand.length<1?null:brand[0].value,selection,price).then((res)=>{
-            console.log("COUNTRY PRODUCCTS: ",res)
+            // console.log("COUNTRY PRODUCCTS: ",res)
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ countryLabel:countryLabel.label,isVisible:false,country:selection,page:1,filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})
         }).catch(err=>{
@@ -308,10 +300,10 @@ export default class ProductList extends Component {
         let {category,subcategory,brand,country} = this.state
         let price = this.state.value[0]==0&&this.state.value[1]==1?null:[parseInt(this.state.value[0]*this.state.multiplier),parseInt(this.state.value[1]*this.state.multiplier)]
         API.getFilteredProducts(page,category.length>0?category:null,subcategory.length>0?subcategory:null,brand.length>0?brand:null,country!=null?country:null,price).then((res)=>{
-            console.log("COUNTRY PRODUCCTS: ",res.data)
-            console.log("STATE: ",this.state.filterProducts)
+            // console.log("COUNTRY PRODUCCTS: ",res.data)
+            // console.log("STATE: ",this.state.filterProducts)
             let addedData = this.state.filterProducts.concat(res.data)
-            console.log("RESULT FROM CONCAT: ",addedData.length)
+            // console.log("RESULT FROM CONCAT: ",addedData.length)
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ isVisible:false,page:1,filterProducts:addedData,fetchedProducts:addedData,isVisible:false,total:res.totalCount})
         })
@@ -497,7 +489,6 @@ export default class ProductList extends Component {
                                 <Title style={{ padding: 10,flex:1 }}>Filter By </Title>
                                 <Title style={{ padding: 10,flex:1, alignItems:'flex-end',paddingHorizontal:20,color:'#6E91EC'}/* ,styles.resetButton  */}
                                 onPress={()=>{
-                                    //console.log("Test")
                                     this.resetEverything()
                                 }}>Reset </Title>
                             </View>
