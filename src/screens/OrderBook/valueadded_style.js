@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
     docPicker:{
         borderWidth:1,
         borderRadius:5,
-        borderColor:'gray',
+        borderColor:'lightgray',
         marginVertical:10,
         flex:1,
         height:55,
@@ -106,7 +106,7 @@ export const styles = StyleSheet.create({
     },
     loginBtn: {
         marginTop:10,
-        marginHorizontal:50,
+        marginHorizontal:20,
         backgroundColor: "#5BC5B9",
         borderRadius: 25,
         alignItems: "center",

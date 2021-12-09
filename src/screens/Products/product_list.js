@@ -580,7 +580,7 @@ export default class ProductList extends Component {
                 </ActionSheet>
                 {this.state.showButton && <TouchableOpacity
                     style={[styles.Btn,this.state.userType==1?{display:'none',opacity:0}:null]}
-                    onPress={() => this.setState({modalVisible:true})/* this.props.navigation.navigate("Add") */}
+                    onPress={() => /* this.setState({modalVisible:true}) */this.props.navigation.navigate("Add",{screen:"Add1"})}
                 >
                     <Icon name="plus-thick" size={30} color="white" />
                 </TouchableOpacity>}

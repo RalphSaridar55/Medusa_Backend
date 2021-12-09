@@ -19,7 +19,7 @@ const ValueAdded = ({ navigation,route }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [total, setTotal] = useState(0);
   const [routeData,setRouteData] = useState();
-  const [document,setDocument] = useState({value:null,error:true});
+  const [document,setDocument] = useState();
 
   const calculateTotal = (value) => {
     console.log("VALUE IS: ", value);
@@ -49,10 +49,10 @@ const ValueAdded = ({ navigation,route }) => {
         "Wrong Extensions",
         "Please only upload pdf or docx type of files"
       );
-      setDocument({...document,error:true})
+      setDocument(result)
     } else {
       try {
-        setDocument({value:result,error:false})
+        setDocument(result)
       } catch (error) {
         console.log(error);
       }
@@ -70,7 +70,7 @@ const ValueAdded = ({ navigation,route }) => {
       Alert.alert("Error","Please select atleast one service")
       return
     }
-    if(document.value.uri==undefined || document.value==null){
+    if(!document.uri){
       setIsVisible(false)
       Alert.alert("Error","Please select a document")
       return
@@ -78,11 +78,11 @@ const ValueAdded = ({ navigation,route }) => {
     let arr = [];
     let doc =[];
     
-    if(typeof(this.state.trading)!="string")
+    if(typeof(document)!="string")
       new Promise (async(resolve,reject)=>{
         let payloadToSend = []
           payloadToSend.push({
-            uri:document.value.uri,name:document.value.name
+            uri:document.uri,name:document.name
           })
 
         let blob =await Promise.all(await documentBlobConverter(payloadToSend))
@@ -93,32 +93,30 @@ const ValueAdded = ({ navigation,route }) => {
         ApiDocument.uploadDoc({document:formatted.document, extension:formatted.extension})
         .then((res)=>{
           doc.push(res)
+          services.map((item)=>{
+            let res = fetchedServices.filter((item2) => {
+              return item2.value === item.value;
+            });
+            arr.push({service_id:item.value,service_name:item.label.split(" ")[0],price:res[0].cost,document:doc})
+          })
+          let payload={
+            cart_id:routeData.cart_id,
+            value_added_services:arr,
+          }
+          console.log("PAYLOAD BECOMES: ",payload)
+      
+          APIORder.addValueAddedServices(payload).then((res)=>{
+            setIsVisible(false)
+            Alert.alert("Added Services",res,[
+              {text:"Ok",onPress:()=>navigation.goBack()}
+            ])
+          }).catch(err=>{
+            setIsVisible(false)
+            Alert.alert("Error",err.response.data.message)
+          })
         })
         .catch(err=>console.log("Error:",err.response.data.message))
       })
-      else
-        doc.push(document.value)
-    services.map((item)=>{
-      let res = fetchedServices.filter((item2) => {
-        return item2.value === item.value;
-      });
-      arr.push({service_id:item.value,service_name:item.label.split(" ")[0],price:res[0].cost,document:doc})
-    })
-    let payload={
-      cart_id:routeData.cart_id,
-      value_added_services:arr,
-    }
-    console.log("PAYLOAD BECOMES: ",payload)
-
-    APIORder.addValueAddedServices(payload).then((res)=>{
-      setIsVisible(false)
-      Alert.alert("Added Services",res,[
-        {text:"Ok",onPress:()=>navigation.goBack()}
-      ])
-    }).catch(err=>{
-      setIsVisible(false)
-      Alert.alert("Error",err.response.data.message)
-    })
   }
 
   useEffect(() => {
@@ -149,24 +147,24 @@ const ValueAdded = ({ navigation,route }) => {
         />
       </View>
       <View style={styles.mainContainer}>
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginTop:10}}>
           <Text style={styles.name}>{routeData?.product_name}</Text>
           {routeData?.value_added_services!=null&&<AntDesign name="closecircle" size={24} color="red" onPress={()=>Alert.alert('Remove Services','Are you sure you want to remove added services',[
             {text:"No"},
             {text:"Yes",onPress:()=>removeServices()},
           ])}/>}
         </View>
-        <Text>{routeData?.description}</Text>
+        <Text style={{fontFamily:'Inter-Black-Light'}}>{routeData?.description}</Text>
         <View style={styles.priceContainer}>
-          <Text style={{ fontWeight: "bold" }}>Cost:</Text>
-          <Text style={{color:'#6E91EC'}}>${total}</Text>
+          <Text style={{ fontFamily:'Inter-Black-Bold' }}>Cost:</Text>
+          <Text style={{color:'#6E91EC', fontFamily:'Inter-Black-Light'}}>${total}</Text>
         </View>
         <View style={{ marginVertical: 20, flex: 1 }}>
           <CollapsibleList
             style={{ marginVertical: 10 }}
             wrapperStyle={{
               borderWidth: 0.2,
-              borderColor: "gray",
+              borderColor: "lightgray",
               borderRadius: 5,
             }}
             buttonPosition="top"
@@ -176,7 +174,7 @@ const ValueAdded = ({ navigation,route }) => {
                 style={[
                   styles.docPicker,
                   {
-                    borderColor: "#A6A6A6",
+                    // borderColor: "#A6A6A6",
                     backgroundColor: "#fff",
                     marginVertical: 0,
                   },
@@ -189,7 +187,7 @@ const ValueAdded = ({ navigation,route }) => {
             <SelectMultiple
               items={fetchedServices}
               selectedItems={services}
-              labelStyle={{ color: "black" }}
+              labelStyle={{ color: "black", fontFamily:'Inter-Black-Light' }}
               selectedLabelStyle={{ color: "#698EB7" }}
               onSelectionsChange={(item) => {
                 console.log("CHOSEN OPTION IS: ", item);
@@ -207,8 +205,8 @@ const ValueAdded = ({ navigation,route }) => {
           icon="file"
           mode="outlined"
           onPress={() =>pickDocument()}
-          style={[styles.docPicker,{marginHorizontal:20,backgroundColor:'#fff',borderColor:'#808080'}]}
-          doc={document.value}
+          style={[styles.docPicker,{marginHorizontal:20,backgroundColor:'#fff'/* ,borderColor:'#808080' */}]}
+          doc={document}
           />
       <View
         style={styles.buttonsContainer}>

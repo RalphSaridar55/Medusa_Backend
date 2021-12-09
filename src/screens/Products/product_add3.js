@@ -376,7 +376,7 @@ export default class AddProduct extends Component {
           style={{ marginVertical: 10 }}
           wrapperStyle={{
             borderWidth: 0.2,
-            borderColor: "gray",
+            borderColor: "lightgray",
             borderRadius: 5,
           }}
           buttonPosition="top"
@@ -386,7 +386,7 @@ export default class AddProduct extends Component {
               style={[
                 styles.docPicker,
                 {
-                  borderColor: "#A6A6A6",
+                  // borderColor: "#A6A6A6",
                   backgroundColor: "#fff",
                   marginVertical: 0,
                 },
@@ -420,7 +420,8 @@ export default class AddProduct extends Component {
         key={index}
         style={{
           borderWidth: 1,
-          borderColor: "#C4C4C4",
+          borderColor:'lightgray',
+          // borderColor: "#C4C4C4",
           borderRadius: 4,
           marginHorizontal: 20,
           marginVertical: 10,

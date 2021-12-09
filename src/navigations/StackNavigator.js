@@ -357,7 +357,7 @@ class CustomDrawer extends Component {
                       }}
                      style={{ flexDirection: "row", marginVertical: 10 }}>
                     <Ionicons name="location-outline" size={24} color="black" />
-                    <Text style={[style.ff,{color:this.props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
+                    <Text style={[style.ff,{color:this.props.screenC =="Adress"?"#6E91EC":"black",marginLeft: 30 }]}>
                       User Address
                     </Text>
                   </TouchableOpacity>
@@ -372,7 +372,7 @@ class CustomDrawer extends Component {
                       Selling Details
                     </Text>
                   </TouchableOpacity>):null}
-                  {this.state.userType==4?(<TouchableOpacity
+                  {/* {this.state.userType==4?(<TouchableOpacity
                     onPress={() => {
                       this.props.navigation.navigate("Adress",{screen:"Sponsored"});
                       this.props.changeScreen("Sponsored")
@@ -382,7 +382,7 @@ class CustomDrawer extends Component {
                     <Text style={[style.ff,{color:this.props.screenC =="Sponsored"?"#6E91EC":"black",marginLeft: 30 }]}>
                       Promoted Products
                     </Text>
-                  </TouchableOpacity>):null}
+                  </TouchableOpacity>):null} */}
               </View>
             </CollapsibleList>
           </View>

@@ -430,10 +430,10 @@ async componentDidMount(){
                       Value added services
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                   onPress={()=>this.props.navigation.navigate("Negotiations",{screen:"Negotiation",params:{fromOrder:item}})}>
                     <Ionicons name="chatbox" size={24} color="#6E91EC" />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               </View>
             </View>

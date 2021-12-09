@@ -430,7 +430,8 @@ export default class AddProduct extends Component {
         key={index}
         style={{
           borderWidth: 1,
-          borderColor: "#C4C4C4",
+          borderColor:'lightgray',
+          // borderColor: "#C4C4C4",
           borderRadius: 4,
           marginHorizontal: 20,
           marginVertical: 10,

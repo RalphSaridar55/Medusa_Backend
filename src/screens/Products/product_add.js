@@ -405,14 +405,7 @@ export default class AddProduct extends Component {
               });
           }
         );
-        console.log(`array will consist of ${array}`);/* 
-        console.log("RESULT ARRAY IS: ", res);
-        res.map((item) => {
-          array.push({
-            label: item.subCategory.sub_category_name,
-            value: item.sub_category_id,
-          });
-        }); */
+        console.log(`array will consist of ${array}`);
         this.setState({ fetchedSubCategories: array });
       case "subCategory":
         let array2 = [];
@@ -430,13 +423,13 @@ export default class AddProduct extends Component {
   }
 
   renderPicker(item, index) {
-    /* if(this.state[item.items].length>0) */
     return (
       <View
         key={index}
         style={{
           borderWidth: 1,
-          borderColor: "#C4C4C4",
+          borderColor:'lightgray',
+          // borderColor: "#C4C4C4",
           borderRadius: 4,
           marginHorizontal: 20,
           marginVertical: 10,
@@ -524,7 +517,7 @@ export default class AddProduct extends Component {
           style={[
             styles.docPicker,
             {
-              borderColor: "#A6A6A6",
+              // borderColor: "#A6A6A6",
               backgroundColor: "#fff",
               marginVertical: 0,
               marginHorizontal: 10,
@@ -560,7 +553,7 @@ export default class AddProduct extends Component {
           style={{ marginVertical: 10 }}
           wrapperStyle={{
             borderWidth: 0.2,
-            borderColor: "gray",
+            borderColor: "lightgray",
             borderRadius: 5,
           }}
           buttonPosition="top"
@@ -570,7 +563,7 @@ export default class AddProduct extends Component {
               style={[
                 styles.docPicker,
                 {
-                  borderColor: "#A6A6A6",
+                  // borderColor: "#A6A6A6",
                   backgroundColor: "#fff",
                   marginVertical: 0,
                 },

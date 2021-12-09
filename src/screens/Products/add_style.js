@@ -25,9 +25,10 @@ export const styles = StyleSheet.create({
       color: "white",
     },
     headerText:{
-        fontSize: 21,
+        fontSize: 24,
         color: "#6E91EC",
-        fontWeight: 'bold',
+        fontFamily:'Adam-Bold',
+        // fontWeight: 'bold',
         marginBottom: 5
     },
     imgContainer: {
@@ -72,7 +73,7 @@ export const styles = StyleSheet.create({
         flex:1,
         borderWidth:1,
         borderRadius:5,
-        borderColor:'gray',
+        borderColor:'lightgray',
         marginVertical:10,
         height:55,
         display:'flex',
