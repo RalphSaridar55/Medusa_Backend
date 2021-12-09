@@ -57,7 +57,8 @@ const List = ({ navigation }) => {
                 >
                   <Card.Title
                     title={item.senderData.name}
-                    titleStyle={{ fontSize: 17}}
+                    titleStyle={{ fontSize: 18,fontFamily:'Adam-Bold'}}
+                    subtitleStyle={{ fontSize:12, fontFamily:'Inter-Black-Light'}}
                     subtitle={item.message}
                     subtitleNumberOfLines={2}
                     left={(props) => (
@@ -66,14 +67,14 @@ const List = ({ navigation }) => {
                     right={(props) =><View>
                       <Avatar.Icon size={16} backgroundColor="#31C2AA" marginVertical={10} {...props} icon="check"/>
                       {/* <Text style={{color:"#31C2AA"}}>{item.read_status==true?"Read":""}</Text> */}
-                      <Text style={{color:"#31C2AA"}}>{item.created_at.substring(0,10)}</Text>
+                      <Text style={{color:"#31C2AA",fontFamily:'Inter-Black-Light'}}>{item.created_at.substring(0,10)}</Text>
                       </View>}
                   />
                 </TouchableOpacity>
               </View>
             );
           })}
-      </ScrollView>:<Text style={{textAlign:'center',marginTop:20}}>No New Notifications</Text>}
+      </ScrollView>:<Text style={{textAlign:'center',marginTop:20,fontFamily:'Adam-Bold',fontSize:16}}>No New Notifications</Text>}
     </View>
   );
 };

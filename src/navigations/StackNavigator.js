@@ -445,7 +445,10 @@ class CustomDrawer extends Component {
                 console.log("WHEN LOGGING OUT: ", res);
                 let changing = JSON.parse(await AsyncStorage.getItem('user_details'))
                 await AsyncStorage.setItem('user_details',JSON.stringify({...changing,user_type:1,user_type_static:1}))
-                await AsyncStorage.clear();
+                // await AsyncStorage.clear();
+                await AsyncStorage.removeItem("company_name");
+                await AsyncStorage.removeItem("user_id");
+                await AsyncStorage.removeItem("user_details");
                 changing = JSON.parse(await AsyncStorage.getItem('user_details'))
                 console.log("ASYNC: ",changing);
                 this.props.changeScreen("Home")

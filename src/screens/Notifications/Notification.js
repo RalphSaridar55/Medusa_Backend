@@ -24,7 +24,9 @@ const Notification = ({route}) => {
       <Card>
         <Card.Title
           title={routeData?.senderData.name}
+          titleStyle={{fontFamily:'Adam-Bold'}}
           subtitle={routeData?.created_at.substring(0,10)}
+          subtitleStyle={{fontFamily:'Inter-Black-Light'}}
           left={(props) => <Avatar.Icon size={20} {...props} icon="bell" />}
         />
         <Card.Content>
@@ -32,7 +34,7 @@ const Notification = ({route}) => {
             style={styles.messageContainer}
             showsVerticalScrollIndicator={false}
           >
-            <Paragraph>{routeData?.message}</Paragraph>
+            <Paragraph style={{fontFamily:'Inter-Black-Light'}}>{routeData?.message}</Paragraph>
           </ScrollView>
         </Card.Content>
       </Card>

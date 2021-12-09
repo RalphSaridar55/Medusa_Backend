@@ -26,7 +26,8 @@ export default StyleSheet.create({
     headLine: {
         marginBottom: 10,
         color: "#698EB7",
-        fontWeight: "bold"
+        fontFamily:'Adam-Bold'
+        // fontWeight: "bold"
     },
     loginBtn: {
         backgroundColor: "#31C2AA",
@@ -42,7 +43,8 @@ export default StyleSheet.create({
     },
     paragraph:{
         marginBottom: 10,
-        color: "#000" 
+        color: "#000",
+        fontFamily:'Inter-Black-Light'
     },
     signupText: {
         color: "#31C2AA",

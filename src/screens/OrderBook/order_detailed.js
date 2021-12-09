@@ -100,9 +100,10 @@ const detailedOrder = ({ route, navigation }) => {
           <View style={styles.modalHeader}>
               <Text
               style={{
-                  fontSize: 18,
+                  fontSize: 20,
                   color: "#31C2AA",
                   marginBottom: 5,
+                  fontFamily:'Adam-Bold'
               }}
               >
               Reject Order
@@ -145,8 +146,7 @@ const detailedOrder = ({ route, navigation }) => {
       <View
         style={{
           paddingHorizontal: 20,
-          paddingTop:10,
-          paddingBottom:5,
+          paddingTop:20,
           display: "flex",
           flexDirection: "row",
           alignItems:'center',
@@ -170,8 +170,8 @@ const detailedOrder = ({ route, navigation }) => {
           }
         />
       </View>
-      <Text style={{paddingHorizontal:20,color:'gray',fontSize:16,paddingBottom:5}}>Tracking ID: {apiData?.trackingId}</Text>
-      <Text style={{paddingHorizontal:20,color:'gray',fontSize:14,paddingBottom:5,color: "#31C2AA",}}>{apiData?.created_at.substring(0,10)}</Text>
+      <Text style={styles.headerTitle}>Tracking ID: {apiData?.trackingId}</Text>
+      <Text style={{paddingHorizontal:20,color:'gray',fontSize:14,paddingBottom:5,fontFamily:'Inter-Black-Light',color: "#31C2AA",}}>{apiData?.created_at.substring(0,10)}</Text>
       <ScrollView style={{ flex: 1,marginTop:10 }}>
         {apiData?.order_data.map((item, index) => {
           return (
@@ -200,7 +200,7 @@ const detailedOrder = ({ route, navigation }) => {
                     ]}
                   >
                     <View style={{ flexDirection: "row" }}>
-                      <Text style={{ color: "#698EB7" }}>{item.product_name}</Text>
+                      <Text style={{ color: "#698EB7", fontFamily:'Inter-Black-Light' }}>{item.product_name}</Text>
                       {/*leaving this here commented intentionally
                        <Ionicons
                         name="chatbox"
@@ -214,7 +214,7 @@ const detailedOrder = ({ route, navigation }) => {
                         }
                       /> */}
                     </View>
-                    <Text style={{ color: "#31C2AA" }}>
+                    <Text style={{ color: "#31C2AA", fontFamily:'Inter-Black-Light'  }}>
                       ${item.total_price + item.shipping}
                     </Text>
                   </View>
@@ -234,38 +234,38 @@ const detailedOrder = ({ route, navigation }) => {
                   <Text>{item.description}</Text>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Variants:</Text>
-                    <Text style={{ color: "#6E91EC" }}>{item.variants}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>{item.variants}</Text>
                   </View>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Quantity:</Text>
-                    <Text style={{ color: "#6E91EC" }}>{item.units}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>{item.units}</Text>
                   </View>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Price:</Text>
-                    <Text style={{ color: "#6E91EC" }}>$ {item.price_per_unit}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>$ {item.price_per_unit}</Text>
                   </View>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Shipping:</Text>
-                    <Text style={{ color: "#6E91EC" }}>$ {item.shipping}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>$ {item.shipping}</Text>
                   </View>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Services:</Text>
-                    <Text style={{ color: "#6E91EC" }}>$ {item.services}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>$ {item.services}</Text>
                   </View>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Value Added Services:</Text>
                   </View>
                   <View style={[styles.priceContainer,{marginTop:0}]}>
                     <Text style={{  color:'gray'}}>Inspection Report:</Text>
-                    <Text style={{ color: "#6E91EC" }}>{item.value_added_services.inspection_report}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>{item.value_added_services.inspection_report}</Text>
                   </View>
                   <View style={[styles.priceContainer,{marginTop:0}]}>
                     <Text style={{  color:'gray'}}>Packaging:</Text>
-                    <Text style={{ color: "#6E91EC" }}>{item.value_added_services.inspection_report}</Text>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>{item.value_added_services.inspection_report}</Text>
                   </View>
                   <View style={styles.priceContainer}>
                     <Text style={styles.detailKey}>Total:</Text>
-                    <Text style={{ color: "#6E91EC" }}>
+                    <Text style={[styles.detailKey,{ color: "#6E91EC" }]}>
                       ${" "}
                       {
                         item.total_price + item.shipping + item.services
@@ -282,32 +282,32 @@ const detailedOrder = ({ route, navigation }) => {
       
       <View style={{ marginHorizontal: 20, paddingVertical: 20 }}>
         {userData?.user_type==4&&<View style={[styles.priceContainer,{marginTop:5}]}>
-          <Text style={{ }}>Logistic:</Text>
-          <Text style={{ color: "#6E91EC" }}>
+          <Text style={styles.infoOrder}>Logistic:</Text>
+          <Text style={[styles.infoOrder,{ color: "#6E91EC" }]}>
           {apiData?.logistic.length<1?"Not Chosen":apiData?.logistic}
           </Text>
         </View>}
-        <View style={[styles.priceContainer,{marginTop:5}]}>
+        {/* <View style={[styles.priceContainer,{marginTop:5}]}>
           <Text style={{ }}>Logistic:</Text>
           <Text style={{ color: "#6E91EC" }}>
           {apiData?.logistic.length<1?"Not Chosen":apiData?.logistic}
           </Text>
-        </View>
+        </View> */}
         <View style={[styles.priceContainer,{marginTop:5}]}>
-          <Text style={{ }}>Warehouse:</Text>
-          <Text style={{ color: "#6E91EC" }}>
+          <Text style={styles.infoOrder}>Warehouse:</Text>
+          <Text style={[styles.infoOrder,{ color: "#6E91EC" }]}>
           {apiData?.wareHouse.length<1?"Not Chosen":apiData?.wareHouse}
           </Text>
         </View>
         <View style={[styles.priceContainer,{marginTop:5}]}>
-          <Text style={{ }}>Total Qty:</Text>
-          <Text style={{ color: "#6E91EC" }}>
+          <Text style={styles.infoOrder}>Total Qty:</Text>
+          <Text style={[styles.infoOrder,{ color: "#6E91EC" }]}>
             {apiData?.order_data.reduce(function(a,b){return a+b.units},0)+""}
           </Text>
         </View>
         <View style={[styles.priceContainer,{marginTop:5}]}>
-          <Text style={{ }}>Total Shipping:</Text>
-          <Text style={{ color: "#6E91EC" }}>
+          <Text style={styles.infoOrder}>Total Shipping:</Text>
+          <Text style={[styles.infoOrder,{ color: "#6E91EC" }]}>
             ${apiData?.order_data.reduce(function(a,b){return a+b.shipping},0)+""}
           </Text>
         </View>
@@ -327,7 +327,6 @@ const detailedOrder = ({ route, navigation }) => {
           }}
         >
           <View style={[styles.buttonContainer]}>
-            {/* </View> */}
             <RenderPicker 
             map={status}
             selectedValue={status}

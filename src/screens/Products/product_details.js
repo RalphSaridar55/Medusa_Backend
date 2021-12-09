@@ -100,15 +100,7 @@ const OverlayComp = forwardRef((props,ref) => {
 const BannerWidth = Dimensions.get("window").width;
 const BannerHeight = 300;
 
-const images = [
-  "https://sc04.alicdn.com/kf/U01854b32af4b45a09df828bfb95a4679t.jpg",
-  "https://sc04.alicdn.com/kf/U60b3294b8bca43b4be7ace957e90226ee.jpg",
-  "https://sc04.alicdn.com/kf/U185220e1ddb64ef9ad7526daa9a169e6i.jpg",
-  "https://sc04.alicdn.com/kf/Hf6c4d5d39fc64fac945778df0d59851ba.jpg",
-];
-
-const actionSheetRef = createRef();
-const actionSheetRef_V = createRef();
+ const actionSheetRef = createRef();
 
 class ProductDetails extends Component {
   constructor(props) {
@@ -302,7 +294,7 @@ class ProductDetails extends Component {
       else if(type=="buy"){
         let {buyer_id,box,price,seller_id,product_id,quantity,productvariant,total} = payload;
        
-        sendToRoute ={
+        let sendToRoute ={
           is_buy_now:true,
           buyer_id:buyer_id,
           total_service_count: 0,
@@ -346,7 +338,7 @@ class ProductDetails extends Component {
       return(
           <>
         <View style={{ padding: 20 }}>
-        <Title>Description:</Title>
+        <Title style={{fontFamily:'Inter-Black-Light'}}>Description:</Title>
         <Paragraph>
           {this.state.dataFromApi?.description}
         </Paragraph>
@@ -355,10 +347,10 @@ class ProductDetails extends Component {
         <DataTable>
           <ScrollView style={{ height: 400 }}>
             <DataTable.Header>
-              <DataTable.Title>Details</DataTable.Title>
+              <DataTable.Title style={{fontFamily:'Inter-Black-Light'}}>Details</DataTable.Title>
             </DataTable.Header>
             <DataTable.Row>
-              <DataTable.Cell>Brand Name:</DataTable.Cell>
+              <DataTable.Cell style={{fontFamily:'Inter-Black-Light'}}>Brand Name:</DataTable.Cell>
               <DataTable.Cell numeric>{this.state.dataFromApi?.brand.brand_name}</DataTable.Cell>
             </DataTable.Row>
             {table.map((item,index)=>{
@@ -414,8 +406,6 @@ class ProductDetails extends Component {
   }
 
   fillDataForCheckout=()=>{
-    //let userdata = JSON.parse(AsyncStorage.getItem('user_details'));
-    //console.log('USER DETAILS:' ,this.state.userData)
     console.log('ORDER DETAILS: ',this.state.current)
     let order_details=[];
     this.state.current.map((item,index)=>{
@@ -447,20 +437,6 @@ class ProductDetails extends Component {
       order_details:order_details,
 
       total:total,
-
-      //order_method_id: 0,
-      //location_id: 0,
-      //delivery_address: {
-        //address_id: 0,
-        //address: "string"
-      //},
-      //payment_method_id: 0,
-      //payment_token_id: "string",
-      //total: 0,
-      //cargo_delivery_method: 0,
-      //service_type: 0,
-      //service_level: 0,
-      //document: "string"
     }
 
     console.log("Reform: ",reform)
@@ -475,13 +451,13 @@ class ProductDetails extends Component {
       containerStyle	={[{backgroundColor: `rgba(255,255,255,0.95)`}]}
       closeOnTouchOutside>
                       
-          <View style={styles.modalHeader/* ,this.state.typeOverlay=="cart"&&{flex:1} */}>
+          <View style={styles.modalHeader}>
               <Text
               style={{
                   fontSize: 21,
                   color: "#31C2AA",
-                  fontWeight: "bold",
                   marginBottom: 5,
+                  fontFamily:'Adam-Bold'
               }}
               >
                 {this.state.typeOverlay=="buy"?"Order Placement":"Reserve Product"}
@@ -497,7 +473,7 @@ class ProductDetails extends Component {
                         }}
                         style={[styles.loginBtn,{height:40,marginTop:20,backgroundColor:'#fff'}]}
                   >
-                      <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Delivery</Text>
+                      <Text style={[styles.loginBtnText,{color:'#31C2AA',flexWrap:'nowrap'}]}>Delivery</Text>
                   </TouchableOpacity>
               </View>
               <View style={{width:150,paddingHorizontal:10}}>
@@ -508,7 +484,7 @@ class ProductDetails extends Component {
                       }}
                       style={[styles.loginBtn,{height:40,marginTop:20,backgroundColor:'#fff'}]}
                   >
-                      <Text style={[styles.loginBtnText,{color:'#31C2AA'}]}>Pickup</Text>
+                      <Text style={[styles.loginBtnText,{color:'#31C2AA',flexWrap:'nowrap'}]}>Pickup</Text>
                   </TouchableOpacity>
               </View>
             </>
@@ -561,7 +537,7 @@ class ProductDetails extends Component {
                   onchange={(t)=>this.changeData(t)}  />
               <TouchableOpacity
                 onPress={() => this.Reserve()}
-                style={[styles.loginBtn]}
+                style={styles.loginBtn}
               >
                 <Text style={styles.loginBtnText}>Reserve</Text>
               </TouchableOpacity>
@@ -587,35 +563,17 @@ class ProductDetails extends Component {
           <View
             style={{
               paddingLeft: 15,
-              padding: 10 /*  display:'flex', flexDirection:'row',alignItems:'center',justifyContent:'space-between' */,
+              padding: 10,
             }}
           >
-            <Title>{this.state.dataFromApi?.product_name}</Title>
-            {/* 
-                        <Text>{this.state.dataFromRoute?.subCategory.sub_category_name}, {this.state.dataFromRoute?.brand.brand_name}</Text> */}
+            <Title style={{fontFamily:'Adam-Bold',fontSize:26}}>{this.state.dataFromApi?.product_name}</Title>
           </View>
-          {/* <Card>
-                        <Card.Title title="Description" style={{ fontSize: 15 }} />
-                        <Card.Content>
-                            <Text style={{marginTop:10,color:'gray'}}>{this.state.dataFromRoute?.description}</Text>
-                        </Card.Content>
-                    </Card> */}
-          {/* <Card>
-              <View style={styles.cartHeader}>
-                <Text style={{fontSize:20,fontWeight:'bold',color:'#6E91EC'}}>Cart</Text>
-                <MaterialCommunityIcons name="cart" size={24} color="#6E91EC"/>
-              </View>
-          </Card> */}
           <Card>
-            {/* <View style={styles.cartIconContainer}>
-              <MaterialCommunityIcons name="cart" size={30} color="#6E91EC" style={{paddingTop:5}}
-              onPress={()=>this.setState({modalVisible:true,typeOverlay:'cart'})}/>
-            </View> */}
-            <Card.Title title="Variations" style={{ fontSize: 15 }} />
+            <Card.Title title="Variations" titleStyle={styles.cardHeader} />
             <Card.Content>
               {this.state.dataFromApi?.productvariant.map((variant,index) => (
                 variant.variant_stock>0?<View key={index}>
-                  <Title style={{ fontSize: 14 }}>
+                  <Title style={{ fontSize: 14, fontFamily:'Inter-Black-Light' }}>
                     {variant.productvariantopt[0].varientType.varient_type}:
                   </Title>
                   <ScrollView
@@ -623,18 +581,18 @@ class ProductDetails extends Component {
                     horizontal
                   >
                     {variant.productvariantopt.map((item, index2) => (
-                      <View key={index2}>
+                      <View key={index2} style={{marginHorizontal:20}}>
                         <TouchableOpacity onPress={()=>
                           this.handleChangingVariant(item,variant)
                           }>
                           <Image
                             source={{ uri: variant.variant_image }}
                             key={index2}
-                            style={[styles.cardImage,this.state.selectedVariant==item.id?{borderColor:'#31C2AA'}:null]}
+                            style={[styles.cardImage,{borderColor:this.state.selectedVariant==item.id?'#31C2AA':null,marginBottom:10}]}
                           />
                         </TouchableOpacity>
-                        <Text style={this.state.selectedVariant==item.id?{color:'#31C2AA'}:{color:'gray'}}>qty: {variant.variant_stock}</Text>
-                        <Text style={this.state.selectedVariant==item.id?{color:'#31C2AA'}:{color:'gray'}}>
+                        <Text style={{color:this.state.selectedVariant==item.id?'#31C2AA':"gray", fontFamily:'Inter-Black-Light'}}>qty: {variant.variant_stock}</Text>
+                        <Text style={{color:this.state.selectedVariant==item.id?'#31C2AA':"gray", fontFamily:'Inter-Black-Light'}}>
                           type: {item.varientValue?.varient_value}
                         </Text>
                       </View>
@@ -645,7 +603,7 @@ class ProductDetails extends Component {
 
               <View style={styles.priceHeader}>
                 <View style={{ flex: 3 }}>
-                  <Title>
+                  <Title style={styles.cardHeader}>
                     ${this.state.dataFromApi?.offered_price} - $
                     {this.state.dataFromApi?.price}
                   </Title>
@@ -665,8 +623,8 @@ class ProductDetails extends Component {
                   alignItems: "center",
                 }}
               >
-                <Title>Available:</Title>
-                <Text style={{ color: "gray", fontSize:16 }}>
+                <Title  style={styles.cardHeader}>Available:</Title>
+                <Text style={{ color: "gray", fontSize:16, fontFamily:'Adam-Bold' }}>
                   {this.state.dataFromApi?.current_stock} Pieces Available
                 </Text>
               </View>
@@ -711,7 +669,7 @@ class ProductDetails extends Component {
                     </TouchableOpacity>
                   </View>
                   <View style={styles.buttonInfo}>
-                    <Text style={{ color: "#31C2AA", fontSize: 18 }}>
+                    <Text style={styles.piecesAndBoxes}>
                       Pieces/{this.state.chosenPieces} pieces
                     </Text>
                   </View>
@@ -748,7 +706,7 @@ class ProductDetails extends Component {
                     </TouchableOpacity>
                   </View>
                   <View style={styles.buttonInfo}>
-                    <Text style={{ color: "#31C2AA", fontSize: 18 }}>
+                    <Text style={styles.piecesAndBoxes}>
                       Box/{this.state.chosenBoxes} pieces
                     </Text>
                   </View>
@@ -788,10 +746,12 @@ class ProductDetails extends Component {
                   onPress={() => {
                     actionSheetRef.current?.setModalVisible();
                   }}
+                  titleStyle={{fontFamily:'Inter-Black-Light'}}
                 >
                   Details
                 </DataTable.Title>
                 <DataTable.Title
+                  titleStyle={{fontFamily:'Inter-Black-Light'}}
                   numeric
                   onPress={() => {
                     actionSheetRef.current?.setModalVisible();
@@ -801,7 +761,7 @@ class ProductDetails extends Component {
                 </DataTable.Title>
               </DataTable.Header>
               <DataTable.Row>
-                <DataTable.Cell>Brand Name:</DataTable.Cell>
+                <DataTable.Cell style={{fontFamily:'Adam-Bold'}}>Brand Name:</DataTable.Cell>
                 <DataTable.Cell numeric>{this.state.dataFromApi?.brand.brand_name}</DataTable.Cell>
               </DataTable.Row>
               <DataTable.Row>

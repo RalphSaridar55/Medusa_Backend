@@ -85,7 +85,7 @@ const Dashboard = () =>{
                     <Text style={styles.totalValue}>USD $ 15000</Text>
                 </View>
                 <View style={styles.weekSalesContainer}>
-                    <Text>This week</Text>
+                    <Text style={{fontFamily:'Adam-Bold'}}>This week</Text>
                     <Text style={styles.weekValue}>USD $ 1500</Text>
                 </View>
                 <View style={styles.totalGraphContainer}>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet,
     Text,
     View,
     TouchableOpacity,
@@ -17,9 +16,7 @@ import * as apiProducts from '../../core/apis/apiProductServices';
 import * as apiPayment from '../../core/apis/apiPaymentServices';
 import * as apiOrder from '../../core/apis/apiOrderServices';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Card, IconButton, Searchbar, Menu, Divider, Provider, Button } from 'react-native-paper';
-import dropdown from '../../../assets/down.png';
-import {Picker} from '@react-native-picker/picker'
+import { Divider, Provider } from 'react-native-paper';
 import styles from './style_pickup';
 import _ from 'lodash';
 import * as DocumentPicker from "expo-document-picker";
@@ -415,7 +412,7 @@ export default class Pickup extends Component {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.container}>
-                        <Text style={{ padding: 10, marginBottom:10, marginLeft: 5, fontSize: 16, fontWeight: 'bold', color: "#698EB7" }}>Order Summary</Text>
+                        <Text style={{ padding: 10, marginBottom:10, marginLeft: 5, fontSize: 20, fontFamily:'Adam-Bold', color: "#698EB7" }}>Order Summary</Text>
                         <View style={{alignItems:'center',}}>
                             <FlatList
                                 style={[styles.contentList,{marginBottom:20}]}
@@ -436,8 +433,18 @@ export default class Pickup extends Component {
                                                 <Image style={styles.image} source={{ uri: item.images[0].media }} />
                                                 <View style={[styles.cardContent,{marginLeft:10}]}>
                                                     <Text style={styles.name}>{item.product_name}</Text>
-                                                    <Text style={{ display: item.value_added_services!==null ? 'flex' : 'none', color: '#31C2AA' }}>Value added service </Text>
-                                                    <Text style={styles.count}>Price {item.total}</Text>
+                                                    {item?.value_added_services !== null ? (
+                                                      <Text
+                                                        style={{
+                                                          display: item.value ? "flex" : "none",
+                                                          color: "#31C2AA",
+                                                          fontFamily:'Inter-Black-Light'
+                                                        }}
+                                                      >
+                                                        Value added service{" "}
+                                                      </Text>
+                                                    ) : null}
+                                                    <Text style={styles.count}>Price ${this.state?.dataFromRoute.is_buy_now?item.price:item.total}</Text>
                                                 </View>
                                                 <TouchableOpacity
                                                 onPress={() => this.removeItem(item.product_id)}
@@ -455,8 +462,8 @@ export default class Pickup extends Component {
                         </View>
                         <Divider></Divider>
                         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between', padding: 5 }}>
-                            <Text style={{ padding: 10, marginLeft: 10, fontSize: 17, fontWeight: 'bold', color: "#31C2AA" }}>Total:</Text>
-                            <Text style={{ padding: 10, marginLeft: 10, fontSize: 17, fontWeight: 'bold', color: "#31C2AA" }}>${this.state.products.length>0 ?this.state.products?.reduce((a,b)=>({total:a.total+b.total}))['total']+"":"0"}  </Text>
+                            <Text style={styles.totalPrice}>Total:</Text>
+                            <Text style={styles.totalPrice}>${this.state.products.length>0 ?this.state.products?.reduce((a,b)=>({total:a.total+b.total}))['total']+"":"0"}  </Text>
                         </View>
                     </View>
                     
@@ -476,9 +483,9 @@ export default class Pickup extends Component {
               }}
             >
               <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
+                style={{ 
+                  fontSize: 20,
+                  fontFamily:'Adam-Bold', 
                   marginBottom: 20,
                   color: "#698EB7",
                 }}
@@ -525,9 +532,9 @@ export default class Pickup extends Component {
                 }}
               >
                 <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
+                  style={{ 
+                    fontSize: 20,
+                    fontFamily:'Adam-Bold', 
                     marginBottom: 20,
                     color: "#698EB7",
                   }}

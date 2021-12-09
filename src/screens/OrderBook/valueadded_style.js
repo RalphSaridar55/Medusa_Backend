@@ -10,8 +10,9 @@ export const styles = StyleSheet.create({
         resizeMode:'stretch'
     },
     detailKey:{
-        fontWeight:'bold',
-        color:'gray'
+        // fontWeight:'bold',
+        color:'gray',
+        fontFamily:'Inter-Black-Light'
     },
     buttonContainer:{
         display:'flex',
@@ -28,6 +29,16 @@ export const styles = StyleSheet.create({
              // marginHorizontal:50,
               justifyContent:'center',
              //backgroundColor:'#fff'
+    },
+    infoOrder:{
+        fontFamily:'Inter-Black-Light'
+    },
+    headerTitle:{
+        paddingHorizontal:20,
+        color:'gray',
+        fontSize:16,
+        paddingBottom:5,
+        fontFamily:'Inter-Black-Light'
     },
     modalHeader:{
         display:'flex',
@@ -71,14 +82,15 @@ export const styles = StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontWeight: "bold",
+        // fontWeight: "bold",
+        fontFamily:'Adam-Bold',
         color:'#698EB7'
     },
     priceContainer:{
         display:'flex',
         flexDirection:'row',
         justifyContent:'space-between',
-        marginTop:20,
+        marginTop:5,
     },
     buttonsContainer:{
         /* position:'absolute',
@@ -106,6 +118,7 @@ export const styles = StyleSheet.create({
     loginBtnText:{
         color:'white',
         fontSize:16,
-        fontWeight:'bold'
+        // fontWeight:'bold'
+        fontFamily:'Adam-Bold'
     },
 })

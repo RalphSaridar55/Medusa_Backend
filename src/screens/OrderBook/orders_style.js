@@ -6,15 +6,16 @@ const screenheight = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
     root: {
         // backgroundColor: "#ffffff",
-
     },
     orderText:{
         fontSize:16,
+        fontFamily:'Inter-Black-Light'
     }, 
     orderQty:{
         marginRight:10,
         color:'#6E91EC',
-        fontSize:16
+        fontSize:16,
+        fontFamily:'Inter-Black-Light'
     },
     mainInfo:{
         flexDirection:'row',
@@ -47,11 +48,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         height: 30
-    },
-    loginBtnText:{
-        color:'#31C2AA',
-        fontSize:16,
-        /* fontWeight:'bold' */
     },
     contentContainer:{
         flexDirection:'row'
@@ -134,7 +130,8 @@ const styles = StyleSheet.create({
     },
     total:{
         fontSize:16,
-        fontWeight:'bold',
+        // fontWeight:'bold',
+        fontFamily:'Inter-Black-Light',
         color:'#6E91EC',
         textAlignVertical:'center'
         },
@@ -148,7 +145,8 @@ const styles = StyleSheet.create({
     loginBtnText:{
         color:'white',
         fontSize:16,
-        fontWeight:'bold'
+        // fontWeight:'bold',
+        fontFamily:'Adam-Bold'
     },
 });
 

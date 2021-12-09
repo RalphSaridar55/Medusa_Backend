@@ -70,18 +70,20 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     paddingHorizontal: 20,
+    marginHorizontal:10,
     borderWidth:1,
     borderColor: "#31C2AA",
     backgroundColor: "#31C2AA",
     borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
-    height: 50,
+    height: 40,
   },
   loginBtnText: {
     color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontFamily:'Adam-Bold',
+    // flexWrap:'wrap'
   },
   buttonOptionsContainer: {
     display: "flex",
@@ -167,6 +169,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  cardHeader:{
+    fontSize:22,
+    fontFamily:'Adam-Bold'
+  },
+  piecesAndBoxes:{ 
+    color: "#31C2AA",
+    fontSize: 18,
+    fontFamily:'Inter-Black-Medium'
   },
   modalText: {
     marginBottom: 15,

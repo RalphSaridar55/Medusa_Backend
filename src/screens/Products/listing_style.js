@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     btnSize: {
         height: 40,
         width: 40,
+        marginBottom:15,
         borderRadius: 40,
         borderColor: '#778899',
         borderWidth: 1,

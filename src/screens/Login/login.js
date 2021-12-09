@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { TouchableOpacity, View, ImageBackground, Alert } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { Text, Checkbox  } from "react-native-paper";
 import Header from "../../components/Header";
 import TextInput from "../../components/TextInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,13 +19,46 @@ export default function Login({ navigation }) {
   const [isAuthorized, setAuthorized] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState("");
-
+  const [rememberMe,setRememberMe] = useState(false)
   /**
    *
    * @returns to login page when user credentials are validated
    */
 
   //const { setUserData,userData,product,setProduct } = useContext(HeadContext);
+
+  useEffect(()=>{
+    const getRemember = async() =>{
+      let result = JSON.parse(await getData("remember_me"));
+      if(result != null){
+        setEmail(result.email)
+        setPassword(result.password)
+        setRememberMe(true)
+      }
+    }
+    getRemember()
+  },[])
+
+  const rememberMeFunction =async()=>{
+    if(!rememberMe && email.value.length>0 && password.value.length>0){
+        storeData("remember_me",JSON.stringify({email:email,password:password}))
+        setRememberMe(!rememberMe);
+    }
+    else{
+      await AsyncStorage.removeItem("remember_me")
+      setRememberMe(false)
+    }
+  }
+  
+
+  const getData =async(key)=>{
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch (error) {
+      // Error saving data
+      return null
+    }
+  }
 
   const storeData =async(key,value)=>{
     try {
@@ -131,6 +164,16 @@ export default function Login({ navigation }) {
               }}
               // right={<TextInput.Icon name="eye" />}
             />
+            <View style={{flexDirection:'row',alignItems:'center'}}>
+              <Checkbox
+                status={rememberMe ? 'checked' : 'unchecked'}
+                color="#31C2AA"
+                onPress={() => {
+                  rememberMeFunction()
+                }}
+              />
+              <Text style={[loginStyle.forgot,{textAlign:'left'}]}>Remember Me</Text>
+            </View>
             <View style={loginStyle.forgotPassword}>
               <TouchableOpacity
                 onPress={() => navigation.navigate("ForgotPassword")}

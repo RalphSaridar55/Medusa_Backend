@@ -191,20 +191,6 @@ const actionSheetCat = createRef();
       order_details:order_details,
 
       total:total,
-
-      //order_method_id: 0,
-      //location_id: 0,
-      //delivery_address: {
-        //address_id: 0,
-        //address: "string"
-      //},
-      //payment_method_id: 0,
-      //payment_token_id: "string",
-      //total: 0,
-      //cargo_delivery_method: 0,
-      //service_type: 0,
-      //service_level: 0,
-      //document: "string"
     }
 
     console.log("Reform: ",reform)
@@ -356,9 +342,10 @@ async componentDidMount(){
           <View style={styles.modalHeader}>
               <Text
               style={{
-                  fontSize: 18,
+                  fontSize: 24,
                   color: "#31C2AA",
                   marginBottom: 5,
+                  fontFamily:'Adam-Bold'
               }}
               >
               Order Placement
@@ -417,13 +404,10 @@ async componentDidMount(){
                 </View>
                 <View style={styles.contentContainer}>
                   <Text style={{ width: "70%" }}>
-                    {/* {item.description.length > 40
-                      ? item.description.substring(0, 40) + "..."
-                      : item.description} */}
                   </Text>
                 </View>
                 <View style={[styles.contentContainer, { marginTop: 10 }]}>
-                  <Text>Total: ${item.total}</Text>
+                  <Text style={{fontFamily:'Inter-Black-Light'}}>Total: ${item.total}</Text>
                 </View>
                 <View
                   style={[
@@ -442,7 +426,7 @@ async componentDidMount(){
                         color={(this.state.current.value_added_services==null ||this.state.current.value_added_services?.length<1 )?"red":"#31C2AA"}
                       />
                     </View>
-                    <Text style={{ marginLeft: 5, color: "#6E91EC", textDecorationLine:'underline'}}>
+                    <Text style={{ marginLeft: 5, color: "#6E91EC", textDecorationLine:'underline', fontFamily:'Inter-Black-Light'}}>
                       Value added services
                     </Text>
                   </TouchableOpacity>
@@ -461,7 +445,7 @@ async componentDidMount(){
         <TouchableOpacity
                 onPress={()=>this.chooseTypeOfPlacement()}
                 style={styles.placeOrderButton}>
-                <Text style={{color:'white'}}>Place Order</Text>
+                <Text style={{color:'white', fontFamily:'Adam-Bold'}}>Place Order</Text>
         </TouchableOpacity>
       </View>
       </>
@@ -478,7 +462,7 @@ async componentDidMount(){
         <Text style={styles.orderText}>Order Number #{item.order_id}</Text>
         <View style={{ flexDirection:'row', justifyContent:'space-between',alignItems:'center'}}>
           {item?.box ?<><Text style={styles.orderQty}>{item?.box}</Text>
-          <Feather name="box" size={24} color="#6E91EC" /></>:<Text style={{ color:'#6E91EC'}}>{item.status}</Text>}
+          <Feather name="box" size={24} color="#6E91EC" /></>:<Text style={{ color:'#6E91EC', fontFamily:'Inter-Black-Light'}}>{item.status}</Text>}
         </View>
       </View>
     </TouchableOpacity>
@@ -523,15 +507,9 @@ async componentDidMount(){
       <Spinner visible={this.state.spinner} />
         <Appbar style={{ backgroundColor: "#E9F3FF", color: "#fff" }}>
           <Appbar.Content
-            title={this.state.filterStatusLabel}/* {
-              this.state.filterData.filter((i) =>
-                i?.name.toLowerCase().includes(this.state.search.toLowerCase())
-              ).length +
-              " " +
-              "Results"
-            } */
+            title={this.state.filterStatusLabel}
             onPress={this.setView}
-            titleStyle={{ fontSize: 18,fontWeight:'100' }}
+            titleStyle={{ fontSize: 20,fontFamily:'Adam-Bold' }}
           />
           <Appbar.Action
             icon="filter-menu"
@@ -603,7 +581,7 @@ async componentDidMount(){
         navigationState={this.state.forTab}
         renderScene={this._renderScene}
         onIndexChange={this._handleIndexChange}
-        //renderTabBar={this._renderTabBar}
+        
         renderTabBar={(props) => (
           <TabBar
             {...props}
@@ -611,7 +589,7 @@ async componentDidMount(){
             //scrollEnabled={false}
             indicatorStyle={{ backgroundColor: "#31c2aa", height: 2 }}
             renderLabel={({ route, color }) => (
-              <Text style={{ color: "black", margin: 8 }}>{route.title}</Text>
+              <Text style={{ color: "black", margin: 8, fontFamily:'Adam-Bold' }}>{route.title}</Text>
             )}
           />
         )}

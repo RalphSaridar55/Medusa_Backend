@@ -5,7 +5,6 @@ import Overlay from './overlay';
 import { docValidator } from "../../helpers/docValidator";
 import {TouchableOpacityButton} from '../../components/TouchableOpacity'
 import {
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
@@ -15,7 +14,7 @@ import {
   Alert,
   LogBox,
 } from "react-native";
-import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import styles from "./style_delivery";
 import * as ApiDocument from "../../core/apis/apiDocumentService";
 import * as apiServices from "../../core/apis/apiAddressServices";
@@ -487,8 +486,9 @@ export default class Delivery extends Component {
               style={{
                 padding: 10,
                 marginLeft: 5,
-                fontSize: 17,
-                fontWeight: "bold",
+                fontSize: 20,
+                fontFamily:'Adam-Bold',
+                // fontWeight: "bold",
                 color: "#698EB7",
               }}
             >
@@ -528,6 +528,7 @@ export default class Delivery extends Component {
                               style={{
                                 display: item.value ? "flex" : "none",
                                 color: "#31C2AA",
+                                fontFamily:'Inter-Black-Light'
                               }}
                             >
                               Value added service{" "}
@@ -564,7 +565,8 @@ export default class Delivery extends Component {
                   padding: 10,
                   marginLeft: 10,
                   fontSize: 17,
-                  fontWeight: "bold",
+                  fontFamily:'Inter-Black-Light',
+                  // fontWeight: "bold",
                   color: "#31C2AA",
                 }}
               >
@@ -575,7 +577,8 @@ export default class Delivery extends Component {
                   padding: 10,
                   marginLeft: 10,
                   fontSize: 17,
-                  fontWeight: "bold",
+                  fontFamily:'Inter-Black-Light',
+                  // fontWeight: "bold",
                   color: "#31C2AA",
                 }}
               >
@@ -605,8 +608,9 @@ export default class Delivery extends Component {
             >
               <Text
                 style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
+                  fontSize: 20,
+                  fontFamily:'Inter-Black-Light',
+                  // fontWeight: "bold",
                   marginBottom: 20,
                   color: "#698EB7",
                 }}
@@ -683,7 +687,8 @@ export default class Delivery extends Component {
                   <Text
                     style={{
                       fontSize: 16,
-                      fontWeight: "bold",
+                      // fontWeight: "bold",
+                      fontFamily:'Inter-Black-Light',
                       marginBottom: 20,
                       color: "#698EB7",
                     }}

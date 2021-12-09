@@ -13,11 +13,6 @@ import { docValidator } from "../../helpers/docValidator";
 import {TouchableDocumentPicker} from '../../components/DocumentPicker';
 import { documentBlobConverter } from "../../helpers/documentBlobConverter";
 
-const data = {
-  name: "Product 1",
-  description: `Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description Item Description `,
-};
-
 const ValueAdded = ({ navigation,route }) => {
   const [fetchedServices, setFetchedServices] = useState([]);
   const [services, setServices] = useState([]);
@@ -56,16 +51,12 @@ const ValueAdded = ({ navigation,route }) => {
       );
       setDocument({...document,error:true})
     } else {
-      //console.log(result);
       try {
         setDocument({value:result,error:false})
       } catch (error) {
         console.log(error);
       }
     }
-    /* e.typeDoc==="Trade"?console.log("test"):console.log(123);
-        this.setState({ docs: result.uri })
-        alert(result.uri); */
   };
 
   const removeServices=()=>{

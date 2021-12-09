@@ -31,9 +31,11 @@ export const styles = StyleSheet.create({
     },
     totalLabel:{
         fontSize:20,
+        fontFamily:'Adam-Bold',
     },
     totalValue:{
         fontSize:20,
+        fontFamily:'Adam-Bold',
         color:'#31C2AA',
     },
     totalGraphContainer:{
@@ -50,6 +52,7 @@ export const styles = StyleSheet.create({
     },
     weekValue:{
         color:'#31C2AA',
+        fontFamily:'Adam-Bold'
     },
     totalOrders:{
         fontSize:26,
@@ -58,9 +61,11 @@ export const styles = StyleSheet.create({
     totalCustomers:{
         fontSize:26,
         color:'#31C2AA',
+        fontFamily:'Adam-Bold'
     },
     ordersLabel:{
         fontSize:12,
+        fontFamily:'Adam-Bold'
     },
     customersLabel:{
         fontSize:12
@@ -74,10 +79,12 @@ export const styles = StyleSheet.create({
         marginBottom:5
     },
     roLabel:{
-        color:'#6893B9'
+        color:'#6893B9',
+        fontFamily:'Adam-Bold'
     },
     roValue:{
-        color:'#6893B9'
+        color:'#6893B9',
+        fontFamily:'Adam-Bold'
     },
     topProductsContainer:{
         display:'flex',

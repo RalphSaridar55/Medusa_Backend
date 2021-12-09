@@ -475,7 +475,7 @@ export default class ProductList extends Component {
                                 {/* <Button mode="contained" onPress={() => console.log('Pressed')} style={{ marginBottom: 10, borderRadius: 10 }}>
                                     Submit
                                 </Button> */}
-                                <Button mode="outlined" onPress={() =>this.SortingByData("reset")} color='#6E91EC'  style={{ marginBottom: 10, borderRadius: 10}}>
+                                <Button mode="outlined" onPress={() =>this.SortingByData("reset")} color='#6E91EC'  style={{ marginBottom: 10, borderRadius: 10, fontFamily:'Adam-Bold'}}>
                                     Reset
                                 </Button>
                             </View>

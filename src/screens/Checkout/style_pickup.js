@@ -19,9 +19,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     header: {
-      fontSize: 21,
-      color: "#6E91EC",
-      fontWeight: "bold",
+        fontSize: 24,
+        color: "#698EB7",
+      //   fontWeight: "bold",
+      fontFamily:'Adam-Bold'
     },
     contentList: {
         flex: 1,
@@ -59,7 +60,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: "flex-start",
         color: "#000",
-        fontWeight: 'bold'
+        // fontWeight: 'bold'
+        fontFamily:'Inter-Black-Light'
     },
     total: {
         fontSize: 18,
@@ -68,6 +70,14 @@ const styles = StyleSheet.create({
         color: "#3399ff",
         margin: 10,
         fontWeight: 'bold'
+    },
+    totalPrice:{ 
+        padding: 10,
+        marginLeft: 10,
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: "#31C2AA",
+        fontFamily:'Inter-Black-Light' 
     },
     totalcard: {
         marginLeft: 10,
@@ -91,7 +101,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         flex: 1,
         alignSelf: "flex-start",
-        color: "#6666ff",
+        color: "#698EB7",
+        fontFamily:'Inter-Black-Light',
         width: 200
     },
     value: {

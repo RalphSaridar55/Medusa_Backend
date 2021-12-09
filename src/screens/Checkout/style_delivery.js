@@ -9,9 +9,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     header: {
-      fontSize: 21,
-      color: "#6E91EC",
-      fontWeight: "bold",
+      fontSize: 24,
+      color: "#698EB7",
+    //   fontWeight: "bold",
+    fontFamily:'Adam-Bold'
     },
     docPicker:{
         borderWidth:0.5,
@@ -49,7 +50,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: "flex-start",
         color: "#000",
-        fontWeight: 'bold'
+        // fontWeight: 'bold'
+        fontFamily:'Inter-Black-Light'
     },
     total: {
         fontSize: 18,
@@ -80,7 +82,8 @@ const styles = StyleSheet.create({
     count: {
         fontSize: 14,
         flex: 1,
-        fontWeight: 'bold',
+        fontFamily:'Inter-Black-Light',
+        // fontWeight: 'bold',
         alignSelf: "flex-start",
         color: "#698EB7",
         width: 200
