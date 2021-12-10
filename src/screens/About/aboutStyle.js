@@ -8,7 +8,8 @@ export default StyleSheet.create({
     
     },
     descritpion:{
-        color:'gray'
+        color:'gray',
+        fontFamily:'Inter-Black-Light'
     },
     Bcontainer: {
         flex: 1,
@@ -38,7 +39,7 @@ export default StyleSheet.create({
     img: {
         width:screenwidth-20,
         height:300,
-        borderRadius:10,
+        // borderRadius:10,
         flex:1
     },
     Title: {
@@ -64,8 +65,9 @@ export default StyleSheet.create({
     title:{
         color: "#698eb7",
         paddingBottom:20,
-        fontSize:18,
-        fontWeight:'bold'
+        fontSize:24,
+        // fontWeight:'bold'
+        fontFamily:'Adam-Bold'
     }
 });
  

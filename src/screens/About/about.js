@@ -38,7 +38,7 @@ const About = () => {
 
     return (
       <View style={aboutStyle.container}>
-        <Headline style={aboutStyle.headLine}>About us </Headline>
+        {/* <Headline style={aboutStyle.headLine}>About us </Headline> */}
         <ScrollView showsVerticalScrollIndicator={false} style={aboutStyle.scrollview}>
           {data.map((item,index)=>
           <View key={index}>
