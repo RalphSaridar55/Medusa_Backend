@@ -18,13 +18,13 @@ export default StyleSheet.create({
     B_container: {
         flex: 1,
         backgroundColor: '#fff',
-        margin: 10
+        // margin: 10
     },
     container: {
         backgroundColor: "#e9f3ff",
         flex: 1,
-        paddingHorizontal: 10,
-        paddingTop:10,
+        // paddingHorizontal: 10,
+        // paddingTop:10,
     },
     header: {
         height: 50,
@@ -37,7 +37,7 @@ export default StyleSheet.create({
         fontWeight: "bold"
     },
     img: {
-        width:screenwidth-20,
+        width:screenwidth,
         height:300,
         // borderRadius:10,
         flex:1
