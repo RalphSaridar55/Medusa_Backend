@@ -105,11 +105,11 @@ export default class ProductList extends Component {
             let {multiplier} = this.state
             if(this.props.route.params?.category_id){
                 let {category_id,category_name} = this.props.route.params
-                this.getProducts(1,category_id,null,null,null,[0*multiplier,1*multiplier])
+                this.getProducts(1,category_id,null,null,null,null/* [0*multiplier,1*multiplier] */)
                 this.setCategory([{value:category_id, label:category_name}])
             }
             else{
-                this.getProducts(1,null,null,null,null,[0*multiplier,1*multiplier]) 
+                this.getProducts(1,null,null,null,null,null/* [0*multiplier,1*multiplier] */) 
             }  
         })
       })

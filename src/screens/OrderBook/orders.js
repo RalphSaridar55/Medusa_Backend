@@ -421,9 +421,9 @@ async componentDidMount(){
                   >
                     <View style={[styles.iconContainer,(this.state.current.value_added_services===null ||this.state.current.value_added_services?.length<1 )?{borderColor:'red'}:{borderColor:'#31C2AA'}]}>
                       <MaterialCommunityIcons
-                        name={(this.state.current.value_added_services==null ||this.state.current.value_added_services?.length<1 )?"close":"check"}
+                        name={(this.state.current.value_added_services?.length<1 )?"close":"check"}
                         size={16}
-                        color={(this.state.current.value_added_services==null ||this.state.current.value_added_services?.length<1 )?"red":"#31C2AA"}
+                        color={(this.state.current.value_added_services?.length<1 )?"red":"#31C2AA"}
                       />
                     </View>
                     <Text style={{ marginLeft: 5, color: "#6E91EC", textDecorationLine:'underline', fontFamily:'Inter-Black-Light'}}>
