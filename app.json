@@ -17,7 +17,7 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.yourcompany.yourappname",
+      "bundleIdentifier": "com.cms.cashmystockapp",
       "buildNumber": "1.0.0",
       "supportsTablet": true
     },
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/images/logoapp.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yourcompany.yourappname"
+      "package": "com.cms.cashmystockapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
