@@ -9,14 +9,8 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 import Home from "../screens/Home/home";
-/* import Contact from "../screens/Contact/contact";
-import Login from "../screens/Login/login";
-import Categories from "../screens/Categories/categories";
-import CategoiresList from "../screens/Categories/categoires_list"; */
 import { NavigationContainer } from "@react-navigation/native";
-//import ForgotPassword from "../screens/ForgotPassword/ForgotPassword";
 import * as apiServices from "../core/apis/apiUserServices";
-//import Registartion from "../screens/Registeration/registration";
 import CollapsibleList from "react-native-collapsible-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -32,17 +26,18 @@ import RoleStack from "./RoleStack";
 import NotificationStack from "./NotificationsStack";
 import NegotiationStack from "./NegotiationStack";
 import DashboardStack from "../screens/Dashboard/Dashboard";
-//import SellingDetail from "../screens/BuyerAccountDetails/sellingDetails";
 import CampaignStack from "./CampaignStack";
-import AboutStack from "./AboutStack";
 import LoyaltyStack from "./LoyaltyStack";
 //
+
+import Deals from '../screens/Deals/Deals'
+import ContactScreen from "../screens/Contact/contact";
+import AboutScreen from "../screens/About/about";
 import Activity from "../screens/Activity/Activity";
 import Categories from "../screens/Categories/categories";
 import Negotiations from "../screens/Notifications/Notification";
-import Products from "../screens/Products/product_list";
-import Orders from "../screens/OrderBook/Reserved_Orders";
-import Users from "../screens/Users/list";
+import Faq from '../screens/Faq/Faq';
+
 import Spinner from "react-native-loading-spinner-overlay";
 import SignContract from "../components/SignContract";
 import Dashboard from "../screens/Dashboard/Dashboard";
@@ -134,10 +129,10 @@ class CustomDrawer extends Component {
         {this.props.loggedIn&&
         (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
           <Text style={[style.ff,{color: "#6E91EC",fontSize:20}]}>
-            {this.props.userData?.owner_email}
+            {this.props.userData?.company_name}
           </Text>
           <Text style={[style.ff,{color: "#6E91EC",fontSize:16,marginTop:10}]}>
-            {this.state.userType==4?"Seller":"Buyer"}
+            Logged in as: {this.state.userType==4?"Seller":"Buyer"}
           </Text>
         </View>)}
         <DrawerItem
@@ -156,6 +151,30 @@ class CustomDrawer extends Component {
             />
           )}
         />
+        {this.state.userType==1 && this.props.userTypeStatic==1?<DrawerItem
+          label="Become a Seller"
+          labelStyle={[style.ff,{color:'black'}]}
+          onPress={() => {
+            // this.props.changeScreen("Home")
+              this.closeCollapsible();
+              apiServices.logout().then(async(res) => {
+                this.setState({userType:null})
+                console.log("WHEN LOGGING OUT: ", res);
+                let changing = JSON.parse(await AsyncStorage.getItem('user_details'))
+                await AsyncStorage.setItem('user_details',JSON.stringify({...changing,user_type:1,user_type_static:1}))
+                // await AsyncStorage.clear();
+                await AsyncStorage.removeItem("company_name");
+                await AsyncStorage.removeItem("user_id");
+                await AsyncStorage.removeItem("user_details");
+                changing = JSON.parse(await AsyncStorage.getItem('user_details'))
+                // console.log("ASYNC: ",changing);
+                this.props.navigation.navigate("Auth",{screen:'Registration'})
+            })
+          }}
+          icon={(focused = true) => (
+            <Ionicons name="create-outline" size={24} color="black" />
+          )}
+        />:null}
       </View>
       {this.props.loggedIn ? (
         <>
@@ -201,25 +220,19 @@ class CustomDrawer extends Component {
           </View>
           <View>
             <DrawerItem
-              label="Notifications"
-              labelStyle={[style.ff,{color:this.props.screenC=="Notifications" ?"#6E91EC":"black"}]}
-              onPress={() =>{
+              label="Deals"
+              labelStyle={[style.ff,{color:this.props.screenC=="Deals" ?"#6E91EC":"red"}]}
+              onPress={() => {
                 this.closeCollapsible();
-                this.props.changeScreen("Notifications")
-                this.props.navigation.navigate("Notifications",{screen:'Notification'})
+                this.props.changeScreen("Deals")
+                this.props.navigation.navigate("Deals");
               }}
-              icon={() => (
-                <Ionicons
-                  name="md-notifications-outline"
-                  size={24}
-                  color={this.props.screenC=="Notifications" ? "#6E91EC" : "black"}
-                />
-              )}
+              icon={() => <MaterialIcons name="local-offer" size={24} color={this.props.screenC=="Deals" ? "#6E91EC" : "red"} />}
             />
           </View>
           <View>
             <DrawerItem
-              label="Product"
+              label="Products"
               labelStyle={[style.ff,{color:this.props.screenC=="Product" ?"#6E91EC":"black"}]}
               onPress={() => {
                 this.closeCollapsible();
@@ -248,6 +261,8 @@ class CustomDrawer extends Component {
               )}
             />
           </View>
+          
+          
           {this.state.userType==4?(<><View>
             <DrawerItem
               label="Loyalty Points"
@@ -284,7 +299,7 @@ class CustomDrawer extends Component {
             icon={() => <Ionicons name="newspaper-outline" size={24} color={this.props.screenC=="Activity" ? "#6E91EC" : "black"} />}
           />
         </View></>):null}
-          <View>
+          {/* <View>
             <DrawerItem
               label="Categories"
               labelStyle={[style.ff,{color:this.props.screenC=="Categories" ?"#6E91EC":"black"}]}
@@ -295,7 +310,7 @@ class CustomDrawer extends Component {
               }}
               icon={() => <MaterialIcons name="category" size={24} color={this.props.screenC=="Categories" ? "#6E91EC" : "black"} />}
             />
-          </View>
+          </View> */}
           
           <View
             style={{
@@ -388,14 +403,76 @@ class CustomDrawer extends Component {
           </View>
         </>
       ) : null}
-      <View
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        marginLeft: 20,
-      }}
-    >
-      <CollapsibleList
+      <View>
+          <DrawerItem
+              label="About Us"
+              labelStyle={[style.ff,{color:this.props.screenC=="About Us" ?"#6E91EC":"black"}]}
+              onPress={() =>{ 
+                this.closeCollapsible();
+                this.props.changeScreen("About Us")
+                this.props.navigation.navigate("About")
+              }}
+              icon={() => <Feather name="globe" size={24} 
+              color={this.props.screenC=="About Us" ? "#6E91EC" : "black"} />}
+            />
+      </View>
+      <View>
+        <DrawerItem
+          label="Contact Us"
+          labelStyle={[style.ff,{color:this.props.screenC=="Contact Us" ?"#6E91EC":"black"}]}
+          onPress={() =>{ 
+          this.closeCollapsible();
+          this.props.changeScreen("Contact Us")
+          this.props.navigation.navigate("Contact")
+              }}
+              icon={() => <MaterialCommunityIcons name="cellphone" size={24} 
+              color={this.props.screenC=="Contact Us" ? "#6E91EC" : "black"} />}
+            />
+      </View>
+      
+      <View>
+        <DrawerItem
+          label="FAQ"
+          labelStyle={[style.ff,{color:this.props.screenC=="FAQ" ?"#6E91EC":"black"}]}
+          onPress={() =>{ 
+          this.closeCollapsible();
+          this.props.changeScreen("FAQ")
+          this.props.navigation.navigate("FAQ")
+              }}
+              icon={() => <MaterialCommunityIcons name="comment-question-outline" size={24} 
+              color={this.props.screenC=="FAQ" ? "#6E91EC" : "black"} />}
+            />
+      </View>
+      {this.props.isUserLoggedIn&&<View>
+            <DrawerItem
+              label="Notifications"
+              labelStyle={[style.ff,{color:this.props.screenC=="Notifications" ?"#6E91EC":"black"}]}
+              onPress={() =>{
+                this.closeCollapsible();
+                this.props.changeScreen("Notifications")
+                this.props.navigation.navigate("Notifications",{screen:'Notification'})
+              }}
+              icon={() => (
+                <Ionicons
+                  name="md-notifications-outline"
+                  size={24}
+                  color={this.props.screenC=="Notifications" ? "#6E91EC" : "black"}
+                />
+              )}
+            />
+        </View>}
+      {/* <TouchableOpacity
+          onPress={() =>{
+            this.props.navigation.navigate("Adress", { screen: "Details" })
+            this.props.changeScreen("AdressDetails")
+          }}
+          style={{ flexDirection: "row", marginVertical: 10 }}>
+          <Feather name="user" size={24} color={this.props.screenC =="AdressDetails"?"#6E91EC":"black"} />
+          <Text style={[style.ff,{color:this.props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
+          Account Details
+        </Text>
+      </TouchableOpacity> */}
+      {/* <CollapsibleList
         ref={this.secondRef}
         numberOfVisibleItems={0}
         buttonPosition="top"
@@ -432,8 +509,7 @@ class CustomDrawer extends Component {
             </Text>
           </TouchableOpacity>
     </View>
-    </CollapsibleList>
-    </View>
+    </CollapsibleList> */}
       {/* this will crash the app */}
       {this.props.loggedIn ? (
         <View>
@@ -609,15 +685,33 @@ class Nav extends Component {
       />
       <Drawer.Screen
         name="About"
-        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AboutStack}
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AboutScreen}
         navigation={navigation}
-        options={{ headerTitle:()=>this.headerTitle("About") }}
+        options={{ headerTitle:()=>this.headerTitle("About Us") }}
+      />
+      <Drawer.Screen
+        name="Contact"
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:ContactScreen}
+        navigation={navigation}
+        options={{ headerTitle:()=>this.headerTitle("Contact Us") }}
+      />
+      <Drawer.Screen
+        name="FAQ"
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Faq}
+        navigation={navigation}
+        options={{ headerTitle:()=>this.headerTitle("FAQ") }}
       />
       <Drawer.Screen
         name="Auth"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AuthStack}
         navigation={navigation}
         options={{ headerShown: false }}
+      />
+      <Drawer.Screen
+        name="Deals"
+        component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Deals}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>this.headerTitle("Deals") }}
       />
       <Drawer.Screen
         name="Product"

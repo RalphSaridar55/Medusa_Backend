@@ -7,6 +7,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import * as apiProducts from'../../core/apis/apiProductServices';
 import Swiper from "react-native-web-swiper";
 import { useFocusEffect } from '@react-navigation/core';
+import Footer from '../../components/footer/footer';
+import { Entypo } from '@expo/vector-icons'; 
 
 const BannerWidth = Dimensions.get('window').width;
 const height = Dimensions.get('screen').height;
@@ -16,7 +18,14 @@ const Home =(props)=> {
     const [data,setData] = useState({topSelling:[],featured:[]})
     const [carousel,setCarousel] = useState([])
     const [categories,setCategories] = useState([])
-
+    const [showArrow,setShowArrow] = useState(false);
+    
+    
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 200;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+    }; 
 
     // const drawDummy = () =>{
     //     let r= [1,2,3,4,5]
@@ -29,7 +38,6 @@ const Home =(props)=> {
 
     useEffect(()=>{
         apiProducts.getTopSellingAndFeatured().then((res)=>{
-            //console.log("CONSOLE: ",res)
             setData({topSelling:res[0].top_selling_products,featured:res[0].product_details})
         }).catch(err=>console.log(":::",err.response.data.message))
         apiProducts.getGroupProducts().then((res)=>{
@@ -61,8 +69,20 @@ const Home =(props)=> {
         return(
         <View style={styles.container}>
             <Spinner visible={isVisible} />
-            <ScrollView>
-                
+            
+            <ScrollView
+            onScroll={({nativeEvent}) => {
+                //console.log("length",this.state.total)
+                if (isCloseToBottom(nativeEvent)) {
+                    console.log("TRUE")
+                    setShowArrow(!showArrow)
+                }
+                else if(showArrow)
+                    setShowArrow(false)
+              }}>
+                {/* {showArrow && <View style={{zIndex:100,marginHorizontal:20,marginVertical:20}}>
+                <Entypo name="arrow-with-circle-up" size={24} color="black" />
+            </View>} */}
         <View style={st.container}>
             {carousel.length>0&&<Swiper
                     from={1}
@@ -261,6 +281,7 @@ const Home =(props)=> {
                         }}
                     />}
                 </View>
+                <Footer/>
             </ScrollView>
         </View >
         );
