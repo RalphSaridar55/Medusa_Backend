@@ -33,14 +33,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#222",
     fontSize: 18,
-    fontFamily:'Inter-Black-Medium'
+    fontFamily:'Inter-Black-Light'
   },
   mblTxt: {
     fontWeight: "200",
     color: "#777",
     fontSize: 13,
     alignItems: "flex-end",
-    fontFamily:'Inter-Black-Medium'
+    fontFamily:'Inter-Black-Light'
   },
 
   msgTxt: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     color: "#008B8B",
     fontSize: 12,
     alignItems: "flex-start",
-    fontFamily:'Inter-Black-Medium'
+    fontFamily:'Inter-Black-Light'
   },
   loginBtnContainer: {
     backgroundColor: "#E9F3FF",

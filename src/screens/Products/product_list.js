@@ -14,8 +14,9 @@ import {
     Alert,
     ScrollView,
     FlatList,
+    TextInput
 } from 'react-native';
-import { MaterialCommunityIcons,Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons,Entypo,Feather } from '@expo/vector-icons';
 import ActionSheet from "react-native-actions-sheet";
 import { List, Checkbox, Button, Appbar, Searchbar, IconButton, Title } from 'react-native-paper';
 import Slider from "react-native-sliders";
@@ -57,6 +58,7 @@ export default class ProductList extends Component {
             multiplier:500,
             modalVisible:false,
             page:1,
+            loggedIn:false,
         };
     }
 
@@ -92,7 +94,8 @@ export default class ProductList extends Component {
       this.focusListener = this.props.navigation.addListener("focus", async() => {
         this.setState({isVisible:true,category:[],subcategory:[],brand:[]})
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
-        this.setState({userType:user.user_type, showButton:true, showButton:user.user_type==4?true:false})
+        console.log("USER: ",user)
+        this.setState({loggedIn: user==null?false:true,userType:user==null?1:user.user_type, showButton:true, showButton:user==null?false:user.user_type==4?true:false})
         APICountry.getCountries().then((res)=>{
             this.setState({countries:res})
         })
@@ -103,20 +106,25 @@ export default class ProductList extends Component {
             this.setState({ fetchedCategories: data, apiCategoriesForFiltering:result });
         }).then((res)=>{
             let {multiplier} = this.state
-            if(this.props.route.params?.category_id){
+            if(this.props.route.params.query){
+                let query = this.props.route.params.query
+                this.setState({showSearch:true,search:query})
+                this.getProducts(1,null,null,null,null,null,query)
+            }
+            else if(this.props.route.params?.category_id){
                 let {category_id,category_name} = this.props.route.params
-                this.getProducts(1,category_id,null,null,null,null/* [0*multiplier,1*multiplier] */)
+                this.getProducts(1,category_id,null,null,null,null,null)
                 this.setCategory([{value:category_id, label:category_name}])
             }
             else{
-                this.getProducts(1,null,null,null,null,null/* [0*multiplier,1*multiplier] */) 
+                this.getProducts(1,null,null,null,null,null,null) 
             }  
         })
       })
     }
 
-    getProducts(page,catid,subid,brandid,countryid,price){
-        API.getFilteredProducts(page,catid,subid,brandid,countryid,price).then((res)=>{
+    getProducts(page,catid,subid,brandid,countryid,price,query){
+        API.getFilteredProducts(page,catid,subid,brandid,countryid,price,query).then((res)=>{
             // console.log("PRODUCTS FETCHED: ",res)
             let result = res.data.sort((a,b)=>a.product_name>b.product_name?1:-1)
             this.setState({ filterProducts:result,fetchedProducts:res,isVisible:false,total:res.totalCount})    
@@ -227,7 +235,7 @@ export default class ProductList extends Component {
         })
         this.SortingByData('reset');
         this.resetPriceRange();
-        this.getProducts(1,null,null,null,null);
+        this.getProducts(1,null,null,null,null,null);
     }
 
     setSubCategory(selection){
@@ -370,8 +378,7 @@ export default class ProductList extends Component {
                 </Overlay>
                 <View>
                     <Appbar style={{backgroundColor:"#E9F3FF" , color:"#fff"}}>
-                        <Appbar.Content title={this.state.filterProducts.length>0?this.state.filterProducts.filter
-                        ((i)=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase())).length + " " + "Results":""} onPress={this.setView} style={{ fontSize: 14 }}
+                        <Appbar.Content title={this.state.filterProducts.length + " Results"} onPress={this.setView} style={{ fontSize: 14 }}
                         titleStyle={{fontFamily:'Adam-Bold'}} />
                         <Appbar.Action icon="pin"/* {<Entypo name="location-pin" size={24} color="black" />} */ onPress={() => {
                         console.log(this.locationRef.current.focus())
@@ -387,11 +394,23 @@ export default class ProductList extends Component {
                     </Appbar>
                 </View>
                 <View style={{paddingHorizontal:10,paddingVertical:10,marginHorizontal:10}}>
-                    <Searchbar
+                    {/* <Searchbar
                         onChangeText={(e)=>this.setState({search:e})}
                         placeholder="Search"
                         style={{ display: !this.state.showSearch ? 'none' : 'flex', }}
-                    />
+                    /> */}
+                    <View style={{display: !this.state.showSearch ? 'none' : 'flex',borderRadius:10,borderWidth:1,borderColor:'lightgray',flexDirection:'row',backgroundColor:'#fff',height:40}}>
+                    <TextInput style={{width:'90%',paddingLeft:20}} placeholder="Search"
+                    onChangeText={(e)=>this.setState({search:e})} value={this.state.search}/>
+                    <TouchableOpacity style={{borderLeftColor:'lightgray', borderLeftWidth:1,width:'10%',justifyContent:'center',marginRight:60}}
+                        onPress={()=>{
+                            let { category,subcategory,brand,country,value,multiplier,search} = this.state 
+                            this.setState({isVisible:true})
+                            this.getProducts(1, category.length<1?null:category[0].value, subcategory.length<1?null:subcategory[0].value, brand.length<1?null:brand[0].value, country==null?null:country, (value[0]==0&&value[1]==1?null:[value[0]*multiplier,value[1]*multiplier]),search)
+                            }}>
+                        <Feather name="search" size={14} color="lightgray" style={{alignSelf:'center'}}/>
+                    </TouchableOpacity>
+                    </View>
                 </View>
                 {(this.state.category.length>0 || this.state.countryLabel.length>0)&& <View style={styles.filterContainer}>
                     <Text style={styles.filterText}>Filtered By: {this.state.countryLabel} {this.state.category[0]?.label} {this.state.subcategory[0]?.label} {this.state.brand[0]?.label}</Text>
@@ -399,8 +418,7 @@ export default class ProductList extends Component {
                 <View style={{flex:1}}>
                     <FlatList style={styles.list}
                         contentContainerStyle={styles.listContainer}
-                        data={this.state.filterProducts.filter
-                            (i=>i.product_name.toLowerCase().includes(this.state.search.toLowerCase()))}
+                        data={this.state.filterProducts}
                         horizontal={false}
                         numColumns={2}
                         onEndReachedThreshold={5}
@@ -416,7 +434,12 @@ export default class ProductList extends Component {
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <TouchableOpacity style={[styles.card,{borderRadius:15,paddingVertical:20}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>
+                                <TouchableOpacity style={[styles.card,{borderRadius:15,paddingVertical:20}]} onPress={()=>{
+                                    if(this.state.loggedIn)
+                                        this.props.navigation.navigate("Detailed",{item:item})
+                                    else
+                                        this.props.navigation.navigate("Auth",{screen:'Login'})
+                                    }}>
                                     <View style={styles.cardHeader}>
                                     </View>
                                     <Image style={[styles.userImage,{marginBottom:20}]} source={{ uri: item?.images[0]?.media }}  resizeMode="cover"/>
@@ -564,8 +587,8 @@ export default class ProductList extends Component {
                                         <TouchableOpacity
                                         style={{marginHorizontal:20,marginBottom:20}}
                                         onPress={()=>{
-                                            let { category,subcategory,brand,country,value,multiplier } = this.state 
-                                            this.getProducts(1, category.length<1?null:category[0].value, subcategory.length<1?null:subcategory[0].value, brand.length<1?null:brand[0].value, country==null?null:country, (value[0]==0&&value[1]==1?null:[value[0]*multiplier,value[1]*multiplier]))
+                                            let { category,subcategory,brand,country,value,multiplier,search} = this.state 
+                                            this.getProducts(1, category.length<1?null:category[0].value, subcategory.length<1?null:subcategory[0].value, brand.length<1?null:brand[0].value, country==null?null:country, (value[0]==0&&value[1]==1?null:[value[0]*multiplier,value[1]*multiplier]),search)
                                             }}>
                                             <Text style={styles.resetText}>
                                                 Apply

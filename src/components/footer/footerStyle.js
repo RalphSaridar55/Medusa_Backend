@@ -21,6 +21,11 @@ export default StyleSheet.create({
     rightContainer:{
         flex:2
     },
+    linkText:{
+        fontFamily:'Inter-Black-Light',
+        textDecorationLine:'underline',
+        color:'#31C2AA'
+    },
     footerHeader:{
         textAlign:'center',
         fontFamily:'Adam-Bold',

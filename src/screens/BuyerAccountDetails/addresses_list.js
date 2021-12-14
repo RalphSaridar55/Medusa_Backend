@@ -98,7 +98,7 @@ const AdressList = (props) => {
                 <Text style={styles.listCountry}>
                   {countries?.filter((s) => s.value === i.country_id)[0]?.label}
                 </Text>
-                <Text style={{fontFamily:'Inter-Black-Medium'}}>
+                <Text style={{fontFamily:'Inter-Black-Light'}}>
                   {i.city + ", " + i.state + ", " + i.street}
                 </Text>
               </View>

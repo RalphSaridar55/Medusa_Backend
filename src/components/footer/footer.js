@@ -5,7 +5,7 @@ import footerStyle from './footerStyle';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AntDesign } from '@expo/vector-icons'; 
 
-export default function Footer() {
+export default function Footer(props) {
 
     
 
@@ -16,11 +16,18 @@ export default function Footer() {
     return (
         <View style={footerStyle.container}>
             <View  style={footerStyle.leftContainer}>
-                <Text style={[footerStyle.footerHeader,{textAlign:'left'}]}>Disclaimer</Text>
-                <View>
-                    <Text style={[footerStyle.description,{width:200}]}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-                    </Text>
-                </View>
+                <Text 
+                style={footerStyle.linkText}
+                onPress={()=>{
+                    props.closeOrOpen(true)
+                    props.changeOverlay("disclaimer")
+                }}>Disclaimer</Text>
+                <Text 
+                style={footerStyle.linkText}
+                onPress={()=>{
+                    props.closeOrOpen(true)
+                    props.changeOverlay("conditions")
+                }}>Conditions and Terms</Text>
             </View>
             <View style={footerStyle.rightContainer}>
                 <Text style={footerStyle.footerHeader}>Social Media</Text>

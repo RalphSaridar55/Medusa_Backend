@@ -141,14 +141,14 @@ export default class AddRole extends Component {
                           },
                         ]}
                       >
-                        <Text style={{fontFamily:'Inter-Black-Medium'}}>Permissions</Text>
+                        <Text style={{fontFamily:'Inter-Black-Light'}}>Permissions</Text>
                       </View>
                     }
                   >
                     <SelectMultiple
                         items={this.state.permissions}
                         selectedItems={this.state.permission}
-                        labelStyle={{color:'black',fontFamily:'Inter-Black-Medium'}}
+                        labelStyle={{color:'black',fontFamily:'Inter-Black-Light'}}
                         selectedLabelStyle	={{color:'#698EB7'}}
                         onSelectionsChange={(item) =>{
                             this.setState({permission:item})

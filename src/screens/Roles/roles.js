@@ -129,8 +129,8 @@ export default class Roles extends Component {
                             }}>
                                 <View style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
                                     {/* <View style={{ paddingTop: 20, paddingBottom: 20, display:'flex', flexDirection:'column',justifyContent:'space-between' }}> */}
-                                        <Text style={{fontFamily:'Inter-Black-Medium'}}>{i.role_name}</Text>
-                                        <Text numeric style={{ marginRight: 15,color:'#C4C4C4',fontFamily:'Inter-Black-Medium' }}>{i.num_of_permission} Permissions</Text>
+                                        <Text style={{fontFamily:'Inter-Black-Light'}}>{i.role_name}</Text>
+                                        <Text numeric style={{ marginRight: 15,color:'#C4C4C4',fontFamily:'Inter-Black-Light' }}>{i.num_of_permission} Permissions</Text>
                                     {/* </View> */}
                                 </View>
                             </TouchableOpacity>

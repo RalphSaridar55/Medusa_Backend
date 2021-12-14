@@ -1,6 +1,6 @@
 import React, { Component, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5} from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, Image, TextInput, Touchable } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5, FontAwesome} from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
   createDrawerNavigator,
@@ -37,6 +37,7 @@ import Activity from "../screens/Activity/Activity";
 import Categories from "../screens/Categories/categories";
 import Negotiations from "../screens/Notifications/Notification";
 import Faq from '../screens/Faq/Faq';
+import TrackingList from "../screens/Tracking/TrackingList";
 
 import Spinner from "react-native-loading-spinner-overlay";
 import SignContract from "../components/SignContract";
@@ -151,7 +152,8 @@ class CustomDrawer extends Component {
             />
           )}
         />
-        {this.state.userType==1 && this.props.userTypeStatic==1?<DrawerItem
+        {this.state.userType==1 && this.props.userTypeStatic==1?<>
+        <DrawerItem
           label="Become a Seller"
           labelStyle={[style.ff,{color:'black'}]}
           onPress={() => {
@@ -174,11 +176,10 @@ class CustomDrawer extends Component {
           icon={(focused = true) => (
             <Ionicons name="create-outline" size={24} color="black" />
           )}
-        />:null}
+        /></>:null}
       </View>
       {this.props.loggedIn ? (
         <>
-        
       {this.props.userTypeStatic==4?<View>
           <TouchableOpacity
             onPress={() => {
@@ -191,6 +192,18 @@ class CustomDrawer extends Component {
             <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Switch To {this.state.userType==4?"Buyer":"Seller"}</Text>
           </TouchableOpacity>
         </View>:null }
+        
+      {this.props.userTypeStatic==1 || this.state.userType==1 ?
+        <DrawerItem
+          label="Tracking"
+          labelStyle={[style.ff,{color:this.props.screenC=="Tracking"?"#6E91EC":"black"}]}
+          onPress={() => {
+            this.closeCollapsible();
+            this.props.changeScreen("Tracking")
+            this.props.navigation.navigate("Tracking");
+          }}
+          icon={() => <MaterialIcons name="local-shipping" size={24} color={this.props.screenC=="Tracking" ? "#6E91EC" : "black"} />}
+        />:null}
         {this.state.userType==4?(<><View>
           <DrawerItem
             label="Dashboard"
@@ -443,7 +456,7 @@ class CustomDrawer extends Component {
               color={this.props.screenC=="FAQ" ? "#6E91EC" : "black"} />}
             />
       </View>
-      {this.props.isUserLoggedIn&&<View>
+      {this.props.loggedIn&&<View>
             <DrawerItem
               label="Notifications"
               labelStyle={[style.ff,{color:this.props.screenC=="Notifications" ?"#6E91EC":"black"}]}
@@ -582,6 +595,7 @@ class Nav extends Component {
       userData:null,
       loading:true,
       visible:false,
+      search:""
     };
   }
 
@@ -590,14 +604,36 @@ class Nav extends Component {
     console.log("SCREEN:",item)
   }
 
-  headerTitle = (title) =>{
-    return <View style={{display:'flex',alignItems:'center'}}>
-      <Text style={{fontFamily:'Adam-Bold',fontWeight:'800',fontSize:24}}>{title}</Text>
+  headerTitle = (title,navigation,loggedIn) =>{
+    return <View style={{display:'flex',alignItems:'center',/* justifyContent:'space-between', */flexDirection:'row',flex:1,width:'100%',}}>
+      {title!="Home"&&<Text style={{fontFamily:'Adam-Bold',fontWeight:'800',fontSize:24}}>{title}</Text>}
+      {title=="Home"&&<View style={{borderRadius:10,borderWidth:1,borderColor:'lightgray',marginLeft:15,flexDirection:'row',alignItems:'center'}}>
+          <TextInput style={{width:200,paddingHorizontal:5}} placeholder="Search"
+          onChangeText={(e)=>this.setState({search:e})}/>
+          <TouchableOpacity style={{borderLeftColor:'lightgray', borderLeftWidth:1,paddingLeft:10}}
+            onPress={()=>{
+              navigation.navigate("Product",{screen:"List", params:{query:this.state.search}})
+            }}>
+            <Feather name="search" size={14} color="lightgray" style={{marginRight:10,}}/>
+          </TouchableOpacity>
+        </View>}
+        {(title=="Home" && loggedIn)&& (<>  
+        <FontAwesome name="envelope-o" size={24} color="#6E91EC"
+        style={{marginLeft:15}} onPress={()=>navigation.navigate("Notifications")}
+        />
+        {/* <Ionicons
+          style={{marginLeft:15}}
+          name="md-notifications-outline"
+          size={28}
+          color="#6E91EC"
+          onPress={()=>navigation.navigate("Notifications")}
+          /> */}
+          </>)}
     </View>
   }
 
   async componentDidMount() {
-    console.log("PROPS DR: ",this.props.navigation)
+    console.log("PROPS DR: ",this.navigation)
     let user = JSON.parse( await AsyncStorage.getItem('user_details'));
     console.log("USER DATA IS: ",user)
     this.setState({userData:user})
@@ -681,7 +717,7 @@ class Nav extends Component {
         name="Home"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Home}
         navigation={navigation}
-        options={{ headerTitle:()=>this.headerTitle("Home") }}
+        options={{ headerTitle:()=>this.headerTitle("Home",navigation, this.state.isUserLoggedIn) }}
       />
       <Drawer.Screen
         name="About"
@@ -785,6 +821,12 @@ class Nav extends Component {
       name="Categories"
       component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Categories}
       options={{ headerShown: true, headerTitle:()=>this.headerTitle("Categories")}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Tracking"
+      component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:TrackingList}
+      options={{ headerShown: true, headerTitle:()=>this.headerTitle("Tracking")}}
       navigation={navigation}
       />
       <Drawer.Screen

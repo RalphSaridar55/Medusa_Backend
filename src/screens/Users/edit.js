@@ -411,7 +411,7 @@ export default class EditUsers extends Component {
                           paddingBottom: 5,
                           borderBottomColor: "#DCDCDC",
                           borderBottomWidth: 1,
-                          fontFamily:'Inter-Black-Medium'
+                          fontFamily:'Inter-Black-Light'
                         }}
                       >
                         {index+1}    {i.permission_name}

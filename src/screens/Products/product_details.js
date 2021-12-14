@@ -608,9 +608,9 @@ class ProductDetails extends Component {
                     {this.state.dataFromApi?.price}
                   </Title>
                 </View>
-                {(this.state.dataFromApi?.is_negotiable && this.state.userData.user_type == 1 && this.state?.userData?.id !== this.state?.seller?.id) && <TouchableOpacity
+                {(this.state.dataFromApi?.is_negotiable && this.state.userData.user_type == 1 && this.state?.userData?.id !== this.state?.seller?.id && this.state.userData != undefined) && <TouchableOpacity
                   onPress={() =>  this.NegotiatePrice()}
-                  style={[styles.loginBtn, { flex: 2, height:30, backgroundColor:'#fff',borderColor:'#31C2AA', borderWidth:1 }]}
+                  style={[styles.loginBtn, { flex: 3, height:30, backgroundColor:'#fff',borderColor:'#31C2AA', borderWidth:1,width:150 }]}
                 >
                   <Text style={[styles.loginBtnText,{color: "#31C2AA",}]}>Negotiate Price</Text>
                 </TouchableOpacity>}

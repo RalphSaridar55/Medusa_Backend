@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   piecesAndBoxes:{ 
     color: "#31C2AA",
     fontSize: 18,
-    fontFamily:'Inter-Black-Medium'
+    fontFamily:'Inter-Black-Light'
   },
   modalText: {
     marginBottom: 15,
