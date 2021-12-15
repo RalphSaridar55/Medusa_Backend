@@ -76,11 +76,11 @@ class CustomDrawer extends Component {
   componentDidMount(){
     // this.props.closeDrawer()
     console.log("NAV: ",this.props.navigation)
-    this.props.navigation.toggleDrawer()
+    // this.props.navigation.closeeDrawer()
   }
 
   componentDidUpdate(prevProps, prevState){
-    if(prevProps.userType !== this.state.userType){
+    if( prevProps.userType !== this.state.userType ){
       console.log("RUNNING123",this.props.userData);
       this.setState({userType:this.props.userType,userApproved:this.props.approved,loggedIn:this.props.loggedIn,userData:this.props.userData})
     }
@@ -471,9 +471,7 @@ class CustomDrawer extends Component {
                 this.props.changeScreen("Notifications")
                 this.props.navigation.navigate("Notifications",{screen:'Notification'})
               }}
-              icon={() => (
-                <Ionicons
-                  name="md-notifications-outline"
+              icon={() => (<FontAwesome name="envelope-o"
                   size={24}
                   color={this.props.screenC=="Notifications" ? "#6E91EC" : "black"}
                 />
@@ -647,7 +645,7 @@ class Nav extends Component {
     //console.log("RESULT INSIDE COMPOENNT: ",result)
     await apiServices.isUserLoggedIn().then((res) => {
       console.log("THIS STATE: ",this.state.userData)
-        setTimeout(()=>this.setState({ isUserLoggedIn: res, loading:false, visible:true, }),1000);
+      this.setState({ isUserLoggedIn: res, loading:false, visible:true, });
     });
   }
 
