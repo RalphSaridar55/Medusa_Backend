@@ -33,6 +33,9 @@ export const styles = StyleSheet.create({
         borderBottomLeftRadius: 1,
         borderBottomRightRadius: 1,
     },
+    cardFooter:{
+        paddingVertical:10
+    },
     userImage: {
         height: 120,
         width: 120,

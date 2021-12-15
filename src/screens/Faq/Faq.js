@@ -21,7 +21,7 @@ const data = [
 const Faq = () => {
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false}>                                 
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex:1,backgroundColor:'#fff'}}>                                 
             <Image
               style={styles.img}
               source={require('../../../assets/about4.png')}

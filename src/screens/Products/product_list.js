@@ -233,6 +233,7 @@ export default class ProductList extends Component {
             brand:[],
             isVisible:true,
         })
+        this.setState({search:"",showSearch:false})
         this.SortingByData('reset');
         this.resetPriceRange();
         this.getProducts(1,null,null,null,null,null);

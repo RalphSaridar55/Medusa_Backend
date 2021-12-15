@@ -27,6 +27,8 @@ export default function Login({ navigation }) {
 
   //const { setUserData,userData,product,setProduct } = useContext(HeadContext);
 
+  
+
   useEffect(()=>{
     const getRemember = async() =>{
       let result = JSON.parse(await getData("remember_me"));

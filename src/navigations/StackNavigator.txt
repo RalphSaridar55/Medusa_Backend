@@ -1,0 +1,837 @@
+import React, { Component, useEffect, useState, useRef, useCallback} from "react";
+import { View, Text, TouchableOpacity, Image, TextInput, Touchable } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5, FontAwesome} from "@expo/vector-icons";
+import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from "@react-navigation/drawer";
+import Home from "../screens/Home/home";
+import { NavigationContainer } from "@react-navigation/native";
+import * as apiServices from "../core/apis/apiUserServices";
+import CollapsibleList from "react-native-collapsible-list";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Importing Stacks
+import AuthStack from "./AuthStack";
+import UserStack from "./UserStack";
+import ProductStack from "./ProductStack";
+import AdressStack from "./AdressStack";
+import OrderStack from "./OrderStack";
+import CategoriesStack from "./CategoryStack";
+import CheckoutStack from "./CheckoutStack";
+import RoleStack from "./RoleStack";
+import NotificationStack from "./NotificationsStack";
+import NegotiationStack from "./NegotiationStack";
+import DashboardStack from "../screens/Dashboard/Dashboard";
+import CampaignStack from "./CampaignStack";
+import LoyaltyStack from "./LoyaltyStack";
+//
+
+import Deals from '../screens/Deals/Deals'
+import ContactScreen from "../screens/Contact/contact";
+import AboutScreen from "../screens/About/about";
+import Activity from "../screens/Activity/Activity";
+import Categories from "../screens/Categories/categories";
+import Negotiations from "../screens/Notifications/Notification";
+import Faq from '../screens/Faq/Faq';
+import TrackingList from "../screens/Tracking/TrackingList";
+
+import Spinner from "react-native-loading-spinner-overlay";
+import SignContract from "../components/SignContract";
+import Dashboard from "../screens/Dashboard/Dashboard";
+
+const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
+
+// code below is just to test the api
+const TStack = createStackNavigator();
+
+const style = {
+  ff:{fontFamily:'Adam-Bold',textAlignVertical:'center'}
+}
+/* const Drawer = () =>{
+    return()
+} */
+const CustomDrawer = (props) => {
+
+    const firstRef = useRef();
+    const secondRef = useRef();
+    const thirdRef = useRef();
+  
+
+  const [state,setState] = useState({userType:null,userApproved:null,loggedIn:false,userData:null})
+  useEffect(()=>{
+    setTimeout(()=>{
+      setState({userType:props.userType,userApproved:props.approved,loggedIn:props.loggedIn,userData:props.userData})
+    })
+  },[props.loggedIn])
+
+  
+  useEffect(()=>{
+    console.log("DRAWER COMP. PROPS: ",
+    props.loggedIn,
+    props.submitContract,
+    props.screenC,
+    props.changeScreen,
+    props.userType,
+    props.userTypeStatic,
+    props.userApproved,
+    props.userData,)
+    // props.navigation.toggleDrawer()
+    setState({userType:props.userType,userApproved:props.approved,loggedIn:props.loggedIn,userData:props.userData})
+  },[props.loggedIn])
+
+  // componentDidUpdate(prevProps, prevState){
+  //   if(prevProps.userType !== state.userType){
+  //     console.log("RUNNING123",props.userType);
+  //     setState({userType:props.userType,userApproved:props.approved})}
+  //     //setState({userType: props.userType})
+  // }
+
+  /* componentWillMount(){
+      focusListener = props.navigation.addListener("focus",()=>{
+        
+    console.log("CIOMP: ",props)
+      console.log("RUNNING123 FROM FOCUS",props.userType)
+      setState({userType: props.userType})
+    })
+  } */
+
+  const closeCollapsible = () =>{
+    let first = firstRef.current
+    let second = secondRef.current
+    let third = thirdRef.current
+    if(first?.state.collapsed)
+      first.toggle()
+    if(second?.state.collapsed)
+      second.toggle()
+    if(third?.state.collapsed)
+      third.toggle()
+  }
+
+  const SignContract = async() =>{
+    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+    let change = {...user,is_approved:1}
+    AsyncStorage.setItem('user_details',JSON.stringify(change))
+    setState({userApproved:1})
+    //this.props.userType=currentType==4?1:4;
+    //console.log("BECOMES: ",this.props.userType)
+  }
+
+  const changeUserType = async(currentType) =>{
+    console.log("Current Type: ",currentType)
+    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+    let change = {...user,user_type:currentType==4?1:4}
+    AsyncStorage.setItem('user_details',JSON.stringify(change))
+    setState({userType:currentType==4?1:4})
+  }
+
+    return (
+    <DrawerContentScrollView {...props} showsVerticalScrollIndicator={false}>
+      <View>
+        <View
+        style={{display:'flex',alignItems:'center',marginVertical:0}}>
+          <Image source={require('../../assets/images/drawerlogo.png')} style={{width:300,height:200}}/>
+        </View>
+        {state.loggedIn&&
+        (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
+          <Text style={[style.ff,{color: "#6E91EC",fontSize:20}]}>
+            {state.userData?.company_name}
+          </Text>
+          <Text style={[style.ff,{color: "#6E91EC",fontSize:16,marginTop:10}]}>
+            Logged in as: {state.userType==4?"Seller":"Buyer"}
+          </Text>
+        </View>)}
+        <DrawerItem
+          label="Home"
+          labelStyle={[style.ff,{ color:props.screenC=="Home"?"#6E91EC":"black"}]}
+          onPress={() => {
+            props.changeScreen("Home")
+            props.navigation.navigate("Home");
+            closeCollapsible();
+            }}
+          icon={(focused = true) => (
+            <MaterialCommunityIcons
+              name="home"
+              size={24}
+              color={props.screenC=="Home" ? "#6E91EC" : "black"}
+            />
+          )}
+        />
+        {state.userType==1 && props.userTypeStatic==1?<>
+        <DrawerItem
+          label="Become a Seller"
+          labelStyle={[style.ff,{color:'black'}]}
+          onPress={() => {
+            // props.changeScreen("Home")
+              closeCollapsible();
+              apiServices.logout().then(async(res) => {
+                setState({userType:null})
+                console.log("WHEN LOGGING OUT: ", res);
+                let changing = JSON.parse(await AsyncStorage.getItem('user_details'))
+                await AsyncStorage.setItem('user_details',JSON.stringify({...changing,user_type:1,user_type_static:1}))
+                // await AsyncStorage.clear();
+                await AsyncStorage.removeItem("company_name");
+                await AsyncStorage.removeItem("user_id");
+                await AsyncStorage.removeItem("user_details");
+                changing = JSON.parse(await AsyncStorage.getItem('user_details'))
+                // console.log("ASYNC: ",changing);
+                props.navigation.navigate("Auth",{screen:'Registration'})
+            })
+          }}
+          icon={(focused = true) => (
+            <Ionicons name="create-outline" size={24} color="black" />
+          )}
+        /></>:null}
+      </View>
+      {state.loggedIn ? (
+        <>
+      {props.userTypeStatic==4?<View>
+          <TouchableOpacity
+            onPress={() => {
+              closeCollapsible();
+              props.navigation.navigate('Home');
+              changeUserType(state.userType)
+            }}
+            style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
+          ><Fontisto name="arrow-swap" size={24} color="black" />
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Switch To {state.userType==4?"Buyer":"Seller"}</Text>
+          </TouchableOpacity>
+        </View>:null }
+        
+      {props.userTypeStatic==1 || state.userType==1 ?
+        <DrawerItem
+          label="Tracking"
+          labelStyle={[style.ff,{color:props.screenC=="Tracking"?"#6E91EC":"black"}]}
+          onPress={() => {
+            closeCollapsible();
+            props.changeScreen("Tracking")
+            props.navigation.navigate("Tracking");
+          }}
+          icon={() => <MaterialIcons name="local-shipping" size={24} color={props.screenC=="Tracking" ? "#6E91EC" : "black"} />}
+        />:null}
+        {state.userType==4?(<><View>
+          <DrawerItem
+            label="Dashboard"
+            labelStyle={[style.ff,{color:props.screenC=="Dashboard"?"#6E91EC":"black"}]}
+            onPress={() => {
+              closeCollapsible();
+              props.changeScreen("Dashboard")
+              props.navigation.navigate("Dashboard");
+            }}
+            icon={() => <MaterialCommunityIcons name="view-dashboard-outline" size={24} color={props.screenC=="Dashboard" ? "#6E91EC" : "black"} />}
+          />
+        </View></>):null}
+        
+        
+        <View>
+            <DrawerItem
+              label="Orders"
+              labelStyle={[style.ff,{color:props.screenC=="Orders" ?"#6E91EC":"black"}]}
+              onPress={() =>{ 
+                closeCollapsible();
+                props.changeScreen("Orders")
+                props.navigation.navigate("Orders")}
+              }
+              icon={() => <Ionicons name="receipt-outline" size={24} 
+              color={props.screenC=="Orders" ? "#6E91EC" : "black"} />}
+            />
+          </View>
+          <View>
+            <DrawerItem
+              label="Deals"
+              labelStyle={[style.ff,{color:props.screenC=="Deals" ?"#6E91EC":"red"}]}
+              onPress={() => {
+                closeCollapsible();
+                props.changeScreen("Deals")
+                props.navigation.navigate("Deals");
+              }}
+              icon={() => <MaterialIcons name="local-offer" size={24} color={props.screenC=="Deals" ? "#6E91EC" : "red"} />}
+            />
+          </View>
+          <View>
+            <DrawerItem
+              label="Products"
+              labelStyle={[style.ff,{color:props.screenC=="Product" ?"#6E91EC":"black"}]}
+              onPress={() => {
+                closeCollapsible();
+                props.changeScreen("Product")
+                props.navigation.navigate("Product",{userType:props.userType, screen:"List"});
+              }}
+              icon={() => <Feather name="box" size={24} color={props.screenC=="Product" ? "#6E91EC" : "black"} />}
+            />
+          </View>
+          
+            <View>
+            <DrawerItem
+              label="Negotiations"
+              labelStyle={[style.ff,{color:props.screenC=="Negotiations" ?"#6E91EC":"black"}]}
+              onPress={() =>{
+                closeCollapsible();
+                props.changeScreen("Negotiations")
+                props.navigation.navigate("Negotiations", {screen:'NegotiationList'})
+              }}
+              icon={() => (
+                <FontAwesome5
+                  name="handshake"
+                  size={20}
+                  color={props.screenC=="Negotiations" ? "#6E91EC" : "black"}
+                />
+              )}
+            />
+          </View>
+          
+          
+          {state.userType==4?(<><View>
+            <DrawerItem
+              label="Loyalty Points"
+              labelStyle={[style.ff,{color:props.screenC=="LoyaltyPoints" ?"#6E91EC":"black"}]}
+              onPress={() =>{ 
+                closeCollapsible();
+                props.changeScreen("LoyaltyPoints")
+                props.navigation.navigate("LoyaltyPoints",{screen:"Loyalty"})}
+              }
+              icon={() => <MaterialCommunityIcons name="chart-donut" size={24} 
+              color={props.screenC=="LoyaltyPoints" ? "#6E91EC" : "black"} />}
+            />
+          </View><View>
+            <DrawerItem
+              label="Campaign"
+              labelStyle={[style.ff,{color:props.screenC=="Campaign" ?"#6E91EC":"black"}]}
+              onPress={() =>{ 
+                closeCollapsible();
+                props.changeScreen("Campaign")
+                props.navigation.navigate("Campaign")}
+              }
+              icon={() => <Feather name="speaker" size={24} 
+              color={props.screenC=="Campaign" ? "#6E91EC" : "black"} />}
+            />
+          </View><View>
+          <DrawerItem
+            label="Activity"
+            labelStyle={[style.ff,{color:props.screenC=="Activity" ?"#6E91EC":"black"}]}
+            onPress={() => {
+              closeCollapsible();
+              props.changeScreen("Activity")
+              props.navigation.navigate("Activity");
+            }}
+            icon={() => <Ionicons name="newspaper-outline" size={24} color={props.screenC=="Activity" ? "#6E91EC" : "black"} />}
+          />
+        </View></>):null}
+          {/* <View>
+            <DrawerItem
+              label="Categories"
+              labelStyle={[style.ff,{color:props.screenC=="Categories" ?"#6E91EC":"black"}]}
+              onPress={() => {
+                closeCollapsible();
+                props.changeScreen("Categories")
+                props.navigation.navigate("Categories");
+              }}
+              icon={() => <MaterialIcons name="category" size={24} color={props.screenC=="Categories" ? "#6E91EC" : "black"} />}
+            />
+          </View> */}
+          
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              marginLeft: 20,
+            }}
+          >
+            <CollapsibleList
+              ref={thirdRef}
+              numberOfVisibleItems={0}
+              buttonPosition="top"
+              buttonContent={
+                <View style={{ flexDirection: "row", marginVertical: 15 }}>
+                  <Ionicons name="settings-outline" size={24} color="black" />
+                  <Text style={[style.ff,{ color: "black", marginLeft: 30}]}>
+                    Settings
+                  </Text>
+                </View>
+              }
+            >
+              <View style={{ marginLeft: 30 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      props.navigation.navigate("User");
+                      props.changeScreen("User")
+                    }}
+                    style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Feather name="users" size={24} color={props.screenC =="User"?"#6E91EC":"black"} />
+                    <Text style={[style.ff,{color:props.screenC =="User"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      User Management
+                    </Text>
+                  </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>{
+                      props.navigation.navigate("Adress", { screen: "Details" })
+                      props.changeScreen("AdressDetails")
+                      }}
+                      style={{ flexDirection: "row", marginVertical: 10 }}>
+                      <Feather name="user" size={24} color={props.screenC =="AdressDetails"?"#6E91EC":"black"} />
+                      <Text style={[style.ff,{color:props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      Account Details
+                    </Text>
+                  </TouchableOpacity>
+                <TouchableOpacity style={{ flexDirection: "row", display:'flex', marginVertical: 10 }}
+                    onPress={() =>{
+                      props.navigation.navigate("Role", { screen: "Roles" })
+                      props.changeScreen("Role")
+                    }}>
+                    <Feather name="lock" size={24}  color={props.screenC =="Role"?"#6E91EC":"black"} />
+                    <Text style={[style.ff,{color:props.screenC =="Role"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      Roles & Permissions
+                    </Text>
+                  </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>{
+                      props.navigation.navigate("Adress",{screen:'List'})
+                      props.changeScreen("Adress")
+                      }}
+                     style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Ionicons name="location-outline" size={24} color="black" />
+                    <Text style={[style.ff,{color:props.screenC =="Adress"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      User Address
+                    </Text>
+                  </TouchableOpacity>
+                  {state.userType==4?(<TouchableOpacity
+                    onPress={() => {
+                      props.navigation.navigate("Adress",{screen:"Selling"});
+                      props.changeScreen("Selling")
+                    }}
+                    style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Feather name="book" size={24} color={props.screenC =="Selling"?"#6E91EC":"black"} />
+                    <Text style={[style.ff,{color:props.screenC =="Selling"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      Selling Details
+                    </Text>
+                  </TouchableOpacity>):null}
+                  {/* {state.userType==4?(<TouchableOpacity
+                    onPress={() => {
+                      props.navigation.navigate("Adress",{screen:"Sponsored"});
+                      props.changeScreen("Sponsored")
+                    }}
+                    style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Feather name="dollar-sign" size={24} color={props.screenC =="Sponsored"?"#6E91EC":"black"} />
+                    <Text style={[style.ff,{color:props.screenC =="Sponsored"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      Promoted Products
+                    </Text>
+                  </TouchableOpacity>):null} */}
+              </View>
+            </CollapsibleList>
+          </View>
+        </>
+      ) : null}
+      <View>
+          <DrawerItem
+              label="About Us"
+              labelStyle={[style.ff,{color:props.screenC=="About Us" ?"#6E91EC":"black"}]}
+              onPress={() =>{ 
+                closeCollapsible();
+                props.changeScreen("About Us")
+                props.navigation.navigate("About")
+              }}
+              icon={() => <Feather name="globe" size={24} 
+              color={props.screenC=="About Us" ? "#6E91EC" : "black"} />}
+            />
+      </View>
+      <View>
+        <DrawerItem
+          label="Contact Us"
+          labelStyle={[style.ff,{color:props.screenC=="Contact Us" ?"#6E91EC":"black"}]}
+          onPress={() =>{ 
+          closeCollapsible();
+          props.changeScreen("Contact Us")
+          props.navigation.navigate("Contact")
+              }}
+              icon={() => <MaterialCommunityIcons name="cellphone" size={24} 
+              color={props.screenC=="Contact Us" ? "#6E91EC" : "black"} />}
+            />
+      </View>
+      
+      <View>
+        <DrawerItem
+          label="FAQ"
+          labelStyle={[style.ff,{color:props.screenC=="FAQ" ?"#6E91EC":"black"}]}
+          onPress={() =>{ 
+          closeCollapsible();
+          props.changeScreen("FAQ")
+          props.navigation.navigate("FAQ")
+              }}
+              icon={() => <MaterialCommunityIcons name="comment-question-outline" size={24} 
+              color={props.screenC=="FAQ" ? "#6E91EC" : "black"} />}
+            />
+      </View>
+      {state.loggedIn&&<View>
+            <DrawerItem
+              label="Notifications"
+              labelStyle={[style.ff,{color:props.screenC=="Notifications" ?"#6E91EC":"black"}]}
+              onPress={() =>{
+                closeCollapsible();
+                props.changeScreen("Notifications")
+                props.navigation.navigate("Notifications",{screen:'Notification'})
+              }}
+              icon={() => (
+                <Ionicons
+                  name="md-notifications-outline"
+                  size={24}
+                  color={props.screenC=="Notifications" ? "#6E91EC" : "black"}
+                />
+              )}
+            />
+        </View>}
+      {/* <TouchableOpacity
+          onPress={() =>{
+            props.navigation.navigate("Adress", { screen: "Details" })
+            props.changeScreen("AdressDetails")
+          }}
+          style={{ flexDirection: "row", marginVertical: 10 }}>
+          <Feather name="user" size={24} color={props.screenC =="AdressDetails"?"#6E91EC":"black"} />
+          <Text style={[style.ff,{color:props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
+          Account Details
+        </Text>
+      </TouchableOpacity> */}
+      {/* <CollapsibleList
+        ref={secondRef}
+        numberOfVisibleItems={0}
+        buttonPosition="top"
+        buttonContent={
+          <View style={{ flexDirection: "row", marginVertical: 15 }}>
+            <MaterialCommunityIcons name="information-outline" size={24} color="black" />
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>
+              About
+            </Text>
+          </View>
+        }
+      >
+      <View style={{ marginLeft: 30 }}>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("About",{screen:"AboutUs"});
+              props.changeScreen("About")
+            }}
+            style={{ flexDirection: "row", marginVertical: 10 }}>
+            <Feather name="globe" size={24} color={props.screenC =="About"?"#6E91EC":"black"} />
+            <Text style={[style.ff,{color:props.screenC =="About"?"#6E91EC":"black", marginLeft: 30 }]}>
+              About us
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("About",{screen:"Contact"});
+              props.changeScreen("Contact")
+            }}
+            style={{ flexDirection: "row", marginVertical: 10 }}>
+            <MaterialCommunityIcons name="cellphone" size={24} color={props.screenC =="Contact"?"#6E91EC":"black"} />
+            <Text style={[style.ff,{color:props.screenC =="Contact"?"#6E91EC":"black", marginLeft: 30 }]}>
+              Contact us
+            </Text>
+          </TouchableOpacity>
+    </View>
+    </CollapsibleList> */}
+      {/* this will crash the app */}
+      {state.loggedIn ? (
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              closeCollapsible();
+              apiServices.logout().then(async(res) => {
+                setState({userType:null})
+                console.log("WHEN LOGGING OUT: ", res);
+                let changing = JSON.parse(await AsyncStorage.getItem('user_details'))
+                await AsyncStorage.setItem('user_details',JSON.stringify({...changing,user_type:1,user_type_static:1}))
+                // await AsyncStorage.clear();
+                await AsyncStorage.removeItem("company_name");
+                await AsyncStorage.removeItem("user_id");
+                await AsyncStorage.removeItem("user_details");
+                changing = JSON.parse(await AsyncStorage.getItem('user_details'))
+                console.log("ASYNC: ",changing);
+                props.changeScreen("Home")
+                props.navigation.navigate("Home")
+              });
+            }}
+            style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
+          >
+            <MaterialCommunityIcons name="logout" size={24} color="black" />
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("Auth", { screen: "Login" });
+            }}
+            style={{ flexDirection: "row", marginVertical: 15, marginLeft: 20 }}
+          >
+            <MaterialCommunityIcons name="login" size={24} color="black" />
+            <Text style={[style.ff,{ color: "black", marginLeft: 30 }]}>Login / Register</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </DrawerContentScrollView>
+  );
+
+}
+
+const TestingNavigator = () => {
+  return (
+    <TStack.Navigator>
+      <TStack.Screen
+        name="Auth"
+        component={AuthStack}
+        options={{ headerShown: false }}
+      />
+      <TStack.Screen
+        name="Negotiations"
+        component={Negotiations}
+        options={{ headerShown: false }}
+      />
+    </TStack.Navigator>
+  );
+};
+//
+
+const Nav = (props) => {
+
+  const [state,setState] = useState({userToken:null, chosenScreen:'Home', isUserLoggedIn:false, userData:null, loading:true, visible:false, search:""})
+
+  changeScreen=(item)=>{
+    setState({chosenScreen:item})
+    console.log("SCREEN:",item)
+  }
+
+  headerTitle = (title,navigation,loggedIn) =>{
+    return <View style={{display:'flex',alignItems:'center',/* justifyContent:'space-between', */flexDirection:'row',flex:1,width:'100%',}}>
+      {title!="Home"&&<Text style={{fontFamily:'Adam-Bold',fontWeight:'800',fontSize:24}}>{title}</Text>}
+      {title=="Home"&&<View style={{borderRadius:10,borderWidth:1,borderColor:'lightgray',marginLeft:15,flexDirection:'row',alignItems:'center'}}>
+          <TextInput style={{width:200,paddingHorizontal:5}} placeholder="Search"
+          onChangeText={(e)=>setState({search:e})}/>
+          <TouchableOpacity style={{borderLeftColor:'lightgray', borderLeftWidth:1,paddingLeft:10}}
+            onPress={()=>{
+              navigation.navigate("Product",{screen:"List", params:{query:state.search}})
+            }}>
+            <Feather name="search" size={14} color="lightgray" style={{marginRight:10,}}/>
+          </TouchableOpacity>
+        </View>}
+        {(title=="Home" && loggedIn)&& (<>  
+        <FontAwesome name="envelope-o" size={24} color="#6E91EC"
+        style={{marginLeft:15}} onPress={()=>navigation.navigate("Notifications")}
+        />
+        {/* <Ionicons
+          style={{marginLeft:15}}
+          name="md-notifications-outline"
+          size={28}
+          color="#6E91EC"
+          onPress={()=>navigation.navigate("Notifications")}
+          /> */}
+          </>)}
+    </View>
+  }
+
+  // useEffect(()=>{
+  //   console.log("RUNNING HERE")
+  // },[])
+
+  
+  const runEffect = async() => {
+    console.log("PROPS DR: ")
+    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+    console.log("USER DATA IS: ",user)
+    setState({userData:user})
+    //await apiServices.isUserLoggedIn();
+    //console.log("RESULT INSIDE COMPOENNT: ",result)
+    await apiServices.isUserLoggedIn().then((res) => {
+      console.log("THIS STATE: ",state.userData)
+        console.log("RESULT LOGIN: ",res)
+        setTimeout(()=>setState({ isUserLoggedIn: res, loading:false, visible:true, }),1000)
+        // setTimeout(()=>setState({ isUserLoggedIn: res, loading:false, visible:true, }),1000);
+    });
+  }
+  
+  useEffect(()=>{
+    setTimeout(()=>runEffect(),1000)
+  },[])
+
+  const authStack = useCallback(() => {
+    return<><Stack.Navigator>
+      <>
+        <Stack.Screen
+          name="drawerTab"
+          component={createDrawer}
+          options={{ headerShown: false }}
+        />
+      </>
+    </Stack.Navigator></>
+  },[state.isUserLoggedIn])
+
+  const submitContract=async()=>{
+    console.log("Running")
+    let user = JSON.parse( await AsyncStorage.getItem('user_details'));
+    let change = {...user,is_approved:1}
+    AsyncStorage.setItem('user_details',JSON.stringify(change))
+    setState({userData:change})
+    // this.forceUpdate()
+  }
+
+  const createDrawer = useCallback(({ navigation, route}) => {
+
+     return (<Drawer.Navigator
+      options={{
+        lazy:false,
+      }}
+      activeTintColor="red"
+      drawerContent={(props) => (
+        <CustomDrawer
+          loggedIn={state.isUserLoggedIn}
+          {...props}
+          route={route}
+          // navigation={navigation}
+          submitContract={submitContract}
+          screenC={state.chosenScreen}
+          changeScreen={changeScreen}
+          userType={state.userData?.user_type}
+          userTypeStatic = {state.userData?.user_type_static}
+          userApproved = {state.userData?.is_approved}
+          userData={state.userData}
+        />
+      )}
+    >
+      <Drawer.Screen
+        name="Home"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:Home}
+        navigation={navigation}
+        options={{ headerTitle:()=>headerTitle("Home",navigation, state.isUserLoggedIn) }}
+      />
+      <Drawer.Screen
+        name="About"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:AboutScreen}
+        navigation={navigation}
+        options={{ headerTitle:()=>headerTitle("About Us") }}
+      />
+      <Drawer.Screen
+        name="Contact"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:ContactScreen}
+        navigation={navigation}
+        options={{ headerTitle:()=>headerTitle("Contact Us") }}
+      />
+      <Drawer.Screen
+        name="FAQ"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:Faq}
+        navigation={navigation}
+        options={{ headerTitle:()=>headerTitle("FAQ") }}
+      />
+      <Drawer.Screen
+        name="Auth"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:AuthStack}
+        navigation={navigation}
+        options={{ headerShown: false }}
+      />
+      <Drawer.Screen
+        name="Deals"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:Deals}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Deals") }}
+      />
+      <Drawer.Screen
+        name="Product"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:ProductStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Products") }}
+      />
+      <Drawer.Screen
+        name="Notifications"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:NotificationStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Notifications") }}
+      />
+      <Drawer.Screen
+        name="Negotiations"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:NegotiationStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Negotiations") }}
+      />
+      <Drawer.Screen
+        name="Orders"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:OrderStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Orders") }}
+      />
+      <Drawer.Screen
+        name="User"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:UserStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Sub Users") }}
+      />
+      <Drawer.Screen
+        name="Role"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:RoleStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Roles") }}
+      />
+      <Drawer.Screen
+        name="Adress"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:AdressStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Addresses") }}
+      />
+      <Drawer.Screen
+        name="Dashboard"
+        //component={()=><SignContract submitContract={submitContract} navigation={navigation}/>}
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:DashboardStack}
+        //component={}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Dashboard") }}
+      />
+      <Drawer.Screen
+        name="Campaign"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:CampaignStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Campaign") }}
+      />
+      <Drawer.Screen
+        name="LoyaltyPoints"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:LoyaltyStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Loyalty Points") }}
+      />
+      <Drawer.Screen
+        name="Checkout"
+        component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:CheckoutStack}
+        navigation={navigation}
+        options={{ headerShown: true, headerTitle:()=>headerTitle("Checkout" )}}
+      />
+      <Drawer.Screen
+      name="Categories"
+      component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:Categories}
+      options={{ headerShown: true, headerTitle:()=>headerTitle("Categories")}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Tracking"
+      component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:TrackingList}
+      options={{ headerShown: true, headerTitle:()=>headerTitle("Tracking")}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Activity"
+      component={(state.userData?.is_approved==3 && state.userData?.user_type==4)?()=><SignContract submitContract={submitContract} navigation={navigation}/>:Activity}
+      options={{ headerShown: true, headerTitle:()=>headerTitle("Activity")}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Contract"
+      children={()=><SignContract submitContract={submitContract} navigation={navigation}/>}
+      //component={SignContract}
+      options={{ headerShown: true, title:""}}
+      navigation={navigation}
+      />
+    </Drawer.Navigator>)
+  },[state.isUserLoggedIn]);
+
+    return <NavigationContainer>{authStack()}</NavigationContainer>;
+}
+export default Nav;

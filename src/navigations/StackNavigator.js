@@ -68,16 +68,22 @@ class CustomDrawer extends Component {
     this.thirdRef = React.createRef();
     this.state={
       userType:null,
-      userApproved:null
+      userApproved:null,
+      loggedIn:false,
+      userData:null,
     }
   }
-
-  
+  componentDidMount(){
+    // this.props.closeDrawer()
+    console.log("NAV: ",this.props.navigation)
+    this.props.navigation.toggleDrawer()
+  }
 
   componentDidUpdate(prevProps, prevState){
     if(prevProps.userType !== this.state.userType){
-      console.log("RUNNING123",this.props.userType);
-      this.setState({userType:this.props.userType,userApproved:this.props.approved})}
+      console.log("RUNNING123",this.props.userData);
+      this.setState({userType:this.props.userType,userApproved:this.props.approved,loggedIn:this.props.loggedIn,userData:this.props.userData})
+    }
       //this.setState({userType: this.props.userType})
   }
 
@@ -127,10 +133,10 @@ class CustomDrawer extends Component {
         style={{display:'flex',alignItems:'center',marginVertical:0}}>
           <Image source={require('../../assets/images/drawerlogo.png')} style={{width:300,height:200}}/>
         </View>
-        {this.props.loggedIn&&
+        {this.state.loggedIn&&
         (<View style={{display:'flex',alignItems:'center',marginBottom:10}}>
           <Text style={[style.ff,{color: "#6E91EC",fontSize:20}]}>
-            {this.props.userData?.company_name}
+            {this.state.userData?.company_name}
           </Text>
           <Text style={[style.ff,{color: "#6E91EC",fontSize:16,marginTop:10}]}>
             Logged in as: {this.state.userType==4?"Seller":"Buyer"}
@@ -178,7 +184,7 @@ class CustomDrawer extends Component {
           )}
         /></>:null}
       </View>
-      {this.props.loggedIn ? (
+      {this.state.loggedIn ? (
         <>
       {this.props.userTypeStatic==4?<View>
           <TouchableOpacity
@@ -456,7 +462,7 @@ class CustomDrawer extends Component {
               color={this.props.screenC=="FAQ" ? "#6E91EC" : "black"} />}
             />
       </View>
-      {this.props.loggedIn&&<View>
+      {this.state.loggedIn&&<View>
             <DrawerItem
               label="Notifications"
               labelStyle={[style.ff,{color:this.props.screenC=="Notifications" ?"#6E91EC":"black"}]}
@@ -524,7 +530,7 @@ class CustomDrawer extends Component {
     </View>
     </CollapsibleList> */}
       {/* this will crash the app */}
-      {this.props.loggedIn ? (
+      {this.state.loggedIn ? (
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -645,13 +651,10 @@ class Nav extends Component {
     });
   }
 
-  componentDidUpdate(prevState){
-    if(prevState.userData == null)
-      console.log(123)
-  }
-
   componentDidUpdate() {
     setTimeout(async () => {
+      // alert(123)
+      // this.forceUpdate()
       await apiServices.isUserLoggedIn();
       apiServices.isUserLoggedIn().then(async(res) => {
         let user = JSON.parse( await AsyncStorage.getItem('user_details'));
@@ -660,7 +663,8 @@ class Nav extends Component {
     });
   }
 
-  authStack = () => {return<><Spinner visible={this.state.loading}/>{this.state.visible==false?null:<Stack.Navigator>
+  authStack = () => {
+    return<><Stack.Navigator>
       <>
         <Stack.Screen
           name="drawerTab"
@@ -668,7 +672,7 @@ class Nav extends Component {
           options={{ headerShown: false }}
         />
       </>
-    </Stack.Navigator>}</>
+    </Stack.Navigator></>
   }
 
   closeDrawer = (navigation) =>{
@@ -692,14 +696,18 @@ class Nav extends Component {
     }
 
   createDrawer = ({ navigation, route}) => {
-     return (this.state.visible==false?null:<Drawer.Navigator
+    
+     return (<Drawer.Navigator
+      options={{
+        lazy:true,
+      }}
       activeTintColor="red"
       drawerContent={(props) => (
         <CustomDrawer
           loggedIn={this.state.isUserLoggedIn}
           {...props}
           route={route}
-          navigation={navigation}
+          // navigation={navigation}
           submitContract={this.submitContract}
           screenC={this.state.chosenScreen}
           changeScreen={this.changeScreen}
