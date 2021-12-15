@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, FlatList, TextInput } from "react-native";
 import { Button, Headline } from 'react-native-paper';
 import styles from "./style";
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -8,7 +8,7 @@ import * as apiProducts from '../../core/apis/apiProductServices';
 import Swiper from "react-native-web-swiper";
 import { useFocusEffect } from '@react-navigation/core';
 import Footer from '../../components/footer/footer';
-import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Entypo, MaterialCommunityIcons, Feather, FontAwesome } from '@expo/vector-icons';
 import Overlay from 'react-native-modal-overlay';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -34,6 +34,7 @@ const Home = (props) => {
     const [showArrow, setShowArrow] = useState(false);
     const [modalVisible, setModalVisible] = useState(false)
     const [overlayType, setOverlayType] = useState("disclaimer")
+    const [searchQuery,setSearchQuery] = useState("");
 
     const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         if (contentOffset.y >= 400)
@@ -60,10 +61,32 @@ const Home = (props) => {
     //     }
     //     runEffect()
     // }, [])
-    
+
     const runEffect = async() =>{
         const user = await AsyncStorage.getItem('user_details')
         user==null?setLoggedIn(false):setLoggedIn(true)
+            // props.navigation.setOptions({
+            //   headerTitle: ()=><View style={{display:'flex',alignItems:'center',/* justifyContent:'space-between', */flexDirection:'row',flex:1,width:'100%',}}>
+            //   <View style={{borderRadius:10,borderWidth:1,borderColor:'lightgray',marginLeft:15,flexDirection:'row',alignItems:'center'}}>
+            //       <TextInput style={{width:200,paddingHorizontal:5}} placeholder="Search"
+            //       value={searchQuery}
+            //       onChangeText={(e)=>{
+            //           setSearchQuery(e)
+            //         //   alert(searchQuery)
+            //        }}/>
+            //       <TouchableOpacity style={{borderLeftColor:'lightgray', borderLeftWidth:1,paddingLeft:10}}
+            //         onPress={()=>{
+            //             alert(searchQuery)
+            //             //   props.navigation.navigate("Product",{screen:"List", params:{query:search}})
+            //         }}>
+            //         <Feather name="search" size={14} color="lightgray" style={{marginRight:10,}}/>
+            //       </TouchableOpacity>
+            //     </View>
+            //     <FontAwesome name="envelope-o" size={24} color="#6E91EC"
+            //     style={{marginLeft:15}} onPress={()=>user?props.navigation.navigate("Notifications"):props.navigation.navigate("Auth",{screen:"Login"})}
+            //     />
+            // </View>
+            // })
         apiProducts.getTopSellingAndFeatured().then((res) => {
             setData({ topSelling: res[0].top_selling_products, featured: res[0].product_details })
         }).catch(err => console.log(":::", err.response.data.message))

@@ -47,7 +47,7 @@ const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 // code below is just to test the api
-const TStack = createStackNavigator();
+const TStack = createDrawerNavigator();
 
 const style = {
   ff:{fontFamily:'Adam-Bold',textAlignVertical:'center'}
@@ -611,6 +611,8 @@ class Nav extends Component {
   }
 
   headerTitle = (title,navigation,loggedIn) =>{
+    // let user = AsyncStorage.getItem('user_details');
+    // alert(user.id!=undefined)
     return <View style={{display:'flex',alignItems:'center',/* justifyContent:'space-between', */flexDirection:'row',flex:1,width:'100%',}}>
       {title!="Home"&&<Text style={{fontFamily:'Adam-Bold',fontWeight:'800',fontSize:24}}>{title}</Text>}
       {title=="Home"&&<View style={{borderRadius:10,borderWidth:1,borderColor:'lightgray',marginLeft:15,flexDirection:'row',alignItems:'center'}}>
@@ -623,17 +625,10 @@ class Nav extends Component {
             <Feather name="search" size={14} color="lightgray" style={{marginRight:10,}}/>
           </TouchableOpacity>
         </View>}
-        {(title=="Home" && loggedIn)&& (<>  
+        {(title=="Home"&& <>  
         <FontAwesome name="envelope-o" size={24} color="#6E91EC"
-        style={{marginLeft:15}} onPress={()=>navigation.navigate("Notifications")}
+        style={{marginLeft:15}} onPress={()=>1==1?navigation.navigate("Notifications"):navigation.navigate("Auth",{screen:'Login'})}
         />
-        {/* <Ionicons
-          style={{marginLeft:15}}
-          name="md-notifications-outline"
-          size={28}
-          color="#6E91EC"
-          onPress={()=>navigation.navigate("Notifications")}
-          /> */}
           </>)}
     </View>
   }
@@ -647,7 +642,7 @@ class Nav extends Component {
     //console.log("RESULT INSIDE COMPOENNT: ",result)
     await apiServices.isUserLoggedIn().then((res) => {
       console.log("THIS STATE: ",this.state.userData)
-        setTimeout(()=>this.setState({ isUserLoggedIn: res, loading:false, visible:true, }),1000);
+      this.setState({ isUserLoggedIn: res, loading:false, visible:true, })
     });
   }
 
@@ -699,7 +694,7 @@ class Nav extends Component {
     
      return (<Drawer.Navigator
       options={{
-        lazy:true,
+        lazy:false,
       }}
       activeTintColor="red"
       drawerContent={(props) => (
@@ -725,7 +720,26 @@ class Nav extends Component {
         name="Home"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Home}
         navigation={navigation}
-        options={{ headerTitle:()=>this.headerTitle("Home",navigation, this.state.isUserLoggedIn) }}
+        options={{ headerTitle:()=> <View style={{display:'flex',alignItems:'center',/* justifyContent:'space-between', */flexDirection:'row',flex:1,width:'100%',}}>
+            {/* <Text style={{fontFamily:'Adam-Bold',fontWeight:'800',fontSize:24}}>Home</Text> */}
+        <   View style={{borderRadius:10,borderWidth:1,borderColor:'lightgray',marginLeft:15,flexDirection:'row',alignItems:'center'}}>
+            <TextInput style={{width:200,paddingHorizontal:5}} placeholder="Search"
+            onChangeText={(e)=>this.setState({search:e})}/>
+            <TouchableOpacity style={{borderLeftColor:'lightgray', borderLeftWidth:1,paddingLeft:10}}
+              onPress={()=>{
+                navigation.navigate("Product",{screen:"List", params:{query:this.state.search}})
+              }}>
+              <Feather name="search" size={14} color="lightgray" style={{marginRight:10,}}/>
+            </TouchableOpacity>
+          </View>
+          <>  
+          <TouchableOpacity onPress={()=>this.state.userData?.id!=undefined?navigation.navigate("Notifications"):navigation.navigate("Auth",{screen:'Login'})}>
+            <FontAwesome name="envelope-o" size={24} color="#6E91EC"
+            style={{marginLeft:15}}
+            />
+          </TouchableOpacity>
+         </>
+      </View> }}
       />
       <Drawer.Screen
         name="About"

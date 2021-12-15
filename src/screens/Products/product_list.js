@@ -106,8 +106,9 @@ export default class ProductList extends Component {
             this.setState({ fetchedCategories: data, apiCategoriesForFiltering:result });
         }).then((res)=>{
             let {multiplier} = this.state
-            if(this.props.route.params.query){
+            if(this.props.route.params?.query!=undefined){
                 let query = this.props.route.params.query
+                // alert(query)
                 this.setState({showSearch:true,search:query})
                 this.getProducts(1,null,null,null,null,null,query)
             }
