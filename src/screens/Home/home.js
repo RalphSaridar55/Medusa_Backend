@@ -8,9 +8,11 @@ import * as apiProducts from '../../core/apis/apiProductServices';
 import Swiper from "react-native-web-swiper";
 import { useFocusEffect } from '@react-navigation/core';
 import Footer from '../../components/footer/footer';
+import Tabs from '../../components/tabs/Tabs';
 import { Entypo, MaterialCommunityIcons, Feather, FontAwesome } from '@expo/vector-icons';
 import Overlay from 'react-native-modal-overlay';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// import Footer from '../../components/footer/footer';
 
 const BannerWidth = Dimensions.get('window').width;
 const height = Dimensions.get('screen').height;
@@ -371,6 +373,7 @@ const Home = (props) => {
             {showArrow &&
                 <Entypo name="arrow-with-circle-up" size={36} color="#6E91EC"
                     style={{ paddingTop: 20, display: 'flex', zIndex: 100, position: 'absolute', right: 20 }} onPress={() => scrollToTop()} />}
+            <Tabs navigation={props.navigation} loggedIn={loggedIn}/>
         </View >
     );
 }

@@ -8,6 +8,7 @@ const HStack = createStackNavigator();
 const ProductStack = ({ navigation, route }) => {
   return (
     <HStack.Navigator>
+      
       <HStack.Screen
         name="Home"
         component={Home}

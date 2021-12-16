@@ -28,6 +28,7 @@ import NegotiationStack from "./NegotiationStack";
 import DashboardStack from "../screens/Dashboard/Dashboard";
 import CampaignStack from "./CampaignStack";
 import LoyaltyStack from "./LoyaltyStack";
+import BottomTab from './BottomNavbarStack'
 //
 
 import Deals from '../screens/Deals/Deals'
@@ -44,7 +45,7 @@ import SignContract from "../components/SignContract";
 import Dashboard from "../screens/Dashboard/Dashboard";
 
 const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator();
+const Stack = createDrawerNavigator();
 
 // code below is just to test the api
 const TStack = createDrawerNavigator();
@@ -661,6 +662,11 @@ class Nav extends Component {
   authStack = () => {
     return<><Stack.Navigator>
       <>
+        {/* <Drawer.Screen
+          name="Tab"
+          component={BottomTab}
+          options={{headerShown:false}}
+        /> */}
         <Stack.Screen
           name="drawerTab"
           component={this.createDrawer}
@@ -716,6 +722,12 @@ class Nav extends Component {
         />
       )}
     >
+    {/* <Drawer.Screen
+      name="Tab"
+      component={BottomTab}
+      navigation={navigation}
+      options={{headerShown:false}}
+    /> */}
       <Drawer.Screen
         name="Home"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Home}
@@ -741,7 +753,7 @@ class Nav extends Component {
          </>
       </View> }}
       />
-      <Drawer.Screen
+       <Drawer.Screen
         name="About"
         component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:AboutScreen}
         navigation={navigation}
@@ -863,7 +875,7 @@ class Nav extends Component {
       //component={SignContract}
       options={{ headerShown: true, title:""}}
       navigation={navigation}
-      />
+      /> 
     </Drawer.Navigator>)
   };
 

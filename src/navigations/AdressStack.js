@@ -10,6 +10,7 @@ import AddVariant from "../screens/BuyerAccountDetails/addVariant";
 import edit1 from '../screens/BuyerAccountDetails/product_edit';
 import edit2 from '../screens/BuyerAccountDetails/product_edit2';
 import SponsoredProducts from '../screens/BuyerAccountDetails/sponsored_products_list'
+import Tab from './BottomNavbarStack'
 
 const AStack = createStackNavigator();
 const PStack = createStackNavigator();
