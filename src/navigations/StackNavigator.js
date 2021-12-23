@@ -145,7 +145,7 @@ class CustomDrawer extends Component {
         </View>)}
         <DrawerItem
           label="Home"
-          labelStyle={[style.ff,{ color:this.props.screenC=="Home"?"#6E91EC":"black"}]}
+          labelStyle={[style.ff,{ color:this.props.screenC=="Home"?"black":"black"}]}
           onPress={() => {
             // this.props.changeScreen("Home")
             this.props.navigation.navigate("Home");
@@ -155,7 +155,7 @@ class CustomDrawer extends Component {
             <MaterialCommunityIcons
               name="home"
               size={24}
-              color={this.props.screenC=="Home" ? "#6E91EC" : "black"}
+              color={this.props.screenC=="Home" ? "black" : "black"}
             />
           )}
         />
@@ -164,7 +164,7 @@ class CustomDrawer extends Component {
           label="Become a Seller"
           labelStyle={[style.ff,{color:'black'}]}
           onPress={() => {
-            this.props.changeScreen("Home")
+            // this.props.changeScreen("Home")
               this.closeCollapsible();
               apiServices.logout().then(async(res) => {
                 this.setState({userType:null})
