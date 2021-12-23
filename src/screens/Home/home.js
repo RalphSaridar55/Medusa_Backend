@@ -372,7 +372,7 @@ const Home = (props) => {
             </Overlay>
             {showArrow &&
                 <Entypo name="arrow-with-circle-up" size={36} color="#6E91EC"
-                    style={{ paddingTop: 20, display: 'flex', zIndex: 100, position: 'absolute', right: 20 }} onPress={() => scrollToTop()} />}
+                    style={{ paddingVertical: 20, display: 'flex', zIndex: 100, position: 'absolute', right: 20 , bottom:100}} onPress={() => scrollToTop()} />}
             <Tabs navigation={props.navigation} loggedIn={loggedIn}/>
         </View >
     );
