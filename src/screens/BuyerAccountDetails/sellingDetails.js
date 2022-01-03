@@ -335,8 +335,8 @@ return (
               loadMore(p);
           }
         }}
-         keyExtractor={(item) => {
-             return item.id;
+         keyExtractor={(item,index) => {
+             return index.toString();
          }}
          renderItem={({ item }) => {
              return (

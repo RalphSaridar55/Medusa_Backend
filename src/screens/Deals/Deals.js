@@ -28,8 +28,8 @@ const Deals = () =>{
             //         this.loadMore(page);
             //     }
             //   }}
-            keyExtractor={(item) => {
-                return item.id;
+            keyExtractor={(item,index) => {
+                return index.toString();
             }}
             renderItem={({ item }) => {
                 return <TouchableOpacity style={[styles.card,{borderRadius:15,marginBottom:20}]} onPress={()=>this.props.navigation.navigate("Detailed",{item:item})}>

@@ -423,8 +423,8 @@ export default class Pickup extends Component {
                                 //         <View style={styles.separator} />
                                 //     )
                                 // }}
-                                keyExtractor={(item) => {
-                                    return item.product_id;
+                                keyExtractor={(item,index) => {
+                                    return index.toString();
                                 }}
                                 renderItem={({ item }) => {
                                     return (

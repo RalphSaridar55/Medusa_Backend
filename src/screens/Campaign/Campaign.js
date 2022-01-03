@@ -10,7 +10,6 @@ import {
   Dimensions,
   Alert,
   ImageBackground,
-  FlatList,
 } from "react-native";
 import { styles } from "./Campaign_style";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";

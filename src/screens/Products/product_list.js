@@ -432,7 +432,7 @@ export default class ProductList extends Component {
                             }
                           }}
                         keyExtractor={(item) => {
-                            return item.id;
+                            return item.id.toString();
                         }}
                         renderItem={({ item }) => {
                             return (

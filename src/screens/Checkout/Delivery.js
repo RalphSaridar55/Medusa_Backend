@@ -505,7 +505,7 @@ export default class Delivery extends Component {
               //     )
               // }}
               keyExtractor={(item) => {
-                return item.product_id;
+                return item.product_id.toString();
               }}
               renderItem={({ item }) => {
                 return (

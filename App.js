@@ -35,7 +35,7 @@ export default function App() {
   else
     return (
       <>
-        <HeadContext.Provider value={{product:product}}>
+        <HeadContext.Provider>
           <Nav />
         </HeadContext.Provider>
       </>

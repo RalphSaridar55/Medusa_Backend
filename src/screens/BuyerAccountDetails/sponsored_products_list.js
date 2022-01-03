@@ -53,8 +53,8 @@ const SponsoredProducts = () =>{
                 (i=>i.product_name.toLowerCase().includes(search.toLowerCase()))}
             horizontal={false}
             numColumns={2}
-            keyExtractor={(item) => {
-                return item.id;
+            keyExtractor={(item,index) => {
+                return index.toString();
             }}
             renderItem={({ item }) => {
                 return (

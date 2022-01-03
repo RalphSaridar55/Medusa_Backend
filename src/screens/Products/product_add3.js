@@ -202,7 +202,7 @@ export default class AddProduct extends Component {
         [
           {
             text: "Ok",
-            onPress: () => this.props.navigation.navigate("Add1"),
+            onPress: () => this.props.navigation.navigate("Home"),
           },
         ]);
       }).catch(err=>{
@@ -217,7 +217,7 @@ export default class AddProduct extends Component {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     //4
     APIProduct.getVarientTypes(
-      4 /* this.props.route.params.category_id */
+      /* 4 this.props.route.params.category_id */
     ).then((res) => {
       let variants = [];
       let values = [];

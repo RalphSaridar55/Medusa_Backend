@@ -163,6 +163,7 @@ const Home = (props) => {
                         data={data.featured}
                         horizontal
                         showsHorizontalScrollIndicator={false}
+                        keyExtractor={(item,index)=>index.toString()}
                         renderItem={({ item, index }) => {
                             return <TouchableOpacity style={styles.card} onPress={() =>{
                                 if(loggedIn==false)
@@ -183,15 +184,16 @@ const Home = (props) => {
                         }}
                     />}
                 </View>
-                <View style={styles.topSellingContainer}>
+                {/* <View style={styles.topSellingContainer}>
                     <Headline style={styles.headerTitle}>Top Selling</Headline>
                     <Button icon="chevron-right" color='#31C2AA' contentStyle={styles.ButtonShowAll} labelStyle={[styles.ButtonShowAll, { textAlignVertical: 'center' }]}
                         onPress={() => props.navigation.navigate("Product", { screen: "List" })}>
                         Show All
                     </Button>
-                </View>
+                </View> */}
                 <View style={styles.flatListSliderContainer2}>
                     {data.topSelling.length > 0 && <FlatList
+                        keyExtractor={(item,index)=>index.toString()}
                         data={data.topSelling}
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -225,6 +227,7 @@ const Home = (props) => {
                 </View>
                 <View style={[styles.flatListSliderContainer2, { marginBottom: 30 }]}>
                     {data.featured.length > 0 && <FlatList
+                        keyExtractor={(item,index)=>index.toString()}
                         data={data.featured}
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -259,6 +262,7 @@ const Home = (props) => {
 
                 <View style={[styles.flatListSliderContainer2, { marginBottom: 20 }]}>
                     {data.featured.length > 0 && <FlatList
+                        keyExtractor={(item,index)=>index.toString()}
                         data={data.featured}
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -317,6 +321,7 @@ const Home = (props) => {
                 </View>
                 <View style={[styles.flatListSliderContainer2, { marginBottom: 20 }]}>
                     {data.featured.length > 0 && <FlatList
+                        keyExtractor={(item,index)=>index.toString()}
                         data={data.featured}
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -336,13 +341,13 @@ const Home = (props) => {
                         }}
                     />}
                 </View>
-                <Footer
+               {/*  <Footer
                     closeOrOpen={(e) => {
                         setModalVisible(e)
                     }}
                     changeOverlay={(e) => {
                         setOverlayType(e)
-                    }} />
+                    }} /> */}
             </ScrollView>
 
             <Overlay visible={modalVisible} onClose={() => setModalVisible(false)}
@@ -373,7 +378,7 @@ const Home = (props) => {
             {showArrow &&
                 <Entypo name="arrow-with-circle-up" size={36} color="#6E91EC"
                     style={{ paddingVertical: 20, display: 'flex', zIndex: 100, position: 'absolute', right: 20 , bottom:100}} onPress={() => scrollToTop()} />}
-            <Tabs navigation={props.navigation} loggedIn={loggedIn}/>
+            {/* <Tabs navigation={props.navigation} loggedIn={loggedIn}/> */}
         </View >
     );
 }

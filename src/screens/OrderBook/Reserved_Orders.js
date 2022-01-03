@@ -50,7 +50,7 @@ export default class Reserved extends Component {
                     columnWrapperStyle={styles.listContainer}
                     data={this.state.data}
                     keyExtractor={(item) => {
-                        return item.id;
+                        return item.id.toString();
                     }}
                     renderItem={({ item }) => {
                         return (

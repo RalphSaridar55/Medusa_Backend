@@ -62,7 +62,7 @@ export const sellerPostProduct= async(payload) =>{
 //Get variant types
 export const getVarientTypes= async(id) =>{
     return await getToken().then((x)=>{
-        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/varient_type?category_id=${id}`,{
+        return apiUserServices.get(`https://ecomstgapi.appskeeper.in/cashmystock/api/v1/varient_type${id!=undefined?`?category_id=${id}`:""}`,{
             headers:{
                 Authorization: x
             }

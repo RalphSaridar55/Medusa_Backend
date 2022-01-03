@@ -49,8 +49,8 @@ export default class Categories extends Component {
                     data={this.state.categories}
                     horizontal={false}
                     numColumns={2}
-                    keyExtractor={(item) => {
-                        return item.id;
+                    keyExtractor={(item,index) => {
+                        return index.toString();
                     }}
                     renderItem={({ item }) => {
                         return (
