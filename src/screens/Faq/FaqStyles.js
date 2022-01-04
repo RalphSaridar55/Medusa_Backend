@@ -19,12 +19,27 @@ export const styles = StyleSheet.create({
         borderColor:'lightgray'
     },
     question:{
-        fontSize:20,
-        fontFamily:'Adam-Bold'
+        fontSize:16,
+        fontFamily:'Inter-Black-Medium'
     },
     answer:{
         fontSize:14,
         fontFamily:'Inter-Black-Light',
         paddingBottom:10
+    },
+    searchBar:{
+        borderColor:'lightgray',
+        borderBottomWidth:1,
+        marginHorizontal:10,
+        marginVertical:30,
+        paddingHorizontal:20,
+        paddingVertical:5,
+        display:"flex",
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    },
+    search:{
+        flex:1
     }
 })

@@ -504,8 +504,8 @@ export default class Delivery extends Component {
               //         <View style={styles.separator} />
               //     )
               // }}
-              keyExtractor={(item) => {
-                return item.product_id.toString();
+              keyExtractor={(item,index) => {
+                return index.toString();
               }}
               renderItem={({ item }) => {
                 return (

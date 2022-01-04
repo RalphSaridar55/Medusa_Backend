@@ -39,6 +39,7 @@ import Categories from "../screens/Categories/categories";
 import Negotiations from "../screens/Notifications/Notification";
 import Faq from '../screens/Faq/Faq';
 import TrackingList from "../screens/Tracking/TrackingList";
+import Terms  from "../screens/Terms/Terms";
 
 import Spinner from "react-native-loading-spinner-overlay";
 import SignContract from "../components/SignContract";
@@ -332,7 +333,10 @@ class CustomDrawer extends Component {
             />
           </View> */}
           
-          <View
+          
+        </>
+      ) : null}
+      <View
             style={{
               display: "flex",
               flexDirection: "row",
@@ -345,7 +349,7 @@ class CustomDrawer extends Component {
               buttonPosition="top"
               buttonContent={
                 <View style={{ flexDirection: "row", marginVertical: 15 }}>
-                  <Ionicons name="settings-outline" size={24} color="black" />
+                  <FontAwesome5 name="user" size={24} color="black" />
                   <Text style={[style.ff,{ color: "black", marginLeft: 30}]}>
                     Settings
                   </Text>
@@ -353,7 +357,8 @@ class CustomDrawer extends Component {
               }
             >
               <View style={{ marginLeft: 30 }}>
-                  <TouchableOpacity
+                {this.state.loggedIn
+                ? <><TouchableOpacity
                     onPress={() => {
                       this.props.navigation.navigate("User");
                       // this.props.changeScreen("User")
@@ -407,7 +412,7 @@ class CustomDrawer extends Component {
                       Selling Details
                     </Text>
                   </TouchableOpacity>):null}
-                  {/* {this.state.userType==4?(<TouchableOpacity
+                  {/* {this.state.userType==4?(<TouchableOpacityx
                     onPress={() => {
                       this.props.navigation.navigate("Adress",{screen:"Sponsored"});
                       // this.props.changeScreen("Sponsored")
@@ -418,11 +423,33 @@ class CustomDrawer extends Component {
                       Promoted Products
                     </Text>
                   </TouchableOpacity>):null} */}
+                  </>:<>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.props.navigation.navigate("Terms",{type:'terms'});
+                      // this.props.changeScreen("User")
+                    }}
+                    style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <Ionicons name="md-newspaper-outline" size={24} color="black" />
+                    <Text style={[style.ff,{color:this.props.screenC =="User"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      Terms & Conditions
+                    </Text>
+                  </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>{
+                      this.props.navigation.navigate("Terms",{type:'privacy'})
+                      // this.props.changeScreen("AdressDetails")
+                      }}
+                      style={{ flexDirection: "row", marginVertical: 10 }}>
+                      <FontAwesome5 name="lock" size={24} color="black" />
+                      <Text style={[style.ff,{color:this.props.screenC =="AdressDetails"?"#6E91EC":"black",marginLeft: 30 }]}>
+                      Privacy Policy
+                    </Text>
+                  </TouchableOpacity>
+                  </>}
               </View>
             </CollapsibleList>
           </View>
-        </>
-      ) : null}
       <View>
           <DrawerItem
               label="About Us"
@@ -873,7 +900,13 @@ class Nav extends Component {
       //component={SignContract}
       options={{ headerShown: true, title:""}}
       navigation={navigation}
-      /> 
+      />
+      <Drawer.Screen
+      name="Terms"
+      component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Terms}
+      options={{ headerShown: true, headerTitle:()=>this.headerTitle("Terms")}}
+      navigation={navigation}
+      />
     </Drawer.Navigator>)
   };
 

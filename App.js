@@ -1,10 +1,11 @@
 import React, { useEffect,createContext ,useState} from 'react'
-import {View, Text} from 'react-native'
+import {View, Text, Platform, AppRegistry} from 'react-native'
 import { LogBox } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import Nav from "././src/navigations/StackNavigator"
 // import { useFonts } from 'expo-font';
 import useFonts from './Hook';
+import { registerRootComponent } from 'expo';
 
 export const HeadContext = createContext();
 export default function App() {
@@ -43,3 +44,8 @@ export default function App() {
   );
 }
 
+if (Platform.OS == "android") {
+  registerRootComponent(App);
+} else {
+  AppRegistry.registerComponent(appName, () => App);
+}
