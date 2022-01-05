@@ -1,6 +1,6 @@
 import React, { Component, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, TextInput, Touchable } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5, FontAwesome} from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, Image, TextInput, Touchable, Linking } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons, Ionicons, Feather, Fontisto, FontAwesome5, FontAwesome, AntDesign} from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
   createDrawerNavigator,
@@ -40,6 +40,7 @@ import Negotiations from "../screens/Notifications/Notification";
 import Faq from '../screens/Faq/Faq';
 import TrackingList from "../screens/Tracking/TrackingList";
 import Terms  from "../screens/Terms/Terms";
+import Privacy from "../screens/Terms/Privacy";
 
 import Spinner from "react-native-loading-spinner-overlay";
 import SignContract from "../components/SignContract";
@@ -116,6 +117,11 @@ class CustomDrawer extends Component {
     this.setState({userApproved:1})
     //this.props.userType=currentType==4?1:4;
     //console.log("BECOMES: ",this.props.userType)
+  }
+  
+
+  handlePress = async(url) => {
+    await Linking.openURL(url)
   }
 
   async changeUserType(currentType){
@@ -426,7 +432,7 @@ class CustomDrawer extends Component {
                   </>:<>
                   <TouchableOpacity
                     onPress={() => {
-                      this.props.navigation.navigate("Terms",{type:'terms'});
+                      this.props.navigation.navigate("Terms");
                       // this.props.changeScreen("User")
                     }}
                     style={{ flexDirection: "row", marginVertical: 10 }}>
@@ -437,7 +443,7 @@ class CustomDrawer extends Component {
                   </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() =>{
-                      this.props.navigation.navigate("Terms",{type:'privacy'})
+                      this.props.navigation.navigate("Privacy")
                       // this.props.changeScreen("AdressDetails")
                       }}
                       style={{ flexDirection: "row", marginVertical: 10 }}>
@@ -446,6 +452,16 @@ class CustomDrawer extends Component {
                       Privacy Policy
                     </Text>
                   </TouchableOpacity>
+                  
+                  <View style={{
+                      display:'flex',
+                      justifyContent:'space-around',
+                      flexDirection:'row',
+                      marginVertical:20}}>
+                      <AntDesign name="instagram" size={24} color="#6E91EC" onPress={()=>this.handlePress("https://www.instagram.com")}/>
+                      <AntDesign name="facebook-square" size={24} color="#6E91EC"  onPress={()=>this.handlePress("https://www.facebook.com")}/>
+                      <AntDesign name="twitter" size={24} color="#6E91EC"  onPress={()=>this.handlePress("https://www.twitter.com")}/>
+                  </View>
                   </>}
               </View>
             </CollapsibleList>
@@ -905,6 +921,12 @@ class Nav extends Component {
       name="Terms"
       component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Terms}
       options={{ headerShown: true, headerTitle:()=>this.headerTitle("Terms")}}
+      navigation={navigation}
+      />
+      <Drawer.Screen
+      name="Privacy"
+      component={(this.state.userData?.is_approved==3 && this.state.userData?.user_type==4)?()=><SignContract submitContract={this.submitContract} navigation={navigation}/>:Privacy}
+      options={{ headerShown: true, headerTitle:()=>this.headerTitle("Privacy")}}
       navigation={navigation}
       />
     </Drawer.Navigator>)

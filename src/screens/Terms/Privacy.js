@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { terms } from './Data';
+import { privacy } from './Data';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useFocusEffect } from '@react-navigation/native';
 
-const Terms = (props) => {
+const Privacy = (props) => {
 
     const [visible, setVisible] = useState(true);
 
@@ -18,8 +18,8 @@ const Terms = (props) => {
 
         <View style={styles.container}>
             <Spinner visible={visible} />
-            <Text style={styles.header}>Terms & Conditions</Text>
-            <Text style={styles.text}>{terms}</Text>
+            <Text style={styles.header}>Privacy</Text>
+            <Text style={styles.text}>{privacy}</Text>
         </View>
     </View>
     )
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Terms
+export default Privacy
