@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: "Roboto-Bold";
+    src: local("Roboto-Bold"), url('./assets/fonts/Roboto-Bold.ttf') format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto-Medium";
+    src: local("Roboto-Medium"), url('./assets/fonts/Roboto-Medium.ttf') format("truetype");
+}
+
+*{
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+    font-family: 'Roboto-Medium';
+    overflow-x: hidden;
+}
+
+
+h1,h2,h3{
+    font-family: 'Roboto-Bold'!important;
+}

@@ -1,0 +1,8 @@
+<p >main works!{{ mainservice.test }}</p>
+<div class="main__grid">
+    <div *ngFor="let item of users?.results; let i = index" [attr.data-index]="i" 
+    class="main__grid__child" (click)="navigateToDetailed(i)">
+        <img src="{{item.picture.large}}" />
+        <p>{{ item.name.first +" "+ item.name.last }}</p>
+    </div>
+</div>
