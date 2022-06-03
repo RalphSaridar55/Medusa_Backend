@@ -1,14 +1,51 @@
+.input__container{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.input__container input{
+    width: 30%;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 10px;
+    padding:0 5px
+}
+
+.radio__container{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.radio__container__child{
+    margin: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radio__container__child label{
+    margin: 0 20px;
+}
+
 .main__grid{
     margin-top: 30px;
     display: grid;
-    align-items: center;
-    justify-content: center;
+    align-content: center!important;
+    justify-items: center!important;
     grid-template-columns: 25% 25% 25% 25%;
     row-gap: 100px;
+    grid-auto-flow:dense
 }
 
 .main__grid__child{
     transition: transform 0.5s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
 }
 
 .main__grid__child:hover{

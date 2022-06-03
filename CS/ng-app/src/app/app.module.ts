@@ -9,6 +9,8 @@ import { MainComponent } from './main/main.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MainDetailedComponent } from './main-detailed/main-detailed.component';
 
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +22,8 @@ import { MainDetailedComponent } from './main-detailed/main-detailed.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

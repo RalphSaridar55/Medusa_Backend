@@ -1,8 +1,31 @@
-<p >main works!{{ mainservice.test }}</p>
+<!-- <p>main works!{{ mainservice.test }}</p> -->
+<div class="input__container">
+    <input placeholder="Search" type="text" #searchinput (input)="getSearchInput(searchinput.value)" [value]="search" />
+</div>
+<div class="radio__container">
+    <div class="radio__container__child">
+        <label>All</label>
+        <input type="radio" value="all" [(ngModel)]="filterByCategory" (change)="changeGender('all')" />
+    </div>
+    <div class="radio__container__child">
+
+        <label>Male</label>
+        <input type="radio" value="male" [(ngModel)]="filterByCategory" (change)="changeGender('male')" />
+    </div>
+
+    <div class="radio__container__child">
+
+        <label>Female</label>
+        <input type="radio" value="female" [(ngModel)]="filterByCategory" (change)="changeGender('female')" />
+    </div>
+
+</div>
 <div class="main__grid">
-    <div *ngFor="let item of users?.results; let i = index" [attr.data-index]="i" 
-    class="main__grid__child" (click)="navigateToDetailed(i)">
-        <img src="{{item.picture.large}}" />
-        <p>{{ item.name.first +" "+ item.name.last }}</p>
+    <div *ngFor="let item of filterUsers; let i = index" [attr.data-index]="i" class="main__grid__child"
+        (click)="navigateToDetailed(i)">
+        <div >
+            <img src="{{item.picture.large}}" />
+            <p>{{ item.name.first +" "+ item.name.last }}</p>
+        </div>
     </div>
 </div>
