@@ -12,14 +12,15 @@ export class MainDetailedComponent implements OnInit {
 
   constructor(private route: Router) {
     this.router = route 
+    this.userDetails = this.route.getCurrentNavigation()?.extras.state?.data
   }
 
   ngOnInit(): void {
-
-    let segments: any = this.router.getCurrentNavigation()?.finalUrl?.root?.children?.primary?.segments;
-    console.log(segments[segments.length - 1].path);
-    let id: number = segments[segments.length - 1].path
-    this.userDetails = this.router.getCurrentNavigation()?.extras?.state?.['data'][id];
+    // let segments: any = this.router.getCurrentNavigation()?.finalUrl?.root?.children?.primary?.segments;
+    // console.log(segments[segments.length - 1].path);
+    // let id: number = segments[segments.length - 1].path
+    // this.userDetails = this.router
+    // console.log(this.userDetails)
   }
 
 

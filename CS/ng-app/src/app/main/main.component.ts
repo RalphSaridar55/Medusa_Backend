@@ -50,10 +50,10 @@ export class MainComponent implements OnInit {
     this.search = input;
   }
 
-  navigateToDetailed(id:number) {
+  async navigateToDetailed(id:number) {
     console.log(id)
-    this.router.navigateByUrl(`/main/${id}`, {
-      state: { data: this.users.results }
+    await this.router.navigateByUrl(`/main/${id}`, {
+      state: { data: this.users[id] }
     });
   }
 

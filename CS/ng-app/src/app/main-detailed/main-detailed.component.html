@@ -1,5 +1,9 @@
 <div class="main__detailed">
     <img src="{{ userDetails?.picture?.large }}" alt="">
-    <p></p>
-    <p></p>
+    <h2>Full Name: {{userDetails?.name.first +" "+userDetails?.name.last}}</h2>
+    <h2>Cell: {{userDetails?.cell}}</h2>
+    <h2>Age: {{userDetails?.dob.age}}</h2>
+    <h2>Country: {{userDetails?.location.country}}</h2>
+    <h2>State: {{userDetails?.location.state}}</h2>
+    <h2>Email: <a href="{{userDetails?.email}}" >{{userDetails?.email}}</a></h2>
 </div>
