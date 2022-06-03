@@ -52,3 +52,28 @@
     cursor: pointer;
     transform: scale(1.1);
 }
+
+@media (max-width:700px){
+ .main__grid{
+    grid-template-columns: 33% 33% 33%;
+ }   
+
+ 
+.input__container input{
+    width: 50%;
+}
+}
+
+@media (max-width:450px){
+ .main__grid{
+    grid-template-columns: 50% 50%;
+ }   
+ 
+.input__container input{
+    width: 80%;
+}
+
+ .radio__container{
+     flex-direction: column;
+ }
+}
