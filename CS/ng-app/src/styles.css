@@ -21,3 +21,34 @@
 h1,h2,h3{
     font-family: 'Roboto-Bold'!important;
 }
+
+.input__container{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.input__container input{
+    width: 30%;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 10px;
+    padding:0 5px
+}
+
+
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: whitesmoke;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: lightgray;
+  }
