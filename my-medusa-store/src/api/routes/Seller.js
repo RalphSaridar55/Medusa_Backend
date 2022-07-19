@@ -1,9 +1,9 @@
 import { Router } from "express"
-const { testSeller, testSeller2} = require('./Seller');
+const { testSeller, testSeller2 } = require('../seller');
 
     const RouterSeller = Router();
 
-    RouterSeller.get('/seller', testSeller);
+    RouterSeller.get('/helo', testSeller);
     RouterSeller.get('/seller2', testSeller2);
 
 

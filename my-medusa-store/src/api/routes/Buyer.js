@@ -1,5 +1,5 @@
 import { Router } from "express"
-const { testBuyer, testBuyer2} = require('./Buyer');
+const { testBuyer, testBuyer2} = require('../Buyer');
 
     const RouterBuyer = Router();
 
